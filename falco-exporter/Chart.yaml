@@ -1,6 +1,6 @@
 apiVersion: v2
 name: falco-exporter
-description: A Helm chart for Kubernetes
+description: Prometheus Metrics Exporter for Falco output events
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -18,7 +18,19 @@ version: 0.1.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 1.16.0
+appVersion: 0.1.0
+
+keywords:
+  - monitoring
+  - security
+  - alerting
+  - metric
+  - troubleshooting
+  - run-time
+
+sources:
+  - https://github.com/falcosecurity/falco-exporter
 
 maintainers:
   - name: leogr
+    email: me@leonardograsso.com
