@@ -35,12 +35,16 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "falco-exporter.labels" -}}
-helm.sh/chart: {{ include "falco-exporter.chart" . }}
 {{ include "falco-exporter.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+{{- if not .Values.skipHelm }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+{{- if not .Values.skipHelm }}
+helm.sh/chart: {{ include "falco-exporter.chart" . }}
+{{- end }}
 {{- end -}}
 
 {{/*
