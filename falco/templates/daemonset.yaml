@@ -115,11 +115,9 @@ spec:
               readOnly: true
             - mountPath: /dev/shm
               name: dshm
-            {{- if (and .Values.ebpf.enabled .Values.ebpf.settings.mountEtcVolume) }}
             - mountPath: /host/etc
               name: etc-fs
               readOnly: true
-            {{- end }}
             - mountPath: /etc/falco
               name: config-volume
             {{- if .Values.customRules }}
@@ -229,11 +227,9 @@ spec:
         - name: usr-fs
           hostPath:
             path: /usr
-        {{- if (and .Values.ebpf.enabled .Values.ebpf.settings.mountEtcVolume) }}
         - name: etc-fs
           hostPath:
             path: /etc
-        {{- end }}
         - name: config-volume
           configMap:
             name: {{ template "falco.fullname" . }}
