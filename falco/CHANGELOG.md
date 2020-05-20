@@ -3,6 +3,14 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.1.8
+
+### Minor Changes
+
+* Upgrade to Falco 0.23.0
+* Correct socket path for `--cri` flag 
+* Always mount `/etc` (required by `falco-driver-loader`)
+
 ## v1.1.7
 
 ### Minor Changes
