@@ -3,7 +3,7 @@
 image:
   registry: docker.io
   repository: falcosecurity/falco
-  tag: 0.21.0
+  tag: 0.23.0
   pullPolicy: IfNotPresent
 
 docker:
@@ -81,9 +81,6 @@ ebpf:
     # Needed to enable eBPF JIT at runtime for performance reasons.
     # Can be skipped if eBPF JIT is enabled from outside the container
     hostNetwork: true
-    # Needed to correctly detect the kernel version for the eBPF program
-    # Set to false if not running on Google COS
-    mountEtcVolume: true
 
 auditLog:
   # true here activates the K8s Audit Log feature for Falco
