@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.1.8
+
+### Minor Changes
+
+* remove ebpf restriction to mountEtcVolume
+
 ## v1.1.7
 
 ### Minor Changes
