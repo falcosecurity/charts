@@ -1,12 +1,27 @@
+# Falco Helm Charts
 
-> Acts as a template for new repositories
+This repo contains [helm](https://helm.sh/) charts for installing falco and related utilities.
 
-## Workflow
+## Usage
 
-1. Above the file list, click **Use this template** button.
-2. Type a name for your repository, and an optional description.
-3. Click **Create repository from template**.
-4. Edit the README.md file.
-5. Edit the OWNERS file adding/removing people for the specific project.
-6. Open an issue into [test-infra](https://github.com/falcosecurity/test-infra) to notify maintainers to enable Prow on the specific project
-7. DO NOT edit the LICENSE file which we'll be already in place
+From git:
+
+```bash
+git clone https://github.com/falcosecurity/charts
+cd charts/falco
+# optional
+vim values.yaml
+helm install falco .
+```
+
+From helm repository:
+
+```
+helm repo add https://falcosecurity.github.io/charts`
+helm search repo | grep falco
+helm install falco falcosecurity/falco
+```
+
+# Releases
+
+The [helm hub]() repository for falco is stored in the `gh-pages` branch of this repository. The repo and releases (`.tgz` files) are managed by the `release.sh` script in the main repository.
