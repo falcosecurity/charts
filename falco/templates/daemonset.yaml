@@ -57,6 +57,7 @@ spec:
             - --cri
             - /run/containerd/containerd.sock
             {{- end }}
+            - --disable-cri-async # @kris-nova default to sync falco mode to eliminate syscall drops
             - -K
             - /var/run/secrets/kubernetes.io/serviceaccount/token
             - -k
