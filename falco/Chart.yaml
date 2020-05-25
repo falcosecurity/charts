@@ -15,5 +15,4 @@ icon: https://falco.org/images/logos/falco-logo.png
 sources:
   - https://github.com/falcosecurity/falco
 maintainers:
-  - name: nestorsalceda
-    email: nestor.salceda@sysdig.com
+  - email: cncf-falco-dev@lists.cncf.io
