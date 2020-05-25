@@ -16,7 +16,7 @@ pushd ../gh-pages
 git checkout gh-pages
 
 #TODO rename to falcosecurity before merge
-helm repo index . --url https://nibalizer.github.com/charts
+helm repo index . --url https://falcosecurity.github.com/charts
 
 # Create json representation (because my browser wont render yaml)
 cat index.yaml | python -c 'import sys, yaml, json; y=yaml.load(sys.stdin.read()); print json.dumps(y)' | jq '.' > index.json
