@@ -25,6 +25,7 @@ fullnameOverride: ""
 falco:
   grpcHostname: falco-grpc.default.svc.cluster.local
   grpcPort: 5060
+  grpcTimeout: 2m
 
 serviceAccount:
   # Specifies whether a service account should be created

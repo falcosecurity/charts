@@ -30,6 +30,7 @@ spec:
             - /usr/bin/falco-exporter
             - --client-hostname={{ .Values.falco.grpcHostname }}
             - --client-port={{ .Values.falco.grpcPort }}
+            - --timeout={{ .Values.falco.grpcTimeout }}
             - --listen-address=0.0.0.0:{{ .Values.service.port }}
           ports:
             - name: metrics
@@ -41,7 +42,7 @@ spec:
               port: {{ .Values.service.port }}
           readinessProbe:
             httpGet:
-              path: /metrics
+              path: /readiness
               port: {{ .Values.service.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
