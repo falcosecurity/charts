@@ -17,7 +17,7 @@ helm install falco .
 From helm repository:
 
 ```
-helm repo add https://falcosecurity.github.io/charts`
+helm repo add falcosecurity https://falcosecurity.github.io/charts
 helm search repo | grep falco
 helm install falco falcosecurity/falco
 ```

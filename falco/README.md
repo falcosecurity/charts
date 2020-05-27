@@ -7,7 +7,7 @@ To know more about Falco have a look at:
 - [Kubernetes security logging with Falco & Fluentd
 ](https://sysdig.com/blog/kubernetes-security-logging-fluentd-falco/)
 - [Active Kubernetes security with Sysdig Falco, NATS, and kubeless](https://sysdig.com/blog/active-kubernetes-security-falco-nats-kubeless/)
-- [Detecting cryptojacking with Sysdig’s Falco
+- [Detecting cryptojacking with Falco
 ](https://sysdig.com/blog/detecting-cryptojacking-with-sysdigs-falco/)
 
 ## Introduction
@@ -16,12 +16,21 @@ This chart adds Falco to all nodes in your cluster using a DaemonSet.
 
 Also provides a Deployment for generating Falco alerts. This is useful for testing purposes.
 
+## Adding `falcosecurity` repository
+
+Prior to install the chart, add the `falcosecurity` charts repository:
+
+```bash
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
+```
+
 ## Installing the Chart
 
 To install the chart with the release name `my-release` run:
 
 ```bash
-$ helm install --name my-release stable/falco
+helm install --name my-release falcosecurity/falco
 ```
 
 After a few seconds, Falco should be running.
@@ -33,7 +42,7 @@ After a few seconds, Falco should be running.
 To uninstall/delete the `my-release` deployment:
 
 ```bash
-$ helm delete my-release
+helm delete my-release
 ```
 > **Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
 
@@ -131,13 +140,13 @@ The following table lists the configurable parameters of the Falco chart and the
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install --name my-release --set falco.jsonOutput=true stable/falco
+helm install --name my-release --set falco.jsonOutput=true falcosecurity/falco
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml stable/falco
+helm install --name my-release -f values.yaml falcosecurity/falco
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -153,7 +162,7 @@ So the question is: How we can load custom rules in our Falco deployment?
 We are going to create a file which contains custom rules so that we can keep it in a Git repository.
 
 ```bash
-$ cat custom-rules.yaml
+cat custom-rules.yaml
 ```
 
 And the file looks like this one:
@@ -193,7 +202,7 @@ customRules:
 So next step is to use the custom-rules.yaml file for installing the Falco Helm chart.
 
 ```bash
-$ helm install --name falco -f custom-rules.yaml stable/falco
+helm install --name falco -f custom-rules.yaml falcosecurity/falco
 ```
 
 And we will see in our logs something like:
@@ -213,10 +222,10 @@ This script lives in [falco-extras repository](https://github.com/draios/falco-e
 Imagine that you would like to add rules for your Redis, MongoDB and Traefik containers, you have to:
 
 ```bash
-$ git clone https://github.com/draios/falco-extras.git
-$ cd falco-extras
-$ ./scripts/rules2helm rules/rules-mongo.yaml rules/rules-redis.yaml rules/rules-traefik.yaml > custom-rules.yaml
-$ helm install --name falco -f custom-rules.yaml stable/falco
+git clone https://github.com/draios/falco-extras.git
+cd falco-extras
+./scripts/rules2helm rules/rules-mongo.yaml rules/rules-redis.yaml rules/rules-traefik.yaml > custom-rules.yaml
+helm install --name falco -f custom-rules.yaml falcosecurity/falco
 ```
 
 And that's all, in a few seconds you will see your pods up and running with MongoDB, Redis and Traefik rules enabled.
@@ -236,21 +245,21 @@ You can do it with the [scripts provided by Falco engineers](https://github.com/
 just running:
 
 ```
-$ cd examples/k8s_audit_config
-$ bash enable-k8s-audit.sh minikube dynamic
+cd examples/k8s_audit_config
+bash enable-k8s-audit.sh minikube dynamic
 ```
 
 Or in the case of Kops:
 
 ```
-$ cd examples/k8s_audit_config
-$ APISERVER_HOST=api.my-kops-cluster.com bash ./enable-k8s-audit.sh kops dynamic
+cd examples/k8s_audit_config
+APISERVER_HOST=api.my-kops-cluster.com bash ./enable-k8s-audit.sh kops dynamic
 ```
 
 Then you can install Falco chart enabling the enabling the `falco.webserver`
 flag:
 
-`helm install --name falco --set falco.auditLog.enabled=true --set falco.auditLog.dynamicBackend.enabled=true stable/falco`
+`helm install --name falco --set falco.auditLog.enabled=true --set falco.auditLog.dynamicBackend.enabled=true falcosecurity/falco`
 
 And that's it, you will start to see the K8s audit log related alerts.
 
@@ -259,7 +268,7 @@ And that's it, you will start to see the K8s audit log related alerts.
 Perhaps you may find the case where you receive an error like the following one:
 
 ```
-$ helm install --name falco --set falco.auditLog.enabled=true stable/falco
+helm install --name falco --set falco.auditLog.enabled=true falcosecurity/falco
 Error: validation failed: unable to recognize "": no matches for kind "AuditSink" in version "auditregistration.k8s.io/v1alpha1"
 ```
 
@@ -277,11 +286,11 @@ The gRPC server can only be used with mutual authentication between the clients 
 To install Falco with gRPC enabled, you have to:
 
 ```
-$ helm install --name my-release \
+helm install --name my-release \
   --set falco.grpc.enabled=true \
   --set falco.grpcOutput.enabled=true \
   --set-file certs.server.key=/path/to/server.key \
   --set-file certs.server.crt=/path/to/certs/server.crt \
   --set-file certs.ca.crt=/path/to/ca.crt \
-   stable/falco
+   falcosecurity/falco
 ```
