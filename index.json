@@ -1,0 +1,38 @@
+{
+  "apiVersion": "v1",
+  "entries": {
+    "falco": [
+      {
+        "apiVersion": "v1",
+        "appVersion": "0.23.0",
+        "created": "2020-05-27T11:50:27.842057965+02:00",
+        "description": "Falco",
+        "digest": "d2b3e470a62b809b4439e4b620fe216132128dc833414ea25f10d4a822ce6f2b",
+        "home": "https://falco.org",
+        "icon": "https://falco.org/images/logos/falco-logo.png",
+        "keywords": [
+          "monitoring",
+          "security",
+          "alerting",
+          "metric",
+          "troubleshooting",
+          "run-time"
+        ],
+        "maintainers": [
+          {
+            "email": "cncf-falco-dev@lists.cncf.io"
+          }
+        ],
+        "name": "falco",
+        "sources": [
+          "https://github.com/falcosecurity/falco"
+        ],
+        "urls": [
+          "https://falcosecurity.github.com/charts/falco-1.1.8.tgz"
+        ],
+        "version": "1.1.8"
+      }
+    ]
+  },
+  "generated": "2020-05-27T11:50:27.836457021+02:00"
+}
