@@ -15,4 +15,5 @@ icon: https://falco.org/images/logos/falco-logo.png
 sources:
   - https://github.com/falcosecurity/falco
 maintainers:
-  - email: cncf-falco-dev@lists.cncf.io
+  - name: The Falco Authors
+    email: cncf-falco-dev@lists.cncf.io
