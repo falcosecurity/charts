@@ -18,7 +18,7 @@ From helm repository:
 
 ```
 helm repo add falcosecurity https://falcosecurity.github.io/charts
-help repo update
+helm repo update
 helm install falco falcosecurity/falco
 ```
 
