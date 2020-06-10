@@ -155,8 +155,6 @@ helm install --name my-release -f values.yaml falcosecurity/falco
 
 Falco ships with a nice default ruleset. Is a good starting point but sooner or later we are going to need to add custom rules which fits our needs.
 
-A few days ago [we published several rules](https://github.com/draios/falco-extras) for well known container images.
-
 So the question is: How we can load custom rules in our Falco deployment?
 
 We are going to create a file which contains custom rules so that we can keep it in a Git repository.
