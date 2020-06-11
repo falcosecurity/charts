@@ -27,10 +27,10 @@ helm repo update
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release` run:
+To install the chart with the release name `falco` run:
 
 ```bash
-helm install --name my-release falcosecurity/falco
+helm install falco falcosecurity/falco
 ```
 
 After a few seconds, Falco should be running.
@@ -39,12 +39,11 @@ After a few seconds, Falco should be running.
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release` deployment:
+To uninstall the `falco` deployment:
 
 ```bash
-helm delete my-release
+helm uninstall falco
 ```
-> **Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
@@ -140,13 +139,13 @@ The following table lists the configurable parameters of the Falco chart and the
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-helm install --name my-release --set falco.jsonOutput=true falcosecurity/falco
+helm install falco --set falco.jsonOutput=true falcosecurity/falco
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-helm install --name my-release -f values.yaml falcosecurity/falco
+helm install falco -f values.yaml falcosecurity/falco
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -200,7 +199,7 @@ customRules:
 So next step is to use the custom-rules.yaml file for installing the Falco Helm chart.
 
 ```bash
-helm install --name falco -f custom-rules.yaml falcosecurity/falco
+helm install falco -f custom-rules.yaml falcosecurity/falco
 ```
 
 And we will see in our logs something like:
@@ -223,7 +222,7 @@ Imagine that you would like to add rules for your Redis, MongoDB and Traefik con
 git clone https://github.com/draios/falco-extras.git
 cd falco-extras
 ./scripts/rules2helm rules/rules-mongo.yaml rules/rules-redis.yaml rules/rules-traefik.yaml > custom-rules.yaml
-helm install --name falco -f custom-rules.yaml falcosecurity/falco
+helm install falco -f custom-rules.yaml falcosecurity/falco
 ```
 
 And that's all, in a few seconds you will see your pods up and running with MongoDB, Redis and Traefik rules enabled.
@@ -257,7 +256,7 @@ APISERVER_HOST=api.my-kops-cluster.com bash ./enable-k8s-audit.sh kops dynamic
 Then you can install Falco chart enabling the enabling the `falco.webserver`
 flag:
 
-`helm install --name falco --set falco.auditLog.enabled=true --set falco.auditLog.dynamicBackend.enabled=true falcosecurity/falco`
+`helm install falco --set falco.auditLog.enabled=true --set falco.auditLog.dynamicBackend.enabled=true falcosecurity/falco`
 
 And that's it, you will start to see the K8s audit log related alerts.
 
@@ -266,7 +265,7 @@ And that's it, you will start to see the K8s audit log related alerts.
 Perhaps you may find the case where you receive an error like the following one:
 
 ```
-helm install --name falco --set falco.auditLog.enabled=true falcosecurity/falco
+helm install falco --set falco.auditLog.enabled=true falcosecurity/falco
 Error: validation failed: unable to recognize "": no matches for kind "AuditSink" in version "auditregistration.k8s.io/v1alpha1"
 ```
 
@@ -284,7 +283,7 @@ The gRPC server can only be used with mutual authentication between the clients 
 To install Falco with gRPC enabled, you have to:
 
 ```
-helm install --name my-release \
+helm install falco \
   --set falco.grpc.enabled=true \
   --set falco.grpcOutput.enabled=true \
   --set-file certs.server.key=/path/to/server.key \
