@@ -28,8 +28,12 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - /usr/bin/falco-exporter
+            {{- if .Values.falco.grpcUnixSocketPath }}
+            - --client-socket={{ .Values.falco.grpcUnixSocketPath }}
+            {{ else }}
             - --client-hostname={{ .Values.falco.grpcHostname }}
             - --client-port={{ .Values.falco.grpcPort }}
+            {{- end }}
             - --timeout={{ .Values.falco.grpcTimeout }}
             - --listen-address=0.0.0.0:{{ .Values.service.port }}
           ports:
@@ -47,10 +51,21 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+          {{- if .Values.falco.grpcUnixSocketPath }}
+            - mountPath: {{ include "falco-exporter.unixSocketDir" . }}
+              name: falco-socket-dir
+              readOnly: true
+          {{ else }}
             - mountPath: /etc/falco/certs
               name: certs-volume
               readOnly: true
+          {{- end }}
       volumes:
+      {{- if .Values.falco.grpcUnixSocketPath }}
+        - name: falco-socket-dir
+          hostPath: 
+            path: {{ include "falco-exporter.unixSocketDir" . }}
+      {{ else }}
         - name: certs-volume
           secret:
             secretName: {{ include "falco-exporter.fullname" . }}-certs
@@ -61,6 +76,7 @@ spec:
                 path: client.crt
               - key: ca.crt
                 path: ca.crt
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

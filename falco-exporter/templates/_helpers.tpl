@@ -65,3 +65,12 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Extract the unixSocket's directory path
+*/}}
+{{- define "falco-exporter.unixSocketDir" -}}
+{{- if .Values.falco.grpcUnixSocketPath -}}
+{{- .Values.falco.grpcUnixSocketPath | trimPrefix "unix://" | dir -}}
+{{- end -}}
+{{- end -}}
