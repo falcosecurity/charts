@@ -23,8 +23,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 falco:
-  grpcHostname: falco-grpc.default.svc.cluster.local
-  grpcPort: 5060
+  grpcUnixSocketPath: "unix:///var/run/falco/falco.sock"
   grpcTimeout: 2m
 
 serviceAccount:
