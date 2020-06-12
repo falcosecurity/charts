@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+### Minor Changes
+
+* Add missing privileges for the apps Kubernetes API group
+
 ## v1.1.8
 
 ### Minor Changes
