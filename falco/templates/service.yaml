@@ -15,7 +15,7 @@ spec:
   - protocol: TCP
     port: {{ .Values.falco.webserver.listenPort }}
 {{- end }}
-{{- if .Values.falco.grpc.enabled }}
+{{- if and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)}}
 ---
 kind: Service
 apiVersion: v1
@@ -34,4 +34,3 @@ spec:
   - protocol: TCP
     port: {{ .Values.falco.grpc.listenPort }}
 {{- end }}
-

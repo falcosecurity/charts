@@ -64,3 +64,12 @@ Also, we can't use a single if because lazy evaluation is not an option
     {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Extract the unixSocket's directory path
+*/}}
+{{- define "falco.unixSocketDir" -}}
+{{- if .Values.falco.grpc.unixSocketPath -}}
+{{- .Values.falco.grpc.unixSocketPath | trimPrefix "unix://" | dir -}}
+{{- end -}}
+{{- end -}}
