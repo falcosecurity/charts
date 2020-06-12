@@ -27,6 +27,17 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - apps
+    resources:
+      - daemonsets
+      - deployments
+      - replicasets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
   - nonResourceURLs:
       - /healthz
       - /healthz/*
