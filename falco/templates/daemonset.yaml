@@ -130,10 +130,15 @@ spec:
               readOnly: false
             {{- end }}
             {{- if .Values.falco.grpc.enabled }}
+            {{- if .Values.falco.grpc.unixSocketPath }}
+            - mountPath: {{ include "falco.unixSocketDir" . }}
+              name: grpc-socket-dir
+            {{- else }}
             - mountPath: /etc/falco/certs
               name: certs-volume
               readOnly: true
-            {{- end}}
+            {{- end }}
+            {{- end }}
       {{- if .Values.integrations.natsOutput.enabled }}
         - name: {{ .Chart.Name }}-nats
           image: sysdig/falco-nats:latest
@@ -256,6 +261,11 @@ spec:
           emptyDir: {}
         {{- end }}
         {{- if .Values.falco.grpc.enabled }}
+        {{- if .Values.falco.grpc.unixSocketPath }}
+        - name: grpc-socket-dir
+          hostPath: 
+            path: {{ include "falco.unixSocketDir" . }}
+        {{- else }}
         - name: certs-volume
           secret:
             secretName: {{ template "falco.fullname" . }}-certs
@@ -266,6 +276,7 @@ spec:
                 path: server.crt
               - key: ca.crt
                 path: ca.crt
+        {{- end }}
         {{- end }}
   updateStrategy:
 {{ toYaml .Values.daemonset.updateStrategy | indent 4 }}

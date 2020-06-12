@@ -185,11 +185,15 @@ data:
 
     grpc:
       enabled: {{ .Values.falco.grpc.enabled }}
-      bind_address: "0.0.0.0:{{ .Values.falco.grpc.listenPort }}"
       threadiness: {{ .Values.falco.grpc.threadiness }}
+      {{- if .Values.falco.grpc.unixSocketPath }}
+      bind_address: "{{ .Values.falco.grpc.unixSocketPath }}"
+      {{ else }}
+      bind_address: "0.0.0.0:{{ .Values.falco.grpc.listenPort }}"
       private_key: {{ .Values.falco.grpc.privateKey }}
       cert_chain: {{ .Values.falco.grpc.certChain }}
       root_certs: {{ .Values.falco.grpc.rootCerts }}
+      {{- end }}
 
     grpc_output:
       enabled: {{ .Values.falco.grpcOutput.enabled }}
