@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: cimg/base:stable
+    branches:
+      ignore: gh-pages
+    steps:
+      - run: echo "Skipping on gh-pages branch"
