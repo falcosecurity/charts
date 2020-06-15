@@ -14,9 +14,13 @@ spec:
       qps: 10
       burst: 15
     clientConfig:
+      {{- if .Values.auditLog.dynamicBackend.url }}
+      url: {{ .Values.auditLog.dynamicBackend.url }}
+      {{- else }}
       service:
         namespace: {{ .Release.Namespace }}
         name: {{ template "falco.fullname" . }}
         port: {{ .Values.falco.webserver.listenPort }}
         path: {{ .Values.falco.webserver.k8sAuditEndpoint }}
+      {{- end }}
 {{- end }}
