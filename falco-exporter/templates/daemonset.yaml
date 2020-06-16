@@ -30,7 +30,7 @@ spec:
             - /usr/bin/falco-exporter
             {{- if .Values.falco.grpcUnixSocketPath }}
             - --client-socket={{ .Values.falco.grpcUnixSocketPath }}
-            {{ else }}
+            {{- else }}
             - --client-hostname={{ .Values.falco.grpcHostname }}
             - --client-port={{ .Values.falco.grpcPort }}
             {{- end }}
@@ -55,7 +55,7 @@ spec:
             - mountPath: {{ include "falco-exporter.unixSocketDir" . }}
               name: falco-socket-dir
               readOnly: true
-          {{ else }}
+          {{- else }}
             - mountPath: /etc/falco/certs
               name: certs-volume
               readOnly: true
@@ -65,7 +65,7 @@ spec:
         - name: falco-socket-dir
           hostPath: 
             path: {{ include "falco-exporter.unixSocketDir" . }}
-      {{ else }}
+      {{- else }}
         - name: certs-volume
           secret:
             secretName: {{ include "falco-exporter.fullname" . }}-certs
