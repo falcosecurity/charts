@@ -3,9 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.1.9
+
 ### Minor Changes
 
 * Add missing privileges for the apps Kubernetes API group
+* Allow client config url for Audit Sink with `auditLog.dynamicBackend.url`
 
 ## v1.1.8
 
