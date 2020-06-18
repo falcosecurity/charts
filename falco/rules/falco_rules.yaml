@@ -55,6 +55,7 @@
 - macro: proc_name_exists
   condition: (proc.name!="<NA>")
 
+# todo(leogr): we miss "renameat2", but it's not yet supported by sinsp
 - macro: rename
   condition: evt.type in (rename, renameat)
 - macro: mkdir
@@ -80,17 +81,29 @@
 
 - macro: bin_dir_mkdir
   condition: >
-    (evt.arg[1] startswith /bin/ or
-     evt.arg[1] startswith /sbin/ or
-     evt.arg[1] startswith /usr/bin/ or
-     evt.arg[1] startswith /usr/sbin/)
+     (evt.arg.path startswith /bin/ or
+     evt.arg.path startswith /sbin/ or
+     evt.arg.path startswith /usr/bin/ or
+     evt.arg.path startswith /usr/sbin/)
 
 - macro: bin_dir_rename
   condition: >
-    evt.arg[1] startswith /bin/ or
-    evt.arg[1] startswith /sbin/ or
-    evt.arg[1] startswith /usr/bin/ or
-    evt.arg[1] startswith /usr/sbin/
+     (evt.arg.path startswith /bin/ or
+     evt.arg.path startswith /sbin/ or
+     evt.arg.path startswith /usr/bin/ or
+     evt.arg.path startswith /usr/sbin/ or
+     evt.arg.name startswith /bin/ or
+     evt.arg.name startswith /sbin/ or
+     evt.arg.name startswith /usr/bin/ or
+     evt.arg.name startswith /usr/sbin/ or
+     evt.arg.oldpath startswith /bin/ or
+     evt.arg.oldpath startswith /sbin/ or
+     evt.arg.oldpath startswith /usr/bin/ or
+     evt.arg.oldpath startswith /usr/sbin/ or
+     evt.arg.newpath startswith /bin/ or
+     evt.arg.newpath startswith /sbin/ or
+     evt.arg.newpath startswith /usr/bin/ or
+     evt.arg.newpath startswith /usr/sbin/)
 
 - macro: etc_dir
   condition: fd.name startswith /etc/
@@ -707,7 +720,7 @@
 
 - macro: lvprogs_writing_conf
   condition: >
-    (proc.name in (dmeventd,lvcreate,pvscan) and
+    (proc.name in (dmeventd,lvcreate,pvscan,lvs) and
      (fd.name startswith /etc/lvm/archive or
       fd.name startswith /etc/lvm/backup or
       fd.name startswith /etc/lvm/cache))
@@ -1361,7 +1374,7 @@
   condition: >
     root_dir and evt.dir = < and open_write
     and not fd.name in (known_root_files)
-    and not fd.directory in (known_root_directories)
+    and not fd.directory pmatch (known_root_directories)
     and not exe_running_docker_save
     and not gugent_writing_guestagent_log
     and not dse_writing_tmp
@@ -1505,7 +1518,7 @@
 
 - rule: Modify binary dirs
   desc: an attempt to modify any file below a set of binary directories.
-  condition: (bin_dir_rename) and modify and not package_mgmt_procs and not exe_running_docker_save
+  condition: bin_dir_rename and modify and not package_mgmt_procs and not exe_running_docker_save
   output: >
     File below known binary directory renamed/removed (user=%user.name command=%proc.cmdline
     pcmdline=%proc.pcmdline operation=%evt.type file=%fd.name %evt.args container_id=%container.id image=%container.image.repository)
@@ -2007,13 +2020,26 @@
   condition: >
     (fd.sockfamily = ip and (system_procs or proc.name in (shell_binaries)))
     and (inbound_outbound)
-    and not proc.name in (systemd, hostid, id)
+    and not proc.name in (known_system_procs_network_activity_binaries)
     and not login_doing_dns_lookup
+    and not user_expected_system_procs_network_activity_conditions
   output: >
     Known system binary sent/received network traffic
     (user=%user.name command=%proc.cmdline connection=%fd.name container_id=%container.id image=%container.image.repository)
   priority: NOTICE
   tags: [network, mitre_exfiltration]
+
+# This list allows easily whitelisting system proc names that are
+# expected to communicate on the network.
+- list: known_system_procs_network_activity_binaries
+  items: [systemd, hostid, id]
+
+# This macro allows specifying conditions under which a system binary
+# is allowed to communicate on the network. For instance, only specific
+# proc.cmdline values could be allowed to be more granular in what is
+# allowed.
+- macro: user_expected_system_procs_network_activity_conditions
+  condition: (never_true)
 
 # When filled in, this should look something like:
 # (proc.env contains "HTTP_PROXY=http://my.http.proxy.com ")
@@ -2212,7 +2238,7 @@
   desc: creating any files below /dev other than known programs that manage devices. Some rootkits hide files in /dev.
   condition: >
     fd.directory = /dev and
-    (evt.type = creat or (evt.type = open and evt.arg.flags contains O_CREAT))
+    (evt.type = creat or ((evt.type = open or evt.type = openat) and evt.arg.flags contains O_CREAT))
     and not proc.name in (dev_creation_binaries)
     and not fd.name in (allowed_dev_files)
     and not fd.name startswith /dev/tty
@@ -2424,7 +2450,9 @@
 
 - macro: trusted_logging_images
   condition: (container.image.repository endswith "splunk/fluentd-hec" or
-              container.image.repository endswith "fluent/fluentd-kubernetes-daemonset")
+              container.image.repository endswith "fluent/fluentd-kubernetes-daemonset" or
+              container.image.repository endswith "openshift3/ose-logging-fluentd" or
+              container.image.repository endswith "containernetworking/azure-npm")
 
 - rule: Clear Log Activities
   desc: Detect clearing of critical log files
@@ -2480,7 +2508,7 @@
     Shell history had been deleted or renamed (user=%user.name type=%evt.type command=%proc.cmdline fd.name=%fd.name name=%evt.arg.name path=%evt.arg.path oldpath=%evt.arg.oldpath %container.info)
   priority:
     WARNING
-  tags: [process, mitre_defense_evation]
+  tags: [process, mitre_defense_evasion]
 
 # This rule is deprecated and will/should never be triggered. Keep it here for backport compatibility.
 # Rule Delete or rename shell history is the preferred rule to use now.
@@ -2493,13 +2521,19 @@
     Shell history had been deleted or renamed (user=%user.name type=%evt.type command=%proc.cmdline fd.name=%fd.name name=%evt.arg.name path=%evt.arg.path oldpath=%evt.arg.oldpath %container.info)
   priority:
     WARNING
-  tags: [process, mitre_defense_evation]
+  tags: [process, mitre_defense_evasion]
 
 - macro: consider_all_chmods
   condition: (always_true)
 
 - list: user_known_chmod_applications
   items: [hyperkube, kubelet]
+
+# This macro should be overridden in user rules as needed. This is useful if a given application
+# should not be ignored alltogether with the user_known_chmod_applications list, but only in
+# specific conditions.
+- macro: user_known_set_setuid_or_setgid_bit_conditions
+  condition: (never_true)
 
 - rule: Set Setuid or Setgid bit
   desc: >
@@ -2510,6 +2544,7 @@
     consider_all_chmods and chmod and (evt.arg.mode contains "S_ISUID" or evt.arg.mode contains "S_ISGID")
     and not proc.name in (user_known_chmod_applications)
     and not exe_running_docker_save
+    and not user_known_set_setuid_or_setgid_bit_conditions
   output: >
     Setuid or setgid bit is set via chmod (fd=%evt.arg.fd filename=%evt.arg.filename mode=%evt.arg.mode user=%user.name process=%proc.name
     command=%proc.cmdline container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
@@ -2543,7 +2578,7 @@
   items: [rsync, scp, sftp, dcp]
 
 - macro: remote_file_copy_procs
-  condition: (proc.name in (remote_File_copy_binaries))
+  condition: (proc.name in (remote_file_copy_binaries))
 
 - rule: Launch Remote File Copy Tools in Container
   desc: Detect remote file copy tools launched in container
@@ -2647,11 +2682,15 @@
 - macro: net_miner_pool
   condition: (evt.type in (sendto, sendmsg) and evt.dir=< and (fd.net != "127.0.0.0/8" and not fd.snet in (rfc_1918_addresses)) and ((minerpool_http) or (minerpool_https) or (minerpool_other)))
 
-# The rule is disabled by default. 
+- macro: trusted_images_query_miner_domain_dns
+  condition: (container.image.repository endswith "sysdig/agent" or container.image.repository endswith "falcosecurity/falco")
+  append: false
+
+# The rule is disabled by default.
 # Note: falco will send DNS request to resolve miner pool domain which may trigger alerts in your environment.
 - rule: Detect outbound connections to common miner pool ports
   desc: Miners typically connect to miner pools on common ports.
-  condition: net_miner_pool
+  condition: net_miner_pool and not trusted_images_query_miner_domain_dns
   enabled: false
   output: Outbound connection to IP/Port flagged by cryptoioc.ch (command=%proc.cmdline port=%fd.rport ip=%fd.rip container=%container.info image=%container.image.repository)
   priority: CRITICAL
@@ -2668,13 +2707,18 @@
   items: [docker, kubectl, crictl]
 
 # Whitelist for known docker client binaries run inside container
-# - k8s.gcr.io/fluentd-gcp-scaler in GCP/GKE 
+# - k8s.gcr.io/fluentd-gcp-scaler in GCP/GKE
 - macro: user_known_k8s_client_container
-  condition: (k8s.ns.name="kube-system" and container.image.repository=k8s.gcr.io/fluentd-gcp-scaler)
-  
+  condition: >
+    (k8s.ns.name="kube-system" and container.image.repository=k8s.gcr.io/fluentd-gcp-scaler) or
+    container.image.repository=mcr.microsoft.com/aks/hcp/hcp-tunnel-front
+
+- macro: user_known_k8s_client_container_parens
+  condition: (user_known_k8s_client_container)
+
 - rule: The docker client is executed in a container
   desc: Detect a k8s client tool executed inside a container
-  condition: spawned_process and container and not user_known_k8s_client_container and proc.name in (k8s_client_binaries)
+  condition: spawned_process and container and not user_known_k8s_client_container_parens and proc.name in (k8s_client_binaries)
   output: "Docker or kubernetes client executed in container (user=%user.name %container.info parent=%proc.pname cmdline=%proc.cmdline image=%container.image.repository:%container.image.tag)"
   priority: WARNING
   tags: [container, mitre_execution]
@@ -2695,7 +2739,93 @@
   output: Packet socket was created in a container (user=%user.name command=%proc.cmdline socket_info=%evt.args container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
   priority: NOTICE
   tags: [network, mitre_discovery]
-  
+ 
+# Change to (always_true) to enable rule 'Network connection outside local subnet'
+- macro: enabled_rule_network_only_subnet
+  condition: (never_true)
+
+# Images that are allowed to have outbound traffic
+- list: images_allow_network_outside_subnet
+  items: []
+
+# Namespaces where the rule is enforce
+- list: namespace_scope_network_only_subnet
+  items: []
+
+- macro: network_local_subnet
+  condition: >
+    fd.rnet in (rfc_1918_addresses) or
+    fd.ip = "0.0.0.0" or 
+    fd.net = "127.0.0.0/8"
+
+# # How to test:
+# # Change macro enabled_rule_network_only_subnet to condition: always_true
+# # Add 'default' to namespace_scope_network_only_subnet
+# # Run:
+# kubectl run --generator=run-pod/v1 -n default -i --tty busybox --image=busybox --rm -- wget google.com -O /var/google.html
+# # Check logs running
+
+- rule: Network Connection outside Local Subnet
+  desc: Detect traffic to image outside local subnet.
+  condition: >
+    enabled_rule_network_only_subnet and
+    inbound_outbound and
+    container and
+    not network_local_subnet and
+    k8s.ns.name in (namespace_scope_network_only_subnet)
+  output: >
+    Network connection outside local subnet
+    (command=%proc.cmdline connection=%fd.name user=%user.name container_id=%container.id
+     image=%container.image.repository namespace=%k8s.ns.name
+     fd.rip.name=%fd.rip.name fd.lip.name=%fd.lip.name fd.cip.name=%fd.cip.name fd.sip.name=%fd.sip.name)
+  priority: WARNING
+  tags: [network]
+
+- macro: allowed_port
+  condition: (never_true)
+
+- list: allowed_image
+  items: [] # add image to monitor, i.e.: bitnami/nginx
+
+- list: authorized_server_binaries
+  items: []  # add binary to allow, i.e.: nginx
+
+- list: authorized_server_port
+  items: [] # add port to allow, i.e.: 80
+
+# # How to test:
+# kubectl run --image=nginx nginx-app --port=80 --env="DOMAIN=cluster"
+# kubectl expose deployment nginx-app --port=80 --name=nginx-http --type=LoadBalancer
+# # On minikube:
+# minikube service nginx-http
+# # On general K8s:
+# kubectl get services
+# kubectl cluster-info
+# # Visit the Nginx service and port, should not fire.
+# # Change rule to different port, then different process name, and test again that it fires.
+
+- rule: Outbound or Inbound Traffic not to Authorized Server Process and Port
+  desc: Detect traffic that is not to authorized server process and port.
+  condition: >
+    allowed_port and
+    inbound_outbound and
+    container and
+    container.image.repository in (allowed_image) and
+    not proc.name in (authorized_server_binary) and
+    not fd.sport in (authorized_server_port)
+  output: >
+    Network connection outside authorized port and binary
+    (command=%proc.cmdline connection=%fd.name user=%user.name container_id=%container.id 
+    image=%container.image.repository)
+  priority: WARNING
+  tags: [network]
+
+- rule: Redirect STDOUT/STDIN to Network Connection in Container
+  desc: Detect redirecting stdout/stdin to network connection in container (potential reverse shell).
+  condition: evt.type=dup and evt.dir=> and container and fd.num in (0, 1, 2) and fd.type in ("ipv4", "ipv6")
+  output: >
+    Redirect stdout/stdin to network connection (user=%user.name %container.info process=%proc.name parent=%proc.pname cmdline=%proc.cmdline terminal=%proc.tty container_id=%container.id image=%container.image.repository fd.name=%fd.name fd.num=%fd.num fd.type=%fd.type fd.sip=%fd.sip)
+  priority: WARNING
 
 # Application rules have moved to application_rules.yaml. Please look
 # there if you want to enable them by adding to
