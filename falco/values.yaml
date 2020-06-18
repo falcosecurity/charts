@@ -45,6 +45,10 @@ serviceAccount:
 
 fakeEventGenerator:
   enabled: false
+  args:
+    - run
+    - --loop
+    - ^syscall
   replicas: 1
 
 daemonset:
