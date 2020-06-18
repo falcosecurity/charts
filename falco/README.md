@@ -257,7 +257,7 @@ APISERVER_HOST=api.my-kops-cluster.com bash ./enable-k8s-audit.sh kops dynamic
 Then you can install Falco chart enabling the enabling the `falco.webserver`
 flag:
 
-`helm install falco --set falco.auditLog.enabled=true --set falco.auditLog.dynamicBackend.enabled=true falcosecurity/falco`
+`helm install falco --set auditLog.enabled=true --set auditLog.dynamicBackend.enabled=true falcosecurity/falco`
 
 And that's it, you will start to see the K8s audit log related alerts.
 
@@ -266,7 +266,7 @@ And that's it, you will start to see the K8s audit log related alerts.
 Perhaps you may find the case where you receive an error like the following one:
 
 ```
-helm install falco --set falco.auditLog.enabled=true falcosecurity/falco
+helm install falco --set auditLog.enabled=true falcosecurity/falco
 Error: validation failed: unable to recognize "": no matches for kind "AuditSink" in version "auditregistration.k8s.io/v1alpha1"
 ```
 
