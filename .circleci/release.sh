@@ -79,8 +79,8 @@ release_charts() {
 update_index() {
     cr index -o "$GIT_USERNAME" -r "$GIT_REPOSITORY_NAME" -c "$CR_REPO_URL"
 
-    git config user.email "circleci@users.noreply.github.com"
-    git config user.name "circleci"
+    git config user.email "poiana@users.noreply.github.com"
+    git config user.name "poiana"
 
     git checkout gh-pages
     cp --force .cr-index/index.yaml index.yaml
