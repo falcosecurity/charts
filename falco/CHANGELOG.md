@@ -3,10 +3,14 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.1.10
+
 ### Minor Changes
 
 * Switch to `falcosecurity/event-generator`
 * Allow configuration using values for `fakeEventGenerator.args` setting
+* Update ruleset
+* New releasing mechanism
 
 ## v1.1.9
 
