@@ -18,34 +18,31 @@ main() {
     echo "Fetching tags..."
     git fetch --tags
 
-    local latest_tag
-    latest_tag=$(find_latest_tag)
+    echo "Fetching charts..."
 
-    local latest_tag_rev
-    latest_tag_rev=$(git rev-parse --verify "$latest_tag")
-    echo "$latest_tag_rev $latest_tag (latest tag)"
+    local changed_charts=()
 
-    local head_rev
-    head_rev=$(git rev-parse --verify HEAD)
-    echo "$head_rev HEAD"
+    # iterate over all charts and skip those that already have a tag matching the current version
+    for chart_config in */Chart.yaml; do
+        local chart_name=$(cat $chart_config | awk '/^name: /{print $NF}')
+        local chart_ver=$(cat $chart_config | awk '/^version: /{print $NF}')
+        local tag="${chart_name}-${chart_ver}"
+        if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "Chart '$chart_name': tag '$tag' already exists, skipping."
+        else
+            echo "Chart '$chart_name': new version '$chart_ver' detected."
+            local changed_charts+=($chart_name)
+        fi
+    done
 
-    if [[ "$latest_tag_rev" == "$head_rev" ]]; then
-        echo "No code changes. Nothing to release."
-        exit
-    fi
-
+    # preparing dirs
     rm -rf .cr-release-packages
     mkdir -p .cr-release-packages
 
     rm -rf .cr-index
     mkdir -p .cr-index
 
-    echo "Identifying changed charts since tag '$latest_tag'..."
-
-    local changed_charts=()
-    local charts_path='*/Chart.yaml' # we consider only charts dirs at level one
-    readarray -t changed_charts <<< "$(git diff --find-renames --name-only "$latest_tag_rev" -- $charts_path | cut -d '/' -f 1 | uniq)"
-
+    # only release those charts for which a new version has been detected
     if [[ -n "${changed_charts[*]}" ]]; then
         for chart in "${changed_charts[@]}"; do
             echo "Packaging chart '$chart'..."
@@ -59,12 +56,6 @@ main() {
     fi
 
     popd > /dev/null
-}
-
-find_latest_tag() {
-    if ! git describe --tags --abbrev=0 2> /dev/null; then
-        git rev-list --max-parents=0 --first-parent HEAD
-    fi
 }
 
 package_chart() {
