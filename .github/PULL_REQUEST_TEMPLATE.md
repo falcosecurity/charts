@@ -1,6 +1,6 @@
 <!--  Thanks for sending a pull request!  Here are some tips for you:
 
-1. If this is your first time, please read our contributor guidelines in the [CONTRIBUTING.md](https://github.com/falcosecurity/falco/blob/master/CONTRIBUTING.md) of the main Falco repository.
+1. If this is your first time, please read our contributor guidelines in the [CONTRIBUTING.md](https://github.com/falcosecurity/.github/blob/master/CONTRIBUTING.md) of the main Falco repository.
 2. Please label this pull request according to what type of issue you are addressing.
 3. If the PR is unfinished while opening it specify a wip in the title before the actual title, for example, "wip: my awesome feature"
 -->
