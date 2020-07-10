@@ -33,7 +33,7 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > Uncomment one (or more) `/area <>` lines:
 
-> /area charts
+> /area falco-chart
 
 > /area proposals
 
