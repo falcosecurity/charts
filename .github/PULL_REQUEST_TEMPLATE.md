@@ -35,7 +35,6 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area falco-chart
 
-> /area proposals
 
 <!--
 Please remove the leading whitespace before the `/area <>` you uncommented.
