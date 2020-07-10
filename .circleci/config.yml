@@ -1,5 +1,13 @@
 version: 2.1
 jobs:
+  lint-charts:
+    docker:
+        - image: quay.io/helmpack/chart-testing:latest
+    steps:
+      - checkout
+      - run:
+          name: lint
+          command: .circleci/lint.sh
   release-charts:
     docker:
       - image: cimg/base:stable
@@ -21,6 +29,7 @@ workflows:
   version: 2
   release:
     jobs:
+      - "lint-charts"
       - release-charts:
           context: falco
           filters:
