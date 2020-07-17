@@ -337,3 +337,7 @@ integrations:
 tolerations:
   - effect: NoSchedule
     key: node-role.kubernetes.io/master
+
+scc:
+  # true here enabled creation of Security Context Constraints in Openshift
+  create: true

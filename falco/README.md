@@ -138,6 +138,7 @@ The following table lists the configurable parameters of the Falco chart and the
 | `nodeSelector`                                  | The node selection constraint                                                                                      | `{}`                                                                                                                                      |
 | `affinity`                                      | The affinity constraint                                                                                            | `{}`                                                                                                                                      |
 | `tolerations`                                   | The tolerations for scheduling                                                                                     | `node-role.kubernetes.io/master:NoSchedule`                                                                                               |
+| `scc.create`                                    | Create OpenShift's Security Context Constraint                                                                     | `true` 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
