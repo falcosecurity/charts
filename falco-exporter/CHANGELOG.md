@@ -9,7 +9,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 * Chart moved to [falcosecurity/charts](https://github.com/falcosecurity/charts) repository
 * gRPC over unix socket support (by default)
-* Updated Falco version to `0.24.0`
+* Updated falco-exporter version to `0.3.0`
 
 ### Minor Changes
 
