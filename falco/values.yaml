@@ -3,7 +3,7 @@
 image:
   registry: docker.io
   repository: falcosecurity/falco
-  tag: master # todo(leogr): replace with 0.24.0 once released
+  tag: 0.24.0
   pullPolicy: IfNotPresent
 
 docker:
