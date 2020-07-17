@@ -35,6 +35,8 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area falco-chart
 
+> /area falco-exporter-chart
+
 
 <!--
 Please remove the leading whitespace before the `/area <>` you uncommented.
