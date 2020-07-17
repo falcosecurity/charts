@@ -3,6 +3,29 @@ entries:
   falco:
   - apiVersion: v1
     appVersion: 0.24.0
+    created: "2020-07-17T16:03:29.964173596Z"
+    description: Falco
+    digest: 9a32b6a87a06fec8e80877b908fec582663df4923bde2502fda29ffffba9cfab
+    home: https://falco.org
+    icon: https://falco.org/images/logos/falco-logo.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: falco
+    sources:
+    - https://github.com/falcosecurity/falco
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-1.2.1/falco-1.2.1.tgz
+    version: 1.2.1
+  - apiVersion: v1
+    appVersion: 0.24.0
     created: "2020-07-17T08:54:29.572593919Z"
     description: Falco
     digest: 621c115d372ebc92723225f61fcc13a2787e5cdacaf7db39fb477416431dd46d
