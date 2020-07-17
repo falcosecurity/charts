@@ -49,7 +49,7 @@ The following table lists the main configurable parameters of the chart and thei
 | Parameter                        | Description                                                         | Default                                        |
 | ---                              | ---                                                                 | ---                                            |
 | `image.repository`               | The image repository to pull from                                   | `falcosecurity/falco-exporter`                 |
-| `image.tag`                      | The image tag to pull                                               | `0.23.0`                                       |
+| `image.tag`                      | The image tag to pull                                               | `0.3.0`                                       |
 | `image.pullPolicy`               | The image pull policy                                               | `IfNotPresent`                                 |
 | `falco.grpcUnixSocketPath`       | Unix socket path for connecting to a Falco gRPC server              | `unix:///var/run/falco/falco.sock`             |
 | `falco.grpcTimeout`              | The image tag to pull                                               | `2m`                                           |
