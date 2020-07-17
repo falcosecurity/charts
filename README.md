@@ -15,11 +15,12 @@ The Charts in this repository are organized into folders: each directory that co
 
 The Charts in the `master` branch (with a corresponding [GitHub release](https://github.com/falcosecurity/charts/releases)) match the latest packaged Charts in [our Helm Chart Repository]((https://falcosecurity.github.io/charts)), though there may be previous versions of a Chart available in that Chart Repository.
 
-Currently, only one Chart is available:
+## Charts
+
+Charts currently available are listed below.
 
 - [falco](falco)
-
-Other charts will be added soon.
+- [falco-exporter](falco-exporter)
 
 ## Usage
 
