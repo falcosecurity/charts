@@ -250,7 +250,7 @@ falco:
   # By modifying the threadiness configuration you can fine-tune the number of threads (and context) it will use.
   grpc:
     enabled: false
-    threadiness: 8
+    threadiness: 0
 
     # gRPC unix socket with no authentication
     unixSocketPath: "unix:///var/run/falco/falco.sock"
