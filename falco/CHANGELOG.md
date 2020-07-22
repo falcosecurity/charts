@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.2.2
+
+### Minor Changes
+
+* Fix dir mounting collision when both gRPC and nats are enabled
+
 ## v1.2.1
 
 ### Minor Changes
