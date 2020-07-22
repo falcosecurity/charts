@@ -131,7 +131,7 @@ spec:
             {{- end }}
             {{- if .Values.falco.grpc.enabled }}
             {{- if .Values.falco.grpc.unixSocketPath }}
-            - mountPath: {{ include "falco.unixSocketDir" . }}
+            - mountPath: {{ include "falco.unixSocketDirWithPrefix" . }}
               name: grpc-socket-dir
             {{- else }}
             - mountPath: /etc/falco/certs

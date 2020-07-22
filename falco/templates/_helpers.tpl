@@ -73,3 +73,21 @@ Extract the unixSocket's directory path
 {{- .Values.falco.grpc.unixSocketPath | trimPrefix "unix://" | dir -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Extract the unixSocket's directory path and add /host prefix
+*/}}
+{{- define "falco.unixSocketDirWithPrefix" -}}
+{{- if .Values.falco.grpc.unixSocketPath -}}
+/host{{- .Values.falco.grpc.unixSocketPath | trimPrefix "unix://" | dir -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Add /host prefix to the unixSocketPath
+*/}}
+{{- define "falco.unixSocketPathWithPrefix" -}}
+{{- if .Values.falco.grpc.unixSocketPath -}}
+unix:///host{{- .Values.falco.grpc.unixSocketPath | trimPrefix "unix://" -}}
+{{- end -}}
+{{- end -}}
