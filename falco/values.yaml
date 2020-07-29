@@ -341,3 +341,16 @@ tolerations:
 scc:
   # true here enabled creation of Security Context Constraints in Openshift
   create: true
+
+eksCloudwatch:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: sysdiglabs/k8sauditlogforwarder
+    tag: ekscloudwatch-0.2
+    pullPolicy: IfNotPresent
+  hostNetwork: true
+  settings:
+      cwPolling: "5m"
+      cwFilter: '{ $.sourceIPs[0] != "::1" && $.sourceIPs[0] != "127.0.0.1" }'
+      clusterName: "k8s"

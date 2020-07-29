@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.2.2
+
+### Minor Changes
+
+* Add option to deploy ekscloudwatch 
+
 ## v1.2.1
 
 ### Minor Changes
