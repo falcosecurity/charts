@@ -139,6 +139,19 @@ The following table lists the configurable parameters of the Falco chart and the
 | `affinity`                                      | The affinity constraint                                                                                            | `{}`                                                                                                                                      |
 | `tolerations`                                   | The tolerations for scheduling                                                                                     | `node-role.kubernetes.io/master:NoSchedule`                                                                                               |
 | `scc.create`                                    | Create OpenShift's Security Context Constraint                                                                     | `true` 
+`                                                                                                                                       |
+| `eksCloudwatch.enabled`                           | Deploy the forwarding agent for cloudwatch auditing logs, falco.webserver and auditlog must be enabled!                                                                 | `false `                                                                                                                                      |
+| `eksCloudwatch.image.registry`                                | The image registry to pull from                                                                                    | `docker.io`                                                                                                                               |
+| `eksCloudwatch.image.repository`                              | The image repository to pull from                                                                                  | `falcosecurity/falco`                                                                                                                     |
+| `eksCloudwatch.image.tag`                                     | The image tag to pull                                                                                              | `0.21.0`                                                                                                                                  |
+| `eksCloudwatch.image.pullPolicy`                              | The image pull policy                                                                                              | `IfNotPresent   `                                                                                                                                      |
+| `eksCloudwatch.hostNetwork`                                   | Necessary if to query instance metadata                                                                                  | `true`                                                                                               |                                                      | ` ` 
+| `eksCloudwatch.settings.cwPolling`                              | Polling interval for cloudwatch                                                                                             | `5m   `                                                                                                                                      |
+| `eksCloudwatch.settings.cwFilter`                                   | Set a filter for the auditlogs                                                                                  | `{ $.sourceIPs[0] != "::1" && $.sourceIPs[0] != "127.0.0.1" }`                                                                                               |
+| `eksCloudwatch.settings.clusterName`                                    | Name of the cluster                                                                   | `k8s` 
+
+
+
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -261,6 +274,11 @@ Then you can install Falco chart enabling the enabling the `falco.webserver`
 flag:
 
 `helm install falco --set auditLog.enabled=true --set auditLog.dynamicBackend.enabled=true falcosecurity/falco`
+
+For EKS, you can enable eksCloudwatch in your value file. This will create a forwarder which will read the logs from
+cloudwatch and forward them to the falco api. You can find the project [here](https://github.com/sysdiglabs/ekscloudwatch/)
+
+Make sure the pod is able to access CloudWatch (policy CloudWatchReadOnlyAccess) by using either kiam for example, or the node's iam role.
 
 And that's it, you will start to see the K8s audit log related alerts.
 

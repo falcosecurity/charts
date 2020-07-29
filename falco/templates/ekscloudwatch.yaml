@@ -1,0 +1,46 @@
+# custom CPT template based on https://github.com/sysdiglabs/ekscloudwatch
+{{- if .Values.eksCloudwatch.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-cloudwatch
+spec:
+  minReadySeconds: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eks-cloudwatch
+  template:
+    metadata:
+      labels:
+        app: eks-cloudwatch
+    spec:
+      {{- if .Values.eksCloudwatch.hostNetwork }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      {{- if .Values.eksCloudwatch.priorityClassName }}
+      priorityClassName: {{ .Values.eksCloudwatch.priorityClassName }}
+      {{- end }}
+      {{- with .Values.eksCloudwatch.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - image: {{ template "eksCloudwatch.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: eks-cloudwatch-container
+      {{- with .Values.eksCloudwatch.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: ENDPOINT
+              value: {{template "eksCloudwatch.Endpoint" . }}
+            - name: CLUSTER_NAME
+              value: {{ .Values.eksCloudwatch.settings.clusterName }}
+            - name: CW_POLLING
+              value: {{ .Values.eksCloudwatch.settings.cwPolling }}
+            - name: CW_FILTER
+              value: {{ .Values.eksCloudwatch.settings.cwFilter | quote }}
+{{- end }}
