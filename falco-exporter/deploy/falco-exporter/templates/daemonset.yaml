@@ -1,0 +1,62 @@
+---
+# Source: falco-exporter/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: RELEASE-NAME-falco-exporter
+  labels:
+    app.kubernetes.io/name: falco-exporter
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.3.0"
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: falco-exporter-0.3.1
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: falco-exporter
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: falco-exporter
+        app.kubernetes.io/instance: RELEASE-NAME
+    spec:
+      serviceAccountName: RELEASE-NAME-falco-exporter
+      securityContext:
+        {}
+      containers:
+        - name: falco-exporter
+          securityContext:
+            {}
+          image: "falcosecurity/falco-exporter:0.3.0"
+          imagePullPolicy: IfNotPresent
+          args:
+            - /usr/bin/falco-exporter
+            - --client-socket=unix:///var/run/falco/falco.sock
+            - --timeout=2m
+            - --listen-address=0.0.0.0:9376
+          ports:
+            - name: metrics
+              containerPort: 9376
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9376
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 9376
+          resources:
+            {}
+          volumeMounts:
+            - mountPath: /var/run/falco
+              name: falco-socket-dir
+              readOnly: true
+      volumes:
+        - name: falco-socket-dir
+          hostPath: 
+            path: /var/run/falco
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master

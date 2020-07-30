@@ -1,0 +1,2111 @@
+---
+# Source: falco/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-falco
+  labels:
+    app: RELEASE-NAME-falco
+    chart: "falco-1.2.1"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  falco.yaml: |-
+    # File(s) or Directories containing Falco rules, loaded at startup.
+    # The name "rules_file" is only for backwards compatibility.
+    # If the entry is a file, it will be read directly. If the entry is a directory,
+    # every file in that directory will be read, in alphabetical order.
+    #
+    # falco_rules.yaml ships with the falco package and is overridden with
+    # every new software version. falco_rules.local.yaml is only created
+    # if it doesn't exist. If you want to customize the set of rules, add
+    # your customizations to falco_rules.local.yaml.
+    #
+    # The files will be read in the order presented here, so make sure if
+    # you have overrides they appear in later files.
+    rules_file:
+      - /etc/falco/falco_rules.yaml
+      - /etc/falco/falco_rules.local.yaml
+      - /etc/falco/k8s_audit_rules.yaml
+      - /etc/falco/rules.d
+
+    # If true, the times displayed in log messages and output messages
+    # will be in ISO 8601. By default, times are displayed in the local
+    # time zone, as governed by /etc/localtime.
+    time_format_iso_8601: false
+
+    # Whether to output events in json or text
+    json_output: false
+
+    # When using json output, whether or not to include the "output" property
+    # itself (e.g. "File below a known binary directory opened for writing
+    # (user=root ....") in the json output.
+    json_include_output_property: true
+
+    # Send information logs to stderr and/or syslog Note these are *not* security
+    # notification logs! These are just Falco lifecycle (and possibly error) logs.
+    log_stderr: true
+    log_syslog: true
+
+    # Minimum log level to include in logs. Note: these levels are
+    # separate from the priority field of rules. This refers only to the
+    # log level of falco's internal logging. Can be one of "emergency",
+    # "alert", "critical", "error", "warning", "notice", "info", "debug".
+    log_level: info
+
+    # Minimum rule priority level to load and run. All rules having a
+    # priority more severe than this level will be loaded/run.  Can be one
+    # of "emergency", "alert", "critical", "error", "warning", "notice",
+    # "info", "debug".
+    priority: debug
+
+    # Whether or not output to any of the output channels below is
+    # buffered. Defaults to false
+    buffered_outputs: false
+
+    # Falco uses a shared buffer between the kernel and userspace to pass
+    # system call information. When falco detects that this buffer is
+    # full and system calls have been dropped, it can take one or more of
+    # the following actions:
+    #   - "ignore": do nothing. If an empty list is provided, ignore is assumed.
+    #   - "log": log a CRITICAL message noting that the buffer was full.
+    #   - "alert": emit a falco alert noting that the buffer was full.
+    #   - "exit": exit falco with a non-zero rc.
+    #
+    # The rate at which log/alert messages are emitted is governed by a
+    # token bucket. The rate corresponds to one message every 30 seconds
+    # with a burst of 10 messages.
+    syscall_event_drops:
+      actions:
+        - log
+        - alert
+      rate: 0.03333
+      max_burst: 10
+
+    # A throttling mechanism implemented as a token bucket limits the
+    # rate of falco notifications. This throttling is controlled by the following configuration
+    # options:
+    #  - rate: the number of tokens (i.e. right to send a notification)
+    #    gained per second. Defaults to 1.
+    #  - max_burst: the maximum number of tokens outstanding. Defaults to 1000.
+    #
+    # With these defaults, falco could send up to 1000 notifications after
+    # an initial quiet period, and then up to 1 notification per second
+    # afterward. It would gain the full burst back after 1000 seconds of
+    # no activity.
+    outputs:
+      rate: 1
+      max_burst: 1000
+
+    # Where security notifications should go.
+    # Multiple outputs can be enabled.
+
+    syslog_output:
+      enabled: true
+
+    # If keep_alive is set to true, the file will be opened once and
+    # continuously written to, with each output message on its own
+    # line. If keep_alive is set to false, the file will be re-opened
+    # for each output message.
+    #
+    # Also, the file will be closed and reopened if falco is signaled with
+    # SIGUSR1.
+    file_output:
+      enabled: false
+      keep_alive: false
+      filename: ./events.txt
+
+    stdout_output:
+      enabled: true
+
+    # Falco contains an embedded webserver that can be used to accept K8s
+    # Audit Events. These config options control the behavior of that
+    # webserver. (By default, the webserver is disabled).
+    #
+    # The ssl_certificate is a combination SSL Certificate and corresponding
+    # key contained in a single file. You can generate a key/cert as follows:
+    #
+    # $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
+    # $ cat certificate.pem key.pem > falco.pem
+    # $ sudo cp falco.pem /etc/falco/falco.pem
+
+    webserver:
+      enabled: true
+      listen_port: 8765
+      k8s_audit_endpoint: /k8s-audit
+      ssl_enabled: false
+      ssl_certificate: /etc/falco/falco.pem
+
+    # Possible additional things you might want to do with program output:
+    #   - send to a slack webhook:
+    #         program: "\"jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX\""
+    #   - logging (alternate method than syslog):
+    #         program: logger -t falco-test
+    #   - send over a network connection:
+    #         program: nc host.example.com 80
+
+    # If keep_alive is set to true, the program will be started once and
+    # continuously written to, with each output message on its own
+    # line. If keep_alive is set to false, the program will be re-spawned
+    # for each output message.
+    #
+    # Also, the program will be closed and reopened if falco is signaled with
+    # SIGUSR1.
+    program_output:
+      enabled: false
+      keep_alive: false
+      program: |
+        mail -s "Falco Notification" someone@example.com
+
+    http_output:
+      enabled: false
+      url: http://some.url
+
+    grpc:
+      enabled: false
+      threadiness: 0
+      bind_address: "unix:///var/run/falco/falco.sock"
+      
+
+    grpc_output:
+      enabled: false
+
+  application_rules.yaml: |
+    #
+    # Copyright (C) 2019 The Falco Authors.
+    #
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    # you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    #     http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    #
+  
+    - required_engine_version: 2
+  
+    ################################################################
+    # By default all application-related rules are disabled for
+    # performance reasons. Depending on the application(s) you use,
+    # uncomment the corresponding rule definitions for
+    # application-specific activity monitoring.
+    ################################################################
+  
+    # Elasticsearch ports
+    - macro: elasticsearch_cluster_port
+      condition: fd.sport=9300
+    - macro: elasticsearch_api_port
+      condition: fd.sport=9200
+    - macro: elasticsearch_port
+      condition: elasticsearch_cluster_port or elasticsearch_api_port
+  
+    # - rule: Elasticsearch unexpected network inbound traffic
+    #   desc: inbound network traffic to elasticsearch on a port other than the standard ports
+    #   condition: user.name = elasticsearch and inbound and not elasticsearch_port
+    #   output: "Inbound network traffic to Elasticsearch on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # - rule: Elasticsearch unexpected network outbound traffic
+    #   desc: outbound network traffic from elasticsearch on a port other than the standard ports
+    #   condition: user.name = elasticsearch and outbound and not elasticsearch_cluster_port
+    #   output: "Outbound network traffic from Elasticsearch on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+  
+    # ActiveMQ ports
+    - macro: activemq_cluster_port
+      condition: fd.sport=61616
+    - macro: activemq_web_port
+      condition: fd.sport=8161
+    - macro: activemq_port
+      condition: activemq_web_port or activemq_cluster_port
+  
+    # - rule: Activemq unexpected network inbound traffic
+    #   desc: inbound network traffic to activemq on a port other than the standard ports
+    #   condition: user.name = activemq and inbound and not activemq_port
+    #   output: "Inbound network traffic to ActiveMQ on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # - rule: Activemq unexpected network outbound traffic
+    #   desc: outbound network traffic from activemq on a port other than the standard ports
+    #   condition: user.name = activemq and outbound and not activemq_cluster_port
+    #   output: "Outbound network traffic from ActiveMQ on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+  
+    # Cassandra ports
+    # https://docs.datastax.com/en/cassandra/2.0/cassandra/security/secureFireWall_r.html
+    - macro: cassandra_thrift_client_port
+      condition: fd.sport=9160
+    - macro: cassandra_cql_port
+      condition: fd.sport=9042
+    - macro: cassandra_cluster_port
+      condition: fd.sport=7000
+    - macro: cassandra_ssl_cluster_port
+      condition: fd.sport=7001
+    - macro: cassandra_jmx_port
+      condition: fd.sport=7199
+    - macro: cassandra_port
+      condition: >
+        cassandra_thrift_client_port or
+        cassandra_cql_port or cassandra_cluster_port or
+        cassandra_ssl_cluster_port or cassandra_jmx_port
+  
+    # - rule: Cassandra unexpected network inbound traffic
+    #   desc: inbound network traffic to cassandra on a port other than the standard ports
+    #   condition: user.name = cassandra and inbound and not cassandra_port
+    #   output: "Inbound network traffic to Cassandra on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # - rule: Cassandra unexpected network outbound traffic
+    #   desc: outbound network traffic from cassandra on a port other than the standard ports
+    #   condition: user.name = cassandra and outbound and not (cassandra_ssl_cluster_port or cassandra_cluster_port)
+    #   output: "Outbound network traffic from Cassandra on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # Couchdb ports
+    # https://github.com/davisp/couchdb/blob/master/etc/couchdb/local.ini
+    - macro: couchdb_httpd_port
+      condition: fd.sport=5984
+    - macro: couchdb_httpd_ssl_port
+      condition: fd.sport=6984
+    # xxx can't tell what clustering ports are used. not writing rules for this
+    # yet.
+  
+    # Fluentd ports
+    - macro: fluentd_http_port
+      condition: fd.sport=9880
+    - macro: fluentd_forward_port
+      condition: fd.sport=24224
+  
+    # - rule: Fluentd unexpected network inbound traffic
+    #   desc: inbound network traffic to fluentd on a port other than the standard ports
+    #   condition: user.name = td-agent and inbound and not (fluentd_forward_port or fluentd_http_port)
+    #   output: "Inbound network traffic to Fluentd on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # - rule: Tdagent unexpected network outbound traffic
+    #   desc: outbound network traffic from fluentd on a port other than the standard ports
+    #   condition: user.name = td-agent and outbound and not fluentd_forward_port
+    #   output: "Outbound network traffic from Fluentd on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # Gearman ports
+    # http://gearman.org/protocol/
+    # - rule: Gearman unexpected network outbound traffic
+    #   desc: outbound network traffic from gearman on a port other than the standard ports
+    #   condition: user.name = gearman and outbound and outbound and not fd.sport = 4730
+    #   output: "Outbound network traffic from Gearman on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # Zookeeper
+    - macro: zookeeper_port
+      condition: fd.sport = 2181
+  
+    # Kafka ports
+    # - rule: Kafka unexpected network inbound traffic
+    #   desc: inbound network traffic to kafka on a port other than the standard ports
+    #   condition: user.name = kafka and inbound and fd.sport != 9092
+    #   output: "Inbound network traffic to Kafka on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # Memcached ports
+    # - rule: Memcached unexpected network inbound traffic
+    #   desc: inbound network traffic to memcached on a port other than the standard ports
+    #   condition: user.name = memcached and inbound and fd.sport != 11211
+    #   output: "Inbound network traffic to Memcached on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # - rule: Memcached unexpected network outbound traffic
+    #   desc: any outbound network traffic from memcached. memcached never initiates outbound connections.
+    #   condition: user.name = memcached and outbound
+    #   output: "Unexpected Memcached outbound connection (connection=%fd.name)"
+    #   priority: WARNING
+  
+  
+    # MongoDB ports
+    - macro: mongodb_server_port
+      condition: fd.sport = 27017
+    - macro: mongodb_shardserver_port
+      condition: fd.sport = 27018
+    - macro: mongodb_configserver_port
+      condition: fd.sport = 27019
+    - macro: mongodb_webserver_port
+      condition: fd.sport = 28017
+  
+    # - rule: Mongodb unexpected network inbound traffic
+    #   desc: inbound network traffic to mongodb on a port other than the standard ports
+    #   condition: >
+    #     user.name = mongodb and inbound and not (mongodb_server_port or
+    #     mongodb_shardserver_port or mongodb_configserver_port or mongodb_webserver_port)
+    #   output: "Inbound network traffic to MongoDB on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # MySQL ports
+    # - rule: Mysql unexpected network inbound traffic
+    #   desc: inbound network traffic to mysql on a port other than the standard ports
+    #   condition: user.name = mysql and inbound and fd.sport != 3306
+    #   output: "Inbound network traffic to MySQL on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  
+    # - rule: HTTP server unexpected network inbound traffic
+    #   desc: inbound network traffic to a http server program on a port other than the standard ports
+    #   condition: proc.name in (http_server_binaries) and inbound and fd.sport != 80 and fd.sport != 443
+    #   output: "Inbound network traffic to HTTP Server on unexpected port (connection=%fd.name)"
+    #   priority: WARNING
+  falco_rules.local.yaml: |
+    #
+    # Copyright (C) 2019 The Falco Authors.
+    #
+    #
+    # Licensed under the Apache License, Version 2.0 (the "License");
+    # you may not use this file except in compliance with the License.
+    # You may obtain a copy of the License at
+    #
+    #     http://www.apache.org/licenses/LICENSE-2.0
+    #
+    # Unless required by applicable law or agreed to in writing, software
+    # distributed under the License is distributed on an "AS IS" BASIS,
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    # See the License for the specific language governing permissions and
+    # limitations under the License.
+    #
+  
+    ####################
+    # Your custom rules!
+    ####################
+  
+    # Add new rules, like this one
+    # - rule: The program "sudo" is run in a container
+    #   desc: An event will trigger every time you run sudo in a container
+    #   condition: evt.type = execve and evt.dir=< and container.id != host and proc.name = sudo
+    #   output: "Sudo run in container (user=%user.name %container.info parent=%proc.pname cmdline=%proc.cmdline)"
+    #   priority: ERROR
+    #   tags: [users, container]
+  
+    # Or override/append to any rule, macro, or list from the Default Rules
+  falco_rules.yaml: "#\n# Copyright (C) 2019 The Falco Authors.\n#\n#\n# Licensed under
+    the Apache License, Version 2.0 (the \"License\");\n# you may not use this file
+    except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#
+    \    http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable
+    law or agreed to in writing, software\n# distributed under the License is distributed
+    on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied.\n# See the License for the specific language governing permissions and\n#
+    limitations under the License.\n#\n\n# See xxx for details on falco engine and rules
+    versioning. Currently,\n# this specific rules file is compatible with engine version
+    0\n# (e.g. falco releases <= 0.13.1), so we'll keep the\n# required_engine_version
+    lines commented out, so maintain\n# compatibility with older falco releases. With
+    the first incompatible\n# change to this rules file, we'll uncomment this line and
+    set it to\n# the falco engine version in use at the time.\n#\n#- required_engine_version:
+    2\n\n# Currently disabled as read/write are ignored syscalls. The nearly\n# similar
+    open_write/open_read check for files being opened for\n# reading/writing.\n# - macro:
+    write\n#   condition: (syscall.type=write and fd.type in (file, directory))\n# -
+    macro: read\n#   condition: (syscall.type=read and evt.dir=> and fd.type in (file,
+    directory))\n\n- macro: open_write\n  condition: (evt.type=open or evt.type=openat)
+    and evt.is_open_write=true and fd.typechar='f' and fd.num>=0\n\n- macro: open_read\n
+    \ condition: (evt.type=open or evt.type=openat) and evt.is_open_read=true and fd.typechar='f'
+    and fd.num>=0\n\n- macro: open_directory\n  condition: (evt.type=open or evt.type=openat)
+    and evt.is_open_read=true and fd.typechar='d' and fd.num>=0\n\n- macro: never_true\n
+    \ condition: (evt.num=0)\n\n- macro: always_true\n  condition: (evt.num>=0)\n\n#
+    In some cases, such as dropped system call events, information about\n# the process
+    name may be missing. For some rules that really depend\n# on the identity of the
+    process performing an action such as opening\n# a file, etc., we require that the
+    process name be known.\n- macro: proc_name_exists\n  condition: (proc.name!=\"<NA>\")\n\n#
+    todo(leogr): we miss \"renameat2\", but it's not yet supported by sinsp\n- macro:
+    rename\n  condition: evt.type in (rename, renameat)\n- macro: mkdir\n  condition:
+    evt.type in (mkdir, mkdirat)\n- macro: remove\n  condition: evt.type in (rmdir,
+    unlink, unlinkat)\n\n- macro: modify\n  condition: rename or remove\n\n- macro:
+    spawned_process\n  condition: evt.type = execve and evt.dir=<\n\n- macro: create_symlink\n
+    \ condition: evt.type in (symlink, symlinkat) and evt.dir=<\n\n- macro: chmod\n
+    \ condition: (evt.type in (chmod, fchmod, fchmodat) and evt.dir=<)\n\n# File categories\n-
+    macro: bin_dir\n  condition: fd.directory in (/bin, /sbin, /usr/bin, /usr/sbin)\n\n-
+    macro: bin_dir_mkdir\n  condition: >\n     (evt.arg.path startswith /bin/ or\n     evt.arg.path
+    startswith /sbin/ or\n     evt.arg.path startswith /usr/bin/ or\n     evt.arg.path
+    startswith /usr/sbin/)\n\n- macro: bin_dir_rename\n  condition: >\n     (evt.arg.path
+    startswith /bin/ or\n     evt.arg.path startswith /sbin/ or\n     evt.arg.path startswith
+    /usr/bin/ or\n     evt.arg.path startswith /usr/sbin/ or\n     evt.arg.name startswith
+    /bin/ or\n     evt.arg.name startswith /sbin/ or\n     evt.arg.name startswith /usr/bin/
+    or\n     evt.arg.name startswith /usr/sbin/ or\n     evt.arg.oldpath startswith
+    /bin/ or\n     evt.arg.oldpath startswith /sbin/ or\n     evt.arg.oldpath startswith
+    /usr/bin/ or\n     evt.arg.oldpath startswith /usr/sbin/ or\n     evt.arg.newpath
+    startswith /bin/ or\n     evt.arg.newpath startswith /sbin/ or\n     evt.arg.newpath
+    startswith /usr/bin/ or\n     evt.arg.newpath startswith /usr/sbin/)\n\n- macro:
+    etc_dir\n  condition: fd.name startswith /etc/\n\n# This detects writes immediately
+    below / or any write anywhere below /root\n- macro: root_dir\n  condition: (fd.directory=/
+    or fd.name startswith /root/)\n\n- list: shell_binaries\n  items: [ash, bash, csh,
+    ksh, sh, tcsh, zsh, dash]\n\n- list: ssh_binaries\n  items: [\n    sshd, sftp-server,
+    ssh-agent,\n    ssh, scp, sftp,\n    ssh-keygen, ssh-keysign, ssh-keyscan, ssh-add\n
+    \   ]\n\n- list: shell_mgmt_binaries\n  items: [add-shell, remove-shell]\n\n- macro:
+    shell_procs\n  condition: proc.name in (shell_binaries)\n\n- list: coreutils_binaries\n
+    \ items: [\n    truncate, sha1sum, numfmt, fmt, fold, uniq, cut, who,\n    groups,
+    csplit, sort, expand, printf, printenv, unlink, tee, chcon, stat,\n    basename,
+    split, nice, \"yes\", whoami, sha224sum, hostid, users, stdbuf,\n    base64, unexpand,
+    cksum, od, paste, nproc, pathchk, sha256sum, wc, test,\n    comm, arch, du, factor,
+    sha512sum, md5sum, tr, runcon, env, dirname,\n    tsort, join, shuf, install, logname,
+    pinky, nohup, expr, pr, tty, timeout,\n    tail, \"[\", seq, sha384sum, nl, head,
+    id, mkfifo, sum, dircolors, ptx, shred,\n    tac, link, chroot, vdir, chown, touch,
+    ls, dd, uname, \"true\", pwd, date,\n    chgrp, chmod, mktemp, cat, mknod, sync,
+    ln, \"false\", rm, mv, cp, echo,\n    readlink, sleep, stty, mkdir, df, dir, rmdir,
+    touch\n    ]\n\n# dpkg -L login | grep bin | xargs ls -ld | grep -v '^d' | awk '{print
+    $9}' | xargs -L 1 basename | tr \"\\\\n\" \",\"\n- list: login_binaries\n  items:
+    [\n    login, systemd, '\"(systemd)\"', systemd-logind, su,\n    nologin, faillog,
+    lastlog, newgrp, sg\n    ]\n\n# dpkg -L passwd | grep bin | xargs ls -ld | grep
+    -v '^d' | awk '{print $9}' | xargs -L 1 basename | tr \"\\\\n\" \",\"\n- list: passwd_binaries\n
+    \ items: [\n    shadowconfig, grpck, pwunconv, grpconv, pwck,\n    groupmod, vipw,
+    pwconv, useradd, newusers, cppw, chpasswd, usermod,\n    groupadd, groupdel, grpunconv,
+    chgpasswd, userdel, chage, chsh,\n    gpasswd, chfn, expiry, passwd, vigr, cpgr,
+    adduser, addgroup, deluser, delgroup\n    ]\n\n# repoquery -l shadow-utils | grep
+    bin | xargs ls -ld | grep -v '^d' |\n#     awk '{print $9}' | xargs -L 1 basename
+    | tr \"\\\\n\" \",\"\n- list: shadowutils_binaries\n  items: [\n    chage, gpasswd,
+    lastlog, newgrp, sg, adduser, deluser, chpasswd,\n    groupadd, groupdel, addgroup,
+    delgroup, groupmems, groupmod, grpck, grpconv, grpunconv,\n    newusers, pwck, pwconv,
+    pwunconv, useradd, userdel, usermod, vigr, vipw, unix_chkpwd\n    ]\n\n- list: sysdigcloud_binaries\n
+    \ items: [setup-backend, dragent, sdchecks]\n\n- list: docker_binaries\n  items:
+    [docker, dockerd, exe, docker-compose, docker-entrypoi, docker-runc-cur, docker-current,
+    dockerd-current]\n\n- list: k8s_binaries\n  items: [hyperkube, skydns, kube2sky,
+    exechealthz, weave-net, loopback, bridge, openshift-sdn, openshift]\n\n- list: lxd_binaries\n
+    \ items: [lxd, lxcfs]\n\n- list: http_server_binaries\n  items: [nginx, httpd, httpd-foregroun,
+    lighttpd, apache, apache2]\n\n- list: db_server_binaries\n  items: [mysqld, postgres,
+    sqlplus]\n\n- list: mysql_mgmt_binaries\n  items: [mysql_install_d, mysql_ssl_rsa_s]\n\n-
+    list: postgres_mgmt_binaries\n  items: [pg_dumpall, pg_ctl, pg_lsclusters, pg_ctlcluster]\n\n-
+    list: db_mgmt_binaries\n  items: [mysql_mgmt_binaries, postgres_mgmt_binaries]\n\n-
+    list: nosql_server_binaries\n  items: [couchdb, memcached, redis-server, rabbitmq-server,
+    mongod]\n\n- list: gitlab_binaries\n  items: [gitlab-shell, gitlab-mon, gitlab-runner-b,
+    git]\n\n- list: interpreted_binaries\n  items: [lua, node, perl, perl5, perl6, php,
+    python, python2, python3, ruby, tcl]\n\n- macro: interpreted_procs\n  condition:
+    >\n    (proc.name in (interpreted_binaries))\n\n- macro: server_procs\n  condition:
+    proc.name in (http_server_binaries, db_server_binaries, docker_binaries, sshd)\n\n#
+    The explicit quotes are needed to avoid the - characters being\n# interpreted by
+    the filter expression.\n- list: rpm_binaries\n  items: [dnf, rpm, rpmkey, yum, '\"75-system-updat\"',
+    rhsmcertd-worke, subscription-ma,\n          repoquery, rpmkeys, rpmq, yum-cron,
+    yum-config-mana, yum-debug-dump,\n          abrt-action-sav, rpmdb_stat, microdnf,
+    rhn_check, yumdb]\n\n- list: openscap_rpm_binaries\n  items: [probe_rpminfo, probe_rpmverify,
+    probe_rpmverifyfile, probe_rpmverifypackage]\n\n- macro: rpm_procs\n  condition:
+    (proc.name in (rpm_binaries, openscap_rpm_binaries) or proc.name in (salt-minion))\n\n-
+    list: deb_binaries\n  items: [dpkg, dpkg-preconfigu, dpkg-reconfigur, dpkg-divert,
+    apt, apt-get, aptitude,\n    frontend, preinst, add-apt-reposit, apt-auto-remova,
+    apt-key,\n    apt-listchanges, unattended-upgr, apt-add-reposit, apt-config, apt-cache\n
+    \   ]\n\n# The truncated dpkg-preconfigu is intentional, process names are\n# truncated
+    at the sysdig level.\n- list: package_mgmt_binaries\n  items: [rpm_binaries, deb_binaries,
+    update-alternat, gem, pip, pip3, sane-utils.post, alternatives, chef-client, apk,
+    snapd]\n\n- macro: package_mgmt_procs\n  condition: proc.name in (package_mgmt_binaries)\n\n-
+    macro: package_mgmt_ancestor_procs\n  condition: proc.pname in (package_mgmt_binaries)
+    or\n             proc.aname[2] in (package_mgmt_binaries) or\n             proc.aname[3]
+    in (package_mgmt_binaries) or\n             proc.aname[4] in (package_mgmt_binaries)\n\n-
+    macro: coreos_write_ssh_dir\n  condition: (proc.name=update-ssh-keys and fd.name
+    startswith /home/core/.ssh)\n\n- macro: run_by_package_mgmt_binaries\n  condition:
+    proc.aname in (package_mgmt_binaries, needrestart)\n\n- list: ssl_mgmt_binaries\n
+    \ items: [ca-certificates]\n\n- list: dhcp_binaries\n  items: [dhclient, dhclient-script,
+    11-dhclient]\n\n# A canonical set of processes that run other programs with different\n#
+    privileges or as a different user.\n- list: userexec_binaries\n  items: [sudo, su,
+    suexec, critical-stack, dzdo]\n\n- list: known_setuid_binaries\n  items: [\n    sshd,
+    dbus-daemon-lau, ping, ping6, critical-stack-, pmmcli,\n    filemng, PassengerAgent,
+    bwrap, osdetect, nginxmng, sw-engine-fpm,\n    start-stop-daem\n    ]\n\n- list:
+    user_mgmt_binaries\n  items: [login_binaries, passwd_binaries, shadowutils_binaries]\n\n-
+    list: dev_creation_binaries\n  items: [blkid, rename_device, update_engine, sgdisk]\n\n-
+    list: hids_binaries\n  items: [aide, aide.wrapper, update-aide.con, logcheck, syslog-summary,
+    osqueryd, ossec-syscheckd]\n\n- list: vpn_binaries\n  items: [openvpn]\n\n- list:
+    nomachine_binaries\n  items: [nxexec, nxnode.bin, nxserver.bin, nxclient.bin]\n\n-
+    macro: system_procs\n  condition: proc.name in (coreutils_binaries, user_mgmt_binaries)\n\n-
+    list: mail_binaries\n  items: [\n    sendmail, sendmail-msp, postfix, procmail,
+    exim4,\n    pickup, showq, mailq, dovecot, imap-login, imap,\n    mailmng-core,
+    pop3-login, dovecot-lda, pop3\n    ]\n\n- list: mail_config_binaries\n  items: [\n
+    \   update_conf, parse_mc, makemap_hash, newaliases, update_mk, update_tlsm4,\n
+    \   update_db, update_mc, ssmtp.postinst, mailq, postalias, postfix.config.,\n    postfix.config,
+    postfix-script, postconf\n    ]\n\n- list: sensitive_file_names\n  items: [/etc/shadow,
+    /etc/sudoers, /etc/pam.conf, /etc/security/pwquality.conf]\n\n- list: sensitive_directory_names\n
+    \ items: [/, /etc, /etc/, /root, /root/]\n\n- macro: sensitive_files\n  condition:
+    >\n    fd.name startswith /etc and\n    (fd.name in (sensitive_file_names)\n     or
+    fd.directory in (/etc/sudoers.d, /etc/pam.d))\n\n# Indicates that the process is
+    new. Currently detected using time\n# since process was started, using a threshold
+    of 5 seconds.\n- macro: proc_is_new\n  condition: proc.duration <= 5000000000\n\n#
+    Network\n- macro: inbound\n  condition: >\n    (((evt.type in (accept,listen) and
+    evt.dir=<) or\n      (evt.type in (recvfrom,recvmsg) and evt.dir=< and\n       fd.l4proto
+    != tcp and fd.connected=false and fd.name_changed=true)) and\n     (fd.typechar
+    = 4 or fd.typechar = 6) and\n     (fd.ip != \"0.0.0.0\" and fd.net != \"127.0.0.0/8\")
+    and\n     (evt.rawres >= 0 or evt.res = EINPROGRESS))\n\n# RFC1918 addresses were
+    assigned for private network usage\n- list: rfc_1918_addresses\n  items: ['\"10.0.0.0/8\"',
+    '\"172.16.0.0/12\"', '\"192.168.0.0/16\"']\n\n- macro: outbound\n  condition: >\n
+    \   (((evt.type = connect and evt.dir=<) or\n      (evt.type in (sendto,sendmsg)
+    and evt.dir=< and\n       fd.l4proto != tcp and fd.connected=false and fd.name_changed=true))
+    and\n     (fd.typechar = 4 or fd.typechar = 6) and\n     (fd.ip != \"0.0.0.0\" and
+    fd.net != \"127.0.0.0/8\" and not fd.snet in (rfc_1918_addresses)) and\n     (evt.rawres
+    >= 0 or evt.res = EINPROGRESS))\n\n# Very similar to inbound/outbound, but combines
+    the tests together\n# for efficiency.\n- macro: inbound_outbound\n  condition: >\n
+    \   (((evt.type in (accept,listen,connect) and evt.dir=<)) or\n     (fd.typechar
+    = 4 or fd.typechar = 6) and\n     (fd.ip != \"0.0.0.0\" and fd.net != \"127.0.0.0/8\")
+    and\n     (evt.rawres >= 0 or evt.res = EINPROGRESS))\n\n- macro: ssh_port\n  condition:
+    fd.sport=22\n\n# In a local/user rules file, you could override this macro to\n#
+    enumerate the servers for which ssh connections are allowed. For\n# example, you
+    might have a ssh gateway host for which ssh connections\n# are allowed.\n#\n# In
+    the main falco rules file, there isn't any way to know the\n# specific hosts for
+    which ssh access is allowed, so this macro just\n# repeats ssh_port, which effectively
+    allows ssh from all hosts. In\n# the overridden macro, the condition would look
+    something like\n# \"fd.sip=\"a.b.c.d\" or fd.sip=\"e.f.g.h\" or ...\"\n- macro:
+    allowed_ssh_hosts\n  condition: ssh_port\n\n- rule: Disallowed SSH Connection\n
+    \ desc: Detect any new ssh connection to a host other than those in an allowed group
+    of hosts\n  condition: (inbound_outbound) and ssh_port and not allowed_ssh_hosts\n
+    \ output: Disallowed SSH Connection (command=%proc.cmdline connection=%fd.name user=%user.name
+    container_id=%container.id image=%container.image.repository)\n  priority: NOTICE\n
+    \ tags: [network, mitre_remote_service]\n\n# These rules and supporting macros are
+    more of an example for how to\n# use the fd.*ip and fd.*ip.name fields to match
+    connection\n# information against ips, netmasks, and complete domain names.\n#\n#
+    To use this rule, you should modify consider_all_outbound_conns and\n# populate
+    allowed_{source,destination}_{ipaddrs,networks,domains} with the\n# values that
+    make sense for your environment.\n- macro: consider_all_outbound_conns\n  condition:
+    (never_true)\n\n# Note that this can be either individual IPs or netmasks\n- list:
+    allowed_outbound_destination_ipaddrs\n  items: ['\"127.0.0.1\"', '\"8.8.8.8\"']\n\n-
+    list: allowed_outbound_destination_networks\n  items: ['\"127.0.0.1/8\"']\n\n- list:
+    allowed_outbound_destination_domains\n  items: [google.com, www.yahoo.com]\n\n-
+    rule: Unexpected outbound connection destination\n  desc: Detect any outbound connection
+    to a destination outside of an allowed set of ips, networks, or domain names\n  condition:
+    >\n    consider_all_outbound_conns and outbound and not\n    ((fd.sip in (allowed_outbound_destination_ipaddrs))
+    or\n     (fd.snet in (allowed_outbound_destination_networks)) or\n     (fd.sip.name
+    in (allowed_outbound_destination_domains)))\n  output: Disallowed outbound connection
+    destination (command=%proc.cmdline connection=%fd.name user=%user.name container_id=%container.id
+    image=%container.image.repository)\n  priority: NOTICE\n  tags: [network]\n\n- macro:
+    consider_all_inbound_conns\n  condition: (never_true)\n\n- list: allowed_inbound_source_ipaddrs\n
+    \ items: ['\"127.0.0.1\"']\n\n- list: allowed_inbound_source_networks\n  items:
+    ['\"127.0.0.1/8\"', '\"10.0.0.0/8\"']\n\n- list: allowed_inbound_source_domains\n
+    \ items: [google.com]\n\n- rule: Unexpected inbound connection source\n  desc: Detect
+    any inbound connection from a source outside of an allowed set of ips, networks,
+    or domain names\n  condition: >\n    consider_all_inbound_conns and inbound and
+    not\n    ((fd.cip in (allowed_inbound_source_ipaddrs)) or\n     (fd.cnet in (allowed_inbound_source_networks))
+    or\n     (fd.cip.name in (allowed_inbound_source_domains)))\n  output: Disallowed
+    inbound connection source (command=%proc.cmdline connection=%fd.name user=%user.name
+    container_id=%container.id image=%container.image.repository)\n  priority: NOTICE\n
+    \ tags: [network]\n\n- list: bash_config_filenames\n  items: [.bashrc, .bash_profile,
+    .bash_history, .bash_login, .bash_logout, .inputrc, .profile]\n\n- list: bash_config_files\n
+    \ items: [/etc/profile, /etc/bashrc]\n\n# Covers both csh and tcsh\n- list: csh_config_filenames\n
+    \ items: [.cshrc, .login, .logout, .history, .tcshrc, .cshdirs]\n\n- list: csh_config_files\n
+    \ items: [/etc/csh.cshrc, /etc/csh.login]\n\n- list: zsh_config_filenames\n  items:
+    [.zshenv, .zprofile, .zshrc, .zlogin, .zlogout]\n\n- list: shell_config_filenames\n
+    \ items: [bash_config_filenames, csh_config_filenames, zsh_config_filenames]\n\n-
+    list: shell_config_files\n  items: [bash_config_files, csh_config_files]\n\n- list:
+    shell_config_directories\n  items: [/etc/zsh]\n\n- rule: Modify Shell Configuration
+    File\n  desc: Detect attempt to modify shell configuration files\n  condition: >\n
+    \   open_write and\n    (fd.filename in (shell_config_filenames) or\n     fd.name
+    in (shell_config_files) or\n     fd.directory in (shell_config_directories))\n    and
+    not proc.name in (shell_binaries)\n    and not exe_running_docker_save\n  output:
+    >\n    a shell configuration file has been modified (user=%user.name command=%proc.cmdline
+    pcmdline=%proc.pcmdline file=%fd.name container_id=%container.id image=%container.image.repository)\n
+    \ priority:\n    WARNING\n  tags: [file, mitre_persistence]\n\n# This rule is not
+    enabled by default, as there are many legitimate\n# readers of shell config files.
+    If you want to enable it, modify the\n# following macro.\n\n- macro: consider_shell_config_reads\n
+    \ condition: (never_true)\n\n- rule: Read Shell Configuration File\n  desc: Detect
+    attempts to read shell configuration files by non-shell programs\n  condition: >\n
+    \   open_read and\n    consider_shell_config_reads and\n    (fd.filename in (shell_config_filenames)
+    or\n     fd.name in (shell_config_files) or\n     fd.directory in (shell_config_directories))
+    and\n    (not proc.name in (shell_binaries))\n  output: >\n    a shell configuration
+    file was read by a non-shell program (user=%user.name command=%proc.cmdline file=%fd.name
+    container_id=%container.id image=%container.image.repository)\n  priority:\n    WARNING\n
+    \ tags: [file, mitre_discovery]\n\n- macro: consider_all_cron_jobs\n  condition:
+    (never_true)\n\n- macro: user_known_cron_jobs\n  condition: (never_true)\n\n- rule:
+    Schedule Cron Jobs\n  desc: Detect cron jobs scheduled\n  condition: >\n    ((open_write
+    and fd.name startswith /etc/cron) or\n     (spawned_process and proc.name = \"crontab\"))
+    and\n    consider_all_cron_jobs and\n    not user_known_cron_jobs\n  output: >\n
+    \   Cron jobs were scheduled to run (user=%user.name command=%proc.cmdline\n    file=%fd.name
+    container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)\n
+    \ priority:\n    NOTICE\n  tags: [file, mitre_persistence]\n\n# Use this to test
+    whether the event occurred within a container.\n\n# When displaying container information
+    in the output field, use\n# %container.info, without any leading term (file=%fd.name\n#
+    %container.info user=%user.name, and not file=%fd.name\n# container=%container.info
+    user=%user.name). The output will change\n# based on the context and whether or
+    not -pk/-pm/-pc was specified on\n# the command line.\n- macro: container\n  condition:
+    (container.id != host)\n\n- macro: container_started\n  condition: >\n    ((evt.type
+    = container or\n     (evt.type=execve and evt.dir=< and proc.vpid=1)) and\n     container.image.repository
+    != incomplete)\n\n- macro: interactive\n  condition: >\n    ((proc.aname=sshd and
+    proc.name != sshd) or\n    proc.name=systemd-logind or proc.name=login)\n\n- list:
+    cron_binaries\n  items: [anacron, cron, crond, crontab]\n\n# https://github.com/liske/needrestart\n-
+    list: needrestart_binaries\n  items: [needrestart, 10-dpkg, 20-rpm, 30-pacman]\n\n#
+    Possible scripts run by sshkit\n- list: sshkit_script_binaries\n  items: [10_etc_sudoers.,
+    10_passwd_group]\n\n- list: plesk_binaries\n  items: [sw-engine, sw-engine-fpm,
+    sw-engine-kv, filemng, f2bmng]\n\n# System users that should never log into a system.
+    Consider adding your own\n# service users (e.g. 'apache' or 'mysqld') here.\n- macro:
+    system_users\n  condition: user.name in (bin, daemon, games, lp, mail, nobody, sshd,
+    sync, uucp, www-data)\n\n# These macros will be removed soon. Only keeping them
+    to maintain\n# compatiblity with some widely used rules files.\n# Begin Deprecated\n-
+    macro: parent_ansible_running_python\n  condition: (proc.pname in (python, pypy,
+    python3) and proc.pcmdline contains ansible)\n\n- macro: parent_bro_running_python\n
+    \ condition: (proc.pname=python and proc.cmdline contains /usr/share/broctl)\n\n-
+    macro: parent_python_running_denyhosts\n  condition: >\n    (proc.cmdline startswith
+    \"denyhosts.py /usr/bin/denyhosts.py\" or\n     (proc.pname=python and\n     (proc.pcmdline
+    contains /usr/sbin/denyhosts or\n      proc.pcmdline contains /usr/local/bin/denyhosts.py)))\n\n-
+    macro: parent_python_running_sdchecks\n  condition: >\n    (proc.pname in (python,
+    python2.7) and\n    (proc.pcmdline contains /opt/draios/bin/sdchecks))\n\n- macro:
+    python_running_sdchecks\n  condition: >\n    (proc.name in (python, python2.7) and\n
+    \   (proc.cmdline contains /opt/draios/bin/sdchecks))\n\n- macro: parent_linux_image_upgrade_script\n
+    \ condition: proc.pname startswith linux-image-\n\n- macro: parent_java_running_echo\n
+    \ condition: (proc.pname=java and proc.cmdline startswith \"sh -c echo\")\n\n- macro:
+    parent_scripting_running_builds\n  condition: >\n    (proc.pname in (php,php5-fpm,php-fpm7.1,python,ruby,ruby2.3,ruby2.1,node,conda)
+    and (\n       proc.cmdline startswith \"sh -c git\" or\n       proc.cmdline startswith
+    \"sh -c date\" or\n       proc.cmdline startswith \"sh -c /usr/bin/g++\" or\n       proc.cmdline
+    startswith \"sh -c /usr/bin/gcc\" or\n       proc.cmdline startswith \"sh -c gcc\"
+    or\n       proc.cmdline startswith \"sh -c if type gcc\" or\n       proc.cmdline
+    startswith \"sh -c cd '/var/www/edi/';LC_ALL=en_US.UTF-8 git\" or\n       proc.cmdline
+    startswith \"sh -c /var/www/edi/bin/sftp.sh\" or\n       proc.cmdline startswith
+    \"sh -c /usr/src/app/crxlsx/bin/linux/crxlsx\" or\n       proc.cmdline startswith
+    \"sh -c make parent\" or\n       proc.cmdline startswith \"node /jenkins/tools\"
+    or\n       proc.cmdline startswith \"sh -c '/usr/bin/node'\" or\n       proc.cmdline
+    startswith \"sh -c stty -a |\" or\n       proc.pcmdline startswith \"node /opt/nodejs/bin/yarn\"
+    or\n       proc.pcmdline startswith \"node /usr/local/bin/yarn\" or\n       proc.pcmdline
+    startswith \"node /root/.config/yarn\" or\n       proc.pcmdline startswith \"node
+    /opt/yarn/bin/yarn.js\"))\n\n\n- macro: httpd_writing_ssl_conf\n  condition: >\n
+    \   (proc.pname=run-httpd and\n     (proc.cmdline startswith \"sed -ri\" or proc.cmdline
+    startswith \"sed -i\") and\n     (fd.name startswith /etc/httpd/conf.d/ or fd.name
+    startswith /etc/httpd/conf))\n\n- macro: userhelper_writing_etc_security\n  condition:
+    (proc.name=userhelper and fd.name startswith /etc/security)\n\n- macro: parent_Xvfb_running_xkbcomp\n
+    \ condition: (proc.pname=Xvfb and proc.cmdline startswith 'sh -c \"/usr/bin/xkbcomp\"')\n\n-
+    macro: parent_nginx_running_serf\n  condition: (proc.pname=nginx and proc.cmdline
+    startswith \"sh -c serf\")\n\n- macro: parent_node_running_npm\n  condition: (proc.pcmdline
+    startswith \"node /usr/local/bin/npm\" or\n              proc.pcmdline startswith
+    \"node /usr/local/nodejs/bin/npm\" or\n              proc.pcmdline startswith \"node
+    /opt/rh/rh-nodejs6/root/usr/bin/npm\")\n\n- macro: parent_java_running_sbt\n  condition:
+    (proc.pname=java and proc.pcmdline contains sbt-launch.jar)\n\n- list: known_container_shell_spawn_cmdlines\n
+    \ items: []\n\n- list: known_shell_spawn_binaries\n  items: []\n\n## End Deprecated\n\n-
+    macro: ansible_running_python\n  condition: (proc.name in (python, pypy, python3)
+    and proc.cmdline contains ansible)\n\n- macro: python_running_chef\n  condition:
+    (proc.name=python and (proc.cmdline contains yum-dump.py or proc.cmdline=\"python
+    /usr/bin/chef-monitor.py\"))\n\n- macro: python_running_denyhosts\n  condition:
+    >\n    (proc.name=python and\n    (proc.cmdline contains /usr/sbin/denyhosts or\n
+    \    proc.cmdline contains /usr/local/bin/denyhosts.py))\n\n# Qualys seems to run
+    a variety of shell subprocesses, at various\n# levels. This checks at a few levels
+    without the cost of a full\n# proc.aname, which traverses the full parent heirarchy.\n-
+    macro: run_by_qualys\n  condition: >\n    (proc.pname=qualys-cloud-ag or\n     proc.aname[2]=qualys-cloud-ag
+    or\n     proc.aname[3]=qualys-cloud-ag or\n     proc.aname[4]=qualys-cloud-ag)\n\n-
+    macro: run_by_sumologic_securefiles\n  condition: >\n    ((proc.cmdline=\"usermod
+    -a -G sumologic_collector\" or\n      proc.cmdline=\"groupadd sumologic_collector\")
+    and\n     (proc.pname=secureFiles.sh and proc.aname[2]=java))\n\n- macro: run_by_yum\n
+    \ condition: ((proc.pname=sh and proc.aname[2]=yum) or\n              (proc.aname[2]=sh
+    and proc.aname[3]=yum))\n\n- macro: run_by_ms_oms\n  condition: >\n    (proc.aname[3]
+    startswith omsagent- or\n     proc.aname[3] startswith scx-)\n\n- macro: run_by_google_accounts_daemon\n
+    \ condition: >\n    (proc.aname[1] startswith google_accounts or\n     proc.aname[2]
+    startswith google_accounts or\n     proc.aname[3] startswith google_accounts)\n\n#
+    Chef is similar.\n- macro: run_by_chef\n  condition: (proc.aname[2]=chef_command_wr
+    or proc.aname[3]=chef_command_wr or\n              proc.aname[2]=chef-client or
+    proc.aname[3]=chef-client or\n              proc.name=chef-client)\n\n- macro: run_by_adclient\n
+    \ condition: (proc.aname[2]=adclient or proc.aname[3]=adclient or proc.aname[4]=adclient)\n\n-
+    macro: run_by_centrify\n  condition: (proc.aname[2]=centrify or proc.aname[3]=centrify
+    or proc.aname[4]=centrify)\n\n- macro: run_by_puppet\n  condition: (proc.aname[2]=puppet
+    or proc.aname[3]=puppet)\n\n# Also handles running semi-indirectly via scl\n- macro:
+    run_by_foreman\n  condition: >\n    (user.name=foreman and\n     (proc.pname in
+    (rake, ruby, scl) and proc.aname[5] in (tfm-rake,tfm-ruby)) or\n     (proc.pname=scl
+    and proc.aname[2] in (tfm-rake,tfm-ruby)))\n\n- macro: java_running_sdjagent\n  condition:
+    proc.name=java and proc.cmdline contains sdjagent.jar\n\n- macro: kubelet_running_loopback\n
+    \ condition: (proc.pname=kubelet and proc.name=loopback)\n\n- macro: python_mesos_marathon_scripting\n
+    \ condition: (proc.pcmdline startswith \"python3 /marathon-lb/marathon_lb.py\")\n\n-
+    macro: splunk_running_forwarder\n  condition: (proc.pname=splunkd and proc.cmdline
+    startswith \"sh -c /opt/splunkforwarder\")\n\n- macro: parent_supervise_running_multilog\n
+    \ condition: (proc.name=multilog and proc.pname=supervise)\n\n- macro: supervise_writing_status\n
+    \ condition: (proc.name in (supervise,svc) and fd.name startswith \"/etc/sb/\")\n\n-
+    macro: pki_realm_writing_realms\n  condition: (proc.cmdline startswith \"bash /usr/local/lib/pki/pki-realm\"
+    and fd.name startswith /etc/pki/realms)\n\n- macro: htpasswd_writing_passwd\n  condition:
+    (proc.name=htpasswd and fd.name=/etc/nginx/.htpasswd)\n\n- macro: lvprogs_writing_conf\n
+    \ condition: >\n    (proc.name in (dmeventd,lvcreate,pvscan,lvs) and\n     (fd.name
+    startswith /etc/lvm/archive or\n      fd.name startswith /etc/lvm/backup or\n      fd.name
+    startswith /etc/lvm/cache))\n\n- macro: ovsdb_writing_openvswitch\n  condition:
+    (proc.name=ovsdb-server and fd.directory=/etc/openvswitch)\n\n- macro: perl_running_plesk\n
+    \ condition: (proc.cmdline startswith \"perl /opt/psa/admin/bin/plesk_agent_manager\"
+    or\n              proc.pcmdline startswith \"perl /opt/psa/admin/bin/plesk_agent_manager\")\n\n-
+    macro: perl_running_updmap\n  condition: (proc.cmdline startswith \"perl /usr/bin/updmap\")\n\n-
+    macro: perl_running_centrifydc\n  condition: (proc.cmdline startswith \"perl /usr/share/centrifydc\")\n\n-
+    macro: runuser_reading_pam\n  condition: (proc.name=runuser and fd.directory=/etc/pam.d)\n\n-
+    macro: parent_ucf_writing_conf\n  condition: (proc.pname=ucf and proc.aname[2]=frontend)\n\n-
+    macro: consul_template_writing_conf\n  condition: >\n    ((proc.name=consul-template
+    and fd.name startswith /etc/haproxy) or\n     (proc.name=reload.sh and proc.aname[2]=consul-template
+    and fd.name startswith /etc/ssl))\n\n- macro: countly_writing_nginx_conf\n  condition:
+    (proc.cmdline startswith \"nodejs /opt/countly/bin\" and fd.name startswith /etc/nginx)\n\n-
+    list: ms_oms_binaries\n  items: [omi.postinst, omsconfig.posti, scx.postinst, omsadmin.sh,
+    omiagent]\n\n- macro: ms_oms_writing_conf\n  condition: >\n    ((proc.name in (omiagent,omsagent,in_heartbeat_r*,omsadmin.sh,PerformInventor,dsc_host)\n
+    \      or proc.pname in (ms_oms_binaries)\n       or proc.aname[2] in (ms_oms_binaries))\n
+    \    and (fd.name startswith /etc/opt/omi or fd.name startswith /etc/opt/microsoft/omsagent))\n\n-
+    macro: ms_scx_writing_conf\n  condition: (proc.name in (GetLinuxOS.sh) and fd.name
+    startswith /etc/opt/microsoft/scx)\n\n- macro: azure_scripts_writing_conf\n  condition:
+    (proc.pname startswith \"bash /var/lib/waagent/\" and fd.name startswith /etc/azure)\n\n-
+    macro: azure_networkwatcher_writing_conf\n  condition: (proc.name in (NetworkWatcherA)
+    and fd.name=/etc/init.d/AzureNetworkWatcherAgent)\n\n- macro: couchdb_writing_conf\n
+    \ condition: (proc.name=beam.smp and proc.cmdline contains couchdb and fd.name startswith
+    /etc/couchdb)\n\n- macro: update_texmf_writing_conf\n  condition: (proc.name=update-texmf
+    and fd.name startswith /etc/texmf)\n\n- macro: slapadd_writing_conf\n  condition:
+    (proc.name=slapadd and fd.name startswith /etc/ldap)\n\n- macro: openldap_writing_conf\n
+    \ condition: (proc.pname=run-openldap.sh and fd.name startswith /etc/openldap)\n\n-
+    macro: ucpagent_writing_conf\n  condition: (proc.name=apiserver and container.image.repository=docker/ucp-agent
+    and fd.name=/etc/authorization_config.cfg)\n\n- macro: iscsi_writing_conf\n  condition:
+    (proc.name=iscsiadm and fd.name startswith /etc/iscsi)\n\n- macro: istio_writing_conf\n
+    \ condition: (proc.name=pilot-agent and fd.name startswith /etc/istio)\n\n- macro:
+    symantec_writing_conf\n  condition: >\n    ((proc.name=symcfgd and fd.name startswith
+    /etc/symantec) or\n     (proc.name=navdefutil and fd.name=/etc/symc-defutils.conf))\n\n-
+    macro: liveupdate_writing_conf\n  condition: (proc.cmdline startswith \"java LiveUpdate\"
+    and fd.name in (/etc/liveupdate.conf, /etc/Product.Catalog.JavaLiveUpdate))\n\n-
+    macro: rancher_agent\n  condition: (proc.name=agent and container.image.repository
+    contains \"rancher/agent\")\n\n- macro: rancher_network_manager\n  condition: (proc.name=rancher-bridge
+    and container.image.repository contains \"rancher/network-manager\")\n\n- macro:
+    sosreport_writing_files\n  condition: >\n    (proc.name=urlgrabber-ext- and proc.aname[3]=sosreport
+    and\n     (fd.name startswith /etc/pkt/nssdb or fd.name startswith /etc/pki/nssdb))\n\n-
+    macro: pkgmgmt_progs_writing_pki\n  condition: >\n    (proc.name=urlgrabber-ext-
+    and proc.pname in (yum, yum-cron, repoquery) and\n     (fd.name startswith /etc/pkt/nssdb
+    or fd.name startswith /etc/pki/nssdb))\n\n- macro: update_ca_trust_writing_pki\n
+    \ condition: (proc.pname=update-ca-trust and proc.name=trust and fd.name startswith
+    /etc/pki)\n\n- macro: brandbot_writing_os_release\n  condition: proc.name=brandbot
+    and fd.name=/etc/os-release\n\n- macro: selinux_writing_conf\n  condition: (proc.name
+    in (semodule,genhomedircon,sefcontext_comp) and fd.name startswith /etc/selinux)\n\n-
+    list: veritas_binaries\n  items: [vxconfigd, sfcache, vxclustadm, vxdctl, vxprint,
+    vxdmpadm, vxdisk, vxdg, vxassist, vxtune]\n\n- macro: veritas_driver_script\n  condition:
+    (proc.cmdline startswith \"perl /opt/VRTSsfmh/bin/mh_driver.pl\")\n\n- macro: veritas_progs\n
+    \ condition: (proc.name in (veritas_binaries) or veritas_driver_script)\n\n- macro:
+    veritas_writing_config\n  condition: (veritas_progs and (fd.name startswith /etc/vx
+    or fd.name startswith /etc/opt/VRTS or fd.name startswith /etc/vom))\n\n- macro:
+    nginx_writing_conf\n  condition: (proc.name in (nginx,nginx-ingress-c,nginx-ingress)
+    and (fd.name startswith /etc/nginx or fd.name startswith /etc/ingress-controller))\n\n-
+    macro: nginx_writing_certs\n  condition: >\n    (((proc.name=openssl and proc.pname=nginx-launch.sh)
+    or proc.name=nginx-launch.sh) and fd.name startswith /etc/nginx/certs)\n\n- macro:
+    chef_client_writing_conf\n  condition: (proc.pcmdline startswith \"chef-client /opt/gitlab\"
+    and fd.name startswith /etc/gitlab)\n\n- macro: centrify_writing_krb\n  condition:
+    (proc.name in (adjoin,addns) and fd.name startswith /etc/krb5)\n\n- macro: cockpit_writing_conf\n
+    \ condition: >\n    ((proc.pname=cockpit-kube-la or proc.aname[2]=cockpit-kube-la)\n
+    \    and fd.name startswith /etc/cockpit)\n\n- macro: ipsec_writing_conf\n  condition:
+    (proc.name=start-ipsec.sh and fd.directory=/etc/ipsec)\n\n- macro: exe_running_docker_save\n
+    \ condition: >\n    proc.name = \"exe\"\n    and (proc.cmdline contains \"/var/lib/docker\"\n
+    \   or proc.cmdline contains \"/var/run/docker\")\n    and proc.pname in (dockerd,
+    docker)\n\n# Ideally we'd have a length check here as well but sysdig\n# filterchecks
+    don't have operators like len()\n- macro: sed_temporary_file\n  condition: (proc.name=sed
+    and fd.name startswith \"/etc/sed\")\n\n- macro: python_running_get_pip\n  condition:
+    (proc.cmdline startswith \"python get-pip.py\")\n\n- macro: python_running_ms_oms\n
+    \ condition: (proc.cmdline startswith \"python /var/lib/waagent/\")\n\n- macro:
+    gugent_writing_guestagent_log\n  condition: (proc.name=gugent and fd.name=GuestAgent.log)\n\n-
+    macro: dse_writing_tmp\n  condition: (proc.name=dse-entrypoint and fd.name=/root/tmp__)\n\n-
+    macro: zap_writing_state\n  condition: (proc.name=java and proc.cmdline contains
+    \"jar /zap\" and fd.name startswith /root/.ZAP)\n\n- macro: airflow_writing_state\n
+    \ condition: (proc.name=airflow and fd.name startswith /root/airflow)\n\n- macro:
+    rpm_writing_root_rpmdb\n  condition: (proc.name=rpm and fd.directory=/root/.rpmdb)\n\n-
+    macro: maven_writing_groovy\n  condition: (proc.name=java and proc.cmdline contains
+    \"classpath /usr/local/apache-maven\" and fd.name startswith /root/.groovy)\n\n-
+    macro: chef_writing_conf\n  condition: (proc.name=chef-client and fd.name startswith
+    /root/.chef)\n\n- macro: kubectl_writing_state\n  condition: (proc.name in (kubectl,oc)
+    and fd.name startswith /root/.kube)\n\n- macro: java_running_cassandra\n  condition:
+    (proc.name=java and proc.cmdline contains \"cassandra.jar\")\n\n- macro: cassandra_writing_state\n
+    \ condition: (java_running_cassandra and fd.directory=/root/.cassandra)\n\n# Istio\n-
+    macro: galley_writing_state\n  condition: (proc.name=galley and fd.name in (known_istio_files))\n\n-
+    list: known_istio_files\n  items: [/healthready, /healthliveness]\n\n- macro: calico_writing_state\n
+    \ condition: (proc.name=kube-controller and fd.name startswith /status.json and
+    k8s.pod.name startswith calico)\n\n- macro: calico_writing_envvars\n  condition:
+    (proc.name=start_runit and fd.name startswith \"/etc/envvars\" and container.image.repository
+    endswith \"calico/node\")\n\n- list: repository_files\n  items: [sources.list]\n\n-
+    list: repository_directories\n  items: [/etc/apt/sources.list.d, /etc/yum.repos.d]\n\n-
+    macro: access_repositories\n  condition: (fd.filename in (repository_files) or fd.directory
+    in (repository_directories))\n\n- macro: modify_repositories\n  condition: (evt.arg.newpath
+    pmatch (repository_directories))\n\n- macro: user_known_update_package_registry\n
+    \ condition: (never_true)\n\n- rule: Update Package Repository\n  desc: Detect package
+    repositories get updated\n  condition: >\n    ((open_write and access_repositories)
+    or (modify and modify_repositories))\n    and not package_mgmt_procs\n    and not
+    exe_running_docker_save\n    and not user_known_update_package_registry\n  output:
+    >\n    Repository files get updated (user=%user.name command=%proc.cmdline pcmdline=%proc.pcmdline
+    file=%fd.name newpath=%evt.arg.newpath container_id=%container.id image=%container.image.repository)\n
+    \ priority:\n    NOTICE\n  tags: [filesystem, mitre_persistence]\n\n# Users should
+    overwrite this macro to specify conditions under which a\n# write under the binary
+    dir is ignored. For example, it may be okay to\n# install a binary in the context
+    of a ci/cd build.\n- macro: user_known_write_below_binary_dir_activities\n  condition:
+    (never_true)\n\n- rule: Write below binary dir\n  desc: an attempt to write to any
+    file below a set of binary directories\n  condition: >\n    bin_dir and evt.dir
+    = < and open_write\n    and not package_mgmt_procs\n    and not exe_running_docker_save\n
+    \   and not python_running_get_pip\n    and not python_running_ms_oms\n    and not
+    user_known_write_below_binary_dir_activities\n  output: >\n    File below a known
+    binary directory opened for writing (user=%user.name\n    command=%proc.cmdline
+    file=%fd.name parent=%proc.pname pcmdline=%proc.pcmdline gparent=%proc.aname[2]
+    container_id=%container.id image=%container.image.repository)\n  priority: ERROR\n
+    \ tags: [filesystem, mitre_persistence]\n\n# If you'd like to generally monitor
+    a wider set of directories on top\n# of the ones covered by the rule Write below
+    binary dir, you can use\n# the following rule and lists.\n\n- list: monitored_directories\n
+    \ items: [/boot, /lib, /lib64, /usr/lib, /usr/local/lib, /usr/local/sbin, /usr/local/bin,
+    /root/.ssh, /etc/cardserver]\n\n# Until https://github.com/draios/sysdig/pull/1153,
+    which fixes\n# https://github.com/draios/sysdig/issues/1152, is widely available,\n#
+    we can't use glob operators to match pathnames. Until then, we do a\n# looser check
+    to match ssh directories.\n# When fixed, we will use \"fd.name glob '/home/*/.ssh/*'\"\n-
+    macro: user_ssh_directory\n  condition: (fd.name startswith '/home' and fd.name
+    contains '.ssh')\n\n# google_accounts_(daemon)\n- macro: google_accounts_daemon_writing_ssh\n
+    \ condition: (proc.name=google_accounts and user_ssh_directory)\n\n- macro: cloud_init_writing_ssh\n
+    \ condition: (proc.name=cloud-init and user_ssh_directory)\n\n- macro: mkinitramfs_writing_boot\n
+    \ condition: (proc.pname in (mkinitramfs, update-initramf) and fd.directory=/boot)\n\n-
+    macro: monitored_dir\n  condition: >\n    (fd.directory in (monitored_directories)\n
+    \    or user_ssh_directory)\n    and not mkinitramfs_writing_boot\n\n# Add conditions
+    to this macro (probably in a separate file,\n# overwriting this macro) to allow
+    for specific combinations of\n# programs writing below monitored directories.\n#\n#
+    Its default value is an expression that always is false, which\n# becomes true when
+    the \"not ...\" in the rule is applied.\n- macro: user_known_write_monitored_dir_conditions\n
+    \ condition: (never_true)\n\n- rule: Write below monitored dir\n  desc: an attempt
+    to write to any file below a set of binary directories\n  condition: >\n    evt.dir
+    = < and open_write and monitored_dir\n    and not package_mgmt_procs\n    and not
+    coreos_write_ssh_dir\n    and not exe_running_docker_save\n    and not python_running_get_pip\n
+    \   and not python_running_ms_oms\n    and not google_accounts_daemon_writing_ssh\n
+    \   and not cloud_init_writing_ssh\n    and not user_known_write_monitored_dir_conditions\n
+    \ output: >\n    File below a monitored directory opened for writing (user=%user.name\n
+    \   command=%proc.cmdline file=%fd.name parent=%proc.pname pcmdline=%proc.pcmdline
+    gparent=%proc.aname[2] container_id=%container.id image=%container.image.repository)\n
+    \ priority: ERROR\n  tags: [filesystem, mitre_persistence]\n\n# This rule is disabled
+    by default as many system management tools\n# like ansible, etc can read these files/paths.
+    Enable it using this macro.\n\n- macro: consider_ssh_reads\n  condition: (never_true)\n\n-
+    macro: user_known_read_ssh_information_activities\n  condition: (never_true)\n\n-
+    rule: Read ssh information\n  desc: Any attempt to read files below ssh directories
+    by non-ssh programs\n  condition: >\n    ((open_read or open_directory) and\n     consider_ssh_reads
+    and\n     (user_ssh_directory or fd.name startswith /root/.ssh) and\n     not user_known_read_ssh_information_activities
+    and\n     not proc.name in (ssh_binaries))\n  output: >\n    ssh-related file/directory
+    read by non-ssh program (user=%user.name\n    command=%proc.cmdline file=%fd.name
+    parent=%proc.pname pcmdline=%proc.pcmdline container_id=%container.id image=%container.image.repository)\n
+    \ priority: ERROR\n  tags: [filesystem, mitre_discovery]\n\n- list: safe_etc_dirs\n
+    \ items: [/etc/cassandra, /etc/ssl/certs/java, /etc/logstash, /etc/nginx/conf.d,
+    /etc/container_environment, /etc/hrmconfig, /etc/fluent/configs.d]\n\n- macro: fluentd_writing_conf_files\n
+    \ condition: (proc.name=start-fluentd and fd.name in (/etc/fluent/fluent.conf, /etc/td-agent/td-agent.conf))\n\n-
+    macro: qualys_writing_conf_files\n  condition: (proc.name=qualys-cloud-ag and fd.name=/etc/qualys/cloud-agent/qagent-log.conf)\n\n-
+    macro: git_writing_nssdb\n  condition: (proc.name=git-remote-http and fd.directory=/etc/pki/nssdb)\n\n-
+    macro: plesk_writing_keys\n  condition: (proc.name in (plesk_binaries) and fd.name
+    startswith /etc/sw/keys)\n\n- macro: plesk_install_writing_apache_conf\n  condition:
+    (proc.cmdline startswith \"bash -hB /usr/lib/plesk-9.0/services/webserver.apache
+    configure\"\n              and fd.name=\"/etc/apache2/apache2.conf.tmp\")\n\n- macro:
+    plesk_running_mktemp\n  condition: (proc.name=mktemp and proc.aname[3] in (plesk_binaries))\n\n-
+    macro: networkmanager_writing_resolv_conf\n  condition: proc.aname[2]=nm-dispatcher
+    and fd.name=/etc/resolv.conf\n\n- macro: add_shell_writing_shells_tmp\n  condition:
+    (proc.name=add-shell and fd.name=/etc/shells.tmp)\n\n- macro: duply_writing_exclude_files\n
+    \ condition: (proc.name=touch and proc.pcmdline startswith \"bash /usr/bin/duply\"
+    and fd.name startswith \"/etc/duply\")\n\n- macro: xmlcatalog_writing_files\n  condition:
+    (proc.name=update-xmlcatal and fd.directory=/etc/xml)\n\n- macro: datadog_writing_conf\n
+    \ condition: ((proc.cmdline startswith \"python /opt/datadog-agent\" or\n               proc.cmdline
+    startswith \"entrypoint.sh /entrypoint.sh datadog start\" or\n               proc.cmdline
+    startswith \"agent.py /opt/datadog-agent\")\n              and fd.name startswith
+    \"/etc/dd-agent\")\n\n- macro: rancher_writing_conf\n  condition: ((proc.name in
+    (healthcheck, lb-controller, rancher-dns)) and\n              (container.image.repository
+    contains \"rancher/healthcheck\" or\n               container.image.repository contains
+    \"rancher/lb-service-haproxy\" or\n               container.image.repository contains
+    \"rancher/dns\") and\n              (fd.name startswith \"/etc/haproxy\" or fd.name
+    startswith \"/etc/rancher-dns\"))\n\n- macro: rancher_writing_root\n  condition:
+    (proc.name=rancher-metadat and\n              (container.image.repository contains
+    \"rancher/metadata\" or container.image.repository contains \"rancher/lb-service-haproxy\")
+    and\n              fd.name startswith \"/answers.json\")\n\n- macro: checkpoint_writing_state\n
+    \ condition: (proc.name=checkpoint and\n              container.image.repository
+    contains \"coreos/pod-checkpointer\" and\n              fd.name startswith \"/etc/kubernetes\")\n\n-
+    macro: jboss_in_container_writing_passwd\n  condition: >\n    ((proc.cmdline=\"run-java.sh
+    /opt/jboss/container/java/run/run-java.sh\"\n      or proc.cmdline=\"run-java.sh
+    /opt/run-java/run-java.sh\")\n     and container\n     and fd.name=/etc/passwd)\n\n-
+    macro: curl_writing_pki_db\n  condition: (proc.name=curl and fd.directory=/etc/pki/nssdb)\n\n-
+    macro: haproxy_writing_conf\n  condition: ((proc.name in (update-haproxy-,haproxy_reload.)
+    or proc.pname in (update-haproxy-,haproxy_reload,haproxy_reload.))\n               and
+    (fd.name=/etc/openvpn/client.map or fd.name startswith /etc/haproxy))\n\n- macro:
+    java_writing_conf\n  condition: (proc.name=java and fd.name=/etc/.java/.systemPrefs/.system.lock)\n\n-
+    macro: rabbitmq_writing_conf\n  condition: (proc.name=rabbitmq-server and fd.directory=/etc/rabbitmq)\n\n-
+    macro: rook_writing_conf\n  condition: (proc.name=toolbox.sh and container.image.repository=rook/toolbox\n
+    \             and fd.directory=/etc/ceph)\n\n- macro: httpd_writing_conf_logs\n
+    \ condition: (proc.name=httpd and fd.name startswith /etc/httpd/)\n\n- macro: mysql_writing_conf\n
+    \ condition: >\n    ((proc.name in (start-mysql.sh, run-mysqld) or proc.pname=start-mysql.sh)
+    and\n     (fd.name startswith /etc/mysql or fd.directory=/etc/my.cnf.d))\n\n- macro:
+    redis_writing_conf\n  condition: >\n    (proc.name in (run-redis, redis-launcher.)
+    and fd.name=/etc/redis.conf or fd.name startswith /etc/redis)\n\n- macro: openvpn_writing_conf\n
+    \ condition: (proc.name in (openvpn,openvpn-entrypo) and fd.name startswith /etc/openvpn)\n\n-
+    macro: php_handlers_writing_conf\n  condition: (proc.name=php_handlers_co and fd.name=/etc/psa/php_versions.json)\n\n-
+    macro: sed_writing_temp_file\n  condition: >\n    ((proc.aname[3]=cron_start.sh
+    and fd.name startswith /etc/security/sed) or\n     (proc.name=sed and (fd.name startswith
+    /etc/apt/sources.list.d/sed or\n                         fd.name startswith /etc/apt/sed
+    or\n                         fd.name startswith /etc/apt/apt.conf.d/sed)))\n\n-
+    macro: cron_start_writing_pam_env\n  condition: (proc.cmdline=\"bash /usr/sbin/start-cron\"
+    and fd.name=/etc/security/pam_env.conf)\n\n# In some cases dpkg-reconfigur runs
+    commands that modify /etc. Not\n# putting the full set of package management programs
+    yet.\n- macro: dpkg_scripting\n  condition: (proc.aname[2] in (dpkg-reconfigur,
+    dpkg-preconfigu))\n\n- macro: ufw_writing_conf\n  condition: (proc.name=ufw and
+    fd.directory=/etc/ufw)\n\n- macro: calico_writing_conf\n  condition: >\n    (proc.name
+    = calico-node and fd.name startswith /etc/calico)\n\n- macro: prometheus_conf_writing_conf\n
+    \ condition: (proc.name=prometheus-conf and fd.name startswith /etc/prometheus/config_out)\n\n-
+    macro: openshift_writing_conf\n  condition: (proc.name=oc and fd.name startswith
+    /etc/origin/node)\n\n- macro: keepalived_writing_conf\n  condition: (proc.name=keepalived
+    and fd.name=/etc/keepalived/keepalived.conf)\n\n- macro: etcd_manager_updating_dns\n
+    \ condition: (container and proc.name=etcd-manager and fd.name=/etc/hosts)\n\n-
+    macro: automount_using_mtab\n  condition: (proc.pname = automount and fd.name startswith
+    /etc/mtab)\n\n- macro: mcafee_writing_cma_d\n  condition: (proc.name=macompatsvc
+    and fd.directory=/etc/cma.d)\n\n- macro: avinetworks_supervisor_writing_ssh\n  condition:
+    >\n    (proc.cmdline=\"se_supervisor.p /opt/avi/scripts/se_supervisor.py -d\" and\n
+    \     (fd.name startswith /etc/ssh/known_host_ or\n       fd.name startswith /etc/ssh/ssh_monitor_config_
+    or\n       fd.name startswith /etc/ssh/ssh_config_))\n\n# Add conditions to this
+    macro (probably in a separate file,\n# overwriting this macro) to allow for specific
+    combinations of\n# programs writing below specific directories below\n# /etc. fluentd_writing_conf_files
+    is a good example to follow, as it\n# specifies both the program doing the writing
+    as well as the specific\n# files it is allowed to modify.\n#\n# In this file, it
+    just takes one of the programs in the base macro\n# and repeats it.\n\n- macro:
+    user_known_write_etc_conditions\n  condition: proc.name=confd\n\n# This is a placeholder
+    for user to extend the whitelist for write below etc rule\n- macro: user_known_write_below_etc_activities\n
+    \ condition: (never_true)\n\n- macro: write_etc_common\n  condition: >\n    etc_dir
+    and evt.dir = < and open_write\n    and proc_name_exists\n    and not proc.name
+    in (passwd_binaries, shadowutils_binaries, sysdigcloud_binaries,\n                          package_mgmt_binaries,
+    ssl_mgmt_binaries, dhcp_binaries,\n                          dev_creation_binaries,
+    shell_mgmt_binaries,\n                          mail_config_binaries,\n                          sshkit_script_binaries,\n
+    \                         ldconfig.real, ldconfig, confd, gpg, insserv,\n                          apparmor_parser,
+    update-mime, tzdata.config, tzdata.postinst,\n                          systemd,
+    systemd-machine, systemd-sysuser,\n                          debconf-show, rollerd,
+    bind9.postinst, sv,\n                          gen_resolvconf., update-ca-certi,
+    certbot, runsv,\n                          qualys-cloud-ag, locales.postins, nomachine_binaries,\n
+    \                         adclient, certutil, crlutil, pam-auth-update, parallels_insta,\n
+    \                         openshift-launc, update-rc.d, puppet)\n    and not (container
+    and proc.cmdline in (\"cp /run/secrets/kubernetes.io/serviceaccount/ca.crt /etc/pki/ca-trust/source/anchors/openshift-ca.crt\"))\n
+    \   and not proc.pname in (sysdigcloud_binaries, mail_config_binaries, hddtemp.postins,
+    sshkit_script_binaries, locales.postins, deb_binaries, dhcp_binaries)\n    and not
+    fd.name pmatch (safe_etc_dirs)\n    and not fd.name in (/etc/container_environment.sh,
+    /etc/container_environment.json, /etc/motd, /etc/motd.svc)\n    and not sed_temporary_file\n
+    \   and not exe_running_docker_save\n    and not ansible_running_python\n    and
+    not python_running_denyhosts\n    and not fluentd_writing_conf_files\n    and not
+    user_known_write_etc_conditions\n    and not run_by_centrify\n    and not run_by_adclient\n
+    \   and not qualys_writing_conf_files\n    and not git_writing_nssdb\n    and not
+    plesk_writing_keys\n    and not plesk_install_writing_apache_conf\n    and not plesk_running_mktemp\n
+    \   and not networkmanager_writing_resolv_conf\n    and not run_by_chef\n    and
+    not add_shell_writing_shells_tmp\n    and not duply_writing_exclude_files\n    and
+    not xmlcatalog_writing_files\n    and not parent_supervise_running_multilog\n    and
+    not supervise_writing_status\n    and not pki_realm_writing_realms\n    and not
+    htpasswd_writing_passwd\n    and not lvprogs_writing_conf\n    and not ovsdb_writing_openvswitch\n
+    \   and not datadog_writing_conf\n    and not curl_writing_pki_db\n    and not haproxy_writing_conf\n
+    \   and not java_writing_conf\n    and not dpkg_scripting\n    and not parent_ucf_writing_conf\n
+    \   and not rabbitmq_writing_conf\n    and not rook_writing_conf\n    and not php_handlers_writing_conf\n
+    \   and not sed_writing_temp_file\n    and not cron_start_writing_pam_env\n    and
+    not httpd_writing_conf_logs\n    and not mysql_writing_conf\n    and not openvpn_writing_conf\n
+    \   and not consul_template_writing_conf\n    and not countly_writing_nginx_conf\n
+    \   and not ms_oms_writing_conf\n    and not ms_scx_writing_conf\n    and not azure_scripts_writing_conf\n
+    \   and not azure_networkwatcher_writing_conf\n    and not couchdb_writing_conf\n
+    \   and not update_texmf_writing_conf\n    and not slapadd_writing_conf\n    and
+    not symantec_writing_conf\n    and not liveupdate_writing_conf\n    and not sosreport_writing_files\n
+    \   and not selinux_writing_conf\n    and not veritas_writing_config\n    and not
+    nginx_writing_conf\n    and not nginx_writing_certs\n    and not chef_client_writing_conf\n
+    \   and not centrify_writing_krb\n    and not cockpit_writing_conf\n    and not
+    ipsec_writing_conf\n    and not httpd_writing_ssl_conf\n    and not userhelper_writing_etc_security\n
+    \   and not pkgmgmt_progs_writing_pki\n    and not update_ca_trust_writing_pki\n
+    \   and not brandbot_writing_os_release\n    and not redis_writing_conf\n    and
+    not openldap_writing_conf\n    and not ucpagent_writing_conf\n    and not iscsi_writing_conf\n
+    \   and not istio_writing_conf\n    and not ufw_writing_conf\n    and not calico_writing_conf\n
+    \   and not calico_writing_envvars\n    and not prometheus_conf_writing_conf\n    and
+    not openshift_writing_conf\n    and not keepalived_writing_conf\n    and not rancher_writing_conf\n
+    \   and not checkpoint_writing_state\n    and not jboss_in_container_writing_passwd\n
+    \   and not etcd_manager_updating_dns\n    and not user_known_write_below_etc_activities\n
+    \   and not automount_using_mtab\n    and not mcafee_writing_cma_d\n    and not
+    avinetworks_supervisor_writing_ssh\n\n- rule: Write below etc\n  desc: an attempt
+    to write to any file below /etc\n  condition: write_etc_common\n  output: \"File
+    below /etc opened for writing (user=%user.name command=%proc.cmdline parent=%proc.pname
+    pcmdline=%proc.pcmdline file=%fd.name program=%proc.name gparent=%proc.aname[2]
+    ggparent=%proc.aname[3] gggparent=%proc.aname[4] container_id=%container.id image=%container.image.repository)\"\n
+    \ priority: ERROR\n  tags: [filesystem, mitre_persistence]\n\n- list: known_root_files\n
+    \ items: [/root/.monit.state, /root/.auth_tokens, /root/.bash_history, /root/.ash_history,
+    /root/.aws/credentials,\n          /root/.viminfo.tmp, /root/.lesshst, /root/.bzr.log,
+    /root/.gitconfig.lock, /root/.babel.json, /root/.localstack,\n          /root/.node_repl_history,
+    /root/.mongorc.js, /root/.dbshell, /root/.augeas/history, /root/.rnd, /root/.wget-hsts,
+    /health, /exec.fifo]\n\n- list: known_root_directories\n  items: [/root/.oracle_jre_usage,
+    /root/.ssh, /root/.subversion, /root/.nami]\n\n- macro: known_root_conditions\n
+    \ condition: (fd.name startswith /root/orcexec.\n              or fd.name startswith
+    /root/.m2\n              or fd.name startswith /root/.npm\n              or fd.name
+    startswith /root/.pki\n              or fd.name startswith /root/.ivy2\n              or
+    fd.name startswith /root/.config/Cypress\n              or fd.name startswith /root/.config/pulse\n
+    \             or fd.name startswith /root/.config/configstore\n              or
+    fd.name startswith /root/jenkins/workspace\n              or fd.name startswith
+    /root/.jenkins\n              or fd.name startswith /root/.cache\n              or
+    fd.name startswith /root/.sbt\n              or fd.name startswith /root/.java\n
+    \             or fd.name startswith /root/.glide\n              or fd.name startswith
+    /root/.sonar\n              or fd.name startswith /root/.v8flag\n              or
+    fd.name startswith /root/infaagent\n              or fd.name startswith /root/.local/lib/python\n
+    \             or fd.name startswith /root/.pm2\n              or fd.name startswith
+    /root/.gnupg\n              or fd.name startswith /root/.pgpass\n              or
+    fd.name startswith /root/.theano\n              or fd.name startswith /root/.gradle\n
+    \             or fd.name startswith /root/.android\n              or fd.name startswith
+    /root/.ansible\n              or fd.name startswith /root/.crashlytics\n              or
+    fd.name startswith /root/.dbus\n              or fd.name startswith /root/.composer\n
+    \             or fd.name startswith /root/.gconf\n              or fd.name startswith
+    /root/.nv\n              or fd.name startswith /root/.local/share/jupyter\n              or
+    fd.name startswith /root/oradiag_root\n              or fd.name startswith /root/workspace\n
+    \             or fd.name startswith /root/jvm\n              or fd.name startswith
+    /root/.node-gyp)\n\n# Add conditions to this macro (probably in a separate file,\n#
+    overwriting this macro) to allow for specific combinations of\n# programs writing
+    below specific directories below\n# / or /root.\n#\n# In this file, it just takes
+    one of the condition in the base macro\n# and repeats it.\n- macro: user_known_write_root_conditions\n
+    \ condition: fd.name=/root/.bash_history\n\n# This is a placeholder for user to
+    extend the whitelist for write below root rule\n- macro: user_known_write_below_root_activities\n
+    \ condition: (never_true)\n\n- macro: runc_writing_exec_fifo\n  condition: (proc.cmdline=\"runc:[1:CHILD]
+    init\" and fd.name=/exec.fifo)\n\n- macro: runc_writing_var_lib_docker\n  condition:
+    (proc.cmdline=\"runc:[1:CHILD] init\" and evt.arg.filename startswith /var/lib/docker)\n\n-
+    rule: Write below root\n  desc: an attempt to write to any file directly below /
+    or /root\n  condition: >\n    root_dir and evt.dir = < and open_write\n    and not
+    fd.name in (known_root_files)\n    and not fd.directory pmatch (known_root_directories)\n
+    \   and not exe_running_docker_save\n    and not gugent_writing_guestagent_log\n
+    \   and not dse_writing_tmp\n    and not zap_writing_state\n    and not airflow_writing_state\n
+    \   and not rpm_writing_root_rpmdb\n    and not maven_writing_groovy\n    and not
+    chef_writing_conf\n    and not kubectl_writing_state\n    and not cassandra_writing_state\n
+    \   and not galley_writing_state\n    and not calico_writing_state\n    and not
+    rancher_writing_root\n    and not runc_writing_exec_fifo\n    and not known_root_conditions\n
+    \   and not user_known_write_root_conditions\n    and not user_known_write_below_root_activities\n
+    \ output: \"File below / or /root opened for writing (user=%user.name command=%proc.cmdline
+    parent=%proc.pname file=%fd.name program=%proc.name container_id=%container.id image=%container.image.repository)\"\n
+    \ priority: ERROR\n  tags: [filesystem, mitre_persistence]\n\n- macro: cmp_cp_by_passwd\n
+    \ condition: proc.name in (cmp, cp) and proc.pname in (passwd, run-parts)\n\n- macro:
+    user_known_read_sensitive_files_activities\n  condition: (never_true)\n\n- rule:
+    Read sensitive file trusted after startup\n  desc: >\n    an attempt to read any
+    sensitive file (e.g. files containing user/password/authentication\n    information)
+    by a trusted program after startup. Trusted programs might read these files\n    at
+    startup to load initial state, but not afterwards.\n  condition: sensitive_files
+    and open_read and server_procs and not proc_is_new and proc.name!=\"sshd\" and not
+    user_known_read_sensitive_files_activities\n  output: >\n    Sensitive file opened
+    for reading by trusted program after startup (user=%user.name\n    command=%proc.cmdline
+    parent=%proc.pname file=%fd.name parent=%proc.pname gparent=%proc.aname[2] container_id=%container.id
+    image=%container.image.repository)\n  priority: WARNING\n  tags: [filesystem, mitre_credential_access]\n\n-
+    list: read_sensitive_file_binaries\n  items: [\n    iptables, ps, lsb_release, check-new-relea,
+    dumpe2fs, accounts-daemon, sshd,\n    vsftpd, systemd, mysql_install_d, psql, screen,
+    debconf-show, sa-update,\n    pam-auth-update, pam-config, /usr/sbin/spamd, polkit-agent-he,
+    lsattr, file, sosreport,\n    scxcimservera, adclient, rtvscand, cockpit-session,
+    userhelper, ossec-syscheckd\n    ]\n\n# Add conditions to this macro (probably in
+    a separate file,\n# overwriting this macro) to allow for specific combinations of\n#
+    programs accessing sensitive files.\n# fluentd_writing_conf_files is a good example
+    to follow, as it\n# specifies both the program doing the writing as well as the
+    specific\n# files it is allowed to modify.\n#\n# In this file, it just takes one
+    of the macros in the base rule\n# and repeats it.\n\n- macro: user_read_sensitive_file_conditions\n
+    \ condition: cmp_cp_by_passwd\n\n- rule: Read sensitive file untrusted\n  desc:
+    >\n    an attempt to read any sensitive file (e.g. files containing user/password/authentication\n
+    \   information). Exceptions are made for known trusted programs.\n  condition:
+    >\n    sensitive_files and open_read\n    and proc_name_exists\n    and not proc.name
+    in (user_mgmt_binaries, userexec_binaries, package_mgmt_binaries,\n     cron_binaries,
+    read_sensitive_file_binaries, shell_binaries, hids_binaries,\n     vpn_binaries,
+    mail_config_binaries, nomachine_binaries, sshkit_script_binaries,\n     in.proftpd,
+    mandb, salt-minion, postgres_mgmt_binaries)\n    and not cmp_cp_by_passwd\n    and
+    not ansible_running_python\n    and not proc.cmdline contains /usr/bin/mandb\n    and
+    not run_by_qualys\n    and not run_by_chef\n    and not run_by_google_accounts_daemon\n
+    \   and not user_read_sensitive_file_conditions\n    and not perl_running_plesk\n
+    \   and not perl_running_updmap\n    and not veritas_driver_script\n    and not
+    perl_running_centrifydc\n    and not runuser_reading_pam\n    and not user_known_read_sensitive_files_activities\n
+    \ output: >\n    Sensitive file opened for reading by non-trusted program (user=%user.name
+    program=%proc.name\n    command=%proc.cmdline file=%fd.name parent=%proc.pname gparent=%proc.aname[2]
+    ggparent=%proc.aname[3] gggparent=%proc.aname[4] container_id=%container.id image=%container.image.repository)\n
+    \ priority: WARNING\n  tags: [filesystem, mitre_credential_access, mitre_discovery]\n\n-
+    macro: amazon_linux_running_python_yum\n  condition: >\n    (proc.name = python
+    and\n     proc.pcmdline = \"python -m amazon_linux_extras system_motd\" and\n     proc.cmdline
+    startswith \"python -c import yum;\")\n\n- macro: user_known_write_rpm_database_activities\n
+    \ condition: (never_true)\n\n# Only let rpm-related programs write to the rpm database\n-
+    rule: Write below rpm database\n  desc: an attempt to write to the rpm database
+    by any non-rpm related program\n  condition: >\n    fd.name startswith /var/lib/rpm
+    and open_write\n    and not rpm_procs\n    and not ansible_running_python\n    and
+    not python_running_chef\n    and not exe_running_docker_save\n    and not amazon_linux_running_python_yum\n
+    \   and not user_known_write_rpm_database_activities\n  output: \"Rpm database opened
+    for writing by a non-rpm program (command=%proc.cmdline file=%fd.name parent=%proc.pname
+    pcmdline=%proc.pcmdline container_id=%container.id image=%container.image.repository)\"\n
+    \ priority: ERROR\n  tags: [filesystem, software_mgmt, mitre_persistence]\n\n- macro:
+    postgres_running_wal_e\n  condition: (proc.pname=postgres and proc.cmdline startswith
+    \"sh -c envdir /etc/wal-e.d/env /usr/local/bin/wal-e\")\n\n- macro: redis_running_prepost_scripts\n
+    \ condition: (proc.aname[2]=redis-server and (proc.cmdline contains \"redis-server.post-up.d\"
+    or proc.cmdline contains \"redis-server.pre-up.d\"))\n\n- macro: rabbitmq_running_scripts\n
+    \ condition: >\n    (proc.pname=beam.smp and\n    (proc.cmdline startswith \"sh
+    -c exec ps\" or\n     proc.cmdline startswith \"sh -c exec inet_gethost\" or\n     proc.cmdline=
+    \"sh -s unix:cmd\" or\n     proc.cmdline= \"sh -c exec /bin/sh -s unix:cmd 2>&1\"))\n\n-
+    macro: rabbitmqctl_running_scripts\n  condition: (proc.aname[2]=rabbitmqctl and
+    proc.cmdline startswith \"sh -c \")\n\n- macro: run_by_appdynamics\n  condition:
+    (proc.pname=java and proc.pcmdline startswith \"java -jar -Dappdynamics\")\n\n-
+    macro: user_known_db_spawned_processes\n  condition: (never_true)\n\n- rule: DB
+    program spawned process\n  desc: >\n    a database-server related program spawned
+    a new process other than itself.\n    This shouldn\\'t occur and is a follow on
+    from some SQL injection attacks.\n  condition: >\n    proc.pname in (db_server_binaries)\n
+    \   and spawned_process\n    and not proc.name in (db_server_binaries)\n    and
+    not postgres_running_wal_e\n    and not user_known_db_spawned_processes\n  output:
+    >\n    Database-related program spawned process other than itself (user=%user.name\n
+    \   program=%proc.cmdline parent=%proc.pname container_id=%container.id image=%container.image.repository)\n
+    \ priority: NOTICE\n  tags: [process, database, mitre_execution]\n\n- macro: user_known_modify_bin_dir_activities\n
+    \ condition: (never_true)\n\n- rule: Modify binary dirs\n  desc: an attempt to modify
+    any file below a set of binary directories.\n  condition: bin_dir_rename and modify
+    and not package_mgmt_procs and not exe_running_docker_save and not user_known_modify_bin_dir_activities\n
+    \ output: >\n    File below known binary directory renamed/removed (user=%user.name
+    command=%proc.cmdline\n    pcmdline=%proc.pcmdline operation=%evt.type file=%fd.name
+    %evt.args container_id=%container.id image=%container.image.repository)\n  priority:
+    ERROR\n  tags: [filesystem, mitre_persistence]\n\n- macro: user_known_mkdir_bin_dir_activities\n
+    \ condition: (never_true)\n\n- rule: Mkdir binary dirs\n  desc: an attempt to create
+    a directory below a set of binary directories.\n  condition: mkdir and bin_dir_mkdir
+    and not package_mgmt_procs and not user_known_mkdir_bin_dir_activities\n  output:
+    >\n    Directory below known binary directory created (user=%user.name\n    command=%proc.cmdline
+    directory=%evt.arg.path container_id=%container.id image=%container.image.repository)\n
+    \ priority: ERROR\n  tags: [filesystem, mitre_persistence]\n\n# This list allows
+    for easy additions to the set of commands allowed\n# to change thread namespace
+    without having to copy and override the\n# entire change thread namespace rule.\n-
+    list: user_known_change_thread_namespace_binaries\n  items: []\n\n- macro: user_known_change_thread_namespace_activities\n
+    \ condition: (never_true)\n\n- list: network_plugin_binaries\n  items: [aws-cni,
+    azure-vnet]\n\n- macro: calico_node\n  condition: (container.image.repository endswith
+    calico/node and proc.name=calico-node)\n\n- macro: weaveworks_scope\n  condition:
+    (container.image.repository endswith weaveworks/scope and proc.name=scope)\n\n-
+    rule: Change thread namespace\n  desc: >\n    an attempt to change a program/thread\\'s
+    namespace (commonly done\n    as a part of creating a container) by calling setns.\n
+    \ condition: >\n    evt.type=setns and evt.dir=<\n    and not (container.id=host
+    and proc.name in (docker_binaries, k8s_binaries, lxd_binaries, nsenter))\n    and
+    not proc.name in (sysdigcloud_binaries, sysdig, calico, oci-umount, cilium-cni,
+    network_plugin_binaries)\n    and not proc.name in (user_known_change_thread_namespace_binaries)\n
+    \   and not proc.name startswith \"runc\"\n    and not proc.cmdline startswith \"containerd\"\n
+    \   and not proc.pname in (sysdigcloud_binaries, hyperkube, kubelet, protokube,
+    dockerd, tini, aws)\n    and not python_running_sdchecks\n    and not java_running_sdjagent\n
+    \   and not kubelet_running_loopback\n    and not rancher_agent\n    and not rancher_network_manager\n
+    \   and not calico_node\n    and not weaveworks_scope\n    and not user_known_change_thread_namespace_activities\n
+    \ output: >\n    Namespace change (setns) by unexpected program (user=%user.name
+    command=%proc.cmdline\n    parent=%proc.pname %container.info container_id=%container.id
+    image=%container.image.repository:%container.image.tag)\n  priority: NOTICE\n  tags:
+    [process, mitre_privilege_escalation, mitre_lateral_movement]\n\n# The binaries
+    in this list and their descendents are *not* allowed\n# spawn shells. This includes
+    the binaries spawning shells directly as\n# well as indirectly. For example, apache
+    -> php/perl for\n# mod_{php,perl} -> some shell is also not allowed, because the
+    shell\n# has apache as an ancestor.\n\n- list: protected_shell_spawning_binaries\n
+    \ items: [\n    http_server_binaries, db_server_binaries, nosql_server_binaries,
+    mail_binaries,\n    fluentd, flanneld, splunkd, consul, smbd, runsv, PM2\n    ]\n\n-
+    macro: parent_java_running_zookeeper\n  condition: (proc.pname=java and proc.pcmdline
+    contains org.apache.zookeeper.server)\n\n- macro: parent_java_running_kafka\n  condition:
+    (proc.pname=java and proc.pcmdline contains kafka.Kafka)\n\n- macro: parent_java_running_elasticsearch\n
+    \ condition: (proc.pname=java and proc.pcmdline contains org.elasticsearch.bootstrap.Elasticsearch)\n\n-
+    macro: parent_java_running_activemq\n  condition: (proc.pname=java and proc.pcmdline
+    contains activemq.jar)\n\n- macro: parent_java_running_cassandra\n  condition: (proc.pname=java
+    and (proc.pcmdline contains \"-Dcassandra.config.loader\" or proc.pcmdline contains
+    org.apache.cassandra.service.CassandraDaemon))\n\n- macro: parent_java_running_jboss_wildfly\n
+    \ condition: (proc.pname=java and proc.pcmdline contains org.jboss)\n\n- macro:
+    parent_java_running_glassfish\n  condition: (proc.pname=java and proc.pcmdline contains
+    com.sun.enterprise.glassfish)\n\n- macro: parent_java_running_hadoop\n  condition:
+    (proc.pname=java and proc.pcmdline contains org.apache.hadoop)\n\n- macro: parent_java_running_datastax\n
+    \ condition: (proc.pname=java and proc.pcmdline contains com.datastax)\n\n- macro:
+    nginx_starting_nginx\n  condition: (proc.pname=nginx and proc.cmdline contains \"/usr/sbin/nginx
+    -c /etc/nginx/nginx.conf\")\n\n- macro: nginx_running_aws_s3_cp\n  condition: (proc.pname=nginx
+    and proc.cmdline startswith \"sh -c /usr/local/bin/aws s3 cp\")\n\n- macro: consul_running_net_scripts\n
+    \ condition: (proc.pname=consul and (proc.cmdline startswith \"sh -c curl\" or proc.cmdline
+    startswith \"sh -c nc\"))\n\n- macro: consul_running_alert_checks\n  condition:
+    (proc.pname=consul and proc.cmdline startswith \"sh -c /bin/consul-alerts\")\n\n-
+    macro: serf_script\n  condition: (proc.cmdline startswith \"sh -c serf\")\n\n- macro:
+    check_process_status\n  condition: (proc.cmdline startswith \"sh -c kill -0 \")\n\n#
+    In some cases, you may want to consider node processes run directly\n# in containers
+    as protected shell spawners. Examples include using\n# pm2-docker or pm2 start some-app.js
+    --no-daemon-mode as the direct\n# entrypoint of the container, and when the node
+    app is a long-lived\n# server using something like express.\n#\n# However, there
+    are other uses of node related to build pipelines for\n# which node is not really
+    a server but instead a general scripting\n# tool. In these cases, shells are very
+    likely and in these cases you\n# don't want to consider node processes protected
+    shell spawners.\n#\n# We have to choose one of these cases, so we consider node
+    processes\n# as unprotected by default. If you want to consider any node process\n#
+    run in a container as a protected shell spawner, override the below\n# macro to
+    remove the \"never_true\" clause, which allows it to take effect.\n- macro: possibly_node_in_container\n
+    \ condition: (never_true and (proc.pname=node and proc.aname[3]=docker-containe))\n\n#
+    Similarly, you may want to consider any shell spawned by apache\n# tomcat as suspect.
+    The famous apache struts attack (CVE-2017-5638)\n# could be exploited to do things
+    like spawn shells.\n#\n# However, many applications *do* use tomcat to run arbitrary
+    shells,\n# as a part of build pipelines, etc.\n#\n# Like for node, we make this
+    case opt-in.\n- macro: possibly_parent_java_running_tomcat\n  condition: (never_true
+    and proc.pname=java and proc.pcmdline contains org.apache.catalina.startup.Bootstrap)\n\n-
+    macro: protected_shell_spawner\n  condition: >\n    (proc.aname in (protected_shell_spawning_binaries)\n
+    \   or parent_java_running_zookeeper\n    or parent_java_running_kafka\n    or parent_java_running_elasticsearch\n
+    \   or parent_java_running_activemq\n    or parent_java_running_cassandra\n    or
+    parent_java_running_jboss_wildfly\n    or parent_java_running_glassfish\n    or
+    parent_java_running_hadoop\n    or parent_java_running_datastax\n    or possibly_parent_java_running_tomcat\n
+    \   or possibly_node_in_container)\n\n- list: mesos_shell_binaries\n  items: [mesos-docker-ex,
+    mesos-slave, mesos-health-ch]\n\n# Note that runsv is both in protected_shell_spawner
+    and the\n# exclusions by pname. This means that runsv can itself spawn shells\n#
+    (the ./run and ./finish scripts), but the processes runsv can not\n# spawn shells.\n-
+    rule: Run shell untrusted\n  desc: an attempt to spawn a shell below a non-shell
+    application. Specific applications are monitored.\n  condition: >\n    spawned_process\n
+    \   and shell_procs\n    and proc.pname exists\n    and protected_shell_spawner\n
+    \   and not proc.pname in (shell_binaries, gitlab_binaries, cron_binaries, user_known_shell_spawn_binaries,\n
+    \                          needrestart_binaries,\n                           mesos_shell_binaries,\n
+    \                          erl_child_setup, exechealthz,\n                           PM2,
+    PassengerWatchd, c_rehash, svlogd, logrotate, hhvm, serf,\n                           lb-controller,
+    nvidia-installe, runsv, statsite, erlexec, calico-node,\n                           \"puma
+    reactor\")\n    and not proc.cmdline in (known_shell_spawn_cmdlines)\n    and not
+    proc.aname in (unicorn_launche)\n    and not consul_running_net_scripts\n    and
+    not consul_running_alert_checks\n    and not nginx_starting_nginx\n    and not nginx_running_aws_s3_cp\n
+    \   and not run_by_package_mgmt_binaries\n    and not serf_script\n    and not check_process_status\n
+    \   and not run_by_foreman\n    and not python_mesos_marathon_scripting\n    and
+    not splunk_running_forwarder\n    and not postgres_running_wal_e\n    and not redis_running_prepost_scripts\n
+    \   and not rabbitmq_running_scripts\n    and not rabbitmqctl_running_scripts\n
+    \   and not run_by_appdynamics\n    and not user_shell_container_exclusions\n  output:
+    >\n    Shell spawned by untrusted binary (user=%user.name shell=%proc.name parent=%proc.pname\n
+    \   cmdline=%proc.cmdline pcmdline=%proc.pcmdline gparent=%proc.aname[2] ggparent=%proc.aname[3]\n
+    \   aname[4]=%proc.aname[4] aname[5]=%proc.aname[5] aname[6]=%proc.aname[6] aname[7]=%proc.aname[7]
+    container_id=%container.id image=%container.image.repository)\n  priority: DEBUG\n
+    \ tags: [shell, mitre_execution]\n\n- macro: allowed_openshift_registry_root\n  condition:
+    >\n    (container.image.repository startswith openshift3/ or\n     container.image.repository
+    startswith registry.redhat.io/openshift3/ or\n     container.image.repository startswith
+    registry.access.redhat.com/openshift3/)\n\n# Source: https://docs.openshift.com/enterprise/3.2/install_config/install/disconnected_install.html\n-
+    macro: openshift_image\n  condition: >\n    (allowed_openshift_registry_root and\n
+    \     (container.image.repository endswith /logging-deployment or\n       container.image.repository
+    endswith /logging-elasticsearch or\n       container.image.repository endswith /logging-kibana
+    or\n       container.image.repository endswith /logging-fluentd or\n       container.image.repository
+    endswith /logging-auth-proxy or\n       container.image.repository endswith /metrics-deployer
+    or\n       container.image.repository endswith /metrics-hawkular-metrics or\n       container.image.repository
+    endswith /metrics-cassandra or\n       container.image.repository endswith /metrics-heapster
+    or\n       container.image.repository endswith /ose-haproxy-router or\n       container.image.repository
+    endswith /ose-deployer or\n       container.image.repository endswith /ose-sti-builder
+    or\n       container.image.repository endswith /ose-docker-builder or\n       container.image.repository
+    endswith /ose-pod or\n       container.image.repository endswith /ose-node or\n
+    \      container.image.repository endswith /ose-docker-registry or\n       container.image.repository
+    endswith /prometheus-node-exporter or\n       container.image.repository endswith
+    /image-inspector))\n\n# These images are allowed both to run with --privileged and
+    to mount\n# sensitive paths from the host filesystem.\n#\n# NOTE: This list is only
+    provided for backwards compatibility with\n# older local falco rules files that
+    may have been appending to\n# trusted_images. To make customizations, it's better
+    to add images to\n# either privileged_images or falco_sensitive_mount_images.\n-
+    list: trusted_images\n  items: []\n\n# NOTE: This macro is only provided for backwards
+    compatibility with\n# older local falco rules files that may have been appending
+    to\n# trusted_images. To make customizations, it's better to add containers to\n#
+    user_trusted_containers, user_privileged_containers or user_sensitive_mount_containers.\n-
+    macro: trusted_containers\n  condition: (container.image.repository in (trusted_images))\n\n#
+    Add conditions to this macro (probably in a separate file,\n# overwriting this macro)
+    to specify additional containers that are\n# trusted and therefore allowed to run
+    privileged *and* with sensitive\n# mounts.\n#\n# Like trusted_images, this is deprecated
+    in favor of\n# user_privileged_containers and user_sensitive_mount_containers and\n#
+    is only provided for backwards compatibility.\n#\n# In this file, it just takes
+    one of the images in trusted_containers\n# and repeats it.\n- macro: user_trusted_containers\n
+    \ condition: (container.image.repository endswith sysdig/agent)\n\n- list: sematext_images\n
+    \ items: [docker.io/sematext/sematext-agent-docker, docker.io/sematext/agent, docker.io/sematext/logagent,\n
+    \         registry.access.redhat.com/sematext/sematext-agent-docker,\n          registry.access.redhat.com/sematext/agent,\n
+    \         registry.access.redhat.com/sematext/logagent]\n\n# These container images
+    are allowed to run with --privileged\n- list: falco_privileged_images\n  items:
+    [\n    docker.io/sysdig/agent, docker.io/sysdig/falco, docker.io/sysdig/sysdig,\n
+    \   gcr.io/google_containers/kube-proxy, docker.io/calico/node, quay.io/calico/node,\n
+    \   docker.io/rook/toolbox, docker.io/cloudnativelabs/kube-router, docker.io/mesosphere/mesos-slave,\n
+    \   docker.io/docker/ucp-agent, sematext_images, k8s.gcr.io/kube-proxy,\n    docker.io/falcosecurity/falco\n
+    \   ]\n\n- macro: falco_privileged_containers\n  condition: (openshift_image or\n
+    \             user_trusted_containers or\n              container.image.repository
+    in (trusted_images) or\n              container.image.repository in (falco_privileged_images)
+    or\n              container.image.repository startswith istio/proxy_ or\n              container.image.repository
+    startswith quay.io/sysdig)\n\n# Add conditions to this macro (probably in a separate
+    file,\n# overwriting this macro) to specify additional containers that are\n# allowed
+    to run privileged\n#\n# In this file, it just takes one of the images in falco_privileged_images\n#
+    and repeats it.\n- macro: user_privileged_containers\n  condition: (container.image.repository
+    endswith sysdig/agent)\n\n- list: rancher_images\n  items: [\n    rancher/network-manager,
+    rancher/dns, rancher/agent,\n    rancher/lb-service-haproxy, rancher/metadata, rancher/healthcheck\n
+    \ ]\n\n# These container images are allowed to mount sensitive paths from the\n#
+    host filesystem.\n- list: falco_sensitive_mount_images\n  items: [\n    docker.io/sysdig/agent,
+    docker.io/sysdig/falco, docker.io/sysdig/sysdig,\n    gcr.io/google_containers/hyperkube,\n
+    \   gcr.io/google_containers/kube-proxy, docker.io/calico/node,\n    docker.io/rook/toolbox,
+    docker.io/cloudnativelabs/kube-router, docker.io/consul,\n    docker.io/datadog/docker-dd-agent,
+    docker.io/datadog/agent, docker.io/docker/ucp-agent, docker.io/gliderlabs/logspout,\n
+    \   docker.io/netdata/netdata, docker.io/google/cadvisor, docker.io/prom/node-exporter,\n
+    \   amazon/amazon-ecs-agent\n    ]\n\n- macro: falco_sensitive_mount_containers\n
+    \ condition: (user_trusted_containers or\n              container.image.repository
+    in (trusted_images) or\n              container.image.repository in (falco_sensitive_mount_images)
+    or\n              container.image.repository startswith quay.io/sysdig)\n\n# These
+    container images are allowed to run with hostnetwork=true\n- list: falco_hostnetwork_images\n
+    \ items: []\n\n# Add conditions to this macro (probably in a separate file,\n# overwriting
+    this macro) to specify additional containers that are\n# allowed to perform sensitive
+    mounts.\n#\n# In this file, it just takes one of the images in falco_sensitive_mount_images\n#
+    and repeats it.\n- macro: user_sensitive_mount_containers\n  condition: (container.image.repository
+    = docker.io/sysdig/agent)\n\n- rule: Launch Privileged Container\n  desc: Detect
+    the initial process started in a privileged container. Exceptions are made for known
+    trusted images.\n  condition: >\n    container_started and container\n    and container.privileged=true\n
+    \   and not falco_privileged_containers\n    and not user_privileged_containers\n
+    \ output: Privileged container started (user=%user.name command=%proc.cmdline %container.info
+    image=%container.image.repository:%container.image.tag)\n  priority: INFO\n  tags:
+    [container, cis, mitre_privilege_escalation, mitre_lateral_movement]\n\n# For now,
+    only considering a full mount of /etc as\n# sensitive. Ideally, this would also
+    consider all subdirectories\n# below /etc as well, but the globbing mechanism used
+    by sysdig\n# doesn't allow exclusions of a full pattern, only single characters.\n-
+    macro: sensitive_mount\n  condition: (container.mount.dest[/proc*] != \"N/A\" or\n
+    \             container.mount.dest[/var/run/docker.sock] != \"N/A\" or\n              container.mount.dest[/var/run/crio/crio.sock]
+    != \"N/A\" or\n              container.mount.dest[/var/lib/kubelet] != \"N/A\" or\n
+    \             container.mount.dest[/var/lib/kubelet/pki] != \"N/A\" or\n              container.mount.dest[/]
+    != \"N/A\" or\n              container.mount.dest[/home/admin] != \"N/A\" or\n              container.mount.dest[/etc]
+    != \"N/A\" or\n              container.mount.dest[/etc/kubernetes] != \"N/A\" or\n
+    \             container.mount.dest[/etc/kubernetes/manifests] != \"N/A\" or\n              container.mount.dest[/root*]
+    != \"N/A\")\n\n# The steps libcontainer performs to set up the root program for
+    a container are:\n# - clone + exec self to a program runc:[0:PARENT]\n# - clone
+    a program runc:[1:CHILD] which sets up all the namespaces\n# - clone a second program
+    runc:[2:INIT] + exec to the root program.\n#   The parent of runc:[2:INIT] is runc:0:PARENT]\n#
+    As soon as 1:CHILD is created, 0:PARENT exits, so there's a race\n#   where at the
+    time 2:INIT execs the root program, 0:PARENT might have\n#   already exited, or
+    might still be around. So we handle both.\n# We also let runc:[1:CHILD] count as
+    the parent process, which can occur\n# when we lose events and lose track of state.\n\n-
+    macro: container_entrypoint\n  condition: (not proc.pname exists or proc.pname in
+    (runc:[0:PARENT], runc:[1:CHILD], runc, docker-runc, exe, docker-runc-cur))\n\n-
+    rule: Launch Sensitive Mount Container\n  desc: >\n    Detect the initial process
+    started by a container that has a mount from a sensitive host directory\n    (i.e.
+    /proc). Exceptions are made for known trusted images.\n  condition: >\n    container_started
+    and container\n    and sensitive_mount\n    and not falco_sensitive_mount_containers\n
+    \   and not user_sensitive_mount_containers\n  output: Container with sensitive
+    mount started (user=%user.name command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag
+    mounts=%container.mounts)\n  priority: INFO\n  tags: [container, cis, mitre_lateral_movement]\n\n#
+    In a local/user rules file, you could override this macro to\n# explicitly enumerate
+    the container images that you want to run in\n# your environment. In this main falco
+    rules file, there isn't any way\n# to know all the containers that can run, so any
+    container is\n# allowed, by using a filter that is guaranteed to evaluate to true.\n#
+    In the overridden macro, the condition would look something like\n# (container.image.repository
+    = vendor/container-1 or\n# container.image.repository = vendor/container-2 or ...)\n\n-
+    macro: allowed_containers\n  condition: (container.id exists)\n\n- rule: Launch
+    Disallowed Container\n  desc: >\n    Detect the initial process started by a container
+    that is not in a list of allowed containers.\n  condition: container_started and
+    container and not allowed_containers\n  output: Container started and not in allowed
+    list (user=%user.name command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag)\n
+    \ priority: WARNING\n  tags: [container, mitre_lateral_movement]\n\n- macro: user_known_system_user_login\n
+    \ condition: (never_true)\n\n# Anything run interactively by root\n# - condition:
+    evt.type != switch and user.name = root and proc.name != sshd and interactive\n#
+    \ output: \"Interactive root (%user.name %proc.name %evt.dir %evt.type %evt.args
+    %fd.name)\"\n#  priority: WARNING\n\n- rule: System user interactive\n  desc: an
+    attempt to run interactive commands by a system (i.e. non-login) user\n  condition:
+    spawned_process and system_users and interactive and not user_known_system_user_login\n
+    \ output: \"System user ran an interactive command (user=%user.name command=%proc.cmdline
+    container_id=%container.id image=%container.image.repository)\"\n  priority: INFO\n
+    \ tags: [users, mitre_remote_access_tools]\n\n# In some cases, a shell is expected
+    to be run in a container. For example, configuration\n# management software may
+    do this, which is expected.\n- macro: user_expected_terminal_shell_in_container_conditions\n
+    \ condition: (never_true)\n\n- rule: Terminal shell in container\n  desc: A shell
+    was used as the entrypoint/exec point into a container with an attached terminal.\n
+    \ condition: >\n    spawned_process and container\n    and shell_procs and proc.tty
+    != 0\n    and container_entrypoint\n    and not user_expected_terminal_shell_in_container_conditions\n
+    \ output: >\n    A shell was spawned in a container with an attached terminal (user=%user.name
+    %container.info\n    shell=%proc.name parent=%proc.pname cmdline=%proc.cmdline terminal=%proc.tty
+    container_id=%container.id image=%container.image.repository)\n  priority: NOTICE\n
+    \ tags: [container, shell, mitre_execution]\n\n# For some container types (mesos),
+    there isn't a container image to\n# work with, and the container name is autogenerated,
+    so there isn't\n# any stable aspect of the software to work with. In this case,
+    we\n# fall back to allowing certain command lines.\n\n- list: known_shell_spawn_cmdlines\n
+    \ items: [\n    '\"sh -c uname -p 2> /dev/null\"',\n    '\"sh -c uname -s 2>&1\"',\n
+    \   '\"sh -c uname -r 2>&1\"',\n    '\"sh -c uname -v 2>&1\"',\n    '\"sh -c uname
+    -a 2>&1\"',\n    '\"sh -c ruby -v 2>&1\"',\n    '\"sh -c getconf CLK_TCK\"',\n    '\"sh
+    -c getconf PAGESIZE\"',\n    '\"sh -c LC_ALL=C LANG=C /sbin/ldconfig -p 2>/dev/null\"',\n
+    \   '\"sh -c LANG=C /sbin/ldconfig -p 2>/dev/null\"',\n    '\"sh -c /sbin/ldconfig
+    -p 2>/dev/null\"',\n    '\"sh -c stty -a 2>/dev/null\"',\n    '\"sh -c stty -a <
+    /dev/tty\"',\n    '\"sh -c stty -g < /dev/tty\"',\n    '\"sh -c node index.js\"',\n
+    \   '\"sh -c node index\"',\n    '\"sh -c node ./src/start.js\"',\n    '\"sh -c
+    node app.js\"',\n    '\"sh -c node -e \\\"require(''nan'')\\\"\"',\n    '\"sh -c
+    node -e \\\"require(''nan'')\\\")\"',\n    '\"sh -c node $NODE_DEBUG_OPTION index.js
+    \"',\n    '\"sh -c crontab -l 2\"',\n    '\"sh -c lsb_release -a\"',\n    '\"sh
+    -c lsb_release -is 2>/dev/null\"',\n    '\"sh -c whoami\"',\n    '\"sh -c node_modules/.bin/bower-installer\"',\n
+    \   '\"sh -c /bin/hostname -f 2> /dev/null\"',\n    '\"sh -c locale -a\"',\n    '\"sh
+    -c  -t -i\"',\n    '\"sh -c openssl version\"',\n    '\"bash -c id -Gn kafadmin\"',\n
+    \   '\"sh -c /bin/sh -c ''date +%%s''\"'\n    ]\n\n# This list allows for easy additions
+    to the set of commands allowed\n# to run shells in containers without having to
+    without having to copy\n# and override the entire run shell in container macro.
+    Once\n# https://github.com/draios/falco/issues/255 is fixed this will be a\n# bit
+    easier, as someone could append of any of the existing lists.\n- list: user_known_shell_spawn_binaries\n
+    \ items: []\n\n# This macro allows for easy additions to the set of commands allowed\n#
+    to run shells in containers without having to override the entire\n# rule. Its default
+    value is an expression that always is false, which\n# becomes true when the \"not
+    ...\" in the rule is applied.\n- macro: user_shell_container_exclusions\n  condition:
+    (never_true)\n\n- macro: login_doing_dns_lookup\n  condition: (proc.name=login and
+    fd.l4proto=udp and fd.sport=53)\n\n# sockfamily ip is to exclude certain processes
+    (like 'groups') that communicate on unix-domain sockets\n# systemd can listen on
+    ports to launch things like sshd on demand\n- rule: System procs network activity\n
+    \ desc: any network activity performed by system binaries that are not expected
+    to send or receive any network traffic\n  condition: >\n    (fd.sockfamily = ip
+    and (system_procs or proc.name in (shell_binaries)))\n    and (inbound_outbound)\n
+    \   and not proc.name in (known_system_procs_network_activity_binaries)\n    and
+    not login_doing_dns_lookup\n    and not user_expected_system_procs_network_activity_conditions\n
+    \ output: >\n    Known system binary sent/received network traffic\n    (user=%user.name
+    command=%proc.cmdline connection=%fd.name container_id=%container.id image=%container.image.repository)\n
+    \ priority: NOTICE\n  tags: [network, mitre_exfiltration]\n\n# This list allows
+    easily whitelisting system proc names that are\n# expected to communicate on the
+    network.\n- list: known_system_procs_network_activity_binaries\n  items: [systemd,
+    hostid, id]\n\n# This macro allows specifying conditions under which a system binary\n#
+    is allowed to communicate on the network. For instance, only specific\n# proc.cmdline
+    values could be allowed to be more granular in what is\n# allowed.\n- macro: user_expected_system_procs_network_activity_conditions\n
+    \ condition: (never_true)\n\n# When filled in, this should look something like:\n#
+    (proc.env contains \"HTTP_PROXY=http://my.http.proxy.com \")\n# The trailing space
+    is intentional so avoid matching on prefixes of\n# the actual proxy.\n- macro: allowed_ssh_proxy_env\n
+    \ condition: (always_true)\n\n- list: http_proxy_binaries\n  items: [curl, wget]\n\n-
+    macro: http_proxy_procs\n  condition: (proc.name in (http_proxy_binaries))\n\n-
+    rule: Program run with disallowed http proxy env\n  desc: An attempt to run a program
+    with a disallowed HTTP_PROXY environment variable\n  condition: >\n    spawned_process
+    and\n    http_proxy_procs and\n    not allowed_ssh_proxy_env and\n    proc.env icontains
+    HTTP_PROXY\n  output: >\n    Program run with disallowed HTTP_PROXY environment
+    variable\n    (user=%user.name command=%proc.cmdline env=%proc.env parent=%proc.pname
+    container_id=%container.id image=%container.image.repository)\n  priority: NOTICE\n
+    \ tags: [host, users]\n\n# In some environments, any attempt by a interpreted program
+    (perl,\n# python, ruby, etc) to listen for incoming connections or perform\n# outgoing
+    connections might be suspicious. These rules are not\n# enabled by default, but
+    you can modify the following macros to\n# enable them.\n\n- macro: consider_interpreted_inbound\n
+    \ condition: (never_true)\n\n- macro: consider_interpreted_outbound\n  condition:
+    (never_true)\n\n- rule: Interpreted procs inbound network activity\n  desc: Any
+    inbound network activity performed by any interpreted program (perl, python, ruby,
+    etc.)\n  condition: >\n    (inbound and consider_interpreted_inbound\n     and interpreted_procs)\n
+    \ output: >\n    Interpreted program received/listened for network traffic\n    (user=%user.name
+    command=%proc.cmdline connection=%fd.name container_id=%container.id image=%container.image.repository)\n
+    \ priority: NOTICE\n  tags: [network, mitre_exfiltration]\n\n- rule: Interpreted
+    procs outbound network activity\n  desc: Any outbound network activity performed
+    by any interpreted program (perl, python, ruby, etc.)\n  condition: >\n    (outbound
+    and consider_interpreted_outbound\n     and interpreted_procs)\n  output: >\n    Interpreted
+    program performed outgoing network connection\n    (user=%user.name command=%proc.cmdline
+    connection=%fd.name container_id=%container.id image=%container.image.repository)\n
+    \ priority: NOTICE\n  tags: [network, mitre_exfiltration]\n\n- list: openvpn_udp_ports\n
+    \ items: [1194, 1197, 1198, 8080, 9201]\n\n- list: l2tp_udp_ports\n  items: [500,
+    1701, 4500, 10000]\n\n- list: statsd_ports\n  items: [8125]\n\n- list: ntp_ports\n
+    \ items: [123]\n\n# Some applications will connect a udp socket to an address only
+    to\n# test connectivity. Assuming the udp connect works, they will follow\n# up
+    with a tcp connect that actually sends/receives data.\n#\n# With that in mind, we
+    listed a few commonly seen ports here to avoid\n# some false positives. In addition,
+    we make the main rule opt-in, so\n# it's disabled by default.\n\n- list: test_connect_ports\n
+    \ items: [0, 9, 80, 3306]\n\n- macro: do_unexpected_udp_check\n  condition: (never_true)\n\n-
+    list: expected_udp_ports\n  items: [53, openvpn_udp_ports, l2tp_udp_ports, statsd_ports,
+    ntp_ports, test_connect_ports]\n\n- macro: expected_udp_traffic\n  condition: fd.port
+    in (expected_udp_ports)\n\n- rule: Unexpected UDP Traffic\n  desc: UDP traffic not
+    on port 53 (DNS) or other commonly used ports\n  condition: (inbound_outbound) and
+    do_unexpected_udp_check and fd.l4proto=udp and not expected_udp_traffic\n  output:
+    >\n    Unexpected UDP Traffic Seen\n    (user=%user.name command=%proc.cmdline connection=%fd.name
+    proto=%fd.l4proto evt=%evt.type %evt.args container_id=%container.id image=%container.image.repository)\n
+    \ priority: NOTICE\n  tags: [network, mitre_exfiltration]\n\n# With the current
+    restriction on system calls handled by falco\n# (e.g. excluding read/write/sendto/recvfrom/etc,
+    this rule won't\n# trigger).\n# - rule: Ssh error in syslog\n#   desc: any ssh errors
+    (failed logins, disconnects, ...) sent to syslog\n#   condition: syslog and ssh_error_message
+    and evt.dir = <\n#   output: \"sshd sent error message to syslog (error=%evt.buffer)\"\n#
+    \  priority: WARNING\n\n- macro: somebody_becoming_themself\n  condition: ((user.name=nobody
+    and evt.arg.uid=nobody) or\n              (user.name=www-data and evt.arg.uid=www-data)
+    or\n              (user.name=_apt and evt.arg.uid=_apt) or\n              (user.name=postfix
+    and evt.arg.uid=postfix) or\n              (user.name=pki-agent and evt.arg.uid=pki-agent)
+    or\n              (user.name=pki-acme and evt.arg.uid=pki-acme) or\n              (user.name=nfsnobody
+    and evt.arg.uid=nfsnobody) or\n              (user.name=postgres and evt.arg.uid=postgres))\n\n-
+    macro: nrpe_becoming_nagios\n  condition: (proc.name=nrpe and evt.arg.uid=nagios)\n\n#
+    In containers, the user name might be for a uid that exists in the\n# container
+    but not on the host. (See\n# https://github.com/draios/sysdig/issues/954). So in
+    that case, allow\n# a setuid.\n- macro: known_user_in_container\n  condition: (container
+    and user.name != \"N/A\")\n\n# Add conditions to this macro (probably in a separate
+    file,\n# overwriting this macro) to allow for specific combinations of\n# programs
+    changing users by calling setuid.\n#\n# In this file, it just takes one of the condition
+    in the base macro\n# and repeats it.\n- macro: user_known_non_sudo_setuid_conditions\n
+    \ condition: user.name=root\n\n# sshd, mail programs attempt to setuid to root even
+    when running as non-root. Excluding here to avoid meaningless FPs\n- rule: Non sudo
+    setuid\n  desc: >\n    an attempt to change users by calling setuid. sudo/su are
+    excluded. users \"root\" and \"nobody\"\n    suing to itself are also excluded,
+    as setuid calls typically involve dropping privileges.\n  condition: >\n    evt.type=setuid
+    and evt.dir=>\n    and (known_user_in_container or not container)\n    and not user.name=root\n
+    \   and not somebody_becoming_themself\n    and not proc.name in (known_setuid_binaries,
+    userexec_binaries, mail_binaries, docker_binaries,\n                          nomachine_binaries)\n
+    \   and not proc.name startswith \"runc:\"\n    and not java_running_sdjagent\n
+    \   and not nrpe_becoming_nagios\n    and not user_known_non_sudo_setuid_conditions\n
+    \ output: >\n    Unexpected setuid call by non-sudo, non-root program (user=%user.name
+    cur_uid=%user.uid parent=%proc.pname\n    command=%proc.cmdline uid=%evt.arg.uid
+    container_id=%container.id image=%container.image.repository)\n  priority: NOTICE\n
+    \ tags: [users, mitre_privilege_escalation]\n\n- macro: user_known_user_management_activities\n
+    \ condition: (never_true)\n\n- rule: User mgmt binaries\n  desc: >\n    activity
+    by any programs that can manage users, passwords, or permissions. sudo and su are
+    excluded.\n    Activity in containers is also excluded--some containers create custom
+    users on top\n    of a base linux distribution at startup.\n    Some innocuous commandlines
+    that don't actually change anything are excluded.\n  condition: >\n    spawned_process
+    and proc.name in (user_mgmt_binaries) and\n    not proc.name in (su, sudo, lastlog,
+    nologin, unix_chkpwd) and not container and\n    not proc.pname in (cron_binaries,
+    systemd, systemd.postins, udev.postinst, run-parts) and\n    not proc.cmdline startswith
+    \"passwd -S\" and\n    not proc.cmdline startswith \"useradd -D\" and\n    not proc.cmdline
+    startswith \"systemd --version\" and\n    not run_by_qualys and\n    not run_by_sumologic_securefiles
+    and\n    not run_by_yum and\n    not run_by_ms_oms and\n    not run_by_google_accounts_daemon
+    and\n    not user_known_user_management_activities\n  output: >\n    User management
+    binary command run outside of container\n    (user=%user.name command=%proc.cmdline
+    parent=%proc.pname gparent=%proc.aname[2] ggparent=%proc.aname[3] gggparent=%proc.aname[4])\n
+    \ priority: NOTICE\n  tags: [host, users, mitre_persistence]\n\n- list: allowed_dev_files\n
+    \ items: [\n    /dev/null, /dev/stdin, /dev/stdout, /dev/stderr,\n    /dev/random,
+    /dev/urandom, /dev/console, /dev/kmsg\n    ]\n\n- macro: user_known_create_files_below_dev_activities\n
+    \ condition: (never_true)\n\n# (we may need to add additional checks against false
+    positives, see:\n# https://bugs.launchpad.net/ubuntu/+source/rkhunter/+bug/86153)\n-
+    rule: Create files below dev\n  desc: creating any files below /dev other than known
+    programs that manage devices. Some rootkits hide files in /dev.\n  condition: >\n
+    \   fd.directory = /dev and\n    (evt.type = creat or ((evt.type = open or evt.type
+    = openat) and evt.arg.flags contains O_CREAT))\n    and not proc.name in (dev_creation_binaries)\n
+    \   and not fd.name in (allowed_dev_files)\n    and not fd.name startswith /dev/tty\n
+    \   and not user_known_create_files_below_dev_activities\n  output: \"File created
+    below /dev by untrusted program (user=%user.name command=%proc.cmdline file=%fd.name
+    container_id=%container.id image=%container.image.repository)\"\n  priority: ERROR\n
+    \ tags: [filesystem, mitre_persistence]\n\n\n# In a local/user rules file, you could
+    override this macro to\n# explicitly enumerate the container images that you want
+    to allow\n# access to EC2 metadata. In this main falco rules file, there isn't\n#
+    any way to know all the containers that should have access, so any\n# container
+    is alllowed, by repeating the \"container\" macro. In the\n# overridden macro, the
+    condition would look something like\n# (container.image.repository = vendor/container-1
+    or\n# container.image.repository = vendor/container-2 or ...)\n- macro: ec2_metadata_containers\n
+    \ condition: container\n\n# On EC2 instances, 169.254.169.254 is a special IP used
+    to fetch\n# metadata about the instance. It may be desirable to prevent access\n#
+    to this IP from containers.\n- rule: Contact EC2 Instance Metadata Service From
+    Container\n  desc: Detect attempts to contact the EC2 Instance Metadata Service
+    from a container\n  condition: outbound and fd.sip=\"169.254.169.254\" and container
+    and not ec2_metadata_containers\n  output: Outbound connection to EC2 instance metadata
+    service (command=%proc.cmdline connection=%fd.name %container.info image=%container.image.repository:%container.image.tag)\n
+    \ priority: NOTICE\n  tags: [network, aws, container, mitre_discovery]\n\n\n# This
+    rule is not enabled by default, since this rule is for cloud environment(GCP, AWS
+    and Azure) only.\n# If you want to enable this rule, overwrite the first macro,\n#
+    And you can filter the container that you want to allow access to metadata by overwriting
+    the second macro.\n- macro: consider_metadata_access\n  condition: (never_true)\n\n-
+    macro: user_known_metadata_access\n  condition: (k8s.ns.name = \"kube-system\")\n\n#
+    On GCP, AWS and Azure, 169.254.169.254 is a special IP used to fetch\n# metadata
+    about the instance. The metadata could be used to get credentials by attackers.\n-
+    rule: Contact cloud metadata service from container\n  desc: Detect attempts to
+    contact the Cloud Instance Metadata Service from a container\n  condition: outbound
+    and fd.sip=\"169.254.169.254\" and container and consider_metadata_access and not
+    user_known_metadata_access\n  output: Outbound connection to cloud instance metadata
+    service (command=%proc.cmdline connection=%fd.name %container.info image=%container.image.repository:%container.image.tag)\n
+    \ priority: NOTICE\n  tags: [network, container, mitre_discovery]\n\n\n# In a local/user
+    rules file, list the namespace or container images that are\n# allowed to contact
+    the K8s API Server from within a container. This\n# might cover cases where the
+    K8s infrastructure itself is running\n# within a container.\n- macro: k8s_containers\n
+    \ condition: >\n    (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,\n
+    \    gcr.io/google_containers/kube2sky, sysdig/agent, sysdig/falco,\n     sysdig/sysdig,
+    falcosecurity/falco) or (k8s.ns.name = \"kube-system\"))\n\n- macro: k8s_api_server\n
+    \ condition: (fd.sip.name=\"kubernetes.default.svc.cluster.local\")\n\n- macro:
+    user_known_contact_k8s_api_server_activities\n  condition: (never_true)\n\n- rule:
+    Contact K8S API Server From Container\n  desc: Detect attempts to contact the K8S
+    API Server from a container\n  condition: >\n    evt.type=connect and evt.dir=<
+    and \n    (fd.typechar=4 or fd.typechar=6) and\n    container and \n    not k8s_containers
+    and\n    k8s_api_server and\n    not user_known_contact_k8s_api_server_activities\n
+    \ output: Unexpected connection to K8s API Server from container (command=%proc.cmdline
+    %container.info image=%container.image.repository:%container.image.tag connection=%fd.name)\n
+    \ priority: NOTICE\n  tags: [network, k8s, container, mitre_discovery]\n\n# In a
+    local/user rules file, list the container images that are\n# allowed to contact
+    NodePort services from within a container. This\n# might cover cases where the K8s
+    infrastructure itself is running\n# within a container.\n#\n# By default, all containers
+    are allowed to contact NodePort services.\n- macro: nodeport_containers\n  condition:
+    container\n\n- rule: Unexpected K8s NodePort Connection\n  desc: Detect attempts
+    to use K8s NodePorts from a container\n  condition: (inbound_outbound) and fd.sport
+    >= 30000 and fd.sport <= 32767 and container and not nodeport_containers\n  output:
+    Unexpected K8s NodePort Connection (command=%proc.cmdline connection=%fd.name container_id=%container.id
+    image=%container.image.repository)\n  priority: NOTICE\n  tags: [network, k8s, container,
+    mitre_port_knocking]\n\n- list: network_tool_binaries\n  items: [nc, ncat, nmap,
+    dig, tcpdump, tshark, ngrep, telnet, mitmproxy, socat, zmap]\n\n- macro: network_tool_procs\n
+    \ condition: (proc.name in (network_tool_binaries))\n\n# In a local/user rules file,
+    create a condition that matches legitimate uses\n# of a package management process
+    inside a container.\n#\n# For example:\n# - macro: user_known_package_manager_in_container\n#
+    \  condition: proc.cmdline=\"dpkg -l\"\n- macro: user_known_package_manager_in_container\n
+    \ condition: (never_true)\n\n# Container is supposed to be immutable. Package management
+    should be done in building the image.\n- rule: Launch Package Management Process
+    in Container\n  desc: Package management process ran inside container\n  condition:
+    >\n    spawned_process\n    and container\n    and user.name != \"_apt\"\n    and
+    package_mgmt_procs\n    and not package_mgmt_ancestor_procs\n    and not user_known_package_manager_in_container\n
+    \ output: >\n    Package management process launched in container (user=%user.name\n
+    \   command=%proc.cmdline container_id=%container.id container_name=%container.name
+    image=%container.image.repository:%container.image.tag)\n  priority: ERROR\n  tags:
+    [process, mitre_persistence]\n\n- rule: Netcat Remote Code Execution in Container\n
+    \ desc: Netcat Program runs inside container that allows remote code execution\n
+    \ condition: >\n    spawned_process and container and\n    ((proc.name = \"nc\"
+    and (proc.args contains \"-e\" or proc.args contains \"-c\")) or\n     (proc.name
+    = \"ncat\" and (proc.args contains \"--sh-exec\" or proc.args contains \"--exec\"
+    or proc.args contains \"-e \"\n                              or proc.args contains
+    \"-c \" or proc.args contains \"--lua-exec\"))\n    )\n  output: >\n    Netcat runs
+    inside container that allows remote code execution (user=%user.name\n    command=%proc.cmdline
+    container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)\n
+    \ priority: WARNING\n  tags: [network, process, mitre_execution]\n\n- macro: user_known_network_tool_activities\n
+    \ condition: (never_true)\n\n- rule: Launch Suspicious Network Tool in Container\n
+    \ desc: Detect network tools launched inside container\n  condition: >\n    spawned_process
+    and container and network_tool_procs and not user_known_network_tool_activities\n
+    \ output: >\n    Network tool launched in container (user=%user.name command=%proc.cmdline
+    parent_process=%proc.pname\n    container_id=%container.id container_name=%container.name
+    image=%container.image.repository:%container.image.tag)\n  priority: NOTICE\n  tags:
+    [network, process, mitre_discovery, mitre_exfiltration]\n\n# This rule is not enabled
+    by default, as there are legitimate use\n# cases for these tools on hosts. If you
+    want to enable it, modify the\n# following macro.\n- macro: consider_network_tools_on_host\n
+    \ condition: (never_true)\n\n- rule: Launch Suspicious Network Tool on Host\n  desc:
+    Detect network tools launched on the host\n  condition: >\n    spawned_process and\n
+    \   not container and\n    consider_network_tools_on_host and\n    network_tool_procs
+    and\n    not user_known_network_tool_activities\n  output: >\n    Network tool launched
+    on host (user=%user.name command=%proc.cmdline parent_process=%proc.pname)\n  priority:
+    NOTICE\n  tags: [network, process, mitre_discovery, mitre_exfiltration]\n\n- list:
+    grep_binaries\n  items: [grep, egrep, fgrep]\n\n- macro: grep_commands\n  condition:
+    (proc.name in (grep_binaries))\n\n# a less restrictive search for things that might
+    be passwords/ssh/user etc.\n- macro: grep_more\n  condition: (never_true)\n\n- macro:
+    private_key_or_password\n  condition: >\n    (proc.args icontains \"BEGIN PRIVATE\"
+    or\n     proc.args icontains \"BEGIN RSA PRIVATE\" or\n     proc.args icontains
+    \"BEGIN DSA PRIVATE\" or\n     proc.args icontains \"BEGIN EC PRIVATE\" or\n     (grep_more
+    and\n      (proc.args icontains \" pass \" or\n       proc.args icontains \" ssh
+    \" or\n       proc.args icontains \" user \"))\n    )\n\n- rule: Search Private
+    Keys or Passwords\n  desc: >\n    Detect grep private keys or passwords activity.\n
+    \ condition: >\n    (spawned_process and\n     ((grep_commands and private_key_or_password)
+    or\n      (proc.name = \"find\" and (proc.args contains \"id_rsa\" or proc.args
+    contains \"id_dsa\")))\n    )\n  output: >\n    Grep private keys or passwords activities
+    found\n    (user=%user.name command=%proc.cmdline container_id=%container.id container_name=%container.name\n
+    \   image=%container.image.repository:%container.image.tag)\n  priority:\n    WARNING\n
+    \ tags: [process, mitre_credential_access]\n\n- list: log_directories\n  items:
+    [/var/log, /dev/log]\n\n- list: log_files\n  items: [syslog, auth.log, secure, kern.log,
+    cron, user.log, dpkg.log, last.log, yum.log, access_log, mysql.log, mysqld.log]\n\n-
+    macro: access_log_files\n  condition: (fd.directory in (log_directories) or fd.filename
+    in (log_files))\n\n# a placeholder for whitelist log files that could be cleared.
+    Recommend the macro as (fd.name startswith \"/var/log/app1*\")\n- macro: allowed_clear_log_files\n
+    \ condition: (never_true)\n\n- macro: trusted_logging_images\n  condition: (container.image.repository
+    endswith \"splunk/fluentd-hec\" or\n              container.image.repository endswith
+    \"fluent/fluentd-kubernetes-daemonset\" or\n              container.image.repository
+    endswith \"openshift3/ose-logging-fluentd\" or\n              container.image.repository
+    endswith \"containernetworking/azure-npm\")\n\n- rule: Clear Log Activities\n  desc:
+    Detect clearing of critical log files\n  condition: >\n    open_write and\n    access_log_files
+    and\n    evt.arg.flags contains \"O_TRUNC\" and\n    not trusted_logging_images
+    and\n    not allowed_clear_log_files\n  output: >\n    Log files were tampered (user=%user.name
+    command=%proc.cmdline file=%fd.name container_id=%container.id image=%container.image.repository)\n
+    \ priority:\n    WARNING\n  tags: [file, mitre_defense_evasion]\n\n- list: data_remove_commands\n
+    \ items: [shred, mkfs, mke2fs]\n\n- macro: clear_data_procs\n  condition: (proc.name
+    in (data_remove_commands))\n\n- macro: user_known_remove_data_activities\n  condition:
+    (never_true)\n\n- rule: Remove Bulk Data from Disk\n  desc: Detect process running
+    to clear bulk data from disk\n  condition: spawned_process and clear_data_procs
+    and not user_known_remove_data_activities\n  output: >\n    Bulk data has been removed
+    from disk (user=%user.name command=%proc.cmdline file=%fd.name container_id=%container.id
+    image=%container.image.repository)\n  priority:\n    WARNING\n  tags: [process,
+    mitre_persistence]\n\n- rule: Delete or rename shell history\n  desc: Detect shell
+    history deletion\n  condition: >\n    (modify and (\n      evt.arg.name contains
+    \"bash_history\" or\n      evt.arg.name contains \"zsh_history\" or\n      evt.arg.name
+    contains \"fish_read_history\" or\n      evt.arg.name endswith \"fish_history\"
+    or\n      evt.arg.oldpath contains \"bash_history\" or\n      evt.arg.oldpath contains
+    \"zsh_history\" or\n      evt.arg.oldpath contains \"fish_read_history\" or\n      evt.arg.oldpath
+    endswith \"fish_history\" or\n      evt.arg.path contains \"bash_history\" or\n
+    \     evt.arg.path contains \"zsh_history\" or\n      evt.arg.path contains \"fish_read_history\"
+    or\n      evt.arg.path endswith \"fish_history\")) or\n    (open_write and (\n      fd.name
+    contains \"bash_history\" or\n      fd.name contains \"zsh_history\" or\n      fd.name
+    contains \"fish_read_history\" or\n      fd.name endswith \"fish_history\") and
+    evt.arg.flags contains \"O_TRUNC\")\n  output: >\n    Shell history had been deleted
+    or renamed (user=%user.name type=%evt.type command=%proc.cmdline fd.name=%fd.name
+    name=%evt.arg.name path=%evt.arg.path oldpath=%evt.arg.oldpath %container.info)\n
+    \ priority:\n    WARNING\n  tags: [process, mitre_defense_evasion]\n\n# This rule
+    is deprecated and will/should never be triggered. Keep it here for backport compatibility.\n#
+    Rule Delete or rename shell history is the preferred rule to use now.\n- rule: Delete
+    Bash History\n  desc: Detect bash history deletion\n  condition: >\n    ((spawned_process
+    and proc.name in (shred, rm, mv) and proc.args contains \"bash_history\") or\n     (open_write
+    and fd.name contains \"bash_history\" and evt.arg.flags contains \"O_TRUNC\"))\n
+    \ output: >\n    Shell history had been deleted or renamed (user=%user.name type=%evt.type
+    command=%proc.cmdline fd.name=%fd.name name=%evt.arg.name path=%evt.arg.path oldpath=%evt.arg.oldpath
+    %container.info)\n  priority:\n    WARNING\n  tags: [process, mitre_defense_evasion]\n\n-
+    macro: consider_all_chmods\n  condition: (always_true)\n\n- list: user_known_chmod_applications\n
+    \ items: [hyperkube, kubelet]\n\n# This macro should be overridden in user rules
+    as needed. This is useful if a given application\n# should not be ignored alltogether
+    with the user_known_chmod_applications list, but only in\n# specific conditions.\n-
+    macro: user_known_set_setuid_or_setgid_bit_conditions\n  condition: (never_true)\n\n-
+    rule: Set Setuid or Setgid bit\n  desc: >\n    When the setuid or setgid bits are
+    set for an application,\n    this means that the application will run with the privileges
+    of the owning user or group respectively.\n    Detect setuid or setgid bits set
+    via chmod\n  condition: >\n    consider_all_chmods and chmod and (evt.arg.mode contains
+    \"S_ISUID\" or evt.arg.mode contains \"S_ISGID\")\n    and not proc.name in (user_known_chmod_applications)\n
+    \   and not exe_running_docker_save\n    and not user_known_set_setuid_or_setgid_bit_conditions\n
+    \ output: >\n    Setuid or setgid bit is set via chmod (fd=%evt.arg.fd filename=%evt.arg.filename
+    mode=%evt.arg.mode user=%user.name process=%proc.name\n    command=%proc.cmdline
+    container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)\n
+    \ priority:\n    NOTICE\n  tags: [process, mitre_persistence]\n\n- list: exclude_hidden_directories\n
+    \ items: [/root/.cassandra]\n\n# To use this rule, you should modify consider_hidden_file_creation.\n-
+    macro: consider_hidden_file_creation\n  condition: (never_true)\n\n- macro: user_known_create_hidden_file_activities\n
+    \ condition: (never_true)\n\n- rule: Create Hidden Files or Directories\n  desc:
+    Detect hidden files or directories created\n  condition: >\n    ((modify and evt.arg.newpath
+    contains \"/.\") or\n     (mkdir and evt.arg.path contains \"/.\") or\n     (open_write
+    and evt.arg.flags contains \"O_CREAT\" and fd.name contains \"/.\" and not fd.name
+    pmatch (exclude_hidden_directories))) and\n    consider_hidden_file_creation and\n
+    \   not user_known_create_hidden_file_activities\n  output: >\n    Hidden file or
+    directory created (user=%user.name command=%proc.cmdline\n    file=%fd.name newpath=%evt.arg.newpath
+    container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)\n
+    \ priority:\n    NOTICE\n  tags: [file, mitre_persistence]\n\n- list: remote_file_copy_binaries\n
+    \ items: [rsync, scp, sftp, dcp]\n\n- macro: remote_file_copy_procs\n  condition:
+    (proc.name in (remote_file_copy_binaries))\n\n- rule: Launch Remote File Copy Tools
+    in Container\n  desc: Detect remote file copy tools launched in container\n  condition:
+    >\n    spawned_process and container and remote_file_copy_procs\n  output: >\n    Remote
+    file copy tool launched in container (user=%user.name command=%proc.cmdline parent_process=%proc.pname\n
+    \   container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)\n
+    \ priority: NOTICE\n  tags: [network, process, mitre_lateral_movement, mitre_exfiltration]\n\n-
+    rule: Create Symlink Over Sensitive Files\n  desc: Detect symlink created over sensitive
+    files\n  condition: >\n    create_symlink and\n    (evt.arg.target in (sensitive_file_names)
+    or evt.arg.target in (sensitive_directory_names))\n  output: >\n    Symlinks created
+    over senstivie files (user=%user.name command=%proc.cmdline target=%evt.arg.target
+    linkpath=%evt.arg.linkpath parent_process=%proc.pname)\n  priority: NOTICE\n  tags:
+    [file, mitre_exfiltration]\n\n- list: miner_ports\n  items: [\n        25, 3333,
+    3334, 3335, 3336, 3357, 4444,\n        5555, 5556, 5588, 5730, 6099, 6666, 7777,\n
+    \       7778, 8000, 8001, 8008, 8080, 8118, 8333,\n        8888, 8899, 9332, 9999,
+    14433, 14444,\n        45560, 45700\n    ]\n\n- list: miner_domains\n  items: [\n
+    \     \"asia1.ethpool.org\",\"ca.minexmr.com\",\n      \"cn.stratum.slushpool.com\",\"de.minexmr.com\",\n
+    \     \"eth-ar.dwarfpool.com\",\"eth-asia.dwarfpool.com\",\n      \"eth-asia1.nanopool.org\",\"eth-au.dwarfpool.com\",\n
+    \     \"eth-au1.nanopool.org\",\"eth-br.dwarfpool.com\",\n      \"eth-cn.dwarfpool.com\",\"eth-cn2.dwarfpool.com\",\n
+    \     \"eth-eu.dwarfpool.com\",\"eth-eu1.nanopool.org\",\n      \"eth-eu2.nanopool.org\",\"eth-hk.dwarfpool.com\",\n
+    \     \"eth-jp1.nanopool.org\",\"eth-ru.dwarfpool.com\",\n      \"eth-ru2.dwarfpool.com\",\"eth-sg.dwarfpool.com\",\n
+    \     \"eth-us-east1.nanopool.org\",\"eth-us-west1.nanopool.org\",\n      \"eth-us.dwarfpool.com\",\"eth-us2.dwarfpool.com\",\n
+    \     \"eu.stratum.slushpool.com\",\"eu1.ethermine.org\",\n      \"eu1.ethpool.org\",\"fr.minexmr.com\",\n
+    \     \"mine.moneropool.com\",\"mine.xmrpool.net\",\n      \"pool.minexmr.com\",\"pool.monero.hashvault.pro\",\n
+    \     \"pool.supportxmr.com\",\"sg.minexmr.com\",\n      \"sg.stratum.slushpool.com\",\"stratum-eth.antpool.com\",\n
+    \     \"stratum-ltc.antpool.com\",\"stratum-zec.antpool.com\",\n      \"stratum.antpool.com\",\"us-east.stratum.slushpool.com\",\n
+    \     \"us1.ethermine.org\",\"us1.ethpool.org\",\n      \"us2.ethermine.org\",\"us2.ethpool.org\",\n
+    \     \"xmr-asia1.nanopool.org\",\"xmr-au1.nanopool.org\",\n      \"xmr-eu1.nanopool.org\",\"xmr-eu2.nanopool.org\",\n
+    \     \"xmr-jp1.nanopool.org\",\"xmr-us-east1.nanopool.org\",\n      \"xmr-us-west1.nanopool.org\",\"xmr.crypto-pool.fr\",\n
+    \     \"xmr.pool.minergate.com\"\n      ]\n\n- list: https_miner_domains\n  items:
+    [\n    \"ca.minexmr.com\",\n    \"cn.stratum.slushpool.com\",\n    \"de.minexmr.com\",\n
+    \   \"fr.minexmr.com\",\n    \"mine.moneropool.com\",\n    \"mine.xmrpool.net\",\n
+    \   \"pool.minexmr.com\",\n    \"sg.minexmr.com\",\n    \"stratum-eth.antpool.com\",\n
+    \   \"stratum-ltc.antpool.com\",\n    \"stratum-zec.antpool.com\",\n    \"stratum.antpool.com\",\n
+    \   \"xmr.crypto-pool.fr\"\n  ]\n\n- list: http_miner_domains\n  items: [\n    \"ca.minexmr.com\",\n
+    \   \"de.minexmr.com\",\n    \"fr.minexmr.com\",\n    \"mine.moneropool.com\",\n
+    \   \"mine.xmrpool.net\",\n    \"pool.minexmr.com\",\n    \"sg.minexmr.com\",\n
+    \   \"xmr.crypto-pool.fr\"\n  ]\n\n# Add rule based on crypto mining IOCs\n- macro:
+    minerpool_https\n  condition: (fd.sport=\"443\" and fd.sip.name in (https_miner_domains))\n\n-
+    macro: minerpool_http\n  condition: (fd.sport=\"80\" and fd.sip.name in (http_miner_domains))\n\n-
+    macro: minerpool_other\n  condition: (fd.sport in (miner_ports) and fd.sip.name
+    in (miner_domains))\n\n- macro: net_miner_pool\n  condition: (evt.type in (sendto,
+    sendmsg) and evt.dir=< and (fd.net != \"127.0.0.0/8\" and not fd.snet in (rfc_1918_addresses))
+    and ((minerpool_http) or (minerpool_https) or (minerpool_other)))\n\n- macro: trusted_images_query_miner_domain_dns\n
+    \ condition: (container.image.repository endswith \"sysdig/agent\" or container.image.repository
+    endswith \"falcosecurity/falco\")\n  append: false\n\n# The rule is disabled by
+    default.\n# Note: falco will send DNS request to resolve miner pool domain which
+    may trigger alerts in your environment.\n- rule: Detect outbound connections to
+    common miner pool ports\n  desc: Miners typically connect to miner pools on common
+    ports.\n  condition: net_miner_pool and not trusted_images_query_miner_domain_dns\n
+    \ enabled: false\n  output: Outbound connection to IP/Port flagged by cryptoioc.ch
+    (command=%proc.cmdline port=%fd.rport ip=%fd.rip container=%container.info image=%container.image.repository)\n
+    \ priority: CRITICAL\n  tags: [network, mitre_execution]\n\n- rule: Detect crypto
+    miners using the Stratum protocol\n  desc: Miners typically specify the mining pool
+    to connect to with a URI that begins with 'stratum+tcp'\n  condition: spawned_process
+    and proc.cmdline contains \"stratum+tcp\"\n  output: Possible miner running (command=%proc.cmdline
+    container=%container.info image=%container.image.repository)\n  priority: CRITICAL\n
+    \ tags: [process, mitre_execution]\n\n- list: k8s_client_binaries\n  items: [docker,
+    kubectl, crictl]\n\n# Whitelist for known docker client binaries run inside container\n#
+    - k8s.gcr.io/fluentd-gcp-scaler in GCP/GKE\n- macro: user_known_k8s_client_container\n
+    \ condition: >\n    (k8s.ns.name=\"kube-system\" and container.image.repository=k8s.gcr.io/fluentd-gcp-scaler)
+    or\n    container.image.repository=mcr.microsoft.com/aks/hcp/hcp-tunnel-front\n\n-
+    macro: user_known_k8s_client_container_parens\n  condition: (user_known_k8s_client_container)\n\n-
+    rule: The docker client is executed in a container\n  desc: Detect a k8s client
+    tool executed inside a container\n  condition: spawned_process and container and
+    not user_known_k8s_client_container_parens and proc.name in (k8s_client_binaries)\n
+    \ output: \"Docker or kubernetes client executed in container (user=%user.name %container.info
+    parent=%proc.pname cmdline=%proc.cmdline image=%container.image.repository:%container.image.tag)\"\n
+    \ priority: WARNING\n  tags: [container, mitre_execution]\n\n\n# This rule is not
+    enabled by default, as there are legitimate use\n# cases for raw packet. If you
+    want to enable it, modify the\n# following macro.\n- macro: consider_packet_socket_communication\n
+    \ condition: (never_true)\n\n- list: user_known_packet_socket_binaries\n  items:
+    []\n\n- rule: Packet socket created in container\n  desc: Detect new packet socket
+    at the device driver (OSI Layer 2) level in a container. Packet socket could be
+    used to do ARP Spoofing by attacker.\n  condition: evt.type=socket and evt.arg[0]=AF_PACKET
+    and consider_packet_socket_communication and container and not proc.name in (user_known_packet_socket_binaries)\n
+    \ output: Packet socket was created in a container (user=%user.name command=%proc.cmdline
+    socket_info=%evt.args container_id=%container.id container_name=%container.name
+    image=%container.image.repository:%container.image.tag)\n  priority: NOTICE\n  tags:
+    [network, mitre_discovery]\n\n# Change to (always_true) to enable rule 'Network
+    connection outside local subnet'\n- macro: enabled_rule_network_only_subnet\n  condition:
+    (never_true)\n\n# Images that are allowed to have outbound traffic\n- list: images_allow_network_outside_subnet\n
+    \ items: []\n\n# Namespaces where the rule is enforce\n- list: namespace_scope_network_only_subnet\n
+    \ items: []\n\n- macro: network_local_subnet\n  condition: >\n    fd.rnet in (rfc_1918_addresses)
+    or\n    fd.ip = \"0.0.0.0\" or\n    fd.net = \"127.0.0.0/8\"\n\n# # How to test:\n#
+    # Change macro enabled_rule_network_only_subnet to condition: always_true\n# # Add
+    'default' to namespace_scope_network_only_subnet\n# # Run:\n# kubectl run --generator=run-pod/v1
+    -n default -i --tty busybox --image=busybox --rm -- wget google.com -O /var/google.html\n#
+    # Check logs running\n\n- rule: Network Connection outside Local Subnet\n  desc:
+    Detect traffic to image outside local subnet.\n  condition: >\n    enabled_rule_network_only_subnet
+    and\n    inbound_outbound and\n    container and\n    not network_local_subnet and\n
+    \   k8s.ns.name in (namespace_scope_network_only_subnet)\n  output: >\n    Network
+    connection outside local subnet\n    (command=%proc.cmdline connection=%fd.name
+    user=%user.name container_id=%container.id\n     image=%container.image.repository
+    namespace=%k8s.ns.name\n     fd.rip.name=%fd.rip.name fd.lip.name=%fd.lip.name fd.cip.name=%fd.cip.name
+    fd.sip.name=%fd.sip.name)\n  priority: WARNING\n  tags: [network]\n\n- macro: allowed_port\n
+    \ condition: (never_true)\n\n- list: allowed_image\n  items: [] # add image to monitor,
+    i.e.: bitnami/nginx\n\n- list: authorized_server_binaries\n  items: []  # add binary
+    to allow, i.e.: nginx\n\n- list: authorized_server_port\n  items: [] # add port
+    to allow, i.e.: 80\n\n# # How to test:\n# kubectl run --image=nginx nginx-app --port=80
+    --env=\"DOMAIN=cluster\"\n# kubectl expose deployment nginx-app --port=80 --name=nginx-http
+    --type=LoadBalancer\n# # On minikube:\n# minikube service nginx-http\n# # On general
+    K8s:\n# kubectl get services\n# kubectl cluster-info\n# # Visit the Nginx service
+    and port, should not fire.\n# # Change rule to different port, then different process
+    name, and test again that it fires.\n\n- rule: Outbound or Inbound Traffic not to
+    Authorized Server Process and Port\n  desc: Detect traffic that is not to authorized
+    server process and port.\n  condition: >\n    allowed_port and\n    inbound_outbound
+    and\n    container and\n    container.image.repository in (allowed_image) and\n
+    \   not proc.name in (authorized_server_binary) and\n    not fd.sport in (authorized_server_port)\n
+    \ output: >\n    Network connection outside authorized port and binary\n    (command=%proc.cmdline
+    connection=%fd.name user=%user.name container_id=%container.id\n    image=%container.image.repository)\n
+    \ priority: WARNING\n  tags: [network]\n\n- macro: user_known_stand_streams_redirect_activities\n
+    \ condition: (never_true)\n\n- rule: Redirect STDOUT/STDIN to Network Connection
+    in Container\n  desc: Detect redirecting stdout/stdin to network connection in container
+    (potential reverse shell).\n  condition: evt.type=dup and evt.dir=> and container
+    and fd.num in (0, 1, 2) and fd.type in (\"ipv4\", \"ipv6\") and not user_known_stand_streams_redirect_activities\n
+    \ output: >\n    Redirect stdout/stdin to network connection (user=%user.name %container.info
+    process=%proc.name parent=%proc.pname cmdline=%proc.cmdline terminal=%proc.tty container_id=%container.id
+    image=%container.image.repository fd.name=%fd.name fd.num=%fd.num fd.type=%fd.type
+    fd.sip=%fd.sip)\n  priority: WARNING\n\n# The two Container Drift rules below will
+    fire when a new executable is created in a container.\n# There are two ways to create
+    executables - file is created with execution permissions or permissions change of
+    existing file.\n# We will use a new sysdig filter, is_open_exec, to find all files
+    creations with execution permission, and will trace all chmods in a container.\n#
+    The use case we are targeting here is an attempt to execute code that was not shipped
+    as part of a container (drift) -\n# an activity that might be malicious or non-compliant.\n#
+    Two things to pay attention to:\n#   1) In most cases, 'docker cp' will not be identified,
+    but the assumption is that if an attacker gained access to the container runtime
+    daemon, they are already privileged\n#   2) Drift rules will be noisy in environments
+    in which containers are built (e.g. docker build)\n# These two rules are not enabled
+    by default. Use `never_true` in macro condition to enable them.\n\n- macro: user_known_container_drift_activities\n
+    \ condition: (always_true)\n\n- rule: Container Drift Detected (chmod)\n  desc:
+    New executable created in a container due to chmod\n  condition: >\n    chmod and\n
+    \   consider_all_chmods and\n    container and\n    not runc_writing_exec_fifo and\n
+    \   not runc_writing_var_lib_docker and\n    not user_known_container_drift_activities
+    and\n    evt.rawres>=0 and\n    ((evt.arg.mode contains \"S_IXUSR\") or\n    (evt.arg.mode
+    contains \"S_IXGRP\") or\n    (evt.arg.mode contains \"S_IXOTH\"))\n  output: Drift
+    detected (chmod), new executable created in a container (user=%user.name command=%proc.cmdline
+    filename=%evt.arg.filename name=%evt.arg.name mode=%evt.arg.mode event=%evt.type)\n
+    \ priority: ERROR\n\n# ****************************************************************************\n#
+    * \"Container Drift Detected (open+create)\" requires FALCO_ENGINE_VERSION 6 *\n#
+    ****************************************************************************\n-
+    rule: Container Drift Detected (open+create)\n  desc: New executable created in
+    a container due to open+create\n  condition: >\n    evt.type in (open,openat,creat)
+    and\n    evt.is_open_exec=true and\n    container and\n    not runc_writing_exec_fifo
+    and\n    not runc_writing_var_lib_docker and\n    not user_known_container_drift_activities
+    and\n    evt.rawres>=0\n  output: Drift detected (open+create), new executable created
+    in a container (user=%user.name command=%proc.cmdline filename=%evt.arg.filename
+    name=%evt.arg.name mode=%evt.arg.mode event=%evt.type)\n  priority: ERROR\n\n\n#
+    Application rules have moved to application_rules.yaml. Please look\n# there if
+    you want to enable them by adding to\n# falco_rules.local.yaml.\n"
+  k8s_audit_rules.yaml: "#\n# Copyright (C) 2019 The Falco Authors.\n#\n#\n# Licensed
+    under the Apache License, Version 2.0 (the \"License\");\n# you may not use this
+    file except in compliance with the License.\n# You may obtain a copy of the License
+    at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by
+    applicable law or agreed to in writing, software\n# distributed under the License
+    is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.\n# See the License for the specific language governing
+    permissions and\n# limitations under the License.\n#\n- required_engine_version:
+    2\n\n# Like always_true/always_false, but works with k8s audit events\n- macro:
+    k8s_audit_always_true\n  condition: (jevt.rawtime exists)\n\n- macro: k8s_audit_never_true\n
+    \ condition: (jevt.rawtime=0)\n\n# Generally only consider audit events once the
+    response has completed\n- list: k8s_audit_stages\n  items: [\"ResponseComplete\"]\n\n#
+    Generally exclude users starting with \"system:\"\n- macro: non_system_user\n  condition:
+    (not ka.user.name startswith \"system:\")\n\n# This macro selects the set of Audit
+    Events used by the below rules.\n- macro: kevt\n  condition: (jevt.value[/stage]
+    in (k8s_audit_stages))\n\n- macro: kevt_started\n  condition: (jevt.value[/stage]=ResponseStarted)\n\n#
+    If you wish to restrict activity to a specific set of users, override/append to
+    this list.\n# users created by kops are included\n- list: vertical_pod_autoscaler_users\n
+    \ items: [\"vpa-recommender\", \"vpa-updater\"]\n\n- list: allowed_k8s_users\n  items:
+    [\n    \"minikube\", \"minikube-user\", \"kubelet\", \"kops\", \"admin\", \"kube\",
+    \"kube-proxy\", \"kube-apiserver-healthcheck\",\n    vertical_pod_autoscaler_users,\n
+    \   ]\n\n- rule: Disallowed K8s User\n  desc: Detect any k8s operation by users
+    outside of an allowed set of users.\n  condition: kevt and non_system_user and not
+    ka.user.name in (allowed_k8s_users)\n  output: K8s Operation performed by user not
+    in allowed list of users (user=%ka.user.name target=%ka.target.name/%ka.target.resource
+    verb=%ka.verb uri=%ka.uri resp=%ka.response.code)\n  priority: WARNING\n  source:
+    k8s_audit\n  tags: [k8s]\n\n# In a local/user rules file, you could override this
+    macro to\n# explicitly enumerate the container images that you want to run in\n#
+    your environment. In this main falco rules file, there isn't any way\n# to know
+    all the containers that can run, so any container is\n# allowed, by using the always_true
+    macro. In the overridden macro, the condition\n# would look something like (ka.req.pod.containers.image.repository
+    in (my-repo/my-image))\n- macro: allowed_k8s_containers\n  condition: (k8s_audit_always_true)\n\n-
+    macro: response_successful\n  condition: (ka.response.code startswith 2)\n\n- macro:
+    kcreate\n  condition: ka.verb=create\n\n- macro: kmodify\n  condition: (ka.verb
+    in (create,update,patch))\n\n- macro: kdelete\n  condition: ka.verb=delete\n\n-
+    macro: pod\n  condition: ka.target.resource=pods and not ka.target.subresource exists\n\n-
+    macro: pod_subresource\n  condition: ka.target.resource=pods and ka.target.subresource
+    exists\n\n- macro: deployment\n  condition: ka.target.resource=deployments\n\n-
+    macro: service\n  condition: ka.target.resource=services\n\n- macro: configmap\n
+    \ condition: ka.target.resource=configmaps\n\n- macro: namespace\n  condition: ka.target.resource=namespaces\n\n-
+    macro: serviceaccount\n  condition: ka.target.resource=serviceaccounts\n\n- macro:
+    clusterrole\n  condition: ka.target.resource=clusterroles\n\n- macro: clusterrolebinding\n
+    \ condition: ka.target.resource=clusterrolebindings\n\n- macro: role\n  condition:
+    ka.target.resource=roles\n\n- macro: secret\n  condition: ka.target.resource=secrets\n\n-
+    macro: health_endpoint\n  condition: ka.uri=/healthz\n\n- rule: Create Disallowed
+    Pod\n  desc: >\n    Detect an attempt to start a pod with a container image outside
+    of a list of allowed images.\n  condition: kevt and pod and kcreate and not allowed_k8s_containers\n
+    \ output: Pod started with container not in allowed list (user=%ka.user.name pod=%ka.resp.name
+    ns=%ka.target.namespace images=%ka.req.pod.containers.image)\n  priority: WARNING\n
+    \ source: k8s_audit\n  tags: [k8s]\n\n- rule: Create Privileged Pod\n  desc: >\n
+    \   Detect an attempt to start a pod with a privileged container\n  condition: kevt
+    and pod and kcreate and ka.req.pod.containers.privileged intersects (true) and not
+    ka.req.pod.containers.image.repository in (falco_privileged_images)\n  output: Pod
+    started with privileged container (user=%ka.user.name pod=%ka.resp.name ns=%ka.target.namespace
+    images=%ka.req.pod.containers.image)\n  priority: WARNING\n  source: k8s_audit\n
+    \ tags: [k8s]\n\n- macro: sensitive_vol_mount\n  condition: >\n    (ka.req.pod.volumes.hostpath
+    intersects (/proc, /var/run/docker.sock, /, /etc, /root, /var/run/crio/crio.sock,
+    /home/admin, /var/lib/kubelet, /var/lib/kubelet/pki, /etc/kubernetes, /etc/kubernetes/manifests))\n\n-
+    rule: Create Sensitive Mount Pod\n  desc: >\n    Detect an attempt to start a pod
+    with a volume from a sensitive host directory (i.e. /proc).\n    Exceptions are
+    made for known trusted images.\n  condition: kevt and pod and kcreate and sensitive_vol_mount
+    and not ka.req.pod.containers.image.repository in (falco_sensitive_mount_images)\n
+    \ output: Pod started with sensitive mount (user=%ka.user.name pod=%ka.resp.name
+    ns=%ka.target.namespace images=%ka.req.pod.containers.image volumes=%jevt.value[/requestObject/spec/volumes])\n
+    \ priority: WARNING\n  source: k8s_audit\n  tags: [k8s]\n\n# Corresponds to K8s
+    CIS Benchmark 1.7.4\n- rule: Create HostNetwork Pod\n  desc: Detect an attempt to
+    start a pod using the host network.\n  condition: kevt and pod and kcreate and ka.req.pod.host_network
+    intersects (true) and not ka.req.pod.containers.image.repository in (falco_hostnetwork_images)\n
+    \ output: Pod started using host network (user=%ka.user.name pod=%ka.resp.name ns=%ka.target.namespace
+    images=%ka.req.pod.containers.image)\n  priority: WARNING\n  source: k8s_audit\n
+    \ tags: [k8s]\n\n- macro: user_known_node_port_service\n  condition: (k8s_audit_never_true)\n\n-
+    rule: Create NodePort Service\n  desc: >\n    Detect an attempt to start a service
+    with a NodePort service type\n  condition: kevt and service and kcreate and ka.req.service.type=NodePort
+    and not user_known_node_port_service\n  output: NodePort Service Created (user=%ka.user.name
+    service=%ka.target.name ns=%ka.target.namespace ports=%ka.req.service.ports)\n  priority:
+    WARNING\n  source: k8s_audit\n  tags: [k8s]\n\n- macro: contains_private_credentials\n
+    \ condition: >\n    (ka.req.configmap.obj contains \"aws_access_key_id\" or\n     ka.req.configmap.obj
+    contains \"aws-access-key-id\" or\n     ka.req.configmap.obj contains \"aws_s3_access_key_id\"
+    or\n     ka.req.configmap.obj contains \"aws-s3-access-key-id\" or\n     ka.req.configmap.obj
+    contains \"password\" or\n     ka.req.configmap.obj contains \"passphrase\")\n\n-
+    rule: Create/Modify Configmap With Private Credentials\n  desc: >\n     Detect creating/modifying
+    a configmap containing a private credential (aws key, password, etc.)\n  condition:
+    kevt and configmap and kmodify and contains_private_credentials\n  output: K8s configmap
+    with private credential (user=%ka.user.name verb=%ka.verb configmap=%ka.req.configmap.name
+    config=%ka.req.configmap.obj)\n  priority: WARNING\n  source: k8s_audit\n  tags:
+    [k8s]\n\n# Corresponds to K8s CIS Benchmark, 1.1.1.\n- rule: Anonymous Request Allowed\n
+    \ desc: >\n    Detect any request made by the anonymous user that was allowed\n
+    \ condition: kevt and ka.user.name=system:anonymous and ka.auth.decision=\"allow\"
+    and not health_endpoint\n  output: Request by anonymous user allowed (user=%ka.user.name
+    verb=%ka.verb uri=%ka.uri reason=%ka.auth.reason))\n  priority: WARNING\n  source:
+    k8s_audit\n  tags: [k8s]\n\n# Roughly corresponds to K8s CIS Benchmark, 1.1.12.
+    In this case,\n# notifies an attempt to exec/attach to a privileged container.\n\n#
+    Ideally, we'd add a more stringent rule that detects attaches/execs\n# to a privileged
+    pod, but that requires the engine for k8s audit\n# events to be stateful, so it
+    could know if a container named in an\n# attach request was created privileged or
+    not. For now, we have a\n# less severe rule that detects attaches/execs to any pod.\n\n-
+    macro: user_known_exec_pod_activities\n  condition: (k8s_audit_never_true)\n\n-
+    rule: Attach/Exec Pod\n  desc: >\n    Detect any attempt to attach/exec to a pod\n
+    \ condition: kevt_started and pod_subresource and kcreate and ka.target.subresource
+    in (exec,attach) and not user_known_exec_pod_activities\n  output: Attach/Exec to
+    pod (user=%ka.user.name pod=%ka.target.name ns=%ka.target.namespace action=%ka.target.subresource
+    command=%ka.uri.param[command])\n  priority: NOTICE\n  source: k8s_audit\n  tags:
+    [k8s]\n\n# In a local/user rules fie, you can append to this list to add additional
+    allowed namespaces\n- list: allowed_namespaces\n  items: [kube-system, kube-public,
+    default]\n\n- rule: Create Disallowed Namespace\n  desc: Detect any attempt to create
+    a namespace outside of a set of known namespaces\n  condition: kevt and namespace
+    and kcreate and not ka.target.name in (allowed_namespaces)\n  output: Disallowed
+    namespace created (user=%ka.user.name ns=%ka.target.name)\n  priority: WARNING\n
+    \ source: k8s_audit\n  tags: [k8s]\n\n- list: user_trusted_image_list\n  items:
+    []\n\n- macro: trusted_pod\n  condition: (ka.req.pod.containers.image.repository
+    in (user_trusted_image_list))\n\n# Detect any new pod created in the kube-system
+    namespace\n- rule: Pod Created in Kube Namespace\n  desc: Detect any attempt to
+    create a pod in the kube-system or kube-public namespaces\n  condition: kevt and
+    pod and kcreate and ka.target.namespace in (kube-system, kube-public) and not trusted_pod\n
+    \ output: Pod created in kube namespace (user=%ka.user.name pod=%ka.resp.name ns=%ka.target.namespace
+    images=%ka.req.pod.containers.image)\n  priority: WARNING\n  source: k8s_audit\n
+    \ tags: [k8s]\n\n- list: user_known_sa_list\n  items: []\n\n- macro: trusted_sa\n
+    \ condition: (ka.target.name in (user_known_sa_list))\n\n# Detect creating a service
+    account in the kube-system/kube-public namespace\n- rule: Service Account Created
+    in Kube Namespace\n  desc: Detect any attempt to create a serviceaccount in the
+    kube-system or kube-public namespaces\n  condition: kevt and serviceaccount and
+    kcreate and ka.target.namespace in (kube-system, kube-public) and response_successful
+    and not trusted_sa\n  output: Service account created in kube namespace (user=%ka.user.name
+    serviceaccount=%ka.target.name ns=%ka.target.namespace)\n  priority: WARNING\n  source:
+    k8s_audit\n  tags: [k8s]\n\n# Detect any modify/delete to any ClusterRole starting
+    with\n# \"system:\". \"system:coredns\" is excluded as changes are expected in\n#
+    normal operation.\n- rule: System ClusterRole Modified/Deleted\n  desc: Detect any
+    attempt to modify/delete a ClusterRole/Role starting with system\n  condition: kevt
+    and (role or clusterrole) and (kmodify or kdelete) and (ka.target.name startswith
+    \"system:\") and ka.target.name!=\"system:coredns\"\n  output: System ClusterRole/Role
+    modified or deleted (user=%ka.user.name role=%ka.target.name ns=%ka.target.namespace
+    action=%ka.verb)\n  priority: WARNING\n  source: k8s_audit\n  tags: [k8s]\n\n# Detect
+    any attempt to create a ClusterRoleBinding to the cluster-admin user\n# (exapand
+    this to any built-in cluster role that does \"sensitive\" things)\n- rule: Attach
+    to cluster-admin Role\n  desc: Detect any attempt to create a ClusterRoleBinding
+    to the cluster-admin user\n  condition: kevt and clusterrolebinding and kcreate
+    and ka.req.binding.role=cluster-admin\n  output: Cluster Role Binding to cluster-admin
+    role (user=%ka.user.name subject=%ka.req.binding.subjects)\n  priority: WARNING\n
+    \ source: k8s_audit\n  tags: [k8s]\n\n- rule: ClusterRole With Wildcard Created\n
+    \ desc: Detect any attempt to create a Role/ClusterRole with wildcard resources
+    or verbs\n  condition: kevt and (role or clusterrole) and kcreate and (ka.req.role.rules.resources
+    intersects (\"*\") or ka.req.role.rules.verbs intersects (\"*\"))\n  output: Created
+    Role/ClusterRole with wildcard (user=%ka.user.name role=%ka.target.name rules=%ka.req.role.rules)\n
+    \ priority: WARNING\n  source: k8s_audit\n  tags: [k8s]\n\n- macro: writable_verbs\n
+    \ condition: >\n    (ka.req.role.rules.verbs intersects (create, update, patch,
+    delete, deletecollection))\n\n- rule: ClusterRole With Write Privileges Created\n
+    \ desc: Detect any attempt to create a Role/ClusterRole that can perform write-related
+    actions\n  condition: kevt and (role or clusterrole) and kcreate and writable_verbs\n
+    \ output: Created Role/ClusterRole with write privileges (user=%ka.user.name role=%ka.target.name
+    rules=%ka.req.role.rules)\n  priority: NOTICE\n  source: k8s_audit\n  tags: [k8s]\n\n-
+    rule: ClusterRole With Pod Exec Created\n  desc: Detect any attempt to create a
+    Role/ClusterRole that can exec to pods\n  condition: kevt and (role or clusterrole)
+    and kcreate and ka.req.role.rules.resources intersects (\"pods/exec\")\n  output:
+    Created Role/ClusterRole with pod exec privileges (user=%ka.user.name role=%ka.target.name
+    rules=%ka.req.role.rules)\n  priority: WARNING\n  source: k8s_audit\n  tags: [k8s]\n\n#
+    The rules below this point are less discriminatory and generally\n# represent a
+    stream of activity for a cluster. If you wish to disable\n# these events, modify
+    the following macro.\n- macro: consider_activity_events\n  condition: (k8s_audit_always_true)\n\n-
+    macro: kactivity\n  condition: (kevt and consider_activity_events)\n\n- rule: K8s
+    Deployment Created\n  desc: Detect any attempt to create a deployment\n  condition:
+    (kactivity and kcreate and deployment and response_successful)\n  output: K8s Deployment
+    Created (user=%ka.user.name deployment=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code
+    decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority: INFO\n  source:
+    k8s_audit\n  tags: [k8s]\n\n- rule: K8s Deployment Deleted\n  desc: Detect any attempt
+    to delete a deployment\n  condition: (kactivity and kdelete and deployment and response_successful)\n
+    \ output: K8s Deployment Deleted (user=%ka.user.name deployment=%ka.target.name
+    ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)\n
+    \ priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n- rule: K8s Service Created\n
+    \ desc: Detect any attempt to create a service\n  condition: (kactivity and kcreate
+    and service and response_successful)\n  output: K8s Service Created (user=%ka.user.name
+    service=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision
+    reason=%ka.auth.reason)\n  priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n-
+    rule: K8s Service Deleted\n  desc: Detect any attempt to delete a service\n  condition:
+    (kactivity and kdelete and service and response_successful)\n  output: K8s Service
+    Deleted (user=%ka.user.name service=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code
+    decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority: INFO\n  source:
+    k8s_audit\n  tags: [k8s]\n\n- rule: K8s ConfigMap Created\n  desc: Detect any attempt
+    to create a configmap\n  condition: (kactivity and kcreate and configmap and response_successful)\n
+    \ output: K8s ConfigMap Created (user=%ka.user.name configmap=%ka.target.name ns=%ka.target.namespace
+    resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority:
+    INFO\n  source: k8s_audit\n  tags: [k8s]\n\n- rule: K8s ConfigMap Deleted\n  desc:
+    Detect any attempt to delete a configmap\n  condition: (kactivity and kdelete and
+    configmap and response_successful)\n  output: K8s ConfigMap Deleted (user=%ka.user.name
+    configmap=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision
+    reason=%ka.auth.reason)\n  priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n-
+    rule: K8s Namespace Created\n  desc: Detect any attempt to create a namespace\n
+    \ condition: (kactivity and kcreate and namespace and response_successful)\n  output:
+    K8s Namespace Created (user=%ka.user.name namespace=%ka.target.name resp=%ka.response.code
+    decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority: INFO\n  source:
+    k8s_audit\n  tags: [k8s]\n\n- rule: K8s Namespace Deleted\n  desc: Detect any attempt
+    to delete a namespace\n  condition: (kactivity and non_system_user and kdelete and
+    namespace and response_successful)\n  output: K8s Namespace Deleted (user=%ka.user.name
+    namespace=%ka.target.name resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)\n
+    \ priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n- rule: K8s Serviceaccount
+    Created\n  desc: Detect any attempt to create a service account\n  condition: (kactivity
+    and kcreate and serviceaccount and response_successful)\n  output: K8s Serviceaccount
+    Created (user=%ka.user.name user=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code
+    decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority: INFO\n  source:
+    k8s_audit\n  tags: [k8s]\n\n- rule: K8s Serviceaccount Deleted\n  desc: Detect any
+    attempt to delete a service account\n  condition: (kactivity and kdelete and serviceaccount
+    and response_successful)\n  output: K8s Serviceaccount Deleted (user=%ka.user.name
+    user=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision
+    reason=%ka.auth.reason)\n  priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n-
+    rule: K8s Role/Clusterrole Created\n  desc: Detect any attempt to create a cluster
+    role/role\n  condition: (kactivity and kcreate and (clusterrole or role) and response_successful)\n
+    \ output: K8s Cluster Role Created (user=%ka.user.name role=%ka.target.name rules=%ka.req.role.rules
+    resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority:
+    INFO\n  source: k8s_audit\n  tags: [k8s]\n\n- rule: K8s Role/Clusterrole Deleted\n
+    \ desc: Detect any attempt to delete a cluster role/role\n  condition: (kactivity
+    and kdelete and (clusterrole or role) and response_successful)\n  output: K8s Cluster
+    Role Deleted (user=%ka.user.name role=%ka.target.name resp=%ka.response.code decision=%ka.auth.decision
+    reason=%ka.auth.reason)\n  priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n-
+    rule: K8s Role/Clusterrolebinding Created\n  desc: Detect any attempt to create
+    a clusterrolebinding\n  condition: (kactivity and kcreate and clusterrolebinding
+    and response_successful)\n  output: K8s Cluster Role Binding Created (user=%ka.user.name
+    binding=%ka.target.name subjects=%ka.req.binding.subjects role=%ka.req.binding.role
+    resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority:
+    INFO\n  source: k8s_audit\n  tags: [k8s]\n\n- rule: K8s Role/Clusterrolebinding
+    Deleted\n  desc: Detect any attempt to delete a clusterrolebinding\n  condition:
+    (kactivity and kdelete and clusterrolebinding and response_successful)\n  output:
+    K8s Cluster Role Binding Deleted (user=%ka.user.name binding=%ka.target.name resp=%ka.response.code
+    decision=%ka.auth.decision reason=%ka.auth.reason)\n  priority: INFO\n  source:
+    k8s_audit\n  tags: [k8s]\n\n- rule: K8s Secret Created\n  desc: Detect any attempt
+    to create a secret. Service account tokens are excluded.\n  condition: (kactivity
+    and kcreate and secret and ka.target.namespace!=kube-system and non_system_user
+    and response_successful)\n  output: K8s Secret Created (user=%ka.user.name secret=%ka.target.name
+    ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)\n
+    \ priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n- rule: K8s Secret Deleted\n
+    \ desc: Detect any attempt to delete a secret Service account tokens are excluded.\n
+    \ condition: (kactivity and kdelete and secret and ka.target.namespace!=kube-system
+    and non_system_user and response_successful)\n  output: K8s Secret Deleted (user=%ka.user.name
+    secret=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision
+    reason=%ka.auth.reason)\n  priority: INFO\n  source: k8s_audit\n  tags: [k8s]\n\n#
+    This rule generally matches all events, and as a result is disabled\n# by default.
+    If you wish to enable these events, modify the\n# following macro.\n#  condition:
+    (jevt.rawtime exists)\n- macro: consider_all_events\n  condition: (k8s_audit_never_true)\n\n-
+    macro: kall\n  condition: (kevt and consider_all_events)\n\n- rule: All K8s Audit
+    Events\n  desc: Match all K8s Audit Events\n  condition: kall\n  output: K8s Audit
+    Event received (user=%ka.user.name verb=%ka.verb uri=%ka.uri obj=%jevt.obj)\n  priority:
+    DEBUG\n  source: k8s_audit\n  tags: [k8s]\n\n\n# This macro disables following rule,
+    change to k8s_audit_never_true to enable it\n- macro: allowed_full_admin_users\n
+    \ condition: (k8s_audit_always_true)\n\n# This list includes some of the default
+    user names for an administrator in several K8s installations\n- list: full_admin_k8s_users\n
+    \ items: [\"admin\", \"kubernetes-admin\",  \"kubernetes-admin@kubernetes\", \"kubernetes-admin@cluster.local\",
+    \"minikube-user\"]\n\n# This rules detect an operation triggered by an user name
+    that is \n# included in the list of those that are default administrators upon \n#
+    cluster creation. This may signify a permission setting too broader. \n# As we can't
+    check for role of the user on a general ka.* event, this \n# may or may not be an
+    administrator. Customize the full_admin_k8s_users \n# list to your needs, and activate
+    at your discrection.\n\n# # How to test:\n# # Execute any kubectl command connected
+    using default cluster user, as:\n# kubectl create namespace rule-test\n\n- rule:
+    Full K8s Administrative Access\n  desc: Detect any k8s operation by a user name
+    that may be an administrator with full access.\n  condition: >\n    kevt \n    and
+    non_system_user \n    and ka.user.name in (admin_k8s_users) \n    and not allowed_full_admin_users\n
+    \ output: K8s Operation performed by full admin user (user=%ka.user.name target=%ka.target.name/%ka.target.resource
+    verb=%ka.verb uri=%ka.uri resp=%ka.response.code)\n  priority: WARNING\n  source:
+    k8s_audit\n  tags: [k8s]\n\n- macro: ingress\n  condition: ka.target.resource=ingresses\n\n-
+    macro: ingress_tls\n  condition: (jevt.value[/requestObject/spec/tls] exists)\n\n#
+    # How to test:\n# # Create an ingress.yaml file with content:\n# apiVersion: networking.k8s.io/v1beta1\n#
+    kind: Ingress\n# metadata:\n#   name: test-ingress\n#   annotations:\n#     nginx.ingress.kubernetes.io/rewrite-target:
+    /\n# spec:\n#   rules:\n#   - http:\n#       paths:\n#       - path: /testpath\n#
+    \        backend:\n#           serviceName: test\n#           servicePort: 80\n#
+    # Execute: kubectl apply -f ingress.yaml\n\n- rule: Ingress Object without TLS Certificate
+    Created\n  desc: Detect any attempt to create an ingress without TLS certification.\n
+    \ condition: >\n    (kactivity and kcreate and ingress and response_successful and
+    not ingress_tls)\n  output: >\n    K8s Ingress Without TLS Cert Created (user=%ka.user.name
+    ingress=%ka.target.name\n    namespace=%ka.target.namespace)\n  source: k8s_audit
+    \   \n  priority: WARNING\n  tags: [k8s, network]\n\n- macro: node\n  condition:
+    ka.target.resource=nodes\n\n- macro: allow_all_k8s_nodes\n  condition: (k8s_audit_always_true)\n\n-
+    list: allowed_k8s_nodes\n  items: []\n\n# # How to test:\n# # Create a Falco monitored
+    cluster with Kops\n# # Increase the number of minimum nodes with:\n# kops edit ig
+    nodes\n# kops apply --yes\n\n- rule: Untrusted Node Successfully Joined the Cluster\n
+    \ desc: >\n    Detect a node successfully joined the cluster outside of the list
+    of allowed nodes.\n  condition: >\n    kevt and node \n    and kcreate \n    and
+    response_successful \n    and not allow_all_k8s_nodes \n    and not ka.target.name
+    in (allowed_k8s_nodes)\n  output: Node not in allowed list successfully joined the
+    cluster (user=%ka.user.name node=%ka.target.name)\n  priority: ERROR\n  source:
+    k8s_audit\n  tags: [k8s]\n\n- rule: Untrusted Node Unsuccessfully Tried to Join
+    the Cluster\n  desc: >\n    Detect an unsuccessful attempt to join the cluster for
+    a node not in the list of allowed nodes.\n  condition: >\n    kevt and node \n    and
+    kcreate \n    and not response_successful \n    and not allow_all_k8s_nodes \n    and
+    not ka.target.name in (allowed_k8s_nodes)\n  output: Node not in allowed list tried
+    unsuccessfully to join the cluster  (user=%ka.user.name node=%ka.target.name reason=%ka.response.reason)\n
+    \ priority: WARNING\n  source: k8s_audit\n  tags: [k8s]\n\n"

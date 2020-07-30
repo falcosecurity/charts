@@ -1,0 +1,46 @@
+---
+# Source: falco/templates/clusterrole.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: RELEASE-NAME-falco
+  labels:
+    app: RELEASE-NAME-falco
+    chart: "falco-1.2.1"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+rules:
+  - apiGroups:
+      - extensions
+      - ""
+    resources:
+      - nodes
+      - namespaces
+      - pods
+      - replicationcontrollers
+      - replicasets
+      - services
+      - daemonsets
+      - deployments
+      - events
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - daemonsets
+      - deployments
+      - replicasets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+  - nonResourceURLs:
+      - /healthz
+      - /healthz/*
+    verbs:
+      - get
