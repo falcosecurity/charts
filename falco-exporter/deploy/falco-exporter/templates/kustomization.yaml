@@ -1,4 +1,0 @@
-resources:
-  - daemonset.yaml
-  - service.yaml
-  - serviceaccount.yaml
