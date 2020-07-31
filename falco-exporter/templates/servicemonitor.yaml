@@ -5,9 +5,9 @@ metadata:
   name: {{ include "falco-exporter.fullname" . }}
   labels:
     {{- include "falco-exporter.labels" . | nindent 4 }}
-      {{- if .Values.serviceMonitor.additionalLabels }}
-    {{ toYaml .Values.serviceMonitor.additionalLabels | indent 4 }}
-      {{- end }}
+    {{- range $key, $value := .Values.serviceMonitor.additionalLabels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
   namespace: {{ .Release.Namespace }}
 spec:
   endpoints:
