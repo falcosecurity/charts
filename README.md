@@ -21,6 +21,7 @@ Charts currently available are listed below.
 
 - [falco](falco)
 - [falco-exporter](falco-exporter)
+- [falcosidekick](falcosidekick)
 
 ## Usage
 
