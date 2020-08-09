@@ -50,7 +50,7 @@ helm repo update
 To install the chart with the release name `falcosidekick` run:
 
 ```bash
-helm install falco falcosecurity/falcosidekick
+helm install falcosidekick falcosecurity/falcosidekick
 ```
 
 After a few seconds, Falcosidekick should be running.
@@ -162,7 +162,7 @@ helm install falcosidekick --set debug=true falcosecurity/falcosidekick
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-helm install falco -f values.yaml falcosecurity/falcosidekick
+helm install falcosidekick -f values.yaml falcosecurity/falcosidekick
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
