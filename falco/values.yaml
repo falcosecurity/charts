@@ -203,6 +203,8 @@ falco:
     listenPort: 8765
     nodePort: false
     k8sAuditEndpoint: /k8s-audit
+    sslEnabled: false
+    sslCertificate: /etc/falco/certs/server.pem
 
   # Possible additional things you might want to do with program output:
   #   - send to a slack webhook:
@@ -333,6 +335,16 @@ integrations:
     topic: ""
     credentialsData: ""
     projectID: ""
+
+
+# certificates used by webserver and grpc server
+# paste certificate content or use helm with --set-file
+certs:
+  server:
+    key: ""
+    crt: ""
+  ca:
+    crt: ""
 
 
 # Allow Falco to run on Kubernetes 1.6 masters.

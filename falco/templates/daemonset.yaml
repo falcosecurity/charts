@@ -22,6 +22,9 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/rules: {{ include (print $.Template.BasePath "/configmap-rules.yaml") . | sha256sum }}
+        {{- if .Values.certs }}
+        checksum/certs: {{ include (print $.Template.BasePath "/secret-certs.yaml") . | sha256sum }}
+        {{- end }}
         {{- if .Values.daemonset.podAnnotations }}
 {{ toYaml .Values.daemonset.podAnnotations | indent 8 }}
         {{- end }}
@@ -133,15 +136,14 @@ spec:
               name: shared-pipe
               readOnly: false
             {{- end }}
-            {{- if .Values.falco.grpc.enabled }}
-            {{- if .Values.falco.grpc.unixSocketPath }}
+            {{- if and .Values.falco.grpc.enabled .Values.falco.grpc.unixSocketPath }}
             - mountPath: {{ include "falco.unixSocketDir" . }}
               name: grpc-socket-dir
-            {{- else }}
+            {{- end }}
+            {{- if or .Values.falco.webserver.sslEnabled (and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)) }}
             - mountPath: /etc/falco/certs
               name: certs-volume
               readOnly: true
-            {{- end }}
             {{- end }}
       {{- if .Values.integrations.natsOutput.enabled }}
         - name: {{ .Chart.Name }}-nats
@@ -269,12 +271,12 @@ spec:
         - name: shared-pipe
           emptyDir: {}
         {{- end }}
-        {{- if .Values.falco.grpc.enabled }}
-        {{- if .Values.falco.grpc.unixSocketPath }}
+        {{- if and .Values.falco.grpc.enabled .Values.falco.grpc.unixSocketPath }}
         - name: grpc-socket-dir
           hostPath:
             path: {{ include "falco.unixSocketDir" . }}
-        {{- else }}
+        {{- end }}
+        {{- if or .Values.falco.webserver.sslEnabled (and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)) }}
         - name: certs-volume
           secret:
             secretName: {{ template "falco.fullname" . }}-certs
@@ -283,9 +285,10 @@ spec:
                 path: server.key
               - key: server.crt
                 path: server.crt
+              - key: server.pem
+                path: server.pem
               - key: ca.crt
                 path: ca.crt
-        {{- end }}
         {{- end }}
   updateStrategy:
 {{ toYaml .Values.daemonset.updateStrategy | indent 4 }}
