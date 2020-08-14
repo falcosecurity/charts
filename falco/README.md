@@ -102,6 +102,8 @@ The following table lists the configurable parameters of the Falco chart and the
 | `falco.webserver.k8sAuditEndpoint`              | Endpoint where Falco embedded webserver accepts K8s audit events                                                   | `/k8s-audit`                                                                                                                              |
 | `falco.webserver.listenPort`                    | Port where Falco embedded webserver listen to connections                                                          | `8765`                                                                                                                                    |
 | `falco.webserver.nodePort`                      | Exposes the Falco embedded webserver through a NodePort                                                            | `false`                                                                                                                                   |
+| `falco.webserver.sslEnabled`                    | Enable SSL on Falco embedded webserver                                                                             | `false`                                                                                                                                   |
+| `falco.webserver.sslCertificate`                | Certificate bundle path for the Falco embedded webserver                                                           | `/etc/falco/certs/server.pem`                                                                                                             |
 | `falco.programOutput.enabled`                   | Enable program output for security notifications                                                                   | `false`                                                                                                                                   |
 | `falco.programOutput.keepAlive`                 | Start the program once or re-spawn when a notification arrives                                                     | `false`                                                                                                                                   |
 | `falco.programOutput.program`                   | Command to execute for program output                                                                              | `mail -s "Falco Notification" someone@example.com`                                                                                        |
@@ -116,6 +118,9 @@ The following table lists the configurable parameters of the Falco chart and the
 | `falco.grpc.rootCerts`                          | CA root file path for the Falco gRPC server                                                                        | `/etc/falco/certs/ca.crt`                                                                                                                 |
 | `falco.grpcOutput.enabled`                      | Enable the gRPC output and events will be kept in memory until you read them with a gRPC client.                   | `false`                                                                                                                                   |
 | `customRules`                                   | Third party rules enabled for Falco                                                                                | `{}`                                                                                                                                      |
+| `certs.server.key`                              | Key used by gRPC and webserver                                                                                     | ` `                                                                                                                                       |
+| `certs.server.crt`                              | Certificate used by gRPC and webserver                                                                             | ` `                                                                                                                                       |
+| `certs.ca.crt`                                  | CA certificate used by gRPC, webserver and AuditSink validation                                                    | ` `                                                                                                                                       |
 | `nodeSelector`                                  | The node selection constraint                                                                                      | `{}`                                                                                                                                      |
 | `affinity`                                      | The affinity constraint                                                                                            | `{}`                                                                                                                                      |
 | `tolerations`                                   | The tolerations for scheduling                                                                                     | `node-role.kubernetes.io/master:NoSchedule`                                                                                               |
@@ -200,6 +205,7 @@ And this means that our Falco installation has loaded the rules and is ready to 
 
 ## Enabling K8s audit event support
 
+### Using scripts
 This has been tested with Kops and Minikube. You will need the following components:
 
 * A Kubernetes cluster greater than v1.13
@@ -243,6 +249,73 @@ This means that the apiserver cannot recognize the `auditregistration.k8s.io`
 resource, which means that the dynamic auditing feature hasn't been enabled
 properly. You need to enable it or ensure that your using a Kubernetes version
 greater than v1.13.
+
+### Manual setup with NodePort on kOps
+
+Using `kops edit cluster`, ensure these options are present, then run `kops update cluster` and `kops rolling-update cluster`:
+```yaml
+spec:
+  kubeAPIServer:
+    auditLogMaxBackups: 1
+    auditLogMaxSize: 10
+    auditLogPath: /var/log/k8s-audit.log
+    auditPolicyFile: /srv/kubernetes/assets/audit-policy.yaml
+    auditWebhookBatchMaxWait: 5s
+    auditWebhookConfigFile: /srv/kubernetes/assets/webhook-config.yaml
+  fileAssets:
+  - content: |
+      # content of the webserver CA certificate
+      # remove this fileAsset and certificate-authority from webhook-config if using http
+    name: audit-ca.pem
+    roles:
+    - Master
+  - content: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+      - name: falco
+        cluster:
+          # remove 'certificate-authority' when using 'http'
+          certificate-authority: /srv/kubernetes/assets/audit-ca.pem
+          server: https://localhost:32765/k8s-audit
+      contexts:
+      - context:
+          cluster: falco
+          user: ""
+        name: default-context
+      current-context: default-context
+      preferences: {}
+      users: []
+    name: webhook-config.yaml
+    roles:
+    - Master
+  - content: |
+      # ... paste audit-policy.yaml here ...
+      # https://raw.githubusercontent.com/falcosecurity/evolution/master/examples/k8s_audit_config/audit-policy.yaml
+    name: audit-policy.yaml
+    roles:
+    - Master
+```
+
+Then you can install the Falco chart enabling these flags:
+
+```shell
+# without SSL (not recommended):
+helm install falco --set auditLog.enabled=true --set falco.webserver.nodePort=32765 falcosecurity/falco
+
+# with SSL:
+helm install falco \
+  --set auditLog.enabled=true \
+  --set falco.webserver.sslEnabled=true \
+  --set falco.webserver.nodePort=32765 \
+  --set-file certs.server.key=/path/to/server.key \
+  --set-file certs.server.crt=/path/to/server.crt \
+  --set-file certs.ca.crt=/path/to/ca.crt \
+  falcosecurity/falco
+```
+
+The webserver reuses the gRPC certificate setup, which is [documented here](https://falco.org/docs/grpc/#generate-valid-ca). Generating the client certificate isn't required.
+
 
 ## Enabling gRPC
 

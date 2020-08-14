@@ -149,8 +149,8 @@ data:
       enabled: {{ .Values.falco.webserver.enabled }}
       listen_port: {{ .Values.falco.webserver.listenPort }}
       k8s_audit_endpoint: {{ .Values.falco.webserver.k8sAuditEndpoint }}
-      ssl_enabled: false
-      ssl_certificate: /etc/falco/falco.pem
+      ssl_enabled: {{ .Values.falco.webserver.sslEnabled }}
+      ssl_certificate: {{ .Values.falco.webserver.sslCertificate }}
 
     # Possible additional things you might want to do with program output:
     #   - send to a slack webhook:
