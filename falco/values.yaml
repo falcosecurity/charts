@@ -5,7 +5,7 @@ image:
   repository: falcosecurity/falco
   tag: 0.24.0
   pullPolicy: IfNotPresent
-
+  pullSecrets: []
 docker:
   enabled: true
   socket: /var/run/docker.sock
@@ -254,7 +254,7 @@ falco:
 
     # gRPC unix socket with no authentication
     unixSocketPath: "unix:///var/run/falco/falco.sock"
-    
+
     # gRPC over the network (mTLS) / required when unixSocketPath is empty
     listenPort: 5060
     privateKey: "/etc/falco/certs/server.key"

@@ -43,6 +43,9 @@ spec:
 {{- end }}
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
+{{- if .Values.image.pullSecrets }}
+      imagePullSecrets: {{ toYaml .Values.image.pullSecrets | nindent 8 }}
+{{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: {{ template "falco.image" . }}
@@ -263,7 +266,7 @@ spec:
         {{- if .Values.falco.grpc.enabled }}
         {{- if .Values.falco.grpc.unixSocketPath }}
         - name: grpc-socket-dir
-          hostPath: 
+          hostPath:
             path: {{ include "falco.unixSocketDir" . }}
         {{- else }}
         - name: certs-volume
