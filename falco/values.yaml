@@ -6,6 +6,7 @@ image:
   tag: 0.24.0
   pullPolicy: IfNotPresent
   pullSecrets: []
+
 docker:
   enabled: true
   socket: /var/run/docker.sock
