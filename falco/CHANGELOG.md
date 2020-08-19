@@ -3,6 +3,13 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.2.2
+
+### Minor Changes
+
+* Allow configuration using values for `imagePullSecrets` setting 
+* Add `docker.io/falcosecurity/falco` image to `falco_privileged_images` macro
+
 ## v1.2.1
 
 ### Minor Changes
