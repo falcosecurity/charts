@@ -299,7 +299,7 @@ integrations:
   # * file_output:
   #     enabled: true
   #     keep_alive: true
-  #     filename: /var/run/falco/nats
+  #     filename: /tmp/shared-pipe/nats
   natsOutput:
     enabled: false
     natsUrl: "nats://nats.nats-io.svc.cluster.local:4222"
@@ -310,7 +310,7 @@ integrations:
   # * file_output:
   #     enabled: true
   #     keep_alive: true
-  #     filename: /var/run/falco/nats
+  #     filename: /tmp/shared-pipe/nats
   snsOutput:
     enabled: false
     topic: ""
@@ -326,7 +326,7 @@ integrations:
   # * file_output:
   #     enabled: true
   #     keep_alive: true
-  #     filename: /var/run/falco/nats
+  #     filename: /tmp/shared-pipe/nats
   pubsubOutput:
     enabled: false
     topic: ""
