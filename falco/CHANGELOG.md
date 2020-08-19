@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.2.3
+
+### Minor Changes
+
+* Fix duplicate mount point problem when both gRPC and NATS integrations are enabled
+
 ## v1.2.2
 
 ### Minor Changes
