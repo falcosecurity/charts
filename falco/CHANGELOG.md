@@ -3,6 +3,13 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.3.0
+
+### Minor Changes
+
+* Upgrade to Falco 0.25.0
+* Update ruleset from Falco 0.25.0
+
 ## v1.2.3
 
 ### Minor Changes
