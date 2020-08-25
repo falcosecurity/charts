@@ -5,15 +5,15 @@ metadata:
   name: falcosidekick
 spec:
   type: 0
-  ResourceID: /subscriptions/{{ .Values.config.azure.subscriptionID }}/resourcegroups/{{ .Values.config.azure.resourceGroupName }}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{{ .Values.config.azure.podIdentityName }}
-  ClientID: {{ .Values.config.azure.podIdentityClientID }}
+  resourceID: /subscriptions/{{ .Values.config.azure.subscriptionID }}/resourcegroups/{{ .Values.config.azure.resourceGroupName }}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{{ .Values.config.azure.podIdentityName }}
+  clientID: {{ .Values.config.azure.podIdentityClientID }}
 ---
 apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentityBinding
 metadata:
   name: falcosidekick
 spec:
-  AzureIdentity: falcosidekick
-  Selector: {{ include "falcosidekick.fullname" . }}
+  azureIdentity: falcosidekick
+  selector: {{ include "falcosidekick.fullname" . }}
 
 {{- end }}
