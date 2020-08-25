@@ -55,11 +55,12 @@
 - macro: proc_name_exists
   condition: (proc.name!="<NA>")
 
-# todo(leogr): we miss "renameat2", but it's not yet supported by sinsp
 - macro: rename
-  condition: evt.type in (rename, renameat)
+  condition: evt.type in (rename, renameat, renameat2)
+
 - macro: mkdir
   condition: evt.type in (mkdir, mkdirat)
+
 - macro: remove
   condition: evt.type in (rmdir, unlink, unlinkat)
 
@@ -867,7 +868,7 @@
     proc.name = "exe"
     and (proc.cmdline contains "/var/lib/docker"
     or proc.cmdline contains "/var/run/docker")
-    and proc.pname in (dockerd, docker)
+    and proc.pname in (dockerd, docker, dockerd-current, docker-current)
 
 # Ideally we'd have a length check here as well but sysdig
 # filterchecks don't have operators like len()
@@ -1458,6 +1459,12 @@
 - macro: user_read_sensitive_file_conditions
   condition: cmp_cp_by_passwd
 
+- list: read_sensitive_file_images
+  items: []
+
+- macro: user_read_sensitive_file_containers
+  condition: (container and container.image.repository in (read_sensitive_file_images))
+
 - rule: Read sensitive file untrusted
   desc: >
     an attempt to read any sensitive file (e.g. files containing user/password/authentication
@@ -1482,6 +1489,7 @@
     and not perl_running_centrifydc
     and not runuser_reading_pam
     and not user_known_read_sensitive_files_activities
+    and not user_read_sensitive_file_containers
   output: >
     Sensitive file opened for reading by non-trusted program (user=%user.name program=%proc.name
     command=%proc.cmdline file=%fd.name parent=%proc.pname gparent=%proc.aname[2] ggparent=%proc.aname[3] gggparent=%proc.aname[4] container_id=%container.id image=%container.image.repository)
@@ -1824,7 +1832,7 @@
 # In this file, it just takes one of the images in trusted_containers
 # and repeats it.
 - macro: user_trusted_containers
-  condition: (container.image.repository endswith sysdig/agent)
+  condition: (never_true)
 
 - list: sematext_images
   items: [docker.io/sematext/sematext-agent-docker, docker.io/sematext/agent, docker.io/sematext/logagent,
@@ -1835,11 +1843,11 @@
 # These container images are allowed to run with --privileged
 - list: falco_privileged_images
   items: [
-    docker.io/sysdig/agent, docker.io/sysdig/falco, docker.io/sysdig/sysdig,
+    docker.io/sysdig/falco, docker.io/sysdig/sysdig,
     gcr.io/google_containers/kube-proxy, docker.io/calico/node, quay.io/calico/node,
     docker.io/rook/toolbox, docker.io/cloudnativelabs/kube-router, docker.io/mesosphere/mesos-slave,
     docker.io/docker/ucp-agent, sematext_images, k8s.gcr.io/kube-proxy,
-    docker.io/falcosecurity/falco
+    docker.io/falcosecurity/falco, sysdig/falco, sysdig/sysdig, falcosecurity/falco
     ]
 
 - macro: falco_privileged_containers
@@ -1848,7 +1856,7 @@
               container.image.repository in (trusted_images) or
               container.image.repository in (falco_privileged_images) or
               container.image.repository startswith istio/proxy_ or
-              container.image.repository startswith quay.io/sysdig)
+              container.image.repository startswith quay.io/sysdig/)
 
 # Add conditions to this macro (probably in a separate file,
 # overwriting this macro) to specify additional containers that are
@@ -1857,7 +1865,7 @@
 # In this file, it just takes one of the images in falco_privileged_images
 # and repeats it.
 - macro: user_privileged_containers
-  condition: (container.image.repository endswith sysdig/agent)
+  condition: (never_true)
 
 - list: rancher_images
   items: [
@@ -1869,7 +1877,7 @@
 # host filesystem.
 - list: falco_sensitive_mount_images
   items: [
-    docker.io/sysdig/agent, docker.io/sysdig/falco, docker.io/sysdig/sysdig,
+    docker.io/sysdig/falco, docker.io/sysdig/sysdig, sysdig/falco, sysdig/sysdig,
     gcr.io/google_containers/hyperkube,
     gcr.io/google_containers/kube-proxy, docker.io/calico/node,
     docker.io/rook/toolbox, docker.io/cloudnativelabs/kube-router, docker.io/consul,
@@ -1895,7 +1903,7 @@
 # In this file, it just takes one of the images in falco_sensitive_mount_images
 # and repeats it.
 - macro: user_sensitive_mount_containers
-  condition: (container.image.repository = docker.io/sysdig/agent)
+  condition: (never_true)
 
 - rule: Launch Privileged Container
   desc: Detect the initial process started in a privileged container. Exceptions are made for known trusted images.
@@ -2354,8 +2362,9 @@
 - macro: k8s_containers
   condition: >
     (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,
-     gcr.io/google_containers/kube2sky, sysdig/agent, sysdig/falco,
-     sysdig/sysdig, falcosecurity/falco) or (k8s.ns.name = "kube-system"))
+     gcr.io/google_containers/kube2sky, docker.io/sysdig/falco,
+     docker.io/sysdig/sysdig, docker.io/falcosecurity/falco,
+     sysdig/falco, sysdig/sysdig, falcosecurity/falco) or (k8s.ns.name = "kube-system"))
 
 - macro: k8s_api_server
   condition: (fd.sip.name="kubernetes.default.svc.cluster.local")
@@ -2761,7 +2770,7 @@
   condition: (evt.type in (sendto, sendmsg) and evt.dir=< and (fd.net != "127.0.0.0/8" and not fd.snet in (rfc_1918_addresses)) and ((minerpool_http) or (minerpool_https) or (minerpool_other)))
 
 - macro: trusted_images_query_miner_domain_dns
-  condition: (container.image.repository endswith "sysdig/agent" or container.image.repository endswith "falcosecurity/falco")
+  condition: (container.image.repository in (docker.io/falcosecurity/falco, falcosecurity/falco))
   append: false
 
 # The rule is disabled by default.
