@@ -51,7 +51,7 @@ Return the proper Falco image name
 {{- $tag := .Values.image.tag | toString -}}
 {{/*
 Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
-but Helm 2.9 and 2.10 don't support it, so we need to implement this if-else logic.
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
 Also, we can't use a single if because lazy evaluation is not an option
 */}}
 {{- if .Values.global }}
@@ -63,19 +63,6 @@ Also, we can't use a single if because lazy evaluation is not an option
 {{- else -}}
     {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
-{{- end -}}
-
-{{- define "eksCloudwatch.image" -}}
-{{- $registryName := .Values.eksCloudwatch.image.registry -}}
-{{- $repositoryName := .Values.eksCloudwatch.image.repository -}}
-{{- $tag := .Values.eksCloudwatch.image.tag | toString -}}
-{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
-{{- end -}}
-
-{{- define "eksCloudwatch.Endpoint" -}}
-{{- $listenPort := .Values.falco.webserver.listenPort | toString -}}
-{{- $k8sAuditEndpoint := .Values.falco.webserver.k8sAuditEndpoint -}}
-{{- printf "http://%s:%s%s" (include "falco.fullname" .) $listenPort $k8sAuditEndpoint -}}
 {{- end -}}
 
 {{/*

@@ -122,7 +122,7 @@ data:
     file_output:
       enabled: true
       keep_alive: true
-      filename: /var/run/falco/nats
+      filename: /tmp/shared-pipe/nats
     {{- else }}
     file_output:
       enabled: {{ .Values.falco.fileOutput.enabled }}

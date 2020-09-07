@@ -3,8 +3,9 @@
 image:
   registry: docker.io
   repository: falcosecurity/falco
-  tag: 0.24.0
+  tag: 0.25.0
   pullPolicy: IfNotPresent
+  pullSecrets: []
 
 docker:
   enabled: true
@@ -254,7 +255,7 @@ falco:
 
     # gRPC unix socket with no authentication
     unixSocketPath: "unix:///var/run/falco/falco.sock"
-    
+
     # gRPC over the network (mTLS) / required when unixSocketPath is empty
     listenPort: 5060
     privateKey: "/etc/falco/certs/server.key"
@@ -298,7 +299,7 @@ integrations:
   # * file_output:
   #     enabled: true
   #     keep_alive: true
-  #     filename: /var/run/falco/nats
+  #     filename: /tmp/shared-pipe/nats
   natsOutput:
     enabled: false
     natsUrl: "nats://nats.nats-io.svc.cluster.local:4222"
@@ -309,7 +310,7 @@ integrations:
   # * file_output:
   #     enabled: true
   #     keep_alive: true
-  #     filename: /var/run/falco/nats
+  #     filename: /tmp/shared-pipe/nats
   snsOutput:
     enabled: false
     topic: ""
@@ -325,7 +326,7 @@ integrations:
   # * file_output:
   #     enabled: true
   #     keep_alive: true
-  #     filename: /var/run/falco/nats
+  #     filename: /tmp/shared-pipe/nats
   pubsubOutput:
     enabled: false
     topic: ""
@@ -341,16 +342,3 @@ tolerations:
 scc:
   # true here enabled creation of Security Context Constraints in Openshift
   create: true
-
-eksCloudwatch:
-  enabled: false
-  image:
-    registry: docker.io
-    repository: sysdiglabs/k8sauditlogforwarder
-    tag: ekscloudwatch-0.2
-    pullPolicy: IfNotPresent
-  hostNetwork: true
-  settings:
-      cwPolling: "5m"
-      cwFilter: '{ $.sourceIPs[0] != "::1" && $.sourceIPs[0] != "127.0.0.1" }'
-      clusterName: "k8s"

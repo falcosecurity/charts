@@ -3,11 +3,25 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.3.0
+
+### Minor Changes
+
+* Upgrade to Falco 0.25.0
+* Update ruleset from Falco 0.25.0
+
+## v1.2.3
+
+### Minor Changes
+
+* Fix duplicate mount point problem when both gRPC and NATS integrations are enabled
+
 ## v1.2.2
 
 ### Minor Changes
 
-* Add option to deploy ekscloudwatch 
+* Allow configuration using values for `imagePullSecrets` setting 
+* Add `docker.io/falcosecurity/falco` image to `falco_privileged_images` macro
 
 ## v1.2.1
 
