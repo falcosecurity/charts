@@ -68,6 +68,7 @@ tolerations:
 affinity: {}
 
 serviceMonitor:
+  # Enable the deployment of a Service Monitor for the Prometheus Operator.
   enabled: false
   # Specify Additional labels to be added on the Service Monitor.
   additionalLabels: {}
