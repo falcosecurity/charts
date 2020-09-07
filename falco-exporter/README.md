@@ -63,7 +63,7 @@ Please, refer to [values.yaml](./values.yaml) for the full list of configurable 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-helm install falco --set falco.jsonOutput=true falcosecurity/falco
+helm install falco-exporter --set falco.grpcTimeout=3m falcosecurity/falco-exporter
 ```
 
 Alternatively, a YAML file that specifies the parameters' values can be provided while installing the chart. For example,
