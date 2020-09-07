@@ -53,6 +53,9 @@ The following table lists the main configurable parameters of the chart and thei
 | `image.pullPolicy`               | The image pull policy                                               | `IfNotPresent`                                 |
 | `falco.grpcUnixSocketPath`       | Unix socket path for connecting to a Falco gRPC server              | `unix:///var/run/falco/falco.sock`             |
 | `falco.grpcTimeout`              | The image tag to pull                                               | `2m`                                           |
+| `grafanaDashboard.enabled`              | Enable the falco security dashboard                                              | `false`                                           |
+| `grafanaDashboard.namespace`              | The namespace to deploy the dashboard configmap in                                              | `default`                                           |
+| `grafanaDasboard.datasource`              | The Prometheus datasource for the dashboard                                               | `default`                                           |
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
@@ -69,7 +72,3 @@ helm install falco-exporter -f values.yaml falcosecurity/falco-exporter
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
-
-## Using falco-exporter with Grafana
-
-See the [Grafana section](https://github.com/falcosecurity/falco-exporter#grafana) in the [falco-exporter](https://github.com/falcosecurity/falco-exporter) documentation.
