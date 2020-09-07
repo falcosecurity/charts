@@ -1,19 +1,12 @@
 # Change Log
 
-This file documents all notable changes to `falco-exporter` Helm Chart. The release
-numbering uses [semantic versioning](http://semver.org).
+## v0.3.0
 
-## v0.3.2
-
-### Minor Changes
-
-* Fix for additional labels for falco-exporter servicemonitor
-
-## v0.3.1
+### Major Changes
 
 ### Minor Changes
 
-* Added the support to deploy a Prometheus Service Monitor. Is disables by default.
+* Add Grafana dashboard
 
 ## v0.3.0
 
