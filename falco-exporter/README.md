@@ -6,7 +6,6 @@ Before using this chart, you need [Falco installed](https://falco.org/docs/insta
 
 This chart is compatible with the [Falco Chart](https://github.com/falcosecurity/charts/tree/master/falco) version `v1.2.0` or greater. Instructions to enable the gRPC Output in the Falco Helm Chart can be found [here](https://github.com/falcosecurity/charts/tree/master/falco#enabling-grpc). We also strongly recommend using [gRPC over Unix socket](https://github.com/falcosecurity/charts/tree/master/falco#grpc-over-unix-socket-default).
 
-
 ## Introduction
 
 The chart deploys **falco-exporter** as Daemon Set on your the Kubernetes cluster. If a [Prometheus installation](https://github.com/helm/charts/tree/master/stable/prometheus) is running within your cluster, metrics provided by **falco-exporter** will be automatically discovered.
@@ -46,19 +45,19 @@ The command removes all the Kubernetes components associated with the chart and 
 
 The following table lists the main configurable parameters of the chart and their default values.
 
-| Parameter                        | Description                                                         | Default                                        |
-| ---                              | ---                                                                 | ---                                            |
-| `image.repository`               | The image repository to pull from                                   | `falcosecurity/falco-exporter`                 |
-| `image.tag`                      | The image tag to pull                                               | `0.3.0`                                       |
-| `image.pullPolicy`               | The image pull policy                                               | `IfNotPresent`                                 |
-| `falco.grpcUnixSocketPath`       | Unix socket path for connecting to a Falco gRPC server              | `unix:///var/run/falco/falco.sock`             |
-| `falco.grpcTimeout`              | The image tag to pull                                               | `2m`
-| `serviceMonitor.enabled`         | Enabled deployment of a Prometheus operator Service Monitor         | `false`                                        |
-| `serviceMonitor.additionalLabels`| Add additional Labels to the Service Monitor                        | `{}`                                           |
-| `serviceMonitor.interval`        | Specify a user defined interval for the Service Monitor             | `""`                                           |
-| `serviceMonitor.scrapeTimeout`   | Specify a user defined scrape timeout for the Service Monitor       | `""`                                           |                                           |
-| `grafanaDashboard.enabled`              | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana                                             | `false`                                           |
-| `grafanaDashboard.namespace`              | The namespace to deploy the dashboard configmap in                                              | `default`                                           |
+| Parameter                         | Description                                                                                      | Default                            |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| `image.repository`                | The image repository to pull from                                                                | `falcosecurity/falco-exporter`     |
+| `image.tag`                       | The image tag to pull                                                                            | `0.3.0`                            |
+| `image.pullPolicy`                | The image pull policy                                                                            | `IfNotPresent`                     |
+| `falco.grpcUnixSocketPath`        | Unix socket path for connecting to a Falco gRPC server                                           | `unix:///var/run/falco/falco.sock` |
+| `falco.grpcTimeout`               | The image tag to pull                                                                            | `2m`                               |
+| `serviceMonitor.enabled`          | Enabled deployment of a Prometheus operator Service Monitor                                      | `false`                            |
+| `serviceMonitor.additionalLabels` | Add additional Labels to the Service Monitor                                                     | `{}`                               |
+| `serviceMonitor.interval`         | Specify a user defined interval for the Service Monitor                                          | `""`                               |
+| `serviceMonitor.scrapeTimeout`    | Specify a user defined scrape timeout for the Service Monitor                                    | `""`                               |  |
+| `grafanaDashboard.enabled`        | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana | `false`                            |
+| `grafanaDashboard.namespace`      | The namespace to deploy the dashboard configmap in                                               | `default`                          |
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
