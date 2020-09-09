@@ -80,4 +80,3 @@ serviceMonitor:
 grafanaDashboard:
   enabled: false
   namespace: default
-  datasource: Prometheus
