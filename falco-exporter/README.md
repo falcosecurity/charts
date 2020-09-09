@@ -57,9 +57,8 @@ The following table lists the main configurable parameters of the chart and thei
 | `serviceMonitor.additionalLabels`| Add additional Labels to the Service Monitor                        | `{}`                                           |
 | `serviceMonitor.interval`        | Specify a user defined interval for the Service Monitor             | `""`                                           |
 | `serviceMonitor.scrapeTimeout`   | Specify a user defined scrape timeout for the Service Monitor       | `""`                                           |                                           |
-| `grafanaDashboard.enabled`              | Enable the falco security dashboard                                              | `false`                                           |
+| `grafanaDashboard.enabled`              | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana                                             | `false`                                           |
 | `grafanaDashboard.namespace`              | The namespace to deploy the dashboard configmap in                                              | `default`                                           |
-| `grafanaDasboard.datasource`              | The Prometheus datasource for the dashboard                                               | `default`                                           |
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
