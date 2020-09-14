@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.4.0
+
+### Minor Changes
+
+* Allow adding InitContainers to falco pod with `extraInitContainers` configuration
+   
 ## v1.3.0
 
 ### Minor Changes
