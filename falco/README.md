@@ -140,6 +140,8 @@ The following table lists the configurable parameters of the Falco chart and the
 | `affinity`                                      | The affinity constraint                                                                                            | `{}`                                                                                                                                      |
 | `tolerations`                                   | The tolerations for scheduling                                                                                     | `node-role.kubernetes.io/master:NoSchedule`                                                                                               |
 | `scc.create`                                    | Create OpenShift's Security Context Constraint                                                                     | `true` 
+| `extraInitContainers`                           | A list of initContainers you want to add to the falco pod in the daemonset.                                        | `[]`
+                                                  |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 

@@ -196,8 +196,12 @@ spec:
                   name: {{ template "falco.fullname" . }}
                   key: gcp-credentials-data
       {{- end }}
-      {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
+      {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled .Values.extraInitContainers) }}
       initContainers:
+          {{- if .Values.extraInitContainers }}
+{{ toYaml .Values.extraInitContainers | indent 12 }}
+          {{- end }}
+          {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
           - name: init-pipe
             image: busybox
             command: ['mkfifo','/tmp/shared-pipe/nats']
@@ -205,6 +209,7 @@ spec:
             - mountPath: /tmp/shared-pipe/
               name: shared-pipe
               readOnly: false
+          {{- end }}
       {{- end }}
       volumes:
         - name: dshm

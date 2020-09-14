@@ -342,3 +342,47 @@ tolerations:
 scc:
   # true here enabled creation of Security Context Constraints in Openshift
   create: true
+
+# Add initContainers to falco pod
+extraInitContainers: []
+
+# Below, there is an example initContainer that compiles the eBPF probe from downloaded kernel sources.
+# You need to change the falco image to use falco-no-driver
+# and modify the daemonset.env section to add the following env variable
+# FALCO_BPF_PROBE: /host/lib/modules/falco-bpf.o
+# 
+# replacement of falcosecurity/falco image with
+# falcosecurity/falco-no-driver is also required, otherwise falco will try to
+# download and compile the driver at startup time.
+
+# extraInitContainers:
+#   - name: init-driverloader
+#     image: falcosecurity/falco-driver-loader:0.25.0
+#     env:
+#       - name: FALCO_BPF_PROBE
+#       - name: BPF_USE_LOCAL_KERNEL_SOURCES
+#         value: "true"
+#       - NAME: ENABLE_DOWNLOAD
+#         value: ""
+#     command: ["/bin/bash"]
+#     args: ["-c", "apt update; apt install -f -y; apt install -y flex bison; apt install -y gcc libssl-dev; falco-driver-loader; cp /root/.falco/falco-bpf.o /host/lib/modules/falco-bpf.o"] 
+#     volumeMounts:
+#     - mountPath: /host/dev
+#       name: dev-fs
+#       readOnly: true
+#     - mountPath: /host/proc
+#       name: proc-fs
+#       readOnly: true
+#     - mountPath: /host/boot
+#       name: boot-fs
+#       readOnly: true
+#     - mountPath: /host/lib/modules
+#       name: lib-modules
+#     - mountPath: /host/usr
+#       name: usr-fs
+#       readOnly: true
+#     - mountPath: /dev/shm
+#       name: dshm
+#     - mountPath: /host/etc
+#       name: etc-fs
+#       readOnly: true
