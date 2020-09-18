@@ -126,11 +126,6 @@ config:
     address: ""
     minimumpriority: ""
 
-  webhook:
-    webhookurl: ""
-    icon: ""
-    minimumpriority: ""
-
   azure:
     subscriptionID: ""
     resourceGroupName: ""
