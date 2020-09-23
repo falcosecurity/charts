@@ -9,6 +9,10 @@ image:
   tag: 2.13.0
   pullPolicy: IfNotPresent
 
+podSecurityContext:
+  runAsUser: 1234
+  fsGroup: 1234
+
 # One or more secrets to be used when pulling images
 imagePullSecrets: []
 # - registrySecretName
