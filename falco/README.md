@@ -245,7 +245,7 @@ This has been tested with Kops and Minikube. You will need the following compone
   * `--feature-gates=DynamicAuditing=true`
   * `--runtime-config=auditregistration.k8s.io/v1alpha1=true`
 
-You can do it with the [scripts provided by Falco engineers](https://github.com/falcosecurity/falco/tree/dev/examples/k8s_audit_config)
+You can do it with the [scripts provided by Falco engineers](https://github.com/falcosecurity/evolution/tree/master/examples/k8s_audit_config)
 just running:
 
 ```
