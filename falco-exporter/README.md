@@ -51,7 +51,7 @@ The following table lists the main configurable parameters of the chart and thei
 | `image.tag`                       | The image tag to pull                                                                            | `0.3.0`                            |
 | `image.pullPolicy`                | The image pull policy                                                                            | `IfNotPresent`                     |
 | `falco.grpcUnixSocketPath`        | Unix socket path for connecting to a Falco gRPC server                                           | `unix:///var/run/falco/falco.sock` |
-| `falco.grpcTimeout`               | The image tag to pull                                                                            | `2m`                               |
+| `falco.grpcTimeout`               | gRPC connection timeout                                                                          | `2m`                               |
 | `serviceMonitor.enabled`          | Enabled deployment of a Prometheus operator Service Monitor                                      | `false`                            |
 | `serviceMonitor.additionalLabels` | Add additional Labels to the Service Monitor                                                     | `{}`                               |
 | `serviceMonitor.interval`         | Specify a user defined interval for the Service Monitor                                          | `""`                               |
