@@ -22,6 +22,8 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+priorityClassName:
+
 falco:
   grpcUnixSocketPath: "unix:///var/run/falco/falco.sock"
   grpcTimeout: 2m
