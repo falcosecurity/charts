@@ -3,11 +3,19 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.5.0
+
+### Minor Changes
+
+* Upgrade to Falco 0.26.1
+* Update ruleset from Falco 0.26.1
+* Automatically set the appropriate apiVersion for rbac
+
 ## v1.4.0
 
 ### Minor Changes
 
-* Allow adding InitContainers to falco pod with `extraInitContainers` configuration
+* Allow adding InitContainers to Falco pod with `extraInitContainers` configuration
    
 ## v1.3.0
 
