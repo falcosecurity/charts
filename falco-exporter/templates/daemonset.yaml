@@ -17,6 +17,9 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+      {{- end }}
       serviceAccountName: {{ include "falco-exporter.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -63,7 +66,7 @@ spec:
       volumes:
       {{- if .Values.falco.grpcUnixSocketPath }}
         - name: falco-socket-dir
-          hostPath: 
+          hostPath:
             path: {{ include "falco-exporter.unixSocketDir" . }}
       {{- else }}
         - name: certs-volume
