@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.3.4
+
+### Minor Changes
+
+* Add priorityClassName to values
+
 ## v0.3.3
 
 ### Minor Changes
