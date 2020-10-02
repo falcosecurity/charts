@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.3.6
+
+### Minor Changes
+
+* Add SecurityContextConstraint to allow deploying in Openshift
+
 ## v0.3.5
 
 ### Minor Changes

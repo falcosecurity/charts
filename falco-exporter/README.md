@@ -60,6 +60,8 @@ The following table lists the main configurable parameters of the chart and thei
 | `serviceMonitor.scrapeTimeout`    | Specify a user defined scrape timeout for the Service Monitor                                    | `""`                               |
 | `grafanaDashboard.enabled`        | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana | `false`                            |
 | `grafanaDashboard.namespace`      | The namespace to deploy the dashboard configmap in                                               | `default`                          |
+| `scc.create`                      | Create OpenShift's Security Context Constraint                                                   | `true`                             |
+
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
