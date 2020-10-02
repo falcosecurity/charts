@@ -5,6 +5,12 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick). 
 
+## 0.1.26
+
+### Minor Changes
+
+* Allow the creation of a PodSecurityPolicy, disabled by default
+
 ## 0.1.25
 
 ### Minor Changes

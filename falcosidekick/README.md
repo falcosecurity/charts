@@ -151,6 +151,7 @@ The following table lists the configurable parameters of the Falcosidekick chart
 | `azure.eventhub.name`            | Name of the Hub, if not empty, EventHub is *enabled*                                                                                                                      |                                                                                                   |
 | `azure.eventhub.namespace`       | Name of the space the Hub is in                                                                                                                                           |                                                                                                   |
 | `azure.eventhub.minimumpriority` | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                   | `debug`                                                                                           |
+| `podSecurityPolicy.create`       | create a PodSecurityPolicy                                                                                                                                                | `false`                                                                                           |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
