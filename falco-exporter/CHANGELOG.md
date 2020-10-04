@@ -3,6 +3,13 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.3.5
+
+### Minor Changes
+
+* Added the possibility to automatically add a PSP (in combination with a Role and a RoleBindung) via the podSecurityPolicy values
+* Namespaced the falco-exporter ServiceAccount and Service
+
 ## v0.3.4
 
 ### Minor Changes

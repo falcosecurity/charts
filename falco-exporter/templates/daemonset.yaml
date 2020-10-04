@@ -4,6 +4,7 @@ metadata:
   name: {{ include "falco-exporter.fullname" . }}
   labels:
     {{- include "falco-exporter.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:

@@ -67,6 +67,17 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
+Create the name of the PSP to use
+*/}}
+{{- define "falco-exporter.podSecurityPolicyName" -}}
+{{- if .Values.podSecurityPolicy.create -}}
+    {{ default (include "falco-exporter.fullname" .) .Values.podSecurityPolicy.name }}
+{{- else -}}
+    {{ default "default" .Values.podSecurityPolicy.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Extract the unixSocket's directory path
 */}}
 {{- define "falco-exporter.unixSocketDir" -}}
