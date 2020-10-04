@@ -52,10 +52,12 @@ The following table lists the main configurable parameters of the chart and thei
 | `image.pullPolicy`                | The image pull policy                                                                            | `IfNotPresent`                     |
 | `falco.grpcUnixSocketPath`        | Unix socket path for connecting to a Falco gRPC server                                           | `unix:///var/run/falco/falco.sock` |
 | `falco.grpcTimeout`               | gRPC connection timeout                                                                          | `2m`                               |
+| `serviceAccount.create`           | Specify if a service account should be created                                                   | `true`                             |
+| `podSecurityPolicy.create`        | Specify if a PSP, Role & RoleBinding should be created                                           | `true`                             |
 | `serviceMonitor.enabled`          | Enabled deployment of a Prometheus operator Service Monitor                                      | `false`                            |
 | `serviceMonitor.additionalLabels` | Add additional Labels to the Service Monitor                                                     | `{}`                               |
 | `serviceMonitor.interval`         | Specify a user defined interval for the Service Monitor                                          | `""`                               |
-| `serviceMonitor.scrapeTimeout`    | Specify a user defined scrape timeout for the Service Monitor                                    | `""`                               |  |
+| `serviceMonitor.scrapeTimeout`    | Specify a user defined scrape timeout for the Service Monitor                                    | `""`                               |
 | `grafanaDashboard.enabled`        | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana | `false`                            |
 | `grafanaDashboard.namespace`      | The namespace to deploy the dashboard configmap in                                               | `default`                          |
 

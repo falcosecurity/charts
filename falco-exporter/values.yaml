@@ -34,6 +34,16 @@ serviceAccount:
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  # If set and create is false, an already existing serviceAccount must be provided.
+  name:
+
+podSecurityPolicy:
+  # Specifies whether a PSP, Role and RoleBinding should be created
+  create: true
+  # Annotations to add to the PSP, Role and RoleBinding
+  annotations: {}
+  # The name of the PSP, Role and RoleBinding to use.
   # If not set and create is true, a name is generated using the fullname template
   name:
 
