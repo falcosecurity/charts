@@ -40,7 +40,7 @@ serviceAccount:
 
 podSecurityPolicy:
   # Specifies whether a PSP, Role and RoleBinding should be created
-  create: true
+  create: false
   # Annotations to add to the PSP, Role and RoleBinding
   annotations: {}
   # The name of the PSP, Role and RoleBinding to use.

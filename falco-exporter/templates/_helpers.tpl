@@ -85,3 +85,14 @@ Extract the unixSocket's directory path
 {{- .Values.falco.grpcUnixSocketPath | trimPrefix "unix://" | dir -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return the appropriate apiVersion for rbac.
+*/}}
+{{- define "rbac.apiVersion" -}}
+{{- if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1" }}
+{{- print "rbac.authorization.k8s.io/v1" -}}
+{{- else -}}
+{{- print "rbac.authorization.k8s.io/v1beta1" -}}
+{{- end -}}
+{{- end -}}
