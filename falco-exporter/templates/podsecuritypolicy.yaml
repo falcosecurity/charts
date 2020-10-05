@@ -24,4 +24,5 @@ spec:
     rule: RunAsAny
   volumes:
   - 'hostPath'
+  - 'secret'
 {{- end -}}
