@@ -3,11 +3,17 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
-## v0.3.6
+## v0.3.7
 
 ### Minor Changes
 
 * Fix PSP when imagePullSecret is used
+
+## v0.3.6
+
+### Minor Changes
+
+* Add SecurityContextConstraint to allow deploying in Openshift
 
 ## v0.3.5
 
