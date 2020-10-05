@@ -1,6 +1,6 @@
 {{- if .Values.podSecurityPolicy.create -}}
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: {{ template "rbac.apiVersion" . }}
 metadata:
   name: {{ include "falco-exporter.podSecurityPolicyName" . }}
   labels:
