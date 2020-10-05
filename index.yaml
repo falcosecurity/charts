@@ -234,6 +234,28 @@ entries:
   falco-exporter:
   - apiVersion: v2
     appVersion: 0.3.0
+    created: "2020-10-05T14:54:12.881193252Z"
+    description: Prometheus Metrics Exporter for Falco output events
+    digest: c7a6e2a2b4b230f26af641f5d5caca8d1daa28b513210ed1d40b718dfc9c9f21
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: me@leonardograsso.com
+      name: leogr
+    name: falco-exporter
+    sources:
+    - https://github.com/falcosecurity/falco-exporter
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-exporter-0.3.5/falco-exporter-0.3.5.tgz
+    version: 0.3.5
+  - apiVersion: v2
+    appVersion: 0.3.0
     created: "2020-10-02T08:13:15.873509933Z"
     description: Prometheus Metrics Exporter for Falco output events
     digest: 202f8deace7a95297fb2c6ddd7df97d6afa6355daf54860ee28be5e7117d9e4f
