@@ -11,8 +11,8 @@ metadata:
   {{- end }}
   namespace: {{ .Release.Namespace }}
 subjects:
-  - kind: ServiceAccount
-    name: {{ include "falco-exporter.podSecurityPolicyName" . }}
+- kind: ServiceAccount
+  name: {{ include "falco-exporter.podSecurityPolicyName" . }}
 roleRef:
   kind: Role
   name: {{ include "falco-exporter.podSecurityPolicyName" . }}
