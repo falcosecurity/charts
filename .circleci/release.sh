@@ -50,6 +50,10 @@ main() {
         done
 
         release_charts
+
+        # the newly created GitHub releases may not be available yet; let's wait a bit to be sure.
+        sleep 5
+
         update_index
     else
         echo "Nothing to do. No chart changes detected."
