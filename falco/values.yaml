@@ -15,6 +15,10 @@ containerd:
   enabled: true
   socket: /run/containerd/containerd.sock
 
+crio:
+  enabled: true
+  socket: /run/crio/crio.sock
+
 kubernetesSupport:
   # Enables Kubernetes meta data collection via a connection to the Kubernetes API server.
   enabled: true
