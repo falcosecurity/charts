@@ -74,6 +74,10 @@ spec:
             - --cri
             - /run/containerd/containerd.sock
             {{- end }}
+            {{- if .Values.crio.enabled }}
+            - --cri
+            - /run/crio/crio.sock
+            {{- end }}
             {{- if .Values.kubernetesSupport.enabled }}
             - -K
             - {{ .Values.kubernetesSupport.apiAuth }}
@@ -148,6 +152,10 @@ spec:
             - mountPath: /host/run/containerd/containerd.sock
               name: containerd-socket
             {{- end}}
+            {{- if .Values.crio.enabled }}
+            - mountPath: /host/run/crio/crio.sock
+              name: crio-socket
+            {{- end}}
             - mountPath: /host/dev
               name: dev-fs
               readOnly: true
@@ -197,6 +205,11 @@ spec:
         - name: containerd-socket
           hostPath:
             path: {{ .Values.containerd.socket }}
+        {{- end}}
+        {{- if .Values.crio.enabled }}
+        - name: crio-socket
+          hostPath:
+            path: {{ .Values.crio.socket }}
         {{- end}}
         - name: dev-fs
           hostPath:
