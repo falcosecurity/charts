@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.3.8
+
+### Minor Changes
+
+* Replace extensions apiGroup/apiVersion because of deprecation
+
 ## v0.3.7
 
 ### Minor Changes
