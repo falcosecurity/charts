@@ -3,6 +3,29 @@ entries:
   falco:
   - apiVersion: v1
     appVersion: 0.26.1
+    created: "2020-10-15T10:44:15.111453625Z"
+    description: Falco
+    digest: 3dc069dfc17a50c5e41691b68683857566cf91e77bf402bde16dcaa59b63cb80
+    home: https://falco.org
+    icon: https://falco.org/images/logos/falco-logo.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: falco
+    sources:
+    - https://github.com/falcosecurity/falco
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-1.5.1/falco-1.5.1.tgz
+    version: 1.5.1
+  - apiVersion: v1
+    appVersion: 0.26.1
     created: "2020-10-01T16:47:15.926039993Z"
     description: Falco
     digest: 9c8e7ef94df059c78e3fc13df8d94a2a24cf5e6d71c2219088b7f76e0ea5c9ba
@@ -234,6 +257,28 @@ entries:
   falco-exporter:
   - apiVersion: v2
     appVersion: 0.3.0
+    created: "2020-10-15T10:44:15.20832443Z"
+    description: Prometheus Metrics Exporter for Falco output events
+    digest: 84a1e547c489034cc1323db5db0ad7a27df39ff0a7477cae481d60a37460cb1c
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: me@leonardograsso.com
+      name: leogr
+    name: falco-exporter
+    sources:
+    - https://github.com/falcosecurity/falco-exporter
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-exporter-0.3.8/falco-exporter-0.3.8.tgz
+    version: 0.3.8
+  - apiVersion: v2
+    appVersion: 0.3.0
     created: "2020-10-06T09:43:04.548816626Z"
     description: Prometheus Metrics Exporter for Falco output events
     digest: 6539bcb0e82122f363958eefc97e48302c6aca046697751f4c67c9ea759479e2
@@ -409,6 +454,26 @@ entries:
     - https://github.com/falcosecurity/charts/releases/download/falco-exporter-0.3.0/falco-exporter-0.3.0.tgz
     version: 0.3.0
   falcosidekick:
+  - apiVersion: v1
+    appVersion: 2.14.0
+    created: "2020-10-15T10:44:15.300433591Z"
+    description: A simple daemon to help you with falco's outputs
+    digest: 726cdd018b9bfdba15e8eeecdf5b7bcdb526ac2c39083f83b74a1d8c544097dd
+    home: https://github.com/falcosecurity/falcosidekick
+    icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: Issif
+    name: falcosidekick
+    sources:
+    - https://github.com/falcosecurity/falcosidekick
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falcosidekick-0.1.27/falcosidekick-0.1.27.tgz
+    version: 0.1.27
   - apiVersion: v1
     appVersion: 2.14.0
     created: "2020-10-05T08:54:58.470648576Z"
