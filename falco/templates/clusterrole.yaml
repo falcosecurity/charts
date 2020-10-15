@@ -45,7 +45,7 @@ rules:
       - get
 {{- if .Values.podSecurityPolicy.create }}
   - apiGroups:
-      - extensions
+      - policy
     resources:
       - podsecuritypolicies
     resourceNames:
