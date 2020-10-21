@@ -18,8 +18,11 @@ spec:
       labels:
         app: {{ template "falco.fullname" . }}-event-generator
     spec:
+      serviceAccountName: {{ template "falco.serviceAccountName" .}}
       containers:
       - name: {{ template "falco.fullname" . }}-event-generator
+        securityContext:
+            privileged: false
         image: falcosecurity/event-generator:latest
 {{- with .Values.fakeEventGenerator.args }}
         args:

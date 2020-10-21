@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.5.2
+
+### Minor Changes
+
+* Add Pod Security Policy Support for the fake event generator
+
 ## v1.5.1
 
 ### Minor Changes
