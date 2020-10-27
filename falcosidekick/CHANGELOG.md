@@ -5,9 +5,14 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick). 
 
+## 0.1.24
+
+* New output can be set : `AWS SNS`
+* Metrics in `prometheus` format can be scrapped from `/metrics` URI
+  
 ## 0.1.23
 
-* fake release for triggering CI for auto-publishing
+* Fake release for triggering CI for auto-publishing
 
 ## 0.1.22
 

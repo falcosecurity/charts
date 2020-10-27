@@ -29,6 +29,7 @@ Currently available outputs are :
 * [**Influxdb**](https://www.influxdata.com/products/influxdb-overview/)
 * [**AWS Lambda**](https://aws.amazon.com/lambda/features/)
 * [**AWS SQS**](https://aws.amazon.com/sqs/features/)
+* [**AWS SNS**](https://aws.amazon.com/sns/features/)
 * **SMTP** (email)
 * [**Opsgenie**](https://www.opsgenie.com/)
 * [**StatsD**](https://github.com/statsd/statsd) (for monitoring of `falcosidekick`)
@@ -129,6 +130,9 @@ The following table lists the configurable parameters of the Falcosidekick chart
 | `aws.region`                     | AWS Region (optionnal if you use EC2 Instance Profile)                                                                                                                    |                                                                                                   |
 | `aws.lambda.functionname`        | AWS Lambda Function Name, if not empty, AWS Lambda output is enabled                                                                                                      |                                                                                                   |
 | `aws.lambda.minimumpriority`     | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                   | `debug`                                                                                           |
+| `aws.sns.topicarn`               | AWS SNS TopicARN, if not empty, AWS SNS output is enabled                                                                                                                 |                                                                                                   |
+| `aws.sns.rawjson`                | Send RawJSON from `falco` or parse it                                                                                                                                     |                                                                                                   |
+| `aws.sns.minimumpriority`        | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                   | `debug`                                                                                           |
 | `aws.sqs.url`                    | AWS SQS Queue URL, if not empty, AWS SQS output is enabled                                                                                                                |                                                                                                   |
 | `aws.sqs.minimumpriority`        | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                   | `debug`                                                                                           |
 | `smtp.hostport`                  | "host:port" address of SMTP server, if not empty, SMTP output is enabled                                                                                                  |                                                                                                   |
@@ -159,7 +163,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 helm install falcosidekick --set debug=true falcosecurity/falcosidekick
 ```
 
-Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
+Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example:
 
 ```bash
 helm install falcosidekick -f values.yaml falcosecurity/falcosidekick
@@ -167,3 +171,6 @@ helm install falcosidekick -f values.yaml falcosecurity/falcosidekick
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
 
+## Metrics
+
+A `prometheus` endpoint can be scrapped at `/metrics`.

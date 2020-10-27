@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.13.0
+  tag: 2.15.0
   pullPolicy: IfNotPresent
 
 # One or more secrets to be used when pulling images
@@ -95,9 +95,14 @@ config:
     lambda:
       functionname : ""
       minimumpriority: ""
+    sns:
+      topicarn: ""
+      rawjson: false
+      minimumpriority: ""
     sqs:
       url : ""
       minimumpriority: ""
+    
 
   smtp:
     hostport: ""
