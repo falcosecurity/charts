@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.14.0
+  tag: 2.15.0
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -98,6 +98,10 @@ config:
     region : ""
     lambda:
       functionname : ""
+      minimumpriority: ""
+    sns:
+      topicarn : ""
+      rawjson: false
       minimumpriority: ""
     sqs:
       url : ""

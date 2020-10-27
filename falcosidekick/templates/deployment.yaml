@@ -205,6 +205,14 @@ spec:
             - name: AWS_LAMBDA_MINIMUMPRIORITY
               value: {{ .Values.config.aws.lambda.minimumpriority | quote }}
             {{- end }}
+            {{- if .Values.config.aws.sns.topicarn }}
+            - name: AWS_SNS_TOPICARN
+              value: {{ .Values.config.aws.sns.topicarn | quote }}
+            - name: AWS_SNS_RAWJSON
+              value: {{ .Values.config.aws.sns.rawjson }}
+            - name: AWS_SNS_MINIMUMPRIORITY
+              value: {{ .Values.config.aws.sns.minimumpriority | quote }}
+            {{- end }}
             {{- if .Values.config.aws.sqs.url }}
             - name: AWS_SQS_URL
               value: {{ .Values.config.aws.sqs.functionname | quote }}
