@@ -3,6 +3,13 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.5.3
+
+### Minor Changes
+
+* Deprecation notice for gcscc, natsOutput, snsOutput, pubsubOutput integrations
+* Clean up old references from documentation
+
 ## v1.5.2
 
 ### Minor Changes
