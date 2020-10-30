@@ -1,14 +1,6 @@
 # Falco
 
-[Falco](https://falco.org) is a behavioral activity monitor designed to detect anomalous activity in your applications. You can use Falco to monitor run-time security of your Kubernetes applications and internal components.
-
-To know more about Falco have a look at:
-
-- [Kubernetes security logging with Falco & Fluentd
-](https://sysdig.com/blog/kubernetes-security-logging-fluentd-falco/)
-- [Active Kubernetes security with Sysdig Falco, NATS, and kubeless](https://sysdig.com/blog/active-kubernetes-security-falco-nats-kubeless/)
-- [Detecting cryptojacking with Falco
-](https://sysdig.com/blog/detecting-cryptojacking-with-sysdigs-falco/)
+[Falco](https://falco.org) is a *Cloud Native Runtime Security* tool designed to detect anomalous activity in your applications. You can use Falco to monitor runtime security of your Kubernetes applications and internal components.
 
 ## Introduction
 
@@ -123,19 +115,6 @@ The following table lists the configurable parameters of the Falco chart and the
 | `falco.grpc.rootCerts`                          | CA root file path for the Falco gRPC server                                                                        | `/etc/falco/certs/ca.crt`                                                                                                                 |
 | `falco.grpcOutput.enabled`                      | Enable the gRPC output and events will be kept in memory until you read them with a gRPC client.                   | `false`                                                                                                                                   |
 | `customRules`                                   | Third party rules enabled for Falco                                                                                | `{}`                                                                                                                                      |
-| `integrations.gcscc.enabled`                    | Enable Google Cloud Security Command Center integration                                                            | `false`                                                                                                                                   |
-| `integrations.gcscc.webhookUrl`                 | The URL where sysdig-gcscc-connector webhook is listening                                                          | `http://sysdig-gcscc-connector.default.svc.cluster.local:8080/events`                                                                     |
-| `integrations.gcscc.webhookAuthenticationToken` | Token used for authentication and webhook                                                                          | `b27511f86e911f20b9e0f9c8104b4ec4`                                                                                                        |
-| `integrations.natsOutput.enabled`               | Enable NATS Output integration                                                                                     | `false`                                                                                                                                   |
-| `integrations.natsOutput.natsUrl`               | The NATS' URL where Falco is going to publish security alerts                                                      | `nats://nats.nats-io.svc.cluster.local:4222`                                                                                              |
-| `integrations.pubsubOutput.credentialsData`     | Contents retrieved from `cat $HOME/.config/gcloud/legacy_credentials/<email>/adc.json`                             | ` `                                                                                                                                       |
-| `integrations.pubsubOutput.enabled`             | Enable GCloud PubSub Output Integration                                                                            | `false`                                                                                                                                   |
-| `integrations.pubsubOutput.projectID`           | GCloud Project ID where the Pub/Sub will be created                                                                | ` `                                                                                                                                       |
-| `integrations.snsOutput.enabled`                | Enable Amazon SNS Output integration                                                                               | `false`                                                                                                                                   |
-| `integrations.snsOutput.topic`                  | The SNS topic where Falco is going to publish security alerts                                                      | ` `                                                                                                                                       |
-| `integrations.snsOutput.aws_access_key_id`      | The AWS Access Key Id credentials for access to SNS n                                                              | ` `                                                                                                                                       |
-| `integrations.snsOutput.aws_secret_access_key`  | The AWS Secret Access Key credential to access to SNS                                                              | ` `                                                                                                                                       |
-| `integrations.snsOutput.aws_default_region`     | The AWS region where SNS is deployed                                                                               | ` `                                                                                                                                       |
 | `nodeSelector`                                  | The node selection constraint                                                                                      | `{}`                                                                                                                                      |
 | `affinity`                                      | The affinity constraint                                                                                            | `{}`                                                                                                                                      |
 | `tolerations`                                   | The tolerations for scheduling                                                                                     | `node-role.kubernetes.io/master:NoSchedule`                                                                                               |
@@ -216,23 +195,6 @@ Tue Jun  5 15:08:57 2018: Loading rules from file /etc/falco/rules.d/rules-traef
 ```
 
 And this means that our Falco installation has loaded the rules and is ready to help us.
-
-### Automating the generation of custom-rules.yaml file
-
-Sometimes edit YAML files with multistrings is a bit error prone, so we added a script for automating this step and make your life easier.
-
-This script lives in [falco-extras repository](https://github.com/draios/falco-extras) in the scripts directory.
-
-Imagine that you would like to add rules for your Redis, MongoDB and Traefik containers, you have to:
-
-```bash
-git clone https://github.com/draios/falco-extras.git
-cd falco-extras
-./scripts/rules2helm rules/rules-mongo.yaml rules/rules-redis.yaml rules/rules-traefik.yaml > custom-rules.yaml
-helm install falco -f custom-rules.yaml falcosecurity/falco
-```
-
-And that's all, in a few seconds you will see your pods up and running with MongoDB, Redis and Traefik rules enabled.
 
 
 ## Enabling K8s audit event support
