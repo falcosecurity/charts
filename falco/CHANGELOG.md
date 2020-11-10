@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.5.4
+
+### Minor Changes
+
+* Upgrade to Falco 0.26.2, `DRIVERS_REPO` now defaults to https://download.falco.org/driver (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.26.2/CHANGELOG.md))
+
 ## v1.5.3
 
 ### Minor Changes
