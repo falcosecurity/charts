@@ -11,6 +11,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 * New output can be set : `GCP PubSub`
 * Custom Headers can be set for `Webhook` output
+* Fix typo `aipKey` for OpsGenie output
 
 ## 0.1.29
 
