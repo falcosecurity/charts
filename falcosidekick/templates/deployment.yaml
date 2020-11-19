@@ -293,6 +293,19 @@ spec:
             - name: DISCORD_MINIMUMPRIORITY
               value: {{ .Values.config.discord.minimumpriority | quote }}
             {{- end }}
+            {{- if .Values.config.gcp.credentials }}
+            - name: GCP_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "falcosidekick.fullname" . }}
+                  key: gcp-credentials
+            - name: GCP_PUBSUB_PROJECTID
+              value: {{ .Values.config.gcp.projectid | quote }}
+            - name: GCP_PUBSUB_TOPIC
+              value: {{ .Values.config.gcp.projectid | quote }}
+            - name: GCP_PUBSUB_MINIMUMPRIORITY
+              value: {{ .Values.config.gcp.minimumpriority | quote }}
+            {{- end }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
