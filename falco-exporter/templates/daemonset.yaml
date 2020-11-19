@@ -40,18 +40,23 @@ spec:
             {{- end }}
             - --timeout={{ .Values.falco.grpcTimeout }}
             - --listen-address=0.0.0.0:{{ .Values.service.port }}
+            {{- if .Values.service.mTLS.enabled }}
+            - --server-ca=/etc/falco/server-certs/ca.crt
+            - --server-cert=/etc/falco/server-certs/server.crt
+            - --server-key=/etc/falco/server-certs/server.key
+            {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /metrics
-              port: {{ .Values.service.port }}
+              path: /liveness
+              port: {{ .Values.probesPort }}
           readinessProbe:
             httpGet:
               path: /readiness
-              port: {{ .Values.service.port }}
+              port: {{ .Values.probesPort }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -62,6 +67,11 @@ spec:
           {{- else }}
             - mountPath: /etc/falco/certs
               name: certs-volume
+              readOnly: true
+          {{- end }}
+          {{- if .Values.service.mTLS.enabled }}
+            - mountPath: /etc/falco/server-certs
+              name: server-certs-volume
               readOnly: true
           {{- end }}
       volumes:
@@ -78,6 +88,18 @@ spec:
                 path: client.key
               - key: client.crt
                 path: client.crt
+              - key: ca.crt
+                path: ca.crt
+      {{- end }}
+      {{- if .Values.service.mTLS.enabled }}
+        - name: server-certs-volume
+          secret:
+            secretName: {{ include "falco-exporter.fullname" . }}-server-certs
+            items:
+              - key: server.key
+                path: server.key
+              - key: server.crt
+                path: server.crt
               - key: ca.crt
                 path: ca.crt
       {{- end }}
