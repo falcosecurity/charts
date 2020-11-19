@@ -308,6 +308,19 @@ spec:
             - name: GCP_PUBSUB_MINIMUMPRIORITY
               value: {{ .Values.config.gcp.minimumpriority | quote }}
             {{- end }}
+            {{- if .Values.config.googlechat.webhookurl }}
+            - name: GOOGLECHAT_WEBHOOKURL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "falcosidekick.fullname" . }}
+                  key: mattermost-webhookurl
+            - name: GOOGLECHAT_OUTPUTFORMAT
+              value: {{ .Values.config.googlechat.outputformat | quote }}
+            - name: GOOGLECHAT_MINIMUMPRIORITY
+              value: {{ .Values.config.googlechat.minimumpriority | quote }}
+            - name: GOOGLECHAT_MESSAGEFORMAT
+              value: {{ .Values.config.googlechat.messageformat | quote }}
+            {{- end }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
