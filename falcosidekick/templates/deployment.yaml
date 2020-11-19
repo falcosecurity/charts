@@ -313,7 +313,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "falcosidekick.fullname" . }}
-                  key: mattermost-webhookurl
+                  key: googlechat-webhookurl
             - name: GOOGLECHAT_OUTPUTFORMAT
               value: {{ .Values.config.googlechat.outputformat | quote }}
             - name: GOOGLECHAT_MINIMUMPRIORITY
