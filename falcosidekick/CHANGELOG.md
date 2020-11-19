@@ -9,7 +9,8 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ### Major changes
 
-* New output can be set : `GCP PubSub` 
+* New output can be set : `GCP PubSub`
+* Custom Headers can be set for `Webhook` output
 
 ## 0.1.29
 
