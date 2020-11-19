@@ -132,6 +132,7 @@ config:
 
   webhook:
     address: ""
+    customHeaders: "" # a list of comma separated custom headers to add, syntax is "key:value,key:value"
     minimumpriority: ""
 
   azure:

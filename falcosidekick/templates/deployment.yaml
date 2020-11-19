@@ -271,6 +271,8 @@ spec:
             {{- if .Values.config.webhook.address }}
             - name: WEBHOOK_ADDRESS
               value: {{ .Values.config.webhook.address | quote }}
+            - name: WEBHOOK_CUSTOMHEADERS
+              value: {{ .Values.config.webhook.customHeaders | quote }}
             - name: WEBHOOK_MINIMUMPRIORITY
               value: {{ .Values.config.webhook.minimumpriority | quote }}
             {{- end }}
