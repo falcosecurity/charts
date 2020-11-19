@@ -7,6 +7,8 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ## 0.1.30
 
+### Major changes
+
 * New output can be set : `GCP PubSub` 
 
 ## 0.1.29
