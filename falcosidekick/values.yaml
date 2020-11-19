@@ -117,7 +117,7 @@ config:
     minimumpriority: ""
 
   opsgenie:
-    aipkey: ""
+    apikey: ""
     region: ""
     minimumpriority: ""
 
