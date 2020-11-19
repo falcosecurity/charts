@@ -12,10 +12,16 @@ service:
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "9376"
+  # Enable Mutual TLS for HTTP metrics server
+  mTLS:
+    enabled: false
+
+# /readiness and /liveness probes port
+probesPort: 19376
 
 image:
   repository: falcosecurity/falco-exporter
-  tag: 0.3.0
+  tag: 0.4.1
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -96,3 +102,4 @@ grafanaDashboard:
 scc:
   # true here enabled creation of Security Context Constraints in Openshift
   create: true
+

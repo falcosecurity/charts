@@ -2,6 +2,11 @@
 
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
+## v0.4.0
+
+### Mayor Changes
+
+* Add Mutual TLS for falco-exporter enable/disabled feature
 
 ## v0.3.8
 

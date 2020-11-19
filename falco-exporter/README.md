@@ -61,7 +61,7 @@ The following table lists the main configurable parameters of the chart and thei
 | `grafanaDashboard.enabled`        | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana | `false`                            |
 | `grafanaDashboard.namespace`      | The namespace to deploy the dashboard configmap in                                               | `default`                          |
 | `scc.create`                      | Create OpenShift's Security Context Constraint                                                   | `true`                             |
-
+| `service.mTLS.enabled`            | Enable falco-exporter server Mutual TLS feature                                                  | `false`                          
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
@@ -75,6 +75,21 @@ Alternatively, a YAML file that specifies the parameters' values can be provided
 
 ```bash
 helm install falco-exporter -f values.yaml falcosecurity/falco-exporter
+```
+
+### Enable Mutual TLS
+
+Mutual TLS for `/metrics` endpoint can be enabled to prevent alerts content from being consumed by unauthorized components.
+
+To install falco-exporter with Mutual TLS enabled, you have to:
+
+```shell
+helm install falco-exporter \
+  --set service.mTLS.enabled=true \
+  --set-file service.mTLS.server.key=/path/to/server.key \
+  --set-file service.mTLS.server.crt=/path/to/server.crt \
+  --set-file service.mTLS.ca.crt=/path/to/ca.crt \
+  falcosecurity/falco-exporter
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
