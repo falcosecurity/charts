@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "falcosidekick.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
     helm.sh/chart: {{ include "falcosidekick.chart" . }}
