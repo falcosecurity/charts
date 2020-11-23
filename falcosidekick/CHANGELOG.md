@@ -9,7 +9,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ### Major Changes
 
-* Support namespace configuration
+* Support release namespace configuration
 
 ## 0.1.31
 
