@@ -6,6 +6,7 @@ metadata:
     kubernetes.io/description: |
       This provides the minimum requirements Falco to run in Openshift.
   name: {{ template "falco.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "falco.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"

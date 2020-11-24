@@ -3,6 +3,7 @@ apiVersion: auditregistration.k8s.io/v1alpha1
 kind: AuditSink
 metadata:
   name: {{ template "falco.fullname" .}}
+  namespace: {{ .Release.Namespace }}
 spec:
   policy:
     level: RequestResponse
