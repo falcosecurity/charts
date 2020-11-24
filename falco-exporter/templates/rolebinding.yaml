@@ -3,6 +3,7 @@ kind: RoleBinding
 apiVersion: {{ template "rbac.apiVersion" . }}
 metadata:
   name: {{ include "falco-exporter.podSecurityPolicyName" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "falco-exporter.labels" . | nindent 4 }}
   {{- with .Values.podSecurityPolicy.annotations }}
