@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.5.5
+
+### Minor Changes
+
+* Support release namespace configuration
+
 ## v1.5.4
 
 ### Minor Changes
