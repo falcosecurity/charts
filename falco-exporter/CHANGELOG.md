@@ -2,6 +2,13 @@
 
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
+
+## v0.4.1
+
+### Minor Changes
+
+* Support release namespace configuration
+
 ## v0.4.0
 
 ### Mayor Changes
