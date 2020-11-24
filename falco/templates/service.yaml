@@ -3,6 +3,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: {{ template "falco.fullname" .}}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "falco.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -21,6 +22,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: {{ template "falco.fullname" .}}-grpc
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "falco.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"

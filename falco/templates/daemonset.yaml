@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ template "falco.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "falco.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
