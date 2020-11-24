@@ -289,5 +289,9 @@ metadata:
   labels:
     grafana_dashboard: "1"
   name: grafana-falco
+  {{- if .Values.grafanaDashboard.namespace }}
   namespace: {{ .Values.grafanaDashboard.namespace }}
+  {{- else }}
+  namespace: {{ .Release.Namespace }}
+  {{- end}}
 {{- end -}}

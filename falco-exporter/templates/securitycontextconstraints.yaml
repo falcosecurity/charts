@@ -6,6 +6,7 @@ metadata:
     kubernetes.io/description: |
       This provides the minimum requirements Falco-exporter to run in Openshift.
   name: {{ template "falco-exporter.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "falco-exporter.labels" . | nindent 4 }}
 allowHostDirVolumePlugin: true
