@@ -31,6 +31,7 @@ config:
   ##
   ## a list of comma separated custom fields to add to falco events, syntax is "key:value,key:value"
   customfields: ""
+  checkcert: true
 
   slack:
     webhookurl: ""
