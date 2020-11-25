@@ -61,6 +61,8 @@ spec:
               value: {{ .Values.config.debug | quote }}
             - name: CUSTOMFIELDS
               value: {{ .Values.config.customfields | quote }}
+            - name: CHECKCERT
+              value: {{ .Values.config.checkcert | quote }}
             {{- if .Values.config.slack.webhookurl }}
             - name: SLACK_WEBHOOKURL
               valueFrom:
