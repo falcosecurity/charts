@@ -303,11 +303,11 @@ spec:
                   name: {{ include "falcosidekick.fullname" . }}
                   key: gcp-credentials
             - name: GCP_PUBSUB_PROJECTID
-              value: {{ .Values.config.gcp.projectid | quote }}
+              value: {{ .Values.config.gcp.pubsub.projectid | quote }}
             - name: GCP_PUBSUB_TOPIC
-              value: {{ .Values.config.gcp.projectid | quote }}
+              value: {{ .Values.config.gcp.pubsub.topic | quote }}
             - name: GCP_PUBSUB_MINIMUMPRIORITY
-              value: {{ .Values.config.gcp.minimumpriority | quote }}
+              value: {{ .Values.config.gcp.pubsub.minimumpriority | quote }}
             {{- end }}
             {{- if .Values.config.googlechat.webhookurl }}
             - name: GOOGLECHAT_WEBHOOKURL
