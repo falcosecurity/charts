@@ -2,8 +2,8 @@ Falco agents are spinning up on each node in your cluster. After a few
 seconds, they are going to start monitoring your containers looking for
 security issues.
 
-{{- if (or .Values.integrations.gcscc.enabled .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
-WARNING: The following integrations have been deprecated and will be removed soon
+{{- if .Values.integrations }}
+WARNING: The following integrations have been deprecated and removed
  - gcscc
  - natsOutput
  - snsOutput
