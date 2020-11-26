@@ -33,21 +33,13 @@ data:
     time_format_iso_8601: {{ .Values.falco.timeFormatISO8601 }}
 
     # Whether to output events in json or text
-    {{- if (or .Values.integrations.gcscc.enabled .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
-    json_output: true
-    {{- else }}
     json_output: {{ .Values.falco.jsonOutput }}
-    {{- end }}
 
     # When using json output, whether or not to include the "output" property
     # itself (e.g. "File below a known binary directory opened for writing
     # (user=root ....") in the json output.
 
-    {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
-    json_include_output_property: true
-    {{- else }}
     json_include_output_property: {{ .Values.falco.jsonIncludeOutputProperty }}
-    {{- end }}
 
     # Send information logs to stderr and/or syslog Note these are *not* security
     # notification logs! These are just Falco lifecycle (and possibly error) logs.
@@ -119,17 +111,10 @@ data:
     # Also, the file will be closed and reopened if falco is signaled with
     # SIGUSR1.
 
-    {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
-    file_output:
-      enabled: true
-      keep_alive: true
-      filename: /tmp/shared-pipe/nats
-    {{- else }}
     file_output:
       enabled: {{ .Values.falco.fileOutput.enabled }}
       keep_alive: {{ .Values.falco.fileOutput.keepAlive }}
       filename: {{ .Values.falco.fileOutput.filename }}
-    {{- end }}
 
     stdout_output:
       enabled: {{ .Values.falco.stdoutOutput.enabled }}
@@ -167,18 +152,11 @@ data:
     #
     # Also, the program will be closed and reopened if falco is signaled with
     # SIGUSR1.
-    {{- if .Values.integrations.gcscc.enabled }}
-    program_output:
-      enabled: true
-      keep_alive: false
-      program: "curl -d @- -X POST --header 'Content-Type: application/json' --header 'Authorization: {{ .Values.integrations.gcscc.webhookAuthenticationToken }}' {{ .Values.integrations.gcscc.webhookUrl }}"
-    {{- else }}
     program_output:
       enabled: {{ .Values.falco.programOutput.enabled }}
       keep_alive: {{ .Values.falco.programOutput.keepAlive }}
       program: |
 {{ .Values.falco.programOutput.program | indent 8 }}
-    {{- end }}
 
     http_output:
       enabled: {{ .Values.falco.httpOutput.enabled }}
@@ -198,9 +176,5 @@ data:
 
     grpc_output:
       enabled: {{ .Values.falco.grpcOutput.enabled }}
-
-  {{- if .Values.integrations.snsOutput.enabled }}
-  aws_default_region: {{ .Values.integrations.snsOutput.aws_default_region }}
-  {{- end }}
 
 {{ (.Files.Glob "rules/*").AsConfig | indent 2 }}
