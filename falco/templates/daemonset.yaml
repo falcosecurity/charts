@@ -120,8 +120,6 @@ spec:
             - mountPath: /host/usr
               name: usr-fs
               readOnly: true
-            - mountPath: /dev/shm
-              name: dshm
             - mountPath: /host/etc
               name: etc-fs
               readOnly: true
@@ -148,9 +146,6 @@ spec:
 {{ toYaml .Values.extraInitContainers | indent 12 }}
       {{- end }}
       volumes:
-        - name: dshm
-          emptyDir:
-            medium: Memory
         {{- if .Values.docker.enabled }}
         - name: docker-socket
           hostPath:
