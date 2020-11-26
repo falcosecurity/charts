@@ -131,11 +131,6 @@ spec:
             - mountPath: /etc/falco/rules.d
               name: rules-volume
             {{- end }}
-            {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
-            - mountPath: /tmp/shared-pipe/
-              name: shared-pipe
-              readOnly: false
-            {{- end }}
             {{- if and .Values.falco.grpc.enabled .Values.falco.grpc.unixSocketPath }}
             - mountPath: {{ include "falco.unixSocketDir" . }}
               name: grpc-socket-dir
@@ -148,74 +143,9 @@ spec:
             {{- if .Values.extraVolumeMounts }}
 {{ toYaml .Values.extraVolumeMounts | indent 12 }}
             {{- end }}
-      {{- if .Values.integrations.natsOutput.enabled }}
-        - name: {{ .Chart.Name }}-nats
-          image: sysdig/falco-nats:latest
-          imagePullPolicy: Always
-          args: [ "/bin/falco-nats", "-s", {{ .Values.integrations.natsOutput.natsUrl | quote }}, "-f", "/tmp/shared-pipe/nats"]
-          volumeMounts:
-            - mountPath: /tmp/shared-pipe/
-              name: shared-pipe
-      {{- end }}
-      {{- if .Values.integrations.snsOutput.enabled }}
-        - name: {{ .Chart.Name }}-sns
-          image: sysdig/falco-sns:latest
-          imagePullPolicy: Always
-          args: [ "/bin/falco-sns", "-t", {{ .Values.integrations.snsOutput.topic | quote }}, "-f", "/tmp/shared-pipe/nats"]
-          volumeMounts:
-            - mountPath: /tmp/shared-pipe/
-              name: shared-pipe
-          env:
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "falco.fullname" . }}
-                  key: aws_access_key_id
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "falco.fullname" . }}
-                  key: aws_secret_access_key
-            - name: AWS_DEFAULT_REGION
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "falco.fullname" . }}
-                  key: aws_default_region
-      {{- end }}
-      {{- if .Values.integrations.pubsubOutput.enabled }}
-        - name: {{ .Chart.Name }}-pubsub
-          image: sysdiglabs/falco-pubsub:latest
-          imagePullPolicy: Always
-          args: [ "/bin/falco-pubsub", "-t", {{ .Values.integrations.pubsubOutput.topic | quote }}, "-f", "/tmp/shared-pipe/nats"]
-          volumeMounts:
-            - mountPath: /tmp/shared-pipe/
-              name: shared-pipe
-          env:
-            - name: GOOGLE_PROJECT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "falco.fullname" . }}
-                  key: gcp-project-id
-            - name: GOOGLE_CREDENTIALS_DATA
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "falco.fullname" . }}
-                  key: gcp-credentials-data
-      {{- end }}
-      {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled .Values.extraInitContainers) }}
+      {{- if .Values.extraInitContainers }}
       initContainers:
-          {{- if .Values.extraInitContainers }}
 {{ toYaml .Values.extraInitContainers | indent 12 }}
-          {{- end }}
-          {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
-          - name: init-pipe
-            image: busybox
-            command: ['mkfifo','/tmp/shared-pipe/nats']
-            volumeMounts:
-            - mountPath: /tmp/shared-pipe/
-              name: shared-pipe
-              readOnly: false
-          {{- end }}
       {{- end }}
       volumes:
         - name: dshm
@@ -269,10 +199,6 @@ spec:
         - name: rules-volume
           configMap:
             name: {{ template "falco.fullname" . }}-rules
-        {{- end }}
-        {{- if (or .Values.integrations.natsOutput.enabled .Values.integrations.snsOutput.enabled .Values.integrations.pubsubOutput.enabled) }}
-        - name: shared-pipe
-          emptyDir: {}
         {{- end }}
         {{- if and .Values.falco.grpc.enabled .Values.falco.grpc.unixSocketPath }}
         - name: grpc-socket-dir
