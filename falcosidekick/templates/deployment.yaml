@@ -322,6 +322,16 @@ spec:
             - name: GOOGLECHAT_MESSAGEFORMAT
               value: {{ .Values.config.googlechat.messageformat | quote }}
             {{- end }}
+            {{- if .Values.config.kafka.url }}
+            - name: KAFKA_URL
+              value: {{ .Values.config.kafka.url | quote }}
+            - name: KAFKA_TOPIC
+              value: {{ .Values.config.kafka.topic | quote }}
+            - name: KAFKA_PARTITION
+              value: {{ .Values.config.kafka.partition | quote }}
+            - name: KAFKA_MINIMUMPRIORITY
+              value: {{ .Values.config.kafka.minimumpriority | quote }}
+            {{- end }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

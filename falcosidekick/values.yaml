@@ -163,6 +163,12 @@ config:
     minimumpriority: ""
     messageformat: ""
 
+  kafka:
+    url: ""
+    topic: ""
+    partition: 0
+    messageformat: ""
+
 service:
   type: ClusterIP
   port: 2801
