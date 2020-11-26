@@ -5,12 +5,17 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.1.34
+
+### Major Changes
+
+* New outputs can be set : `Kafka`
+
 ## 0.1.33
 
 ### Minor Changes
 
 * Fixed GCP Pub/Sub values references in `deployment.yaml`
-
 
 ## 0.1.32
 
