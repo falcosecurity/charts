@@ -206,9 +206,9 @@ spec:
             - name: AWS_LAMBDA_MINIMUMPRIORITY
               value: {{ .Values.config.aws.lambda.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.aws.cloudwatchlogs.logstream }}
+            {{- if .Values.config.aws.cloudwatchlogs.loggroup }}
             - name: AWS_CLOUDWATCHLOGS_LOGGROUP
-              value: {{ .Values.config.aws.cloudwatchlogs.logstream | quote }}
+              value: {{ .Values.config.aws.cloudwatchlogs.loggroup | quote }}
             - name: AWS_CLOUDWATCHLOGS_LOGSTREAM
               value: {{ .Values.config.aws.cloudwatchlogs.logstream }}
             - name: AWS_CLOUDWATCHLOGS_MINIMUMPRIORITY
