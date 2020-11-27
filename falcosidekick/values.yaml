@@ -96,6 +96,10 @@ config:
     accesskeyid: ""
     secretaccesskey: ""
     region : ""
+    cloudwatchlogs:
+      loggroup : ""
+      logstream : ""
+      minimumpriority: "" 
     lambda:
       functionname : ""
       minimumpriority: ""
