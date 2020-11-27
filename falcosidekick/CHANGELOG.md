@@ -9,7 +9,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ### Major Changes
 
-* New outputs can be set : `Kafka`
+* New outputs can be set : `Kafka`, `AWS CloudWatchLogs`
 
 ## 0.1.33
 
