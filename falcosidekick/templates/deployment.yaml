@@ -308,6 +308,27 @@ spec:
               value: {{ .Values.config.gcp.pubsub.topic | quote }}
             - name: GCP_PUBSUB_MINIMUMPRIORITY
               value: {{ .Values.config.gcp.pubsub.minimumpriority | quote }}
+            {{- else if .Values.config.gcp.existingcredentials }}
+            - name: GCP_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingcredentials }}
+                  key: gcp-credentials
+            - name: GCP_PUBSUB_PROJECTID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingcredentials }}
+                  key: projectid
+            - name: GCP_PUBSUB_TOPIC
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingcredentials }}
+                  key: topic
+            - name: GCP_PUBSUB_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingcredentials }}
+                  key: minimumpriority
             {{- end }}
             {{- if .Values.config.googlechat.webhookurl }}
             - name: GOOGLECHAT_WEBHOOKURL
