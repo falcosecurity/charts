@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.15.0
+  tag: 2.19.1
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -24,7 +24,7 @@ podSecurityPolicy:
   create: false
 
 priorityClassName: ""
-  
+
 config:
 
   debug: false
@@ -99,7 +99,7 @@ config:
     cloudwatchlogs:
       loggroup : ""
       logstream : ""
-      minimumpriority: "" 
+      minimumpriority: ""
     lambda:
       functionname : ""
       minimumpriority: ""
@@ -128,7 +128,7 @@ config:
   statsd:
     forwarder: ""
     namespace: "falcosidekick."
-    
+
   dogstatsd:
     forwarder: ""
     namespace: "falcosidekick."
@@ -153,7 +153,7 @@ config:
     webhookurl: ""
     icon: ""
     minimumpriority: ""
-  
+
   gcp:
     credentials: "" # The base64-encoded JSON key file for the GCP service account
     pubsub:
