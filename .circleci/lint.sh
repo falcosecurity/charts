@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -o errexit
 set -o nounset
@@ -13,7 +13,7 @@ main() {
 
     # iterate over all charts
     for chart_config in */Chart.yaml; do
-        helm lint $(dirname $chart_config)
+        helm lint "$(dirname "$chart_config")"
     done
 }
 

@@ -24,14 +24,18 @@ main() {
 
     # iterate over all charts and skip those that already have a tag matching the current version
     for chart_config in */Chart.yaml; do
-        local chart_name=$(cat $chart_config | awk '/^name: /{print $NF}')
-        local chart_ver=$(cat $chart_config | awk '/^version: /{print $NF}')
-        local tag="${chart_name}-${chart_ver}"
+        local chart_name
+        local chart_ver
+        local tag
+
+        chart_name=$(awk '/^name: /{print $NF}' < "$chart_config" )
+        chart_ver=$(awk '/^version: /{print $NF}' < "$chart_config")
+        tag="${chart_name}-${chart_ver}"
         if git rev-parse "$tag" >/dev/null 2>&1; then
             echo "Chart '$chart_name': tag '$tag' already exists, skipping."
         else
             echo "Chart '$chart_name': new version '$chart_ver' detected."
-            local changed_charts+=($chart_name)
+            changed_charts+=("$chart_name")
         fi
     done
 
