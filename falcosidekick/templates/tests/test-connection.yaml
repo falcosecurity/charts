@@ -12,8 +12,8 @@ metadata:
     "helm.sh/hook": test-success
 spec:
   containers:
-    - name: wget
-      image: busybox
-      command: ['wget']
-      args:  ['{{ include "falcosidekick.fullname" . }}:{{ .Values.service.port }}']
+    - name: curl
+      image: appropriate/curl
+      command: ['curl']
+      args:  ["-X", "POST", '{{ include "falcosidekick.fullname" . }}:{{ .Values.service.port }}/ping']
   restartPolicy: Never
