@@ -10,7 +10,6 @@ jobs:
             shellcheck -x tests/e2e-kind.sh
             shellcheck -x .circleci/install_tools.sh
             shellcheck -x .circleci/release.sh
-            shellcheck -x .circleci/lint.sh
   lint-charts:
     docker:
         - image: quay.io/helmpack/chart-testing:latest
@@ -18,7 +17,7 @@ jobs:
       - checkout
       - run:
           name: lint
-          command: .circleci/lint.sh
+          command: ct lint --config tests/ct.yaml
   install-charts:
       machine: true
       steps:
