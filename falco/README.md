@@ -77,8 +77,6 @@ The following table lists the configurable parameters of the Falco chart and the
 | `ebpf.enabled`                                  | Enable eBPF support for Falco instead of `falco-probe` kernel module                                               | `false`                                                                                                                                   |
 | `ebpf.settings.hostNetwork`                     | Needed to enable eBPF JIT at runtime for performance reasons                                                       | `true`                                                                                                                                    |
 | `auditLog.enabled`                              | Enable K8s audit log support for Falco                                                                             | `false`                                                                                                                                   |
-| `auditLog.dynamicBackend.enabled`               | Deploy the Audit Sink where Falco listens for K8s audit log events                                                 | `false`                                                                                                                                   |
-| `auditLog.dynamicBackend.url`                   | Define if Audit Sink client config should point to a fixed [url](https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#url) (useful for development) instead of the default webserver service.                                                 | ``                                                                                                                                   |
 | `falco.rulesFile`                               | The location of the rules files                                                                                    | `[/etc/falco/falco_rules.yaml, /etc/falco/falco_rules.local.yaml, /etc/falco/rules.available/application_rules.yaml, /etc/falco/rules.d]` |
 | `falco.timeFormatISO8601`                       | Display times using ISO 8601 instead of local time zone                                                            | `false`                                                                                                                                   |
 | `falco.jsonOutput`                              | Output events in json or text                                                                                      | `false`                                                                                                                                   |
@@ -200,49 +198,79 @@ And this means that our Falco installation has loaded the rules and is ready to 
 
 ## Enabling K8s audit event support
 
-This has been tested with Kops and Minikube. You will need the following components:
+### Using scripts
 
-* A Kubernetes cluster greater than v1.13
-* The apiserver must be configured with Dynamic Auditing feature, do it with the following flags:
-  * `--audit-dynamic-configuration`
-  * `--feature-gates=DynamicAuditing=true`
-  * `--runtime-config=auditregistration.k8s.io/v1alpha1=true`
+This has been tested with Kops and Minikube.
 
-You can do it with the [scripts provided by Falco engineers](https://github.com/falcosecurity/evolution/tree/master/examples/k8s_audit_config)
-just running:
+You can do it with the [scripts provided by Falco engineers](https://github.com/falcosecurity/evolution/tree/master/examples/k8s_audit_config) just running:
 
 ```
 cd examples/k8s_audit_config
-bash enable-k8s-audit.sh minikube dynamic
+bash enable-k8s-audit.sh minikube static
 ```
 
 Or in the case of Kops:
 
 ```
 cd examples/k8s_audit_config
-APISERVER_HOST=api.my-kops-cluster.com bash ./enable-k8s-audit.sh kops dynamic
+APISERVER_HOST=api.my-kops-cluster.com bash ./enable-k8s-audit.sh kops static
 ```
 
-Then you can install Falco chart enabling the enabling the `falco.webserver`
+Then you can install Falco chart enabling the `auditLog`
 flag:
-
-`helm install falco --set auditLog.enabled=true --set auditLog.dynamicBackend.enabled=true falcosecurity/falco`
-
-And that's it, you will start to see the K8s audit log related alerts.
-
-### Known validation failed error
-
-Perhaps you may find the case where you receive an error like the following one:
 
 ```
 helm install falco --set auditLog.enabled=true falcosecurity/falco
-Error: validation failed: unable to recognize "": no matches for kind "AuditSink" in version "auditregistration.k8s.io/v1alpha1"
 ```
 
-This means that the apiserver cannot recognize the `auditregistration.k8s.io`
-resource, which means that the dynamic auditing feature hasn't been enabled
-properly. You need to enable it or ensure that your using a Kubernetes version
-greater than v1.13.
+And that's it, you will start to see the K8s audit log related alerts.
+
+### Manual setup on kops
+
+First deploy the falco chart, then note the service Cluster IP: `kubectl describe svc/falco`
+
+Using `kops edit cluster`, ensure these options are present, then run `kops update cluster` and `kops rolling-update cluster`:
+```yaml
+spec:
+  kubeAPIServer:
+    auditLogMaxBackups: 1
+    auditLogMaxSize: 10
+    auditLogPath: /var/log/k8s-audit.log
+    auditPolicyFile: /srv/kubernetes/assets/audit-policy.yaml
+    auditWebhookBatchMaxWait: 5s
+    auditWebhookConfigFile: /srv/kubernetes/assets/webhook-config.yaml
+  fileAssets:
+  - content: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+      - name: falco
+        cluster:
+          server: http://{falco-cluster-ip}:32765/k8s-audit
+      contexts:
+      - context:
+          cluster: falco
+          user: ""
+        name: default-context
+      current-context: default-context
+      preferences: {}
+      users: []
+    name: webhook-config.yaml
+    roles:
+    - Master
+  - content: |
+      # ... paste audit-policy.yaml here ...
+      # https://raw.githubusercontent.com/falcosecurity/evolution/master/examples/k8s_audit_config/audit-policy.yaml
+    name: audit-policy.yaml
+    roles:
+    - Master
+```
+
+Then you can install the Falco chart enabling these flags:
+
+```shell
+helm install falco --set auditLog.enabled=true falcosecurity/falco
+```
 
 ## Enabling gRPC
 
