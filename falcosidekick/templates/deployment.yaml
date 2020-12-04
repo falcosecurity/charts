@@ -188,7 +188,7 @@ spec:
             - name: NATS_MINIMUMPRIORITY
               value: {{ .Values.config.nats.minimumpriority | quote }}
             {{ end }}
-            {{- if and .Values.config.aws.accesskeyid .Values.config.influxdb.secretaccesskey .Values.config.aws.region }}
+            {{- if and .Values.config.aws.accesskeyid .Values.config.aws.secretaccesskey .Values.config.aws.region }}
             - name: AWS_ACCESSKEYID
               valueFrom:
                 secretKeyRef:
@@ -212,7 +212,7 @@ spec:
             - name: AWS_CLOUDWATCHLOGS_LOGGROUP
               value: {{ .Values.config.aws.cloudwatchlogs.loggroup | quote }}
             - name: AWS_CLOUDWATCHLOGS_LOGSTREAM
-              value: {{ .Values.config.aws.cloudwatchlogs.logstream }}
+              value: {{ .Values.config.aws.cloudwatchlogs.logstream | quote }}
             - name: AWS_CLOUDWATCHLOGS_MINIMUMPRIORITY
               value: {{ .Values.config.aws.cloudwatchlogs.minimumpriority | quote }}
             {{- end }}
@@ -252,7 +252,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "falcosidekick.fullname" . }}
                   key: smtp-password
-            {{- end }}  
+            {{- end }}
             {{- end }}
             {{- if .Values.config.opsgenie.apikey }}
             - name: OPSGENIE_APIKEY

@@ -96,20 +96,20 @@ config:
   aws:
     accesskeyid: ""
     secretaccesskey: ""
-    region : ""
+    region: ""
     cloudwatchlogs:
-      loggroup : ""
-      logstream : ""
+      loggroup: ""
+      logstream: ""
       minimumpriority: ""
     lambda:
-      functionname : ""
+      functionname: ""
       minimumpriority: ""
     sns:
-      topicarn : ""
+      topicarn: ""
       rawjson: false
       minimumpriority: ""
     sqs:
-      url : ""
+      url: ""
       minimumpriority: ""
 
   smtp:
@@ -137,7 +137,7 @@ config:
 
   webhook:
     address: ""
-    customHeaders: "" # a list of comma separated custom headers to add, syntax is "key:value,key:value"
+    customHeaders: ""  # a list of comma separated custom headers to add, syntax is "key:value,key:value"
     minimumpriority: ""
 
   azure:
@@ -156,10 +156,10 @@ config:
     minimumpriority: ""
 
   gcp:
-    credentials: "" # The base64-encoded JSON key file for the GCP service account
+    credentials: ""  # The base64-encoded JSON key file for the GCP service account
     pubsub:
-      projectid: "" # The GCP Project ID containing the Pub/Sub Topic
-      topic: "" # The name of the Pub/Sub topic
+      projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
+      topic: ""  # The name of the Pub/Sub topic
     # minimumpriority: "debug" # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
 
   googlechat:
