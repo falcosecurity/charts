@@ -10,11 +10,17 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
+  {{- if .Values.falco.webserver.nodePort }}
+  type: NodePort
+  {{- end }}
   selector:
     app: {{ template "falco.fullname" .}}
   ports:
   - protocol: TCP
     port: {{ .Values.falco.webserver.listenPort }}
+    {{- with .Values.falco.webserver.nodePort }}
+    nodePort: {{ . }}
+    {{- end }}
 {{- end }}
 {{- if and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)}}
 ---
