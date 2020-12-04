@@ -201,6 +201,7 @@ falco:
   webserver:
     enabled: true
     listenPort: 8765
+    nodePort: false
     k8sAuditEndpoint: /k8s-audit
 
   # Possible additional things you might want to do with program output:
