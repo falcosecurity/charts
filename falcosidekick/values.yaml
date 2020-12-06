@@ -156,12 +156,8 @@ config:
     minimumpriority: ""
 
   gcp:
-<<<<<<< HEAD
     existingcredentials: ""
     credentials: "" # The base64-encoded JSON key file for the GCP service account
-=======
-    credentials: ""  # The base64-encoded JSON key file for the GCP service account
->>>>>>> e06c04f7dbbb65d94dee543ffd4336fd1053d1de
     pubsub:
       projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
       topic: ""  # The name of the Pub/Sub topic
