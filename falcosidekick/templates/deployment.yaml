@@ -589,7 +589,7 @@ spec:
             - name: OPSGENIE_MINIMUMPRIORITY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.dogstatsd.existingsecret }}
+                  name: {{ .Values.config.opsgenie.existingsecret }}
                   key: opsgenie-minimumpriority
             {{- else if .Values.config.opsgenie.apikey }}
             - name: OPSGENIE_APIKEY
@@ -790,22 +790,22 @@ spec:
             - name: KAFKA_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingsecret }}
+                  name: {{ .Values.config.kafka.existingsecret }}
                   key: kafka-url
             - name: KAFKA_TOPIC
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingsecret }}
+                  name: {{ .Values.config.kafka.existingsecret }}
                   key: kafka-topic
             - name: KAFKA_PARTITION
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingsecret }}
+                  name: {{ .Values.config.kafka.existingsecret }}
                   key: kafka-partition
             - name: KAFKA_MINIMUMPRIORITY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingsecret }}
+                  name: {{ .Values.config.kafka.existingsecret }}
                   key: kafka-minimumpriority
             {{- else if .Values.config.kafka.url }}
             - name: KAFKA_URL
