@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.15.0
+  tag: 2.19.1
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -24,13 +24,14 @@ podSecurityPolicy:
   create: false
 
 priorityClassName: ""
-  
+
 config:
 
   debug: false
   ##
   ## a list of comma separated custom fields to add to falco events, syntax is "key:value,key:value"
   customfields: ""
+  checkcert: true
 
   slack:
     webhookurl: ""
@@ -95,16 +96,20 @@ config:
   aws:
     accesskeyid: ""
     secretaccesskey: ""
-    region : ""
+    region: ""
+    cloudwatchlogs:
+      loggroup: ""
+      logstream: ""
+      minimumpriority: ""
     lambda:
-      functionname : ""
+      functionname: ""
       minimumpriority: ""
     sns:
-      topicarn : ""
+      topicarn: ""
       rawjson: false
       minimumpriority: ""
     sqs:
-      url : ""
+      url: ""
       minimumpriority: ""
 
   smtp:
@@ -124,7 +129,7 @@ config:
   statsd:
     forwarder: ""
     namespace: "falcosidekick."
-    
+
   dogstatsd:
     forwarder: ""
     namespace: "falcosidekick."
@@ -132,7 +137,7 @@ config:
 
   webhook:
     address: ""
-    customHeaders: "" # a list of comma separated custom headers to add, syntax is "key:value,key:value"
+    customHeaders: ""  # a list of comma separated custom headers to add, syntax is "key:value,key:value"
     minimumpriority: ""
 
   azure:
@@ -149,19 +154,29 @@ config:
     webhookurl: ""
     icon: ""
     minimumpriority: ""
-  
+
   gcp:
+<<<<<<< HEAD
     existingcredentials: ""
     credentials: "" # The base64-encoded JSON key file for the GCP service account
+=======
+    credentials: ""  # The base64-encoded JSON key file for the GCP service account
+>>>>>>> e06c04f7dbbb65d94dee543ffd4336fd1053d1de
     pubsub:
-      projectid: "" # The GCP Project ID containing the Pub/Sub Topic
-      topic: "" # The name of the Pub/Sub topic
+      projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
+      topic: ""  # The name of the Pub/Sub topic
     # minimumpriority: "debug" # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
 
   googlechat:
     webhookurl: ""
     outputformat: "all"
     minimumpriority: ""
+    messageformat: ""
+
+  kafka:
+    url: ""
+    topic: ""
+    partition: 0
     messageformat: ""
 
 service:

@@ -61,6 +61,8 @@ spec:
               value: {{ .Values.config.debug | quote }}
             - name: CUSTOMFIELDS
               value: {{ .Values.config.customfields | quote }}
+            - name: CHECKCERT
+              value: {{ .Values.config.checkcert | quote }}
             {{- if .Values.config.slack.webhookurl }}
             - name: SLACK_WEBHOOKURL
               valueFrom:
@@ -186,7 +188,7 @@ spec:
             - name: NATS_MINIMUMPRIORITY
               value: {{ .Values.config.nats.minimumpriority | quote }}
             {{ end }}
-            {{- if and .Values.config.aws.accesskeyid .Values.config.influxdb.secretaccesskey .Values.config.aws.region }}
+            {{- if and .Values.config.aws.accesskeyid .Values.config.aws.secretaccesskey .Values.config.aws.region }}
             - name: AWS_ACCESSKEYID
               valueFrom:
                 secretKeyRef:
@@ -205,6 +207,14 @@ spec:
               value: {{ .Values.config.aws.lambda.functionname | quote }}
             - name: AWS_LAMBDA_MINIMUMPRIORITY
               value: {{ .Values.config.aws.lambda.minimumpriority | quote }}
+            {{- end }}
+            {{- if .Values.config.aws.cloudwatchlogs.loggroup }}
+            - name: AWS_CLOUDWATCHLOGS_LOGGROUP
+              value: {{ .Values.config.aws.cloudwatchlogs.loggroup | quote }}
+            - name: AWS_CLOUDWATCHLOGS_LOGSTREAM
+              value: {{ .Values.config.aws.cloudwatchlogs.logstream | quote }}
+            - name: AWS_CLOUDWATCHLOGS_MINIMUMPRIORITY
+              value: {{ .Values.config.aws.cloudwatchlogs.minimumpriority | quote }}
             {{- end }}
             {{- if .Values.config.aws.sns.topicarn }}
             - name: AWS_SNS_TOPICARN
@@ -242,7 +252,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "falcosidekick.fullname" . }}
                   key: smtp-password
-            {{- end }}  
+            {{- end }}
             {{- end }}
             {{- if .Values.config.opsgenie.apikey }}
             - name: OPSGENIE_APIKEY
@@ -342,6 +352,16 @@ spec:
               value: {{ .Values.config.googlechat.minimumpriority | quote }}
             - name: GOOGLECHAT_MESSAGEFORMAT
               value: {{ .Values.config.googlechat.messageformat | quote }}
+            {{- end }}
+            {{- if .Values.config.kafka.url }}
+            - name: KAFKA_URL
+              value: {{ .Values.config.kafka.url | quote }}
+            - name: KAFKA_TOPIC
+              value: {{ .Values.config.kafka.topic | quote }}
+            - name: KAFKA_PARTITION
+              value: {{ .Values.config.kafka.partition | quote }}
+            - name: KAFKA_MINIMUMPRIORITY
+              value: {{ .Values.config.kafka.minimumpriority | quote }}
             {{- end }}
 
           resources:
