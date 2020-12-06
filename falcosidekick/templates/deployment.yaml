@@ -221,7 +221,7 @@ spec:
             - name: MATTERMOST_MESSAGEFORMAT
               value: {{ .Values.config.mattermost.messageformat | quote }}
             {{- end }}
-            {{- .Values.config.teams.existingsecret }}
+            {{- if .Values.config.teams.existingsecret }}
             - name: TEAMS_WEBHOOKURL
               valueFrom:
                 secretKeyRef:
