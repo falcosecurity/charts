@@ -179,7 +179,7 @@ config:
 
   gcp:
     existingsecret: ""
-    credentials: "" # The base64-encoded JSON key file for the GCP service account
+    credentials: ""  # The base64-encoded JSON key file for the GCP service account
     pubsub:
       projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
       topic: ""  # The name of the Pub/Sub topic
