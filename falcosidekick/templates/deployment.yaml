@@ -63,7 +63,43 @@ spec:
               value: {{ .Values.config.customfields | quote }}
             - name: CHECKCERT
               value: {{ .Values.config.checkcert | quote }}
-            {{- if .Values.config.slack.webhookurl }}
+            {{- if .Values.config.slack.existingsecret }}
+            - name: SLACK_WEBHOOKURL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.slack.existingsecret }}
+                  key: slack-webhookurl
+            - name: SLACK_OUTPUTFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.slack.existingsecret }}
+                  key: slack-outputformat
+            - name: SLACK_FOOTER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.slack.existingsecret }}
+                  key: slack-footer
+            - name: SLACK_ICON
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.slack.existingsecret }}
+                  key: slack-icon
+            - name: SLACK_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.slack.existingsecret }}
+                  key: slack-username
+            - name: SLACK_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.slack.existingsecret }}
+                  key: slack-minimumpriority
+            - name: SLACK_MESSAGEFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.rocketchat.existingsecret }}
+                  key: slack-messageformat
+            {{- else if .Values.config.slack.webhookurl }}
             - name: SLACK_WEBHOOKURL
               valueFrom:
                 secretKeyRef:
@@ -82,7 +118,38 @@ spec:
             - name: SLACK_MESSAGEFORMAT
               value: {{ .Values.config.slack.messageformat | quote }}
             {{- end }}
-            {{- if .Values.config.rocketchat.webhookurl }}
+            {{- if .Values.config.rocketchat.existingsecret }}
+            - name: ROCKETCHAT_WEBHOOKURL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.rocketchat.existingsecret }}
+                  key: rocketchat-webhookurl
+            - name: ROCKETCHAT_OUTPUTFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.rocketchat.existingsecret }}
+                  key: rocketchat-outputformat
+            - name: ROCKETCHAT_ICON
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.rocketchat.existingsecret }}
+                  key: rocketchat-icon
+            - name: ROCKETCHAT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.rocketchat.existingsecret }}
+                  key: rocketchat-username
+            - name: ROCKETCHAT_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.rocketchat.existingsecret }}
+                  key: rocketchat-minimumpriority
+            - name: ROCKETCHAT_MESSAGEFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.rocketchat.existingsecret }}
+                  key: rocketchat-messageformat
+            {{- else if .Values.config.rocketchat.webhookurl }}
             - name: ROCKETCHAT_WEBHOOKURL
               valueFrom:
                 secretKeyRef:
@@ -99,7 +166,43 @@ spec:
             - name: ROCKETCHAT_MESSAGEFORMAT
               value: {{ .Values.config.rocketchat.messageformat | quote }}
             {{- end }}
-            {{- if .Values.config.mattermost.webhookurl }}
+            {{- if .Values.config.mattermost.existingsecret }}
+            - name: MATTERMOST_WEBHOOKURL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.mattermost.existingsecret }}
+                  key: mattermost-webhookurl
+            - name: MATTERMOST_OUTPUTFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.mattermost.existingsecret }}
+                  key: mattermost-outputformat
+            - name: MATTERMOST_FOOTER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.mattermost.existingsecret }}
+                  key: mattermost-footer
+            - name: MATTERMOST_ICON
+               valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.mattermost.existingsecret }}
+                  key: mattermost-icon
+            - name: MATTERMOST_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.mattermost.existingsecret }}
+                  key: mattermost-username
+            - name: MATTERMOST_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.mattermost.existingsecret }}
+                  key: mattermost-minimumpriority
+            - name: MATTERMOST_MESSAGEFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.mattermost.existingsecret }}
+                  key: mattermost-messageformat
+            {{- else if .Values.config.mattermost.webhookurl }}
             - name: MATTERMOST_WEBHOOKURL
               valueFrom:
                 secretKeyRef:
@@ -118,7 +221,28 @@ spec:
             - name: MATTERMOST_MESSAGEFORMAT
               value: {{ .Values.config.mattermost.messageformat | quote }}
             {{- end }}
-            {{- if .Values.config.teams.webhookurl }}
+            {{- .Values.config.teams.existingsecret }}
+            - name: TEAMS_WEBHOOKURL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "falcosidekick.fullname" . }}
+                  key: teams-webhookurl
+            - name: TEAMS_OUTPUTFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.teams.existingsecret }}
+                  key: teams-outputformat
+            - name: TEAMS_ACTIVITYIMAGE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.teams.existingsecret }}
+                  key: teams-activityimage
+            - name: TEAMS_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.teams.existingsecret }}
+                  key: teams-.minimumpriority
+            {{- else if .Values.config.teams.webhookurl }}
             - name: TEAMS_WEBHOOKURL
               valueFrom:
                 secretKeyRef:
@@ -131,7 +255,18 @@ spec:
             - name: TEAMS_MINIMUMPRIORITY
               value: {{ .Values.config.teams.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.datadog.apikey }}
+            {{- if .Values.config.datadog.existingsecret }}
+            - name: DATADOG_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.datadog.existingsecret }}
+                  key: datadog-apikey
+            - name: DATADOG_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.datadog.existingsecret }}
+                  key: datadog-minimumpriority
+            {{- else if .Values.config.datadog.apikey }}
             - name: DATADOG_APIKEY
               valueFrom:
                 secretKeyRef:
@@ -140,13 +275,45 @@ spec:
             - name: DATADOG_MINIMUMPRIORITY
               value: {{ .Values.config.datadog.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.alertmanager.hostport }}
+            {{- if .Values.config.alertmanager.existingsecret }}
+            - name: ALERTMANAGER_HOSTPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.alertmanager.existingsecret }}
+                  key: alertmanager-hostport
+            - name: ALERTMANAGER_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.alertmanager.existingsecret }}
+                  key: alertmanager-minimumpriority
+            {{- else if .Values.config.alertmanager.hostport }}
             - name: ALERTMANAGER_HOSTPORT
               value: {{ .Values.config.alertmanager.hostport | quote }}
             - name: ALERTMANAGER_MINIMUMPRIORITY
               value: {{ .Values.config.alertmanager.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.elasticsearch.hostport }}
+            {{- if .Values.config.elasticsearch.existingsecret }}
+            - name: ELASTICSEARCH_HOSTPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.elasticsearch.existingsecret }}
+                  key: elasticsearch-hostport
+            - name: ELASTICSEARCH_INDEX
+                valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.elasticsearch.existingsecret }}
+                  key: elasticsearch-index
+            - name: ELASTICSEARCH_TYPE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.elasticsearch.existingsecret }}
+                  key: elasticsearch-type
+            - name: ELASTICSEARCH_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.elasticsearch.existingsecret }}
+                  key: elasticsearch.minimumpriority | quote }}
+            {{- else if .Values.config.elasticsearch.hostport }}
             - name: ELASTICSEARCH_HOSTPORT
               value: {{ .Values.config.elasticsearch.hostport | quote }}
             - name: ELASTICSEARCH_INDEX
@@ -156,14 +323,39 @@ spec:
             - name: ELASTICSEARCH_MINIMUMPRIORITY
               value: {{ .Values.config.elasticsearch.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.influxdb.hostport }}
+            {{- if .Values.config.influxdb.existingsecret }}
+            - name: INFLUXDB_HOSTPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.influxdb.existingsecret }}
+                  key: influxdb-hostport
+            - name: INFLUXDB_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.influxdb.existingsecret }}
+                  key: influxdb-minimumpriority
+            - name: INFLUXDB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.influxdb.existingsecret }}
+                  key: influxdb-database
+            - name: INFLUXDB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.influxdb.existingsecret }}
+                  key: influxbd-user
+            - name: INFLUXDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.influxdb.existingsecret }}
+                  key: influxbd-password
+            {{- else if .Values.config.influxdb.hostport }}
             - name: INFLUXDB_HOSTPORT
               value: {{ .Values.config.influxdb.hostport | quote }}
             - name: INFLUXDB_MINIMUMPRIORITY
               value: {{ .Values.config.influxdb.minimumpriority | quote }}
             - name: INFLUXDB_DATABASE
               value: {{ .Values.config.influxdb.database | quote }}
-            {{- end }}
             {{- if and .Values.config.influxdb.user .Values.config.influxdb.password }}
             - name: INFLUXDB_USER
               valueFrom:
@@ -176,19 +368,58 @@ spec:
                   name: {{ include "falcosidekick.fullname" . }}
                   key: influxbd-password
             {{- end }}
-            {{- if .Values.config.loki.hostport }}
+            {{- end }}
+            {{- if .Values.config.loki.existingsecret }}
+            - name: LOKI_HOSTPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.loki.existingsecret }}
+                  key:  loki-hostport
+            - name: LOKI_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.loki.existingsecret }}
+                  key:  loki-minimumpriority           
+            {{- else if .Values.config.loki.hostport }}
             - name: LOKI_HOSTPORT
               value: {{ .Values.config.loki.hostport | quote }}
             - name: LOKI_MINIMUMPRIORITY
               value: {{ .Values.config.loki.minimumpriority | quote }}
             {{ end }}
-            {{- if .Values.config.nats.hostport }}
+            {{- if .Values.config.nats.existingsecret }}
+            - name: NATS_HOSTPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.nats.existingsecret }}
+                  key: nats-hostport
+            - name: NATS_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.nats.existingsecret }}
+                  key:  nats-minimumpriority            
+            {{- else if .Values.config.nats.hostport }}
             - name: NATS_HOSTPORT
               value: {{ .Values.config.nats.hostport | quote }}
             - name: NATS_MINIMUMPRIORITY
               value: {{ .Values.config.nats.minimumpriority | quote }}
             {{ end }}
-            {{- if and .Values.config.aws.accesskeyid .Values.config.aws.secretaccesskey .Values.config.aws.region }}
+            {{- if .Values.config.aws.existingsecret }}
+            - name: AWS_ACCESSKEYID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.existingsecret }}
+                  key: aws-accesskeyid
+            - name: AWS_SECRETACCESSKEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.existingsecret }}
+                  key: aws-secretaccesskey
+            - name: AWS_REGION
+                 valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.existingsecret }}
+                  key:  aws-region
+            {{- else if and .Values.config.aws.accesskeyid .Values.config.aws.secretaccesskey .Values.config.aws.region }}
             - name: AWS_ACCESSKEYID
               valueFrom:
                 secretKeyRef:
@@ -202,13 +433,40 @@ spec:
             - name: AWS_REGION
               value: {{ .Values.config.aws.region | quote }}
             {{- end }}
-            {{- if .Values.config.aws.lambda.functionname }}
+            {{- if .Values.config.aws.lambda.existingsecret }}
+            - name: AWS_LAMBDA_FUNCTIONNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.lambda.existingsecret }}
+                  key: aws-lambda-functionname
+            - name: AWS_LAMBDA_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.lambda.existingsecret }}
+                  key: aws-lambda-minimumpriority
+            {{- else if .Values.config.aws.lambda.functionname }}
             - name: AWS_LAMBDA_FUNCTIONNAME
               value: {{ .Values.config.aws.lambda.functionname | quote }}
             - name: AWS_LAMBDA_MINIMUMPRIORITY
               value: {{ .Values.config.aws.lambda.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.aws.cloudwatchlogs.loggroup }}
+            {{- if .Values.config.aws.cloudwatchlogs.existingsecret }}
+            - name: AWS_CLOUDWATCHLOGS_LOGGROUP
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.cloudwatchlogs.existingsecret }}
+                  key: aws-cloudwatchlogs-loggroup
+            - name: AWS_CLOUDWATCHLOGS_LOGSTREAM
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.cloudwatchlogs.existingsecret }}
+                  key: aws-cloudwatchlogs-logstream
+            - name: AWS_CLOUDWATCHLOGS_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.cloudwatchlogs.existingsecret }}
+                  key: aws-cloudwatchlogs-minimumpriority           
+            {{- else if .Values.config.aws.cloudwatchlogs.loggroup }}
             - name: AWS_CLOUDWATCHLOGS_LOGGROUP
               value: {{ .Values.config.aws.cloudwatchlogs.loggroup | quote }}
             - name: AWS_CLOUDWATCHLOGS_LOGSTREAM
@@ -216,7 +474,23 @@ spec:
             - name: AWS_CLOUDWATCHLOGS_MINIMUMPRIORITY
               value: {{ .Values.config.aws.cloudwatchlogs.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.aws.sns.topicarn }}
+            {{- if .Values.config.aws.sns.existingsecret }}
+           - name: AWS_SNS_TOPICARN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.sns.existingsecret }}
+                  key: aws-sns-topicarn
+            - name: AWS_SNS_RAWJSON
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.sns.existingsecret }}
+                  key: aws-sns-rawjson
+            - name: AWS_SNS_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.sns.existingsecret }}
+                  key: aws-sns-minimumpriority
+            {{- else if .Values.config.aws.sns.topicarn }}
             - name: AWS_SNS_TOPICARN
               value: {{ .Values.config.aws.sns.topicarn | quote }}
             - name: AWS_SNS_RAWJSON
@@ -224,13 +498,60 @@ spec:
             - name: AWS_SNS_MINIMUMPRIORITY
               value: {{ .Values.config.aws.sns.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.aws.sqs.url }}
+            {{- if and .Values.config.aws.sqs.existingsecret }}
+            - name: AWS_SQS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.sqs.existingsecret }}
+                  key: aws-sqs-functionname
+            - name: AWS_SQS_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.aws.sqs.existingsecret }}
+                  key: aws-sqs-minimumpriority
+            {{- else if .Values.config.aws.sqs.url }}
             - name: AWS_SQS_URL
               value: {{ .Values.config.aws.sqs.functionname | quote }}
             - name: AWS_SQS_MINIMUMPRIORITY
               value: {{ .Values.config.aws.sqs.minimumpriority | quote }}
             {{- end }}
-            {{- if and .Values.config.smtp.hostport .Values.config.smtp.from .Values.config.smtp.to }}
+            {{- if .Values.config.smtp.existingsecret }}
+            - name: SMTP_HOSTPORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.smtp.existingsecret }}
+                  key: smtp-hostport
+            - name: SMTP_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.smtp.existingsecret }}
+                  key: smtp-from
+            - name: SMTP_TO
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.smtp.existingsecret }}
+                  key: smtp-to
+            - name: SMTP_OUTPUTFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.smtp.existingsecret }}
+                  key: smtp-outputformat
+            - name: SMTP_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.smtp.existingsecret }}
+                  key: smtp-minimumpriority
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.smtp.existingsecret }}
+                  key:  smtp-user
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.smtp.existingsecret }}
+                  key:  smtp-password           
+            {{- else if and .Values.config.smtp.hostport .Values.config.smtp.from .Values.config.smtp.to }}
             - name: SMTP_HOSTPORT
               value: {{ .Values.config.smtp.hostport | quote }}
             - name: SMTP_FROM
@@ -258,6 +579,22 @@ spec:
             - name: OPSGENIE_APIKEY
               valueFrom:
                 secretKeyRef:
+                  name: {{ .Values.config.opsgenie.existingsecret }}
+                  key: opsgenie-apikey
+            - name: OPSGENIE_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.opsgenie.existingsecret }}
+                  key: opsgenie-region
+            - name: OPSGENIE_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.dogstatsd.existingsecret }}
+                  key: opsgenie-minimumpriority
+            {{- else if .Values.config.opsgenie.apikey }}
+            - name: OPSGENIE_APIKEY
+              valueFrom:
+                secretKeyRef:
                   name: {{ include "falcosidekick.fullname" . }}
                   key: opsgenie-apikey
             - name: OPSGENIE_REGION
@@ -265,13 +602,40 @@ spec:
             - name: OPSGENIE_MINIMUMPRIORITY
               value: {{ .Values.config.opsgenie.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.statsd.forwarder }}
+            {{- if .Values.config.statsd.existingsecret }}
+            - name: STATSD_FORWARDER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.statsd.existingsecret }}
+                  key: statsd-forwarder
+            - name: STATSD_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.statsd.existingsecret }}
+                  key:  statsd-namespace
+            {{- else if .Values.config.statsd.forwarder }}
             - name: STATSD_FORWARDER
               value: {{ .Values.config.statsd.forwarder | quote }}
             - name: STATSD_NAMESPACE
               value: {{ .Values.config.statsd.namespace | quote }}
             {{- end }}
-            {{- if .Values.config.statsd.forwarder }}
+            {{- if .Values.config.dogstatsd.existingsecret }}
+            - name: DOGSTATSD_FORWARDER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.dogstatsd.existingsecret }}
+                  key: dogstatsd-forwarder
+            - name: DOGSTATSD_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.dogstatsd.existingsecret }}
+                  key: dogstatsd-namespace
+            - name: DOGSTATSD_TAGS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.dogstatsd.existingsecret }}
+                  key: dogstatsd-tags
+            {{- else if .Values.config.dogstatsd.forwarder }}
             - name: DOGSTATSD_FORWARDER
               value: {{ .Values.config.dogstatsd.forwarder | quote }}
             - name: DOGSTATSD_NAMESPACE
@@ -279,7 +643,23 @@ spec:
             - name: DOGSTATSD_TAGS
               value: {{ .Values.config.dogstatsd.tags | quote }}
             {{- end }}
-            {{- if .Values.config.webhook.address }}
+            {{- if .Values.config.webhook.existingsecret }}
+            - name: WEBHOOK_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.webhook.existingsecret }}
+                  key: webhook-address
+            - name: WEBHOOK_CUSTOMHEADERS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.webhook.existingsecret }}
+                  key: webhook-customHeaders
+            - name: WEBHOOK_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.webhook.existingsecret }}
+                  key: webhook-minimumpriority           
+            {{- else if .Values.config.webhook.address }}
             - name: WEBHOOK_ADDRESS
               value: {{ .Values.config.webhook.address | quote }}
             - name: WEBHOOK_CUSTOMHEADERS
@@ -287,7 +667,23 @@ spec:
             - name: WEBHOOK_MINIMUMPRIORITY
               value: {{ .Values.config.webhook.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.azure.eventHub.name }}
+            {{- if .Values.config.azure.existingsecret }}
+            - name: AZURE_EVENTHUB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.azure.existingsecret }}
+                  key: azure-eventhub-name
+            - name: AZURE_EVENTHUB_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.azure.existingsecret }}
+                  key: azure-eventhub-namespace
+            - name: AZURE_EVENTHUB_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.azur.existingsecret }}
+                  key: azure-eventHub-minimumpriority
+            {{- else if .Values.config.azure.eventHub.name }}
             - name: AZURE_EVENTHUB_NAME
               value: {{ .Values.config.azure.eventHub.name | quote }}
             - name: AZURE_EVENTHUB_NAMESPACE
@@ -295,7 +691,23 @@ spec:
             - name: AZURE_EVENTHUB_MINIMUMPRIORITY
               value: {{ .Values.config.azure.eventHub.minimumpriority | quote }}
             {{- end }}
-            {{- if .Values.config.discord.webhookurl }}
+            {{- if .Values.config.discord.existingsecret }}
+            - name: DISCORD_WEBHOOKURL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.discord.existingsecret }}
+                  key: discord-webhookurl
+            - name: DISCORD_ICON
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.discord.existingsecret }}
+                  key: discord-icon
+            - name: DISCORD_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.discord.existingsecret }}
+                  key: discord-minimumpriority
+            {{- else if .Values.config.discord.webhookurl }}
             - name: DISCORD_WEBHOOKURL
               valueFrom:
                 secretKeyRef:
@@ -318,29 +730,50 @@ spec:
               value: {{ .Values.config.gcp.pubsub.topic | quote }}
             - name: GCP_PUBSUB_MINIMUMPRIORITY
               value: {{ .Values.config.gcp.pubsub.minimumpriority | quote }}
-            {{- else if .Values.config.gcp.existingcredentials }}
+            {{- else if .Values.config.gcp.existingsecret }}
             - name: GCP_CREDENTIALS
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingcredentials }}
+                  name: {{ .Values.config.gcp.existingsecret }}
                   key: gcp-credentials
             - name: GCP_PUBSUB_PROJECTID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingcredentials }}
-                  key: projectid
+                  name: {{ .Values.config.gcp.existingsecret }}
+                  key: gcp-projectid
             - name: GCP_PUBSUB_TOPIC
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingcredentials }}
-                  key: topic
+                  name: {{ .Values.config.gcp.existingsecret }}
+                  key: gcp-topic
             - name: GCP_PUBSUB_MINIMUMPRIORITY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.config.gcp.existingcredentials }}
-                  key: minimumpriority
+                  name: {{ .Values.config.gcp.existingsecret }}
+                  key: gcp-minimumpriority
             {{- end }}
-            {{- if .Values.config.googlechat.webhookurl }}
+            {{- if .Values.config.googlechat.existingsecret }}
+            - name: GOOGLECHAT_WEBHOOKURL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.googlechat.existingsecret }}
+                  key: googlechat-webhookurl
+            - name: GOOGLECHAT_OUTPUTFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.googlechat.existingsecret }}
+                  key: googlechat-outputformat
+            - name: GOOGLECHAT_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.googlechat.existingsecret }}
+                  key: googlechat-minimumpriority
+            - name: GOOGLECHAT_MESSAGEFORMAT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.googlechat.existingsecret }}
+                  key: googlechat-messageformat
+            {{- else if .Values.config.googlechat.webhookurl }}
             - name: GOOGLECHAT_WEBHOOKURL
               valueFrom:
                 secretKeyRef:
@@ -353,7 +786,28 @@ spec:
             - name: GOOGLECHAT_MESSAGEFORMAT
               value: {{ .Values.config.googlechat.messageformat | quote }}
             {{- end }}
-            {{- if .Values.config.kafka.url }}
+            {{- if .Values.config.kafka.existingsecret }}
+            - name: KAFKA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingsecret }}
+                  key: kafka-url
+            - name: KAFKA_TOPIC
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingsecret }}
+                  key: kafka-topic
+            - name: KAFKA_PARTITION
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingsecret }}
+                  key: kafka-partition
+            - name: KAFKA_MINIMUMPRIORITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.gcp.existingsecret }}
+                  key: kafka-minimumpriority
+            {{- else if .Values.config.kafka.url }}
             - name: KAFKA_URL
               value: {{ .Values.config.kafka.url | quote }}
             - name: KAFKA_TOPIC

@@ -34,6 +34,7 @@ config:
   checkcert: true
 
   slack:
+    existingsecret: ""
     webhookurl: ""
     footer: ""
     icon: ""
@@ -43,6 +44,7 @@ config:
     messageformat: ""
 
   rocketchat:
+    existingsecret: ""
     webhookurl: ""
     icon: ""
     username: ""
@@ -51,6 +53,7 @@ config:
     messageformat: ""
 
   mattermost:
+    existingsecret: ""
     webhookurl: ""
     footer: ""
     icon: ""
@@ -60,25 +63,30 @@ config:
     messageformat: ""
 
   teams:
+    existingsecret: ""
     webhookurl: ""
     activityimage: ""
     outputformat: "all"
     minimumpriority: ""
 
   datadog:
+    existingsecret: ""
     apikey: ""
     minimumpriority: ""
 
   alertmanager:
+    existingsecret: ""
     hostport: ""
 
   elasticsearch:
+    existingsecret: ""
     hostport: ""
     index: "falco"
     type: "event"
     minimumpriority: ""
 
   influxdb:
+    existingsecret: ""
     hostport: ""
     database: "falco"
     user: ""
@@ -86,33 +94,41 @@ config:
     minimumpriority: ""
 
   loki:
+    existingsecret: ""
     hostport: ""
     minimumpriority: ""
 
   nats:
+    existingsecret: ""
     hostport: ""
     minimumpriority: ""
 
   aws:
+    existingsecret: ""
     accesskeyid: ""
     secretaccesskey: ""
     region: ""
     cloudwatchlogs:
+      existingsecret: ""
       loggroup: ""
       logstream: ""
       minimumpriority: ""
     lambda:
+      existingsecret: ""
       functionname: ""
       minimumpriority: ""
     sns:
+      existingsecret: ""
       topicarn: ""
       rawjson: false
       minimumpriority: ""
     sqs:
+      existingsecret: ""
       url: ""
       minimumpriority: ""
 
   smtp:
+    existingsecret: ""
     hostport: ""
     user: ""
     password: ""
@@ -122,25 +138,30 @@ config:
     minimumpriority: ""
 
   opsgenie:
+    existingsecret: ""
     apikey: ""
     region: ""
     minimumpriority: ""
 
   statsd:
+    existingsecret: ""
     forwarder: ""
     namespace: "falcosidekick."
 
   dogstatsd:
+    existingsecret: ""
     forwarder: ""
     namespace: "falcosidekick."
     tags: ""
 
   webhook:
+    existingsecret: ""
     address: ""
     customHeaders: ""  # a list of comma separated custom headers to add, syntax is "key:value,key:value"
     minimumpriority: ""
 
   azure:
+    existingsecret: ""
     subscriptionID: ""
     resourceGroupName: ""
     podIdentityClientID: ""
@@ -151,12 +172,13 @@ config:
       minimumpriority: ""
 
   discord:
+    existingsecret: ""
     webhookurl: ""
     icon: ""
     minimumpriority: ""
 
   gcp:
-    existingcredentials: ""
+    existingsecret: ""
     credentials: "" # The base64-encoded JSON key file for the GCP service account
     pubsub:
       projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
@@ -164,12 +186,14 @@ config:
     # minimumpriority: "debug" # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
 
   googlechat:
+    existingsecret: ""
     webhookurl: ""
     outputformat: "all"
     minimumpriority: ""
     messageformat: ""
 
   kafka:
+    existingsecret: ""
     url: ""
     topic: ""
     partition: 0
