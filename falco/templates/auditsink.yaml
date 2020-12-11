@@ -2,7 +2,7 @@
 apiVersion: auditregistration.k8s.io/v1alpha1
 kind: AuditSink
 metadata:
-  name: {{ template "falco.fullname" .}}
+  name: {{ template "falco.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   policy:
@@ -24,4 +24,7 @@ spec:
         port: {{ .Values.falco.webserver.listenPort }}
         path: {{ .Values.falco.webserver.k8sAuditEndpoint }}
       {{- end }}
+      {{- if .Values.falco.webserver.sslEnabled }}
+      caBundle: {{ .Values.certs.ca.crt | b64enc | quote }}
+      {{- end}}
 {{- end }}
