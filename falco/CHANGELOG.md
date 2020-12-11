@@ -3,10 +3,11 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
-## Unreleased
+## v1.5.6
 
 ### Minor Changes
 
+* Add `falco.webserver.sslEnabled` config, enabling SSL support
 * Add `falco.webserver.nodePort` configuration as an alternative way for exposing the AuditLog webhook (disabled by default)
 
 ## v1.5.5
