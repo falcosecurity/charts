@@ -5,6 +5,18 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.2.0
+
+### Major Changes
+
+* Add option to use an existing secret
+* Add option to add extra environment variables
+* Add `Stan` output
+
+### Minor Changes
+
+* Use the Existing secret resource and add all possible variables to there, and make it simpler to read and less error-prone in the deployment resource
+
 ## 0.1.37
 
 ### Minor Changes
@@ -25,7 +37,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ## 0.1.34
 
-### Major Changes
+
 
 * New outputs can be set : `Kafka`, `AWS CloudWatchLogs`
 
