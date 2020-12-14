@@ -26,17 +26,22 @@ Currently available outputs are :
 * [**Elasticsearch**](https://www.elastic.co/)
 * [**Loki**](https://grafana.com/oss/loki)
 * [**NATS**](https://nats.io/)
+* [**STAN (NATS Streaming)**](https://docs.nats.io/nats-streaming-concepts/intro)
 * [**Influxdb**](https://www.influxdata.com/products/influxdb-overview/)
 * [**AWS Lambda**](https://aws.amazon.com/lambda/features/)
 * [**AWS SQS**](https://aws.amazon.com/sqs/features/)
 * [**AWS SNS**](https://aws.amazon.com/sns/features/)
-* [**Google Chat**](https://workspace.google.com/products/chat/)
+* [**AWS CloudWatchLogs**](https://aws.amazon.com/cloudwatch/features/)
 * **SMTP** (email)
 * [**Opsgenie**](https://www.opsgenie.com/)
 * [**StatsD**](https://github.com/statsd/statsd) (for monitoring of `falcosidekick`)
 * [**DogStatsD**](https://docs.datadoghq.com/developers/dogstatsd/?tab=go) (for monitoring of `falcosidekick`)
 * **Webhook**
 * [**Azure Event Hubs**](https://azure.microsoft.com/en-in/services/event-hubs/)
+* [**Prometheus**](https://prometheus.io/) (for both events and monitoring of `falcosidekick`)
+* [**GCP PubSub**](https://cloud.google.com/pubsub)
+* [**Google Chat**](https://workspace.google.com/products/chat/)
+* [**Apache Kafka**](https://kafka.apache.org/)
 
 ## Adding `falcosecurity` repository
 
@@ -130,6 +135,10 @@ The following table lists the configurable parameters of the Falcosidekick chart
 | `config.loki.minimumpriority`               | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                            | `debug`                                                                                           |
 | `config.nats.hostport`                      | NATS "nats://host:port", if not `empty`, NATS is *enabled*                                                                                                                                         |                                                                                                   |
 | `config.nats.minimumpriority`               | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                            | `debug`                                                                                           |
+| `config.stan.hostport`                      | Stan nats://{domain or ip}:{port}, if not empty, STAN output is *enabled*                                                                                                                   |                                                                                                   |
+| `config.stan.clusterid`                     | Cluster name, if not empty, STAN output is *enabled*                                           | `debug`                                                                                           |
+| `config.stan.clientid`                      | Client ID, if not empty, STAN output is *enabled*                                              |                                                                                                   |
+| `config.stan.minimumpriority`               | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                            | `debug`                                                                                           |
 | `config.aws.accesskeyid`                    | AWS Access Key Id (optionnal if you use EC2 Instance Profile)                                                                                                                                      |                                                                                                   |
 | `config.aws.secretaccesskey`                | AWS Secret Access Key (optionnal if you use EC2 Instance Profile)                                                                                                                                  |                                                                                                   |
 | `config.aws.region`                         | AWS Region (optionnal if you use EC2 Instance Profile)                                                                                                                                             |                                                                                                   |

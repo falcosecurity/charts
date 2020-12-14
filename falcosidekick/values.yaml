@@ -26,7 +26,8 @@ podSecurityPolicy:
 priorityClassName: ""
 
 config:
-
+  existingSecret: ""
+  extraEnv: []
   debug: false
   ##
   ## a list of comma separated custom fields to add to falco events, syntax is "key:value,key:value"
@@ -71,6 +72,7 @@ config:
 
   alertmanager:
     hostport: ""
+    minimumpriority: ""
 
   elasticsearch:
     hostport: ""
@@ -91,6 +93,12 @@ config:
 
   nats:
     hostport: ""
+    minimumpriority: ""
+
+  stan:
+    hostport: ""
+    clusterid: ""
+    clientid: ""
     minimumpriority: ""
 
   aws:
@@ -160,7 +168,7 @@ config:
     pubsub:
       projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
       topic: ""  # The name of the Pub/Sub topic
-    # minimumpriority: "debug" # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+      minimumpriority: ""
 
   googlechat:
     webhookurl: ""
@@ -171,8 +179,9 @@ config:
   kafka:
     url: ""
     topic: ""
-    partition: 0
+    partition: "0"
     messageformat: ""
+    minimumpriority: ""
 
 service:
   type: ClusterIP
