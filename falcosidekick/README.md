@@ -42,6 +42,7 @@ Currently available outputs are :
 * [**GCP PubSub**](https://cloud.google.com/pubsub)
 * [**Google Chat**](https://workspace.google.com/products/chat/)
 * [**Apache Kafka**](https://kafka.apache.org/)
+* [**PagerDuty**](https://pagerduty.com/)
 
 ## Adding `falcosecurity` repository
 
@@ -185,6 +186,13 @@ The following table lists the configurable parameters of the Falcosidekick chart
 | `config.kafka.topic`                        | `all` (default), `text` (only text is displayed in Google chat)                                                                                                                                    | `all`                                                                                             |
 | `config.kafka.partition`                    | a Go template to format Google Chat Text above Attachment, displayed in addition to the output from `config.googlechat.outputformat`. If empty, no Text is displayed before Attachment             |                                                                                                   |
 | `config.kafka.minimumpriority`              | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                            | `debug`                                                                                           |
+| `config.pagerduty.apiKey`                   | Pagerduty API Key, if not empty, Pagerduty output is enabled                                                                                                                                       |                                                                                                   |
+| `config.pagerduty.service`                  | Service to create an incident (mandatory)                                                                                                                                                          |                                                                                                   |
+| `config.pagerduty.assignee`                 | A list of comma separated users to assign. Cannot be provided if pagerduty.escalationpolicy is already specified                                                                                   |                                                                                                   |
+| `config.pagerduty.escalationpolicy`         | Escalation policy to assign. Cannot be provided if pagerduty.escalationpolicy is already specified                                                                                                 |                                                                                                   |
+| `config.pagerduty.minimumpriority`          | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                            | `debug`                                                                                           |
+
+
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
