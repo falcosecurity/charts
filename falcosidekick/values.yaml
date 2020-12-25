@@ -183,6 +183,13 @@ config:
     messageformat: ""
     minimumpriority: ""
 
+  pagerduty:
+    apikey: ""
+    service: ""
+    assignee: ""
+    escalationpolicy: ""
+    minimumpriority: ""
+
 service:
   type: ClusterIP
   port: 2801
