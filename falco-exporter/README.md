@@ -45,23 +45,24 @@ The command removes all the Kubernetes components associated with the chart and 
 
 The following table lists the main configurable parameters of the chart and their default values.
 
-| Parameter                         | Description                                                                                      | Default                            |
-| --------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| `image.repository`                | The image repository to pull from                                                                | `falcosecurity/falco-exporter`     |
-| `image.tag`                       | The image tag to pull                                                                            | `0.3.0`                            |
-| `image.pullPolicy`                | The image pull policy                                                                            | `IfNotPresent`                     |
-| `falco.grpcUnixSocketPath`        | Unix socket path for connecting to a Falco gRPC server                                           | `unix:///var/run/falco/falco.sock` |
-| `falco.grpcTimeout`               | gRPC connection timeout                                                                          | `2m`                               |
-| `serviceAccount.create`           | Specify if a service account should be created                                                   | `true`                             |
-| `podSecurityPolicy.create`        | Specify if a PSP, Role & RoleBinding should be created                                           | `false`                            |
-| `serviceMonitor.enabled`          | Enabled deployment of a Prometheus operator Service Monitor                                      | `false`                            |
-| `serviceMonitor.additionalLabels` | Add additional Labels to the Service Monitor                                                     | `{}`                               |
-| `serviceMonitor.interval`         | Specify a user defined interval for the Service Monitor                                          | `""`                               |
-| `serviceMonitor.scrapeTimeout`    | Specify a user defined scrape timeout for the Service Monitor                                    | `""`                               |
-| `grafanaDashboard.enabled`        | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana | `false`                            |
-| `grafanaDashboard.namespace`      | The namespace to deploy the dashboard configmap in                                               | `default`                          |
-| `scc.create`                      | Create OpenShift's Security Context Constraint                                                   | `true`                             |
-| `service.mTLS.enabled`            | Enable falco-exporter server Mutual TLS feature                                                  | `false`                          
+| Parameter                                        | Description                                                                                      | Default                            |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| `image.repository`                               | The image repository to pull from                                                                | `falcosecurity/falco-exporter`     |
+| `image.tag`                                      | The image tag to pull                                                                            | `0.3.0`                            |
+| `image.pullPolicy`                               | The image pull policy                                                                            | `IfNotPresent`                     |
+| `falco.grpcUnixSocketPath`                       | Unix socket path for connecting to a Falco gRPC server                                           | `unix:///var/run/falco/falco.sock` |
+| `falco.grpcTimeout`                              | gRPC connection timeout                                                                          | `2m`                               |
+| `serviceAccount.create`                          | Specify if a service account should be created                                                   | `true`                             |
+| `podSecurityPolicy.create`                       | Specify if a PSP, Role & RoleBinding should be created                                           | `false`                            |
+| `serviceMonitor.enabled`                         | Enabled deployment of a Prometheus operator Service Monitor                                      | `false`                            |
+| `serviceMonitor.additionalLabels`                | Add additional Labels to the Service Monitor                                                     | `{}`                               |
+| `serviceMonitor.interval`                        | Specify a user defined interval for the Service Monitor                                          | `""`                               |
+| `serviceMonitor.scrapeTimeout`                   | Specify a user defined scrape timeout for the Service Monitor                                    | `""`                               |
+| `grafanaDashboard.enabled`                       | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana | `false`                            |
+| `grafanaDashboard.namespace`                     | The namespace to deploy the dashboard configmap in                                               | `default`                          |
+| `grafanaDashboard.prometheusDatasourceName`      | The prometheus datasource name to be used for the dashboard                                      | `Prometheus`                       |
+| `scc.create`                                     | Create OpenShift's Security Context Constraint                                                   | `true`                             |
+| `service.mTLS.enabled`                           | Enable falco-exporter server Mutual TLS feature                                                  | `false`                          
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 

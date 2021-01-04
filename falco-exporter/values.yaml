@@ -98,6 +98,7 @@ serviceMonitor:
 grafanaDashboard:
   enabled: false
   namespace: default
+  prometheusDatasourceName: Prometheus
 
 scc:
   # true here enabled creation of Security Context Constraints in Openshift
