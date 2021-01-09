@@ -6,11 +6,17 @@ numbering uses [semantic versioning](http://semver.org).
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
 
+## 0.2.2
+
+### Major Changes
+
+* Add `Kubeless` output
+ 
 ## 0.2.1
 
 ### Major Changes
 
-* New outputs can be set : `PagerDuty`
+* Add `PagerDuty` output
 
 ## 0.2.0
 

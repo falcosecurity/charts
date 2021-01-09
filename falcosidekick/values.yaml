@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.19.1
+  tag: 2.20.0
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -188,6 +188,12 @@ config:
     service: ""
     assignee: ""
     escalationpolicy: ""
+    minimumpriority: ""
+
+  kubeless:
+    function: ""
+    namespace: ""
+    port: 8080
     minimumpriority: ""
 
 service:
