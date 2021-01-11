@@ -145,6 +145,9 @@ spec:
               name: certs-volume
               readOnly: true
             {{- end }}
+            {{- if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts | indent 12 }}
+            {{- end }}
       {{- if .Values.integrations.natsOutput.enabled }}
         - name: {{ .Chart.Name }}-nats
           image: sysdig/falco-nats:latest
@@ -289,6 +292,9 @@ spec:
                 path: server.pem
               - key: ca.crt
                 path: ca.crt
+        {{- end }}
+        {{- if .Values.extraVolumes }}
+{{ toYaml .Values.extraVolumes | indent 8 }}
         {{- end }}
   updateStrategy:
 {{ toYaml .Values.daemonset.updateStrategy | indent 4 }}
