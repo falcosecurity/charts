@@ -3,6 +3,13 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.5.8
+
+### Minor Changes
+
+* Add value `extraVolumes`, allow adding extra volumes to falco daemonset
+* Add value `extraVolumeMounts`, allow adding extra volumeMounts to falco container in falco daemonset
+
 ## v1.5.6
 
 ### Minor Changes
