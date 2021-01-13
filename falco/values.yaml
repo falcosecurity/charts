@@ -320,3 +320,8 @@ extraVolumes: []
 extraVolumeMounts: []
 # - mountPath: /etc/falco/rules.optional.d
 #   name: optional-rules-volume
+
+falcosidekick:
+  # enable falcosidekick deployment
+  enabled: false
+  # for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
