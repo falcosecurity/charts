@@ -33,13 +33,21 @@ data:
     time_format_iso_8601: {{ .Values.falco.timeFormatISO8601 }}
 
     # Whether to output events in json or text
+    {{- if .Values.falcosidekick.enabled }}
+    json_output: true
+    {{- else }}
     json_output: {{ .Values.falco.jsonOutput }}
+    {{- end }}
 
     # When using json output, whether or not to include the "output" property
     # itself (e.g. "File below a known binary directory opened for writing
     # (user=root ....") in the json output.
 
+    {{- if .Values.falcosidekick.enabled }}
+    json_include_output_property: true
+    {{- else }}
     json_include_output_property: {{ .Values.falco.jsonIncludeOutputProperty }}
+    {{- end }}
 
     # Send information logs to stderr and/or syslog Note these are *not* security
     # notification logs! These are just Falco lifecycle (and possibly error) logs.
@@ -159,8 +167,8 @@ data:
 {{ .Values.falco.programOutput.program | indent 8 }}
 
     http_output:
-      enabled: {{ .Values.falco.httpOutput.enabled }}
-      url: {{ .Values.falco.httpOutput.url }}
+      enabled: {{ if .Values.falcosidekick.enabled }}true{{ else }}{{ .Values.falco.httpOutput.enabled }}{{ end }}
+      url: {{ if .Values.falcosidekick.enabled }}http://falcosidekick:{{ .Values.falcosidekick.listenport | default "2801" }}{{ else }}{{ .Values.falco.httpOutput.url }}{{ end }}
 
     grpc:
       enabled: {{ .Values.falco.grpc.enabled }}

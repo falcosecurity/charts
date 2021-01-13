@@ -128,6 +128,7 @@ The following table lists the configurable parameters of the Falco chart and the
 | `extraInitContainers`                           | A list of initContainers you want to add to the falco pod in the daemonset.                                        | `[]`                                                                                                                                      |
 | `extraVolumes`                                  | A list of volumes you want to add to the falco daemonset.                                                          | `[]`                                                                                                                                      |
 | `extraVolumeMounts`                             | A list of volumeMounts you want to add to the falco container in the falco daemonset.                              | `[]`                                                                                                                                      |
+| `falcosidekick.enable`                             | Enable `falcosidekick` deployment                              | `false`                                                                                                                                      |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
