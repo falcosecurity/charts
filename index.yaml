@@ -682,6 +682,26 @@ entries:
     version: 0.3.0
   falcosidekick:
   - apiVersion: v1
+    appVersion: 2.20.0
+    created: "2021-01-14T01:33:50.606634883Z"
+    description: A simple daemon to help you with falco's outputs
+    digest: e969ebcb09076ece983c1b96de04ba4dfffda488bdebccfc2c74b8c12d0968f5
+    home: https://github.com/falcosecurity/falcosidekick
+    icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: Issif
+    name: falcosidekick
+    sources:
+    - https://github.com/falcosecurity/falcosidekick
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falcosidekick-0.2.1/falcosidekick-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v1
     appVersion: 2.19.1
     created: "2020-12-21T10:26:19.285575643Z"
     description: A simple daemon to help you with falco's outputs
