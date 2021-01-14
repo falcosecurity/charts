@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.6.0
+
+### Minor Changes
+
+* Remove deprecated integrations (see [#123](https://github.com/falcosecurity/charts/issues/123))
+
 ## v1.5.8
 
 ### Minor Changes
