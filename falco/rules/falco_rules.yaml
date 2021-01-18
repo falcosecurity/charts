@@ -522,7 +522,7 @@
 - macro: container_started
   condition: >
     ((evt.type = container or
-     (evt.type=execve and evt.dir=< and proc.vpid=1)) and
+     (spawned_process and proc.vpid=1)) and
      container.image.repository != incomplete)
 
 - macro: interactive
@@ -1213,6 +1213,9 @@
        fd.name startswith /etc/ssh/ssh_monitor_config_ or
        fd.name startswith /etc/ssh/ssh_config_))
 
+- macro: multipath_writing_conf
+  condition: (proc.name = multipath and fd.name startswith /etc/multipath/)
+
 # Add conditions to this macro (probably in a separate file,
 # overwriting this macro) to allow for specific combinations of
 # programs writing below specific directories below
@@ -1333,6 +1336,7 @@
     and not automount_using_mtab
     and not mcafee_writing_cma_d
     and not avinetworks_supervisor_writing_ssh
+    and not multipath_writing_conf
 
 - rule: Write below etc
   desc: an attempt to write to any file below /etc
@@ -1597,7 +1601,12 @@
 
 - rule: Mkdir binary dirs
   desc: an attempt to create a directory below a set of binary directories.
-  condition: mkdir and bin_dir_mkdir and not package_mgmt_procs and not user_known_mkdir_bin_dir_activities
+  condition: >
+    mkdir
+    and bin_dir_mkdir
+    and not package_mgmt_procs
+    and not user_known_mkdir_bin_dir_activities
+    and not exe_running_docker_save
   output: >
     Directory below known binary directory created (user=%user.name user_loginuid=%user.loginuid
     command=%proc.cmdline directory=%evt.arg.path container_id=%container.id image=%container.image.repository)
@@ -1608,7 +1617,7 @@
 # to change thread namespace without having to copy and override the
 # entire change thread namespace rule.
 - list: user_known_change_thread_namespace_binaries
-  items: []
+  items: [crio, multus]
 
 - macro: user_known_change_thread_namespace_activities
   condition: (never_true)
@@ -1866,6 +1875,7 @@
 - list: falco_privileged_images
   items: [
     docker.io/calico/node,
+    calico/node,
     docker.io/cloudnativelabs/kube-router,
     docker.io/docker/ucp-agent,
     docker.io/falcosecurity/falco,
@@ -1918,6 +1928,7 @@
 - list: falco_sensitive_mount_images
   items: [
     docker.io/sysdig/falco, docker.io/sysdig/sysdig, sysdig/falco, sysdig/sysdig,
+    docker.io/falcosecurity/falco, falcosecurity/falco,
     gcr.io/google_containers/hyperkube,
     gcr.io/google_containers/kube-proxy, docker.io/calico/node,
     docker.io/rook/toolbox, docker.io/cloudnativelabs/kube-router, docker.io/consul,
@@ -2313,6 +2324,9 @@
 - macro: user_known_user_management_activities
   condition: (never_true)
 
+- macro: chage_list
+  condition: (proc.name=chage and (proc.cmdline contains "-l" or proc.cmdline contains "--list"))
+
 - rule: User mgmt binaries
   desc: >
     activity by any programs that can manage users, passwords, or permissions. sudo and su are excluded.
@@ -2331,6 +2345,7 @@
     not run_by_yum and
     not run_by_ms_oms and
     not run_by_google_accounts_daemon and
+    not chage_list and
     not user_known_user_management_activities
   output: >
     User management binary command run outside of container
@@ -2715,6 +2730,7 @@
      (open_write and evt.arg.flags contains "O_CREAT" and fd.name contains "/." and not fd.name pmatch (exclude_hidden_directories))) and
     consider_hidden_file_creation and
     not user_known_create_hidden_file_activities
+    and not exe_running_docker_save
   output: >
     Hidden file or directory created (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline
     file=%fd.name newpath=%evt.arg.newpath container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
@@ -2728,10 +2744,18 @@
 - macro: remote_file_copy_procs
   condition: (proc.name in (remote_file_copy_binaries))
 
+# Users should overwrite this macro to specify conditions under which a
+# Custom condition for use of remote file copy tool in container
+- macro: user_known_remote_file_copy_activities
+  condition: (never_true)
+
 - rule: Launch Remote File Copy Tools in Container
   desc: Detect remote file copy tools launched in container
   condition: >
-    spawned_process and container and remote_file_copy_procs
+    spawned_process
+    and container
+    and remote_file_copy_procs
+    and not user_known_remote_file_copy_activities
   output: >
     Remote file copy tool launched in container (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline parent_process=%proc.pname
     container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
@@ -2854,12 +2878,22 @@
 - list: k8s_client_binaries
   items: [docker, kubectl, crictl]
 
+- list: user_known_k8s_ns_kube_system_images
+  items: [
+      k8s.gcr.io/fluentd-gcp-scaler,
+      k8s.gcr.io/node-problem-detector/node-problem-detector
+  ]
+
+- list: user_known_k8s_images
+  items: [
+      mcr.microsoft.com/aks/hcp/hcp-tunnel-front
+  ]
+
 # Whitelist for known docker client binaries run inside container
 # - k8s.gcr.io/fluentd-gcp-scaler in GCP/GKE
 - macro: user_known_k8s_client_container
   condition: >
-    (k8s.ns.name="kube-system" and container.image.repository=k8s.gcr.io/fluentd-gcp-scaler) or
-    container.image.repository=mcr.microsoft.com/aks/hcp/hcp-tunnel-front
+    (k8s.ns.name="kube-system" and container.image.repository in (user_known_k8s_ns_kube_system_images)) or container.image.repository in (user_known_k8s_images)
 
 - macro: user_known_k8s_client_container_parens
   condition: (user_known_k8s_client_container)
@@ -3022,6 +3056,41 @@
   output: Drift detected (open+create), new executable created in a container (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline filename=%evt.arg.filename name=%evt.arg.name mode=%evt.arg.mode event=%evt.type)
   priority: ERROR
 
+- list: c2_server_ip_list
+  items: []
+
+- rule: Outbound Connection to C2 Servers
+  desc: Detect outbound connection to command & control servers
+  condition: outbound and fd.sip in (c2_server_ip_list)
+  output: Outbound connection to C2 server (command=%proc.cmdline connection=%fd.name user=%user.name user_loginuid=%user.loginuid container_id=%container.id image=%container.image.repository)
+  priority: WARNING
+  tags: [network]
+
+- list: white_listed_modules
+  items: []
+    
+- rule: Linux Kernel Module Injection Detected
+  desc: Detect kernel module was injected (from container).
+  condition: spawned_process and container and proc.name=insmod and not proc.args in (white_listed_modules)
+  output: Linux Kernel Module injection using insmod detected (user=%user.name user_loginuid=%user.loginuid parent_process=%proc.pname module=%proc.args)
+  priority: WARNING
+  tags: [process]
+
+- list: run_as_root_image_list
+  items: []
+
+- macro: user_known_run_as_root_container
+  condition: (container.image.repository in (run_as_root_image_list))
+
+# The rule is disabled by default and should be enabled when non-root container policy has been applied.
+# Note the rule will not work as expected when usernamespace is applied, e.g. userns-remap is enabled.
+- rule: Container Run as Root User
+  desc: Detected container running as root user
+  condition: spawned_process and container and proc.vpid=1 and user.uid=0 and not user_known_run_as_root_container
+  enabled: false
+  output: Container launched with root user privilege (uid=%user.uid container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
+  priority: INFO
+  tags: [container, process]
 
 # Application rules have moved to application_rules.yaml. Please look
 # there if you want to enable them by adding to
