@@ -18,8 +18,7 @@ maintainers:
   - name: The Falco Authors
     email: cncf-falco-dev@lists.cncf.io
 dependencies:
-  - alias: falcosidekick
-    name: falcosidekick
-    version: 0.2.2
+  - name: falcosidekick
+    version: "0.2.*"
     condition: falcosidekick.enabled
     repository: https://falcosecurity.github.io/charts
