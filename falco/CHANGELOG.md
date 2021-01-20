@@ -3,9 +3,13 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.1
+
+* Correct image tag for Falco 0.27.0
+
 ## v1.7.0
 
-* Upgrade to Falco 0.7.0 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.27.0/CHANGELOG.md))
+* Upgrade to Falco 0.27.0 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.27.0/CHANGELOG.md))
 * Add `falco.output_timeout` configuration setting
 
 ## v1.6.1
