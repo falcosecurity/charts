@@ -5,6 +5,7 @@ approvers:
   - leogr
   - nibalizer
   - Issif
+  - cpanato
 reviewers:
   - leodido
   - fntlnz
@@ -14,3 +15,4 @@ reviewers:
   - nestorsalceda
   - bencer
   - Issif
+  - cpanato
