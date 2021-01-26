@@ -3,6 +3,13 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.5.0
+
+### Minor Changes
+
+* Upgrade falco-exporter version to v0.5.0
+* Add metrics about Falco drops
+* Make `unix://` prefix optional
 ## v0.4.2
 
 ### Minor Changes
