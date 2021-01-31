@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.2
+
+* Fix `falco` configmap when `Falcosidekick` is enabled, wrong service name was used
+
 ## v1.7.1
 
 * Correct image tag for Falco 0.27.0
