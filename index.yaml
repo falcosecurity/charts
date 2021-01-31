@@ -3,6 +3,34 @@ entries:
   falco:
   - apiVersion: v2
     appVersion: 0.27.0
+    created: "2021-01-31T18:01:06.172751866Z"
+    dependencies:
+    - condition: falcosidekick.enabled
+      name: falcosidekick
+      repository: https://falcosecurity.github.io/charts
+      version: 0.2.*
+    description: Falco
+    digest: 51e7dd66fb201a817d399a7685ec11a3a7e76a0aa82b7ac1d54451e8f67f13b4
+    home: https://falco.org
+    icon: https://falco.org/images/logos/falco-logo.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: falco
+    sources:
+    - https://github.com/falcosecurity/falco
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-1.7.2/falco-1.7.2.tgz
+    version: 1.7.2
+  - apiVersion: v2
+    appVersion: 0.27.0
     created: "2021-01-20T10:41:52.276157527Z"
     dependencies:
     - condition: falcosidekick.enabled
