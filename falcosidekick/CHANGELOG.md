@@ -5,6 +5,12 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.2.4
+
+### Minor Changes
+
+* Add `DATADOG_HOST` to secret
+
 ## 0.2.3
 
 ### Minor Changes
@@ -17,7 +23,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 ### Major Changes
 
 * Add `Kubeless` output
- 
+
 ## 0.2.1
 
 ### Major Changes
@@ -170,7 +176,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 ### Major Changes
 
 * New output can be set : `DogStatsD`
- 
+
 ## 0.1.9
 
 ### Major Changes
