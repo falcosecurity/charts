@@ -71,6 +71,7 @@ config:
   datadog:
     apikey: ""
     minimumpriority: ""
+    host: ""
 
   alertmanager:
     hostport: ""
