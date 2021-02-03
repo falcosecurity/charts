@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.3
+
+* Add the option to disable async CRI metadata fetching
+
 ## v1.7.2
 
 * Fix `falco` configmap when `Falcosidekick` is enabled, wrong service name was used

@@ -64,6 +64,9 @@ spec:
             - --cri
             - /run/containerd/containerd.sock
             {{- end }}
+            {{- if .Values.falco.disableCriAsync }}
+            - --disable-cri-async
+            {{- end }}
             - -K
             - /var/run/secrets/kubernetes.io/serviceaccount/token
             - -k
