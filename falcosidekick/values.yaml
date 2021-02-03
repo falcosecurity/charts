@@ -25,6 +25,8 @@ podSecurityPolicy:
 
 priorityClassName: ""
 
+podAnnotations: {}
+
 config:
   existingSecret: ""
   extraEnv: []
