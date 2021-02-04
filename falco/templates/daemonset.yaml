@@ -64,7 +64,7 @@ spec:
             - --cri
             - /run/containerd/containerd.sock
             {{- end }}
-            {{- if .Values.falco.disableCriAsync }}
+            {{- if .Values.falco.disableCRIAsync }}
             - --disable-cri-async
             {{- end }}
             - -K

@@ -183,7 +183,7 @@ falco:
   # to empty fields for container metadata when the fetch is not fast enough to be
   # completed asynchronously. This can have a performance penalty on your environment
   # depending on the number of containers and the frequency at which they are created/started/stopped
-  disableCriAsync: false
+  disableCRIAsync: false
 
   # A throttling mechanism implemented as a token bucket limits the
   # rate of Falco notifications. This throttling is controlled by the following configuration
