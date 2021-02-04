@@ -177,6 +177,13 @@ falco:
   # for up to 2 seconds without reaching the timeout.
 
   output_timeout: 2000
+  # Disable asynchronous CRI metadata fetching.
+  # This is useful to let the input event wait for the container metadata fetch
+  # to finish before moving forward. Async fetching, in some environments leads
+  # to empty fields for container metadata when the fetch is not fast enough to be
+  # completed asynchronously. This can have a performance penalty on your environment
+  # depending on the number of containers and the frequency at which they are created/started/stopped
+  disableCriAsync: false
 
   # A throttling mechanism implemented as a token bucket limits the
   # rate of Falco notifications. This throttling is controlled by the following configuration
