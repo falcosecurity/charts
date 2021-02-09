@@ -43,7 +43,10 @@ Currently available outputs are :
 * [**Google Chat**](https://workspace.google.com/products/chat/)
 * [**Apache Kafka**](https://kafka.apache.org/)
 * [**PagerDuty**](https://pagerduty.com/)
-* [**Kubeless**](https://https://kubeless.io/)
+* [**Kubeless**](https://kubeless.io/)
+* [**Kubeless**](https://kubeless.io/)
+* [**Cloud Events**](https://cloudevents.io/)
+* [**WebUI**](https://github.com/falcosecurity/falcosidekick-ui) (a Web UI for displaying latest events in real time)
 
 ## Adding `falcosecurity` repository
 
@@ -56,10 +59,21 @@ helm repo update
 
 ## Installing the Chart
 
+### Standalone
+
 To install the chart with the release name `falcosidekick` run:
 
 ```bash
-helm install falcosidekick falcosecurity/falcosidekick
+helm install falcosidekick falcosecurity/falcosidekick --set webui.enabled=true
+```
+
+### With Helm chart of Falco
+
+`Falco` and `Falcosidekick` can be installed together in one command. All values to set for `Falcosidekick` will have to be
+prefixed with `falcosidekick.`.
+
+```bash
+helm install falco falcosecurity/falcosidekick --set falcosidekick.enabled=true --set falcosidekick.webui.enabled=true
 ```
 
 After a few seconds, Falcosidekick should be running.
@@ -82,12 +96,12 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists the configurable parameters of the Falcosidekick chart and their default values.
+The following table lists the main configurable parameters of the Falcosidekick chart and their default values. See `values.yaml` for full list.
 
 | Parameter                                   | Description                                                                                                                                                                            | Default                                                                                           |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `replicaCount`                              | number of running pods                                                                                                                                                                 | `1`                                                                                               |
-| `podAnnotations`                            | additions annotations on the pods                 | `{}`
+| `podAnnotations`                            | additions annotations on the pods                                                                                                                                                      | `{}`                                                                                              |
 | `listenport`                                | port to listen for daemon                                                                                                                                                              | `2801`                                                                                            |
 | `config.debug`                              | if *true* all outputs will print in stdout the payload they send                                                                                                                       | `false`                                                                                           |
 | `config.customfields`                       | a list of comma separated custom fields to add to falco events, syntax is "key:value,key:value"                                                                                        |                                                                                                   |
@@ -195,8 +209,12 @@ The following table lists the configurable parameters of the Falcosidekick chart
 | `config.pagerduty.minimumpriority`          | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                | `debug`                                                                                           |
 | `kubeless.function`                         | Name of Kubeless function, if not empty, EventHub is *enabled*                                                                                                                         |                                                                                                   |
 | `kubeless.namespace`                        | Namespace of Kubeless function (mandatory)                                                                                                                                             |                                                                                                   |
-| `kubeless.port`                             | Port of service of Kubeless function. Default is `8080`.                                                                                                                               |                                                                                                   |
+| `kubeless.port`                             | Port of service of Kubeless function. Default is `8080`                                                                                                                                |                                                                                                   |
 | `kubeless.minimumpriority`                  | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                | `debug`                                                                                           |
+| `cloudevents.address`                       | CloudEvents consumer http address, if not empty, CloudEvents output is *enabled*                                                                                                       |                                                                                                   |
+| `cloudevents.extension`                     | Extensions to add in the outbound Event, useful for routing                                                                                                                            |                                                                                                   |
+| `cloudevents.minimumpriority`               | minimum priority of event for using use this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`                                                | `debug`                                                                                           |
+| `webui.enabled`                             | enable Falcosidekick-UI                                                                                                                                                                | `false`                                                                                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 

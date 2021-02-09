@@ -1,4 +1,5 @@
 {{- if and .Values.config.azure.podIdentityClientID .Values.config.azure.podIdentityName -}}
+--
 apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentity
 metadata:
@@ -16,5 +17,4 @@ metadata:
 spec:
   azureIdentity: falcosidekick
   selector: {{ include "falcosidekick.fullname" . }}
-
 {{- end }}
