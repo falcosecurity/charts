@@ -1,0 +1,26 @@
+{{- if .Values.webui.enabled -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-ui
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
+    helm.sh/chart: {{ include "falcosidekick.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-ui
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.webui.service.type }}
+  ports:
+    - port: {{ .Values.webui.service.port }}
+      {{ if eq .Values.webui.service.type "NodePort" }}
+      nodePort: {{ .Values.webui.service.nodePort }}
+      {{ end }}   
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
+    app.kubernetes.io/instance: {{ .Release.Name }}-ui
+{{- end }}

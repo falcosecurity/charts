@@ -2,11 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 2
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.20.0
+  tag: 2.21.0
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -199,6 +199,11 @@ config:
     port: 8080
     minimumpriority: ""
 
+  cloudevents:
+    address: ""
+    extension: ""
+    minimumpriority: ""
+
 service:
   type: ClusterIP
   port: 2801
@@ -234,3 +239,64 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+webui:
+  enabled: false
+
+  image:
+    repository: issif/falcosidekick-ui
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  podSecurityContext:
+    runAsUser: 1234
+    fsGroup: 1234
+
+  # One or more secrets to be used when pulling images
+  imagePullSecrets: []
+  # - registrySecretName
+
+  podSecurityPolicy:
+    create: false
+
+  priorityClassName: ""
+
+  podAnnotations: {}
+
+  service:
+    # type: NodePort
+    type: ClusterIP
+    port: 2802
+    nodePort: 30282
+
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: falcosidekick-ui.local
+        paths: ["/ui", "/events", "/healthz", "/ws"]
+
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
