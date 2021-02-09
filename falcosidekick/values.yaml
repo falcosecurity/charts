@@ -32,7 +32,7 @@ config:
   extraEnv: []
   debug: false
   ##
-  ## a list of comma separated custom fields to add to falco events, syntax is "key:value,key:value"
+  ## a list of escaped comma separated custom fields to add to falco events, syntax is "key:value\,key:value"
   customfields: ""
   checkcert: true
 
