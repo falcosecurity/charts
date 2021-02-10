@@ -6,7 +6,7 @@ replicaCount: 2
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.21.0
+  tag: latest
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -251,6 +251,8 @@ webui:
   podSecurityContext:
     runAsUser: 1234
     fsGroup: 1234
+
+  retention: 50
 
   # One or more secrets to be used when pulling images
   imagePullSecrets: []
