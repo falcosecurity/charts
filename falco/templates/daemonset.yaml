@@ -75,7 +75,7 @@ spec:
           env:
           {{- if .Values.ebpf.enabled }}
             - name: FALCO_BPF_PROBE
-              value:
+              value: {{ .Values.ebpf.path }}
           {{- end }}
           {{- if .Values.proxy.httpProxy }}
             - name: http_proxy
