@@ -81,6 +81,7 @@ priorityClassName:
 ebpf:
   # Enable eBPF support for Falco
   enabled: false
+  path:
 
   settings:
     # Needed to enable eBPF JIT at runtime for performance reasons.
