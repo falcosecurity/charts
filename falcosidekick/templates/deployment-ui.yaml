@@ -32,6 +32,7 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
           imagePullPolicy: {{ .Values.webui.image.pullPolicy }}
+          args: ["-r", "{{ .Values.webui.retention}}"]
           ports:
             - name: http
               containerPort: 2802
