@@ -59,7 +59,7 @@ helm repo update
 
 ## Installing the Chart
 
-### Standalone
+### Install Falco + Falcosidekick + Falcosidekick-ui
 
 To install the chart with the release name `falcosidekick` run:
 
@@ -69,11 +69,11 @@ helm install falcosidekick falcosecurity/falcosidekick --set webui.enabled=true
 
 ### With Helm chart of Falco
 
-`Falco` and `Falcosidekick` can be installed together in one command. All values to set for `Falcosidekick` will have to be
+`Falco`, `Falcosidekick` and `Falcosidekick-ui` can be installed together in one command. All values to configure `Falcosidekick` will have to be
 prefixed with `falcosidekick.`.
 
 ```bash
-helm install falco falcosecurity/falcosidekick --set falcosidekick.enabled=true --set falcosidekick.webui.enabled=true
+helm install falco falcosecurity/falco --set falcosidekick.enabled=true --set falcosidekick.webui.enabled=true
 ```
 
 After a few seconds, Falcosidekick should be running.
@@ -217,16 +217,6 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `webui.enabled`                             | enable Falcosidekick-UI                                                                                                                                                                | `false`                                                                                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
-
-```bash
-helm install falcosidekick --set debug=true falcosecurity/falcosidekick
-```
-
-Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example:
-
-```bash
-helm install falcosidekick -f values.yaml falcosecurity/falcosidekick
-```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
 

@@ -6,7 +6,7 @@ replicaCount: 2
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: latest
+  tag: 2.21.0
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -245,7 +245,7 @@ webui:
 
   image:
     repository: issif/falcosidekick-ui
-    tag: latest
+    tag: 0.1.0
     pullPolicy: IfNotPresent
 
   podSecurityContext:
