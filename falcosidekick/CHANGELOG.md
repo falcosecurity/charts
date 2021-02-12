@@ -12,6 +12,10 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 * Add `CLOUDEVENTS` output
 * Add `WEBUI` output
 
+### Minor Changes
+
+* Add details about syntax for adding `custom_fields`
+
 ## 0.2.4
 
 ### Minor Changes
