@@ -3,6 +3,10 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.5.1
+
+* Display only non-zero rates in Grafana dashboard template
+
 ## v0.5.0
 
 ### Minor Changes
