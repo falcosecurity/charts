@@ -80,7 +80,7 @@ data:
             },
             "lines": true,
             "linewidth": 1,
-            "nullPointMode": "null",
+            "nullPointMode": "null as zero",
             "options": {
               "dataLinks": []
             },
@@ -94,7 +94,7 @@ data:
             "steppedLine": false,
             "targets": [
               {
-                "expr": "rate(falco_events[5m])",
+                "expr": "rate(falco_events[5m]) > 0",
                 "interval": "",
                 "intervalFactor": 1,
                 "legendFormat": "{{`{{rule}} (node=\"{{kubernetes_node}}\",ns=\"{{k8s_ns_name}}\",pod=\"{{k8s_pod_name}}\")"`}},
