@@ -244,8 +244,8 @@ webui:
   enabled: false
 
   image:
-    repository: issif/falcosidekick-ui
-    tag: 0.1.0
+    repository: falcosecurity/falcosidekick-ui
+    tag: "v0.1.0"
     pullPolicy: IfNotPresent
 
   podSecurityContext:
