@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.4
+
+* Fix containerd socket path in argument
+
 ## v1.7.3
 
 * Bump up version of chart for `Falcosidekick` dependency
