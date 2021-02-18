@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.5
+
+* Update downstream sidekick chart
+
 ## v1.7.4
 
 * Add `ebpf.probe.path` configuration option
