@@ -11,7 +11,7 @@ keywords:
   - troubleshooting
   - run-time
 home: https://falco.org
-icon: https://falco.org/images/logos/falco-logo.png
+icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/falco/horizontal/color/falco-horizontal-color.svg
 sources:
   - https://github.com/falcosecurity/falco
 maintainers:
