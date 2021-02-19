@@ -180,7 +180,7 @@ config:
     messageformat: ""
 
   kafka:
-    url: ""
+    hostport: ""
     topic: ""
     partition: "0"
     messageformat: ""
