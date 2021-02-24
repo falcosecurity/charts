@@ -3,6 +3,9 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.6
+
+* Correct icon URL
 ## v1.7.5
 
 * Update downstream sidekick chart
