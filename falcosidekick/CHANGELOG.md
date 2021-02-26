@@ -5,11 +5,17 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.2.9
+
+### Major Changes
+
+* Updated falcosidekuck-ui default image version to `v0.2.0`
+
 ## 0.2.8
 
 ### Fixes
 
-* FIxed to specify `kafka.hostPort` instead of `kafka.url`
+* Fixed to specify `kafka.hostPort` instead of `kafka.url`
 
 ## 0.2.7
 
