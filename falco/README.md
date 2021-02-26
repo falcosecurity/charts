@@ -6,11 +6,11 @@
 
 This chart adds Falco to all nodes in your cluster using a DaemonSet.
 
-Also provides a Deployment for generating Falco alerts. This is useful for testing purposes.
+It also provides a Deployment for generating Falco alerts. This is useful for testing purposes.
 
 ## Adding `falcosecurity` repository
 
-Prior to install the chart, add the `falcosecurity` charts repository:
+Before installing the chart, add the `falcosecurity` charts repository:
 
 ```bash
 helm repo add falcosecurity https://falcosecurity.github.io/charts
@@ -148,11 +148,11 @@ helm install falco -f values.yaml falcosecurity/falco
 
 ## Loading custom rules
 
-Falco ships with a nice default ruleset. Is a good starting point but sooner or later we are going to need to add custom rules which fits our needs.
+Falco ships with a nice default ruleset. It is a good starting point but sooner or later, we are going to need to add custom rules which fit our needs.
 
-So the question is: How we can load custom rules in our Falco deployment?
+So the question is: How can we load custom rules in our Falco deployment?
 
-We are going to create a file which contains custom rules so that we can keep it in a Git repository.
+We are going to create a file that contains custom rules so that we can keep it in a Git repository.
 
 ```bash
 cat custom-rules.yaml
@@ -320,19 +320,110 @@ helm install falco \
 
 The webserver reuses the gRPC certificate setup, which is [documented here](https://falco.org/docs/grpc/#generate-valid-ca). Generating the client certificate isn't required.
 
+## Using an init container
+
+This chart allows adding init containers and extra volume mounts. One common usage of the init container is to specify a different image for loading the driver (ie. [falcosecurity/driver-loader](https://hub.docker.com/repository/docker/falcosecurity/falco-driver-loader)). So then a slim image can be used for running Falco (ie. [falcosecurity/falco-no-driver](https://hub.docker.com/repository/docker/falcosecurity/falco-no-driver)).
+
+### Using `falcosecurity/driver-loader` image
+
+Create a YAML file `values.yaml` as following:
+
+```yaml
+image:
+  repository: falcosecurity/falco-no-driver
+
+extraInitContainers: 
+  - name: driver-loader
+    image: docker.io/falcosecurity/falco-driver-loader:latest
+    imagePullPolicy: Always
+    securityContext:
+      privileged: true
+    volumeMounts:
+      - mountPath: /host/proc
+        name: proc-fs
+        readOnly: true
+      - mountPath: /host/boot
+        name: boot-fs
+        readOnly: true
+      - mountPath: /host/lib/modules
+        name: lib-modules
+      - mountPath: /host/usr
+        name: usr-fs
+        readOnly: true
+      - mountPath: /host/etc
+        name: etc-fs
+        readOnly: true
+```
+
+Then:
+
+```shell
+helm install falco -f values.yaml falcosecurity/falco
+```
+
+### Using `falcosecurity/driver-loader` image with eBPF
+
+Create a YAML file `values.yaml` as following:
+
+```yaml
+image:
+  repository: falcosecurity/falco-no-driver
+
+extraInitContainers:
+  - name: driver-loader
+    image: docker.io/falcosecurity/falco-driver-loader:latest
+    imagePullPolicy: Always
+    volumeMounts:
+      - mountPath: /host/proc
+        name: proc-fs
+        readOnly: true
+      - mountPath: /host/boot
+        name: boot-fs
+        readOnly: true
+      - mountPath: /host/lib/modules
+        name: lib-modules
+      - mountPath: /host/usr
+        name: usr-fs
+        readOnly: true
+      - mountPath: /host/etc
+        name: etc-fs
+        readOnly: true
+      - mountPath: /root/.falco
+        name: driver-fs
+    env:
+      - name: FALCO_BPF_PROBE
+        value:
+
+extraVolumes:
+  - name: driver-fs
+    emptyDir: {}
+
+extraVolumeMounts:
+  - mountPath: /root/.falco
+    name: driver-fs
+
+ebpf:
+  enabled: true
+```
+
+Then:
+
+```shell
+helm install falco -f values.yaml falcosecurity/falco
+```
 
 ## Enabling gRPC
 
 The Falco gRPC server and the Falco gRPC Outputs APIs are not enabled by default.
-Morover, Falco supports running a gRPC server with two main binding types:
-- Over a local **unix socket** with no authentication 
+Moreover, Falco supports running a gRPC server with two main binding types:
+- Over a local **Unix socket** with no authentication 
 - Over the **network** with mandatory mutual TLS authentication (mTLS)
 
 > **Tip**: Once gRPC is enabled, you can deploy [falco-exporter](https://github.com/falcosecurity/falco-exporter) to export metrics to Prometheus.
 
 ### gRPC over unix socket (default)
 
-The preferred way to use the gRPC is over a unix socket.
+The preferred way to use the gRPC is over a Unix socket.
 
 To install Falco with gRPC enabled over a **unix socket**, you have to:
 
