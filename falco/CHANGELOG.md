@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.8
+
+* Increase CPU limit default value
+
 ## v1.7.7
 
 * Add a documentation section about using init containers
