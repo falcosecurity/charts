@@ -23,7 +23,7 @@ resources:
     cpu: 100m
     memory: 512Mi
   limits:
-    cpu: 200m
+    cpu: 1000m
     memory: 1024Mi
 
 extraArgs: []
