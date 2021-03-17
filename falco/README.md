@@ -29,6 +29,14 @@ After a few seconds, Falco should be running.
 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
 
+### About the driver
+
+Falco needs a driver (the [kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module) or the [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe)) to work.
+
+The container image includes a script (`falco-driver-loader`) that either tries to build the driver on-the-fly or downloads a prebuilt driver as a fallback. Usually, no action is required.
+
+If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to building the driver on the fly correctly. You can find instructions on installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
+
 ## Uninstalling the Chart
 
 To uninstall the `falco` deployment:
