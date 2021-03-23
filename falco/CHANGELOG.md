@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.7.10
+
+* Update rule `Write below monitored dir` description
+
 ## v1.7.9
 
 * Add a documentation section about the driver
