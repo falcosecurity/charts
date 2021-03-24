@@ -56,6 +56,10 @@ podSecurityPolicy:
 podSecurityContext: {}
   # fsGroup: 2000
 
+daemonset:
+  # Annotations to add to the DaemonSet pods
+  annotations: {}
+
 securityContext: {}
   # capabilities:
   #   drop:
