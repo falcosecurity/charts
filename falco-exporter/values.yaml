@@ -58,8 +58,11 @@ podSecurityContext:
   {}
   # fsGroup: 2000
 
-securityContext:
-  {}
+daemonset:
+  # Annotations to add to the DaemonSet pods
+  annotations: {}
+
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
