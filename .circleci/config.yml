@@ -12,19 +12,19 @@ jobs:
             shellcheck -x .circleci/release.sh
   lint-charts:
     docker:
-        - image: quay.io/helmpack/chart-testing:latest
+      - image: quay.io/helmpack/chart-testing:latest
     steps:
       - checkout
       - run:
           name: lint
           command: ct lint --config tests/ct.yaml
   install-charts:
-      machine: true
-      steps:
-        - checkout
-        - run:
-            command: tests/e2e-kind.sh
-            no_output_timeout: 1h
+    machine: true
+    steps:
+      - checkout
+      - run:
+          command: tests/e2e-kind.sh
+          no_output_timeout: 1h
   release-charts:
     docker:
       - image: cimg/base:stable
@@ -46,9 +46,18 @@ workflows:
   version: 2
   release:
     jobs:
-      - lint-scripts
-      - lint-charts
+      - lint-scripts:
+          filters:
+            branches:
+              ignore: gh-pages
+      - lint-charts:
+          filters:
+            branches:
+              ignore: gh-pages
       - install-charts:
+          filters:
+            branches:
+              ignore: gh-pages
           requires:
             - lint-scripts
             - lint-charts
