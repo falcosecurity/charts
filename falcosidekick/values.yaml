@@ -6,7 +6,7 @@ replicaCount: 2
 
 image:
   repository: falcosecurity/falcosidekick
-  tag: 2.21.0
+  tag: 2.22.0
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -122,6 +122,10 @@ config:
     sqs:
       url: ""
       minimumpriority: ""
+    s3:
+      bucket: "falcosidekick"
+      prefix: ""
+      minimumpriority: ""
 
   smtp:
     hostport: ""
@@ -172,6 +176,10 @@ config:
       projectid: ""  # The GCP Project ID containing the Pub/Sub Topic
       topic: ""  # The name of the Pub/Sub topic
       minimumpriority: ""
+    storage:
+      prefix: ""
+      bucket: ""
+      minimumpriority: "debug"
 
   googlechat:
     webhookurl: ""
@@ -199,10 +207,23 @@ config:
     port: 8080
     minimumpriority: ""
 
+  openfaas:
+    gatewayservice: ""
+    gatewaynamespace: ""
+    gatewayport: 8080
+    functionname: ""
+    functionnamespace: ""
+    minimumpriority: ""
+
   cloudevents:
     address: ""
     extension: ""
     minimumpriority: ""
+
+  rabbitmq:
+    url: ""
+    queue: ""
+    minimumpriority: "debug"
 
 service:
   type: ClusterIP
@@ -245,14 +266,14 @@ webui:
 
   image:
     repository: falcosecurity/falcosidekick-ui
-    tag: "v0.2.0"
+    tag: "v1.0.0"
     pullPolicy: IfNotPresent
 
   podSecurityContext:
     runAsUser: 1234
     fsGroup: 1234
 
-  retention: 50
+  retention: 200
 
   # One or more secrets to be used when pulling images
   imagePullSecrets: []
