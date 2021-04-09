@@ -123,7 +123,7 @@ config:
       url: ""
       minimumpriority: ""
     s3:
-      bucket: "falcosidekick"
+      bucket: ""
       prefix: ""
       minimumpriority: ""
 
