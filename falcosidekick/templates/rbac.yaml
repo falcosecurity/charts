@@ -9,6 +9,10 @@ metadata:
     helm.sh/chart: {{ include "falcosidekick.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- if .Values.podAnnotations }}
+  annotations:
+    {{ toYaml .Values.serviceAccountAnnotations | indent 4 }}
+  {{- end }}    
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

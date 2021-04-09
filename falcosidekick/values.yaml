@@ -27,6 +27,8 @@ priorityClassName: ""
 
 podAnnotations: {}
 
+serviceAccountAnnotations: {}
+
 config:
   existingSecret: ""
   extraEnv: []
