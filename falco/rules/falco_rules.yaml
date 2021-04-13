@@ -15,14 +15,9 @@
 # limitations under the License.
 #
 
-# See xxx for details on falco engine and rules versioning. Currently,
-# this specific rules file is compatible with engine version 0
-# (e.g. falco releases <= 0.13.1), so we'll keep the
-# required_engine_version lines commented out, so maintain
-# compatibility with older falco releases. With the first incompatible
-# change to this rules file, we'll uncomment this line and set it to
-# the falco engine version in use at the time.
-#
+# The latest Falco Engine version is 8 if you want to
+# use exceptions. However the default rules file does not
+# use them so we stick with 7 for compatibility.
 - required_engine_version: 7
 
 # Currently disabled as read/write are ignored syscalls. The nearly
@@ -186,14 +181,8 @@
 - list: db_server_binaries
   items: [mysqld, postgres, sqlplus]
 
-- list: mysql_mgmt_binaries
-  items: [mysql_install_d, mysql_ssl_rsa_s]
-
 - list: postgres_mgmt_binaries
   items: [pg_dumpall, pg_ctl, pg_lsclusters, pg_ctlcluster]
-
-- list: db_mgmt_binaries
-  items: [mysql_mgmt_binaries, postgres_mgmt_binaries]
 
 - list: nosql_server_binaries
   items: [couchdb, memcached, redis-server, rabbitmq-server, mongod]
@@ -214,7 +203,7 @@
 # The explicit quotes are needed to avoid the - characters being
 # interpreted by the filter expression.
 - list: rpm_binaries
-  items: [dnf, rpm, rpmkey, yum, '"75-system-updat"', rhsmcertd-worke, subscription-ma,
+  items: [dnf, rpm, rpmkey, yum, '"75-system-updat"', rhsmcertd-worke, rhsmcertd, subscription-ma,
           repoquery, rpmkeys, rpmq, yum-cron, yum-config-mana, yum-debug-dump,
           abrt-action-sav, rpmdb_stat, microdnf, rhn_check, yumdb]
 
@@ -227,7 +216,7 @@
 - list: deb_binaries
   items: [dpkg, dpkg-preconfigu, dpkg-reconfigur, dpkg-divert, apt, apt-get, aptitude,
     frontend, preinst, add-apt-reposit, apt-auto-remova, apt-key,
-    apt-listchanges, unattended-upgr, apt-add-reposit, apt-config, apt-cache
+    apt-listchanges, unattended-upgr, apt-add-reposit, apt-config, apt-cache, apt.systemd.dai
     ]
 
 # The truncated dpkg-preconfigu is intentional, process names are
@@ -549,59 +538,10 @@
 - macro: system_users
   condition: user.name in (bin, daemon, games, lp, mail, nobody, sshd, sync, uucp, www-data)
 
-# These macros will be removed soon. Only keeping them to maintain
-# compatiblity with some widely used rules files.
-# Begin Deprecated
-- macro: parent_ansible_running_python
-  condition: (proc.pname in (python, pypy, python3) and proc.pcmdline contains ansible)
-
-- macro: parent_bro_running_python
-  condition: (proc.pname=python and proc.cmdline contains /usr/share/broctl)
-
-- macro: parent_python_running_denyhosts
-  condition: >
-    (proc.cmdline startswith "denyhosts.py /usr/bin/denyhosts.py" or
-     (proc.pname=python and
-     (proc.pcmdline contains /usr/sbin/denyhosts or
-      proc.pcmdline contains /usr/local/bin/denyhosts.py)))
-
-- macro: parent_python_running_sdchecks
-  condition: >
-    (proc.pname in (python, python2.7) and
-    (proc.pcmdline contains /opt/draios/bin/sdchecks))
-
 - macro: python_running_sdchecks
   condition: >
     (proc.name in (python, python2.7) and
     (proc.cmdline contains /opt/draios/bin/sdchecks))
-
-- macro: parent_linux_image_upgrade_script
-  condition: proc.pname startswith linux-image-
-
-- macro: parent_java_running_echo
-  condition: (proc.pname=java and proc.cmdline startswith "sh -c echo")
-
-- macro: parent_scripting_running_builds
-  condition: >
-    (proc.pname in (php,php5-fpm,php-fpm7.1,python,ruby,ruby2.3,ruby2.1,node,conda) and (
-       proc.cmdline startswith "sh -c git" or
-       proc.cmdline startswith "sh -c date" or
-       proc.cmdline startswith "sh -c /usr/bin/g++" or
-       proc.cmdline startswith "sh -c /usr/bin/gcc" or
-       proc.cmdline startswith "sh -c gcc" or
-       proc.cmdline startswith "sh -c if type gcc" or
-       proc.cmdline startswith "sh -c cd '/var/www/edi/';LC_ALL=en_US.UTF-8 git" or
-       proc.cmdline startswith "sh -c /var/www/edi/bin/sftp.sh" or
-       proc.cmdline startswith "sh -c /usr/src/app/crxlsx/bin/linux/crxlsx" or
-       proc.cmdline startswith "sh -c make parent" or
-       proc.cmdline startswith "node /jenkins/tools" or
-       proc.cmdline startswith "sh -c '/usr/bin/node'" or
-       proc.cmdline startswith "sh -c stty -a |" or
-       proc.pcmdline startswith "node /opt/nodejs/bin/yarn" or
-       proc.pcmdline startswith "node /usr/local/bin/yarn" or
-       proc.pcmdline startswith "node /root/.config/yarn" or
-       proc.pcmdline startswith "node /opt/yarn/bin/yarn.js"))
-
 
 - macro: httpd_writing_ssl_conf
   condition: >
@@ -611,28 +551,6 @@
 
 - macro: userhelper_writing_etc_security
   condition: (proc.name=userhelper and fd.name startswith /etc/security)
-
-- macro: parent_Xvfb_running_xkbcomp
-  condition: (proc.pname=Xvfb and proc.cmdline startswith 'sh -c "/usr/bin/xkbcomp"')
-
-- macro: parent_nginx_running_serf
-  condition: (proc.pname=nginx and proc.cmdline startswith "sh -c serf")
-
-- macro: parent_node_running_npm
-  condition: (proc.pcmdline startswith "node /usr/local/bin/npm" or
-              proc.pcmdline startswith "node /usr/local/nodejs/bin/npm" or
-              proc.pcmdline startswith "node /opt/rh/rh-nodejs6/root/usr/bin/npm")
-
-- macro: parent_java_running_sbt
-  condition: (proc.pname=java and proc.pcmdline contains sbt-launch.jar)
-
-- list: known_container_shell_spawn_cmdlines
-  items: []
-
-- list: known_shell_spawn_binaries
-  items: []
-
-## End Deprecated
 
 - macro: ansible_running_python
   condition: (proc.name in (python, pypy, python3) and proc.cmdline contains ansible)
@@ -688,9 +606,6 @@
 
 - macro: run_by_centrify
   condition: (proc.aname[2]=centrify or proc.aname[3]=centrify or proc.aname[4]=centrify)
-
-- macro: run_by_puppet
-  condition: (proc.aname[2]=puppet or proc.aname[3]=puppet)
 
 # Also handles running semi-indirectly via scl
 - macro: run_by_foreman
@@ -877,7 +792,7 @@
     or proc.cmdline contains "/var/run/docker")
     and proc.pname in (dockerd, docker, dockerd-current, docker-current)
 
-# Ideally we'd have a length check here as well but sysdig
+# Ideally we'd have a length check here as well but
 # filterchecks don't have operators like len()
 - macro: sed_temporary_file
   condition: (proc.name=sed and fd.name startswith "/etc/sed")
@@ -988,15 +903,10 @@
 # the following rule and lists.
 
 - list: monitored_directories
-  items: [/boot, /lib, /lib64, /usr/lib, /usr/local/lib, /usr/local/sbin, /usr/local/bin, /root/.ssh, /etc/cardserver]
+  items: [/boot, /lib, /lib64, /usr/lib, /usr/local/lib, /usr/local/sbin, /usr/local/bin, /root/.ssh]
 
-# Until https://github.com/draios/sysdig/pull/1153, which fixes
-# https://github.com/draios/sysdig/issues/1152, is widely available,
-# we can't use glob operators to match pathnames. Until then, we do a
-# looser check to match ssh directories.
-# When fixed, we will use "fd.name glob '/home/*/.ssh/*'"
 - macro: user_ssh_directory
-  condition: (fd.name startswith '/home' and fd.name contains '.ssh')
+  condition: (fd.name glob '/home/*/.ssh/*')
 
 # google_accounts_(daemon)
 - macro: google_accounts_daemon_writing_ssh
@@ -1844,13 +1754,6 @@
 - list: trusted_images
   items: []
 
-# NOTE: This macro is only provided for backwards compatibility with
-# older local falco rules files that may have been appending to
-# trusted_images. To make customizations, it's better to add containers to
-# user_trusted_containers, user_privileged_containers or user_sensitive_mount_containers.
-- macro: trusted_containers
-  condition: (container.image.repository in (trusted_images))
-
 # Add conditions to this macro (probably in a separate file,
 # overwriting this macro) to specify additional containers that are
 # trusted and therefore allowed to run privileged *and* with sensitive
@@ -1917,12 +1820,6 @@
 - macro: user_privileged_containers
   condition: (never_true)
 
-- list: rancher_images
-  items: [
-    rancher/network-manager, rancher/dns, rancher/agent,
-    rancher/lb-service-haproxy, rancher/metadata, rancher/healthcheck
-  ]
-
 # These container images are allowed to mount sensitive paths from the
 # host filesystem.
 - list: falco_sensitive_mount_images
@@ -1934,7 +1831,7 @@
     docker.io/rook/toolbox, docker.io/cloudnativelabs/kube-router, docker.io/consul,
     docker.io/datadog/docker-dd-agent, docker.io/datadog/agent, docker.io/docker/ucp-agent, docker.io/gliderlabs/logspout,
     docker.io/netdata/netdata, docker.io/google/cadvisor, docker.io/prom/node-exporter,
-    amazon/amazon-ecs-agent
+    amazon/amazon-ecs-agent, prom/node-exporter, amazon/cloudwatch-agent
     ]
 
 - macro: falco_sensitive_mount_containers
@@ -2418,6 +2315,12 @@
   priority: NOTICE
   tags: [network, container, mitre_discovery]
 
+# Containers from IBM Cloud
+- list: ibm_cloud_containers
+  items:
+    - icr.io/ext/sysdig/agent
+    - registry.ng.bluemix.net/armada-master/metrics-server-amd64
+    - registry.ng.bluemix.net/armada-master/olm
 
 # In a local/user rules file, list the namespace or container images that are
 # allowed to contact the K8s API Server from within a container. This
@@ -2428,7 +2331,10 @@
     (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,
      gcr.io/google_containers/kube2sky, docker.io/sysdig/falco,
      docker.io/sysdig/sysdig, docker.io/falcosecurity/falco,
-     sysdig/falco, sysdig/sysdig, falcosecurity/falco) or (k8s.ns.name = "kube-system"))
+     sysdig/falco, sysdig/sysdig, falcosecurity/falco,
+     fluent/fluentd-kubernetes-daemonset, prom/prometheus,
+     ibm_cloud_containers)
+     or (k8s.ns.name = "kube-system"))
 
 - macro: k8s_api_server
   condition: (fd.sip.name="kubernetes.default.svc.cluster.local")
@@ -2439,9 +2345,9 @@
 - rule: Contact K8S API Server From Container
   desc: Detect attempts to contact the K8S API Server from a container
   condition: >
-    evt.type=connect and evt.dir=< and 
+    evt.type=connect and evt.dir=< and
     (fd.typechar=4 or fd.typechar=6) and
-    container and 
+    container and
     not k8s_containers and
     k8s_api_server and
     not user_known_contact_k8s_api_server_activities
@@ -2687,7 +2593,7 @@
   condition: (always_true)
 
 - list: user_known_chmod_applications
-  items: [hyperkube, kubelet]
+  items: [hyperkube, kubelet, k3s-agent]
 
 # This macro should be overridden in user rules as needed. This is useful if a given application
 # should not be ignored alltogether with the user_known_chmod_applications list, but only in
@@ -2906,7 +2812,7 @@
   tags: [container, mitre_execution]
 
 
-# This rule is enabled by default. 
+# This rule is enabled by default.
 # If you want to disable it, modify the following macro.
 - macro: consider_packet_socket_communication
   condition: (always_true)
@@ -2924,10 +2830,6 @@
 # Change to (always_true) to enable rule 'Network connection outside local subnet'
 - macro: enabled_rule_network_only_subnet
   condition: (never_true)
-
-# Images that are allowed to have outbound traffic
-- list: images_allow_network_outside_subnet
-  items: []
 
 # Namespaces where the rule is enforce
 - list: namespace_scope_network_only_subnet
@@ -2967,9 +2869,6 @@
 
 - list: allowed_image
   items: [] # add image to monitor, i.e.: bitnami/nginx
-
-- list: authorized_server_binaries
-  items: []  # add binary to allow, i.e.: nginx
 
 - list: authorized_server_port
   items: [] # add port to allow, i.e.: 80
@@ -3068,7 +2967,7 @@
 
 - list: white_listed_modules
   items: []
-    
+
 - rule: Linux Kernel Module Injection Detected
   desc: Detect kernel module was injected (from container).
   condition: spawned_process and container and proc.name=insmod and not proc.args in (white_listed_modules)
@@ -3091,6 +2990,39 @@
   output: Container launched with root user privilege (uid=%user.uid container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
   priority: INFO
   tags: [container, process]
+
+# This rule helps detect CVE-2021-3156:
+# A privilege escalation to root through heap-based buffer overflow
+- rule: Sudo Potential Privilege Escalation
+  desc: Privilege escalation vulnerability affecting sudo (<= 1.9.5p2). Executing sudo using sudoedit -s or sudoedit -i command with command-line argument that ends with a single backslash character from an unprivileged user it's possible to elevate the user privileges to root.
+  condition: spawned_process and user.uid!= 0 and proc.name=sudoedit and (proc.args contains -s or proc.args contains -i) and (proc.args contains "\ " or proc.args endswith \)
+  output: "Detect Sudo Privilege Escalation Exploit (CVE-2021-3156) (user=%user.name parent=%proc.pname cmdline=%proc.cmdline %container.info)"
+  priority: CRITICAL
+  tags: [filesystem, mitre_privilege_escalation]
+
+- rule: Debugfs Launched in Privileged Container
+  desc: Detect file system debugger debugfs launched inside a privilegd container which might lead to container escape.
+  condition: >
+    spawned_process and container
+    and container.privileged=true
+    and proc.name=debugfs
+  output: Debugfs launched started in a privileged container (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag)
+  priority: WARNING
+  tags: [container, cis, mitre_lateral_movement]
+
+- macro: mount_info
+  condition: (proc.args="" or proc.args intersects ("-V", "-l", "-h"))
+
+- rule: Mount Launched in Privileged Container
+  desc: Detect file system mount happened inside a privilegd container which might lead to container escape.
+  condition: >
+    spawned_process and container
+    and container.privileged=true
+    and proc.name=mount
+    and not mount_info
+  output: Mount was executed inside a privileged container (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag)
+  priority: WARNING
+  tags: [container, cis, mitre_lateral_movement]
 
 # Application rules have moved to application_rules.yaml. Please look
 # there if you want to enable them by adding to

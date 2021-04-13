@@ -50,7 +50,9 @@
     vertical_pod_autoscaler_users,
     cluster-autoscaler,
     "system:addon-manager",
-    "cloud-controller-manager"
+    "cloud-controller-manager",
+    "eks:node-manager",
+    "system:kube-controller-manager"
     ]
 
 - rule: Disallowed K8s User
@@ -207,6 +209,10 @@
 # events to be stateful, so it could know if a container named in an
 # attach request was created privileged or not. For now, we have a
 # less severe rule that detects attaches/execs to any pod.
+#
+# For the same reason, you can't use things like image names/prefixes,
+# as the event that creates the pod (which has the images) is a
+# separate event than the actual exec/attach to the pod.
 
 - macro: user_known_exec_pod_activities
   condition: (k8s_audit_never_true)
@@ -295,8 +301,13 @@
 - list: user_known_sa_list
   items: []
 
+- list: known_sa_list
+  items: ["pod-garbage-collector","resourcequota-controller","cronjob-controller","generic-garbage-collector",
+          "daemon-set-controller","endpointslice-controller","deployment-controller", "replicaset-controller",
+          "endpoint-controller"]
+
 - macro: trusted_sa
-  condition: (ka.target.name in (user_known_sa_list))
+  condition: (ka.target.name in (known_sa_list, user_known_sa_list))
 
 # Detect creating a service account in the kube-system/kube-public namespace
 - rule: Service Account Created in Kube Namespace
@@ -521,11 +532,11 @@
 - list: full_admin_k8s_users
   items: ["admin", "kubernetes-admin",  "kubernetes-admin@kubernetes", "kubernetes-admin@cluster.local", "minikube-user"]
 
-# This rules detect an operation triggered by an user name that is 
-# included in the list of those that are default administrators upon 
-# cluster creation. This may signify a permission setting too broader. 
-# As we can't check for role of the user on a general ka.* event, this 
-# may or may not be an administrator. Customize the full_admin_k8s_users 
+# This rules detect an operation triggered by an user name that is
+# included in the list of those that are default administrators upon
+# cluster creation. This may signify a permission setting too broader.
+# As we can't check for role of the user on a general ka.* event, this
+# may or may not be an administrator. Customize the full_admin_k8s_users
 # list to your needs, and activate at your discrection.
 
 # # How to test:
@@ -535,8 +546,8 @@
 - rule: Full K8s Administrative Access
   desc: Detect any k8s operation by a user name that may be an administrator with full access.
   condition: >
-    kevt 
-    and non_system_user 
+    kevt
+    and non_system_user
     and ka.user.name in (full_admin_k8s_users)
     and not allowed_full_admin_users
   output: K8s Operation performed by full admin user (user=%ka.user.name target=%ka.target.name/%ka.target.resource verb=%ka.verb uri=%ka.uri resp=%ka.response.code)
@@ -575,7 +586,7 @@
   output: >
     K8s Ingress Without TLS Cert Created (user=%ka.user.name ingress=%ka.target.name
     namespace=%ka.target.namespace)
-  source: k8s_audit    
+  source: k8s_audit
   priority: WARNING
   tags: [k8s, network]
 
@@ -598,10 +609,10 @@
   desc: >
     Detect a node successfully joined the cluster outside of the list of allowed nodes.
   condition: >
-    kevt and node 
-    and kcreate 
-    and response_successful 
-    and not allow_all_k8s_nodes 
+    kevt and node
+    and kcreate
+    and response_successful
+    and not allow_all_k8s_nodes
     and not ka.target.name in (allowed_k8s_nodes)
   output: Node not in allowed list successfully joined the cluster (user=%ka.user.name node=%ka.target.name)
   priority: ERROR
@@ -612,13 +623,12 @@
   desc: >
     Detect an unsuccessful attempt to join the cluster for a node not in the list of allowed nodes.
   condition: >
-    kevt and node 
-    and kcreate 
-    and not response_successful 
-    and not allow_all_k8s_nodes 
+    kevt and node
+    and kcreate
+    and not response_successful
+    and not allow_all_k8s_nodes
     and not ka.target.name in (allowed_k8s_nodes)
   output: Node not in allowed list tried unsuccessfully to join the cluster  (user=%ka.user.name node=%ka.target.name reason=%ka.response.reason)
   priority: WARNING
   source: k8s_audit
   tags: [k8s]
-
