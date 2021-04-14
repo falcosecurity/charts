@@ -10,7 +10,8 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 ### Fixes
 
 * Add config checksum annotation to deployment pods to restart pods on config change
-* Fix statsd config options in the secret to make them match the docs 
+* Fix statsd config options in the secret to make them match the docs
+
 ## 0.3.1
 
 ### Fixes
