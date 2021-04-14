@@ -79,6 +79,19 @@ prefixed with `falcosidekick.`.
 helm install falco falcosecurity/falco --set falcosidekick.enabled=true --set falcosidekick.webui.enabled=true
 ```
 
+### Behind Proxy
+
+If you are behind corporate proxy, enable the program output exclusively as below. so that falco can post its log events to falcosidekick.
+
+```
+programOutput:
+  enabled: true
+  keepAlive: false
+  program: "curl -d @- falco-falcosidekick.{namespace}.svc.cluster.local:2801/"
+```
+
+when you set falcosidekick.enabled=true while using helm, falco by default enable `httpOutput` and `httpOutput.url` will be set to `http://falco-falcosidekick:2801/`. This url will be captured by your proxy and may not reach falcosidekick as its not fully qualified url like `http://falco-falcosidekick.{namespace}.svc.cluster.local:2801/`
+
 After a few seconds, Falcosidekick should be running.
 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
