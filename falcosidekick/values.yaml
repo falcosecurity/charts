@@ -14,7 +14,7 @@ podSecurityContext:
   fsGroup: 1234
 
 # One or more secrets to be used when pulling images
-imagePullSecrets: []
+imagePullSecrets: [ ]
 # - registrySecretName
 
 nameOverride: ""
@@ -25,11 +25,11 @@ podSecurityPolicy:
 
 priorityClassName: ""
 
-podAnnotations: {}
+podAnnotations: { }
 
 config:
   existingSecret: ""
-  extraEnv: []
+  extraEnv: [ ]
   debug: false
   ##
   ## a list of escaped comma separated custom fields to add to falco events, syntax is "key:value\,key:value"
@@ -208,11 +208,11 @@ config:
     minimumpriority: ""
 
   openfaas:
-    gatewayservice: ""
-    gatewaynamespace: ""
-    gatewayport: 8080
     functionname: ""
-    functionnamespace: ""
+    functionnamespace: "openfaas-fn"
+    gatewayservice: "gateway"
+    gatewayport: 8080
+    gatewaynamespace: "openfaas"
     minimumpriority: ""
 
   cloudevents:
@@ -231,19 +231,19 @@ service:
 
 ingress:
   enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations: { }
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
   hosts:
     - host: falcosidekick.local
-      paths: []
+      paths: [ ]
 
-  tls: []
+  tls: [ ]
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources: { }
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -251,15 +251,15 @@ resources: {}
   # limits:
   #   cpu: 100m
   #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }
 
 webui:
   enabled: false
@@ -276,7 +276,7 @@ webui:
   retention: 200
 
   # One or more secrets to be used when pulling images
-  imagePullSecrets: []
+  imagePullSecrets: [ ]
   # - registrySecretName
 
   podSecurityPolicy:
@@ -284,7 +284,7 @@ webui:
 
   priorityClassName: ""
 
-  podAnnotations: {}
+  podAnnotations: { }
 
   service:
     # type: NodePort
@@ -294,19 +294,19 @@ webui:
 
   ingress:
     enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    annotations: { }
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
     hosts:
       - host: falcosidekick-ui.local
-        paths: ["/ui", "/events", "/healthz", "/ws"]
+        paths: [ "/ui", "/events", "/healthz", "/ws" ]
 
-    tls: []
+    tls: [ ]
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
 
-  resources: {}
+  resources: { }
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -314,12 +314,12 @@ webui:
     # limits:
     #   cpu: 100m
     #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
-  nodeSelector: {}
+  nodeSelector: { }
 
-  tolerations: []
+  tolerations: [ ]
 
-  affinity: {}
+  affinity: { }
