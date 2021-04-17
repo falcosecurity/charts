@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.11.0
+
+* Bump up version of chart for `Falcosidekick` dependency
+
 ## v1.10.0
 
 * Add `falcosidekick.fullfqdn` option to connect `falco` to `falcosidekick` with full FQDN

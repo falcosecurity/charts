@@ -5,9 +5,15 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.3.4
+
+### Minor changes
+
+* Use `v1.0.1` version for `Falcosidekick-UI` image
+
 ## 0.3.3
 
-### Fixes
+### Minor changes
 
 * Set default values for `OpenFaaS` output type parameters
 * Fixes of documentation
