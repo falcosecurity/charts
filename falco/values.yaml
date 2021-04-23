@@ -342,5 +342,4 @@ extraVolumeMounts: []
 falcosidekick:
   # enable falcosidekick deployment
   enabled: false
-  fullfdqn: false
   # for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
