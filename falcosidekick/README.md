@@ -6,7 +6,7 @@
 
 ## Description
 
-A simple daemon for enhancing available outputs for [Falco](https://sysdig.com/opensource/falco/). It takes a falco's event and forwards it to different outputs.
+A simple daemon for enhancing available outputs for [Falco](https://github.com/falcosecurity/falco). It takes a falco's event and forwards it to different outputs.
 
 It works as a single endpoint for as many as you want `falco` instances :
 
