@@ -5,6 +5,12 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.3.5
+
+### Minor Changes
+
+* Fix link to Falco in the `README.md`
+
 ## 0.3.4
 
 ### Major Changes
@@ -35,7 +41,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ### Major Changes
 
-* Add `AWS S3` output  
+* Add `AWS S3` output
 * Add `GCP Storage` output
 * Add `RabbitMQ` output
 * Add `OpenFaas` output
