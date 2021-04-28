@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## v1.10.0
 
+* Bump up version of chart for `Falcosidekick` dependency to `v3.5.0`
+
+## v1.10.0
+
 * Add `falcosidekick.fullfqdn` option to connect `falco` to `falcosidekick` with full FQDN
 * Bump up version of chart for `Falcosidekick` dependency
 
