@@ -538,11 +538,6 @@
 - macro: system_users
   condition: user.name in (bin, daemon, games, lp, mail, nobody, sshd, sync, uucp, www-data)
 
-- macro: python_running_sdchecks
-  condition: >
-    (proc.name in (python, python2.7) and
-    (proc.cmdline contains /opt/draios/bin/sdchecks))
-
 - macro: httpd_writing_ssl_conf
   condition: >
     (proc.pname=run-httpd and
@@ -1397,6 +1392,15 @@
 - macro: user_read_sensitive_file_containers
   condition: (container and container.image.repository in (read_sensitive_file_images))
 
+# This macro detects man-db postinst, see https://salsa.debian.org/debian/man-db/-/blob/master/debian/postinst
+# The rule "Read sensitive file untrusted" use this macro to avoid FPs.
+- macro: mandb_postinst
+  condition: >
+    (proc.name=perl and proc.args startswith "-e" and
+    proc.args contains "@pwd = getpwnam(" and
+    proc.args contains "exec " and
+    proc.args contains "/usr/bin/mandb")
+
 - rule: Read sensitive file untrusted
   desc: >
     an attempt to read any sensitive file (e.g. files containing user/password/authentication
@@ -1412,11 +1416,11 @@
      )
     and not cmp_cp_by_passwd
     and not ansible_running_python
-    and not proc.cmdline contains /usr/bin/mandb
     and not run_by_qualys
     and not run_by_chef
     and not run_by_google_accounts_daemon
     and not user_read_sensitive_file_conditions
+    and not mandb_postinst
     and not perl_running_plesk
     and not perl_running_updmap
     and not veritas_driver_script
@@ -1554,7 +1558,6 @@
     and not proc.name startswith "runc"
     and not proc.cmdline startswith "containerd"
     and not proc.pname in (sysdigcloud_binaries, hyperkube, kubelet, protokube, dockerd, tini, aws)
-    and not python_running_sdchecks
     and not java_running_sdjagent
     and not kubelet_running_loopback
     and not rancher_agent
@@ -1744,6 +1747,33 @@
        container.image.repository endswith /prometheus-node-exporter or
        container.image.repository endswith /image-inspector))
 
+# https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
+#  official AWS EKS registry list. AWS has different ECR repo per region
+- macro: allowed_aws_ecr_registry_root_for_eks
+  condition: >
+    (container.image.repository startswith "602401143452.dkr.ecr" or
+     container.image.repository startswith "877085696533.dkr.ecr" or 
+     container.image.repository startswith "800184023465.dkr.ecr" or 
+     container.image.repository startswith "602401143452.dkr.ecr" or 
+     container.image.repository startswith "918309763551.dkr.ecr" or
+     container.image.repository startswith "961992271922.dkr.ecr" or 
+     container.image.repository startswith "590381155156.dkr.ecr" or
+     container.image.repository startswith "558608220178.dkr.ecr" or 
+     container.image.repository startswith "151742754352.dkr.ecr" or
+     container.image.repository startswith "013241004608.dkr.ecr")
+
+
+- macro: aws_eks_core_images
+  condition: >
+    (allowed_aws_ecr_registry_root_for_eks and
+    (container.image.repository endswith ".amazonaws.com/amazon-k8s-cni" or
+     container.image.repository endswith ".amazonaws.com/eks/kube-proxy"))
+
+
+- macro: aws_eks_image_sensitive_mount
+  condition: >
+    (allowed_aws_ecr_registry_root_for_eks and container.image.repository endswith ".amazonaws.com/amazon-k8s-cni")
+
 # These images are allowed both to run with --privileged and to mount
 # sensitive paths from the host filesystem.
 #
@@ -1784,7 +1814,6 @@
     docker.io/falcosecurity/falco,
     docker.io/mesosphere/mesos-slave,
     docker.io/rook/toolbox,
-    docker.io/sysdig/falco,
     docker.io/sysdig/sysdig,
     falcosecurity/falco,
     gcr.io/google_containers/kube-proxy,
@@ -1798,7 +1827,6 @@
     k8s.gcr.io/kube-proxy,
     k8s.gcr.io/prometheus-to-sd,
     quay.io/calico/node,
-    sysdig/falco,
     sysdig/sysdig,
     sematext_images
     ]
@@ -1806,6 +1834,7 @@
 - macro: falco_privileged_containers
   condition: (openshift_image or
               user_trusted_containers or
+              aws_eks_core_images or
               container.image.repository in (trusted_images) or
               container.image.repository in (falco_privileged_images) or
               container.image.repository startswith istio/proxy_ or
@@ -1824,7 +1853,7 @@
 # host filesystem.
 - list: falco_sensitive_mount_images
   items: [
-    docker.io/sysdig/falco, docker.io/sysdig/sysdig, sysdig/falco, sysdig/sysdig,
+    docker.io/sysdig/sysdig, sysdig/sysdig,
     docker.io/falcosecurity/falco, falcosecurity/falco,
     gcr.io/google_containers/hyperkube,
     gcr.io/google_containers/kube-proxy, docker.io/calico/node,
@@ -1836,6 +1865,7 @@
 
 - macro: falco_sensitive_mount_containers
   condition: (user_trusted_containers or
+              aws_eks_image_sensitive_mount or
               container.image.repository in (trusted_images) or
               container.image.repository in (falco_sensitive_mount_images) or
               container.image.repository startswith quay.io/sysdig/)
@@ -2329,9 +2359,9 @@
 - macro: k8s_containers
   condition: >
     (container.image.repository in (gcr.io/google_containers/hyperkube-amd64,
-     gcr.io/google_containers/kube2sky, docker.io/sysdig/falco,
+     gcr.io/google_containers/kube2sky,
      docker.io/sysdig/sysdig, docker.io/falcosecurity/falco,
-     sysdig/falco, sysdig/sysdig, falcosecurity/falco,
+     sysdig/sysdig, falcosecurity/falco,
      fluent/fluentd-kubernetes-daemonset, prom/prometheus,
      ibm_cloud_containers)
      or (k8s.ns.name = "kube-system"))
