@@ -15,6 +15,24 @@ containerd:
   enabled: true
   socket: /run/containerd/containerd.sock
 
+kubernetesSupport:
+  # Enables Kubernetes meta data collection via a connection to the Kubernetes API server.
+  enabled: true
+  # The apiAuth value is to provide the authentication method Falco should use to connect to the Kubernetes API.
+  # The argument's documentation from Falco is provided here for reference:
+  #
+  #  <bt_file> | <cert_file>:<key_file[#password]>[:<ca_cert_file>], --k8s-api-cert <bt_file> | <cert_file>:<key_file[#password]>[:<ca_cert_file>]
+  #     Use the provided files names to authenticate user and (optionally) verify the K8S API server identity.
+  #     Each entry must specify full (absolute, or relative to the current directory) path to the respective file.
+  #     Private key password is optional (needed only if key is password protected).
+  #     CA certificate is optional. For all files, only PEM file format is supported. 
+  #     Specifying CA certificate only is obsoleted - when single entry is provided 
+  #     for this option, it will be interpreted as the name of a file containing bearer token.
+  #     Note that the format of this command-line option prohibits use of files whose names contain
+  #     ':' or '#' characters in the file name. 
+  apiAuth: /var/run/secrets/kubernetes.io/serviceaccount/token
+  apiUrl: "https://$(KUBERNETES_SERVICE_HOST)"
+
 resources:
   # Although resources needed are subjective on the actual workload we provide
   # a sane defaults ones. If you have more questions or concerns, please refer
