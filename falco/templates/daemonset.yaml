@@ -64,10 +64,12 @@ spec:
             - --cri
             - /run/containerd/containerd.sock
             {{- end }}
+            {{- if .Values.kubernetesSupport.enabled }} 
             - -K
-            - /var/run/secrets/kubernetes.io/serviceaccount/token
+            - {{ .Values.kubernetesSupport.apiAuth }} 
             - -k
-            - "https://$(KUBERNETES_SERVICE_HOST)"
+            - {{ .Values.kubernetesSupport.apiUrl }} 
+            {{- end }}
             - -pk
         {{- if .Values.extraArgs }}
 {{ toYaml .Values.extraArgs | indent 12 }}
