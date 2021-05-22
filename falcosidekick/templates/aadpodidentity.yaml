@@ -3,7 +3,7 @@
 apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentity
 metadata:
-  name: falcosidekick
+  name: {{ include "falcosidekick.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   type: 0
@@ -13,8 +13,8 @@ spec:
 apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentityBinding
 metadata:
-  name: falcosidekick
+  name: {{ include "falcosidekick.fullname" . }}
 spec:
-  azureIdentity: falcosidekick
+  azureIdentity: {{ include "falcosidekick.fullname" . }}
   selector: {{ include "falcosidekick.fullname" . }}
 {{- end }}
