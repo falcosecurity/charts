@@ -125,6 +125,7 @@ falco:
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/k8s_audit_rules.yaml
     - /etc/falco/rules.d
+    - /etc/falco/rules.available/application_rules.yaml
   # - /etc/falco/rules.optional.d
 
   # If true, the times displayed in log messages and output messages
