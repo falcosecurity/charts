@@ -240,8 +240,19 @@ falco:
     listenPort: 8765
     nodePort: false
     k8sAuditEndpoint: /k8s-audit
+    k8sHealthzEndpoint: /healthz
     sslEnabled: false
     sslCertificate: /etc/falco/certs/server.pem
+
+  livenessProbe:
+    initialDelaySeconds: 60
+    timeoutSeconds: 5
+    periodSeconds: 15
+
+  readinessProbe:
+    initialDelaySeconds: 30
+    timeoutSeconds: 5
+    periodSeconds: 15
 
   # Possible additional things you might want to do with program output:
   #   - send to a slack webhook:
