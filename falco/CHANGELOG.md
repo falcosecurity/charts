@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.13.0
+
+* Add liveness and readiness probes to Falco
+
 ## v1.12.0
 
 * Add `kubernetesSupport` configuration to make Kubernetes Falco support optional in the daemonset (enabled by default)
