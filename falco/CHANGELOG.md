@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.13.1
+
+* Fix port for readinessProbe and livenessProbe
+
 ## v1.13.0
 
 * Add liveness and readiness probes to Falco
