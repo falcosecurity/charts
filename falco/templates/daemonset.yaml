@@ -106,14 +106,14 @@ spec:
             periodSeconds: {{ .Values.falco.livenessProbe.periodSeconds }}
             httpGet:
               path: {{ .Values.falco.webserver.k8sHealthzEndpoint }}
-              port: http
+              port: {{ .Values.falco.webserver.listenPort }}
           readinessProbe:
             initialDelaySeconds: {{ .Values.falco.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.falco.readinessProbe.timeoutSeconds }}
             periodSeconds: {{ .Values.falco.readinessProbe.periodSeconds }}
             httpGet:
               path: {{ .Values.falco.webserver.k8sHealthzEndpoint }}
-              port: http
+              port: {{ .Values.falco.webserver.listenPort }}
           {{- end }}
           volumeMounts:
             {{- if .Values.docker.enabled }}
