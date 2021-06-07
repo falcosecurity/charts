@@ -10,6 +10,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 ### Fixes
 
 * Fix Pagerduty output parameter `config.pagerduty.routingKey` in `README.md`
+* Fix issue of Pagerduty output not shown in Sidekick
 
 ## 0.3.7
 
