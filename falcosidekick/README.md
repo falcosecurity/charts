@@ -6,50 +6,78 @@
 
 ## Description
 
-A simple daemon for enhancing available outputs for [Falco](https://github.com/falcosecurity/falco). It takes a falco's event and forwards it to different outputs.
+A simple daemon for connecting [`Falco`](https://github.com/falcosecurity/falco) to your ecossytem. It takes a `Falco`'s events and
+forward them to different outputs in a fan-out way.
 
-It works as a single endpoint for as many as you want `falco` instances :
+It works as a single endpoint for as many as you want `Falco` instances :
 
 ![falco_with_falcosidekick](https://github.com/falcosecurity/falcosidekick/raw/master/imgs/falco_with_falcosidekick.png)
 
 ## Outputs
 
-Currently available outputs are :
+`Falcosidekick` manages a large variety of outputs with different purposes.
 
-* [**Slack**](https://slack.com)
-* [**Rocketchat**](https://rocket.chat/)
-* [**Mattermost**](https://mattermost.com/)
-* [**Teams**](https://products.office.com/en-us/microsoft-teams/group-chat-software)
-* [**Datadog**](https://www.datadoghq.com/)
-* [**Discord**](https://www.discord.com/)
-* [**AlertManager**](https://prometheus.io/docs/alerting/alertmanager/)
-* [**Elasticsearch**](https://www.elastic.co/)
-* [**Loki**](https://grafana.com/oss/loki)
-* [**NATS**](https://nats.io/)
-* [**STAN (NATS Streaming)**](https://docs.nats.io/nats-streaming-concepts/intro)
-* [**Influxdb**](https://www.influxdata.com/products/influxdb-overview/)
-* [**AWS Lambda**](https://aws.amazon.com/lambda/features/)
-* [**AWS SQS**](https://aws.amazon.com/sqs/features/)
-* [**AWS SNS**](https://aws.amazon.com/sns/features/)
-* [**AWS S3**](https://aws.amazon.com/s3/features/)
-* [**AWS CloudWatchLogs**](https://aws.amazon.com/cloudwatch/features/)
-* **SMTP** (email)
-* [**Opsgenie**](https://www.opsgenie.com/)
-* [**StatsD**](https://github.com/statsd/statsd) (for monitoring of `falcosidekick`)
-* [**DogStatsD**](https://docs.datadoghq.com/developers/dogstatsd/?tab=go) (for monitoring of `falcosidekick`)
-* **Webhook**
-* [**Azure Event Hubs**](https://azure.microsoft.com/en-in/services/event-hubs/)
-* [**Prometheus**](https://prometheus.io/) (for both events and monitoring of `falcosidekick`)
-* [**GCP PubSub**](https://cloud.google.com/pubsub)
-* [**GCP Storage**](https://cloud.google.com/storage)  
-* [**Google Chat**](https://workspace.google.com/products/chat/)
-* [**Apache Kafka**](https://kafka.apache.org/)
-* [**PagerDuty**](https://pagerduty.com/)
-* [**Kubeless**](https://kubeless.io/)
-* [**OpenFaaS**](https://www.openfaas.com/)
-* [**Cloud Events**](https://cloudevents.io/)
-* [**RabbitMQ**](https://www.rabbitmq.com)  
-* [**WebUI**](https://github.com/falcosecurity/falcosidekick-ui) (a Web UI for displaying latest events in real time)
+### Chat
+
+- [**Slack**](https://slack.com)
+- [**Rocketchat**](https://rocket.chat/)
+- [**Mattermost**](https://mattermost.com/)
+- [**Teams**](https://products.office.com/en-us/microsoft-teams/group-chat-software)
+- [**Discord**](https://www.discord.com/)
+- [**Google Chat**](https://workspace.google.com/products/chat/)
+
+### Metrics / Observability
+
+- [**Datadog**](https://www.datadoghq.com/)
+- [**Influxdb**](https://www.influxdata.com/products/influxdb-overview/)
+- [**StatsD**](https://github.com/statsd/statsd) (for monitoring of `falcosidekick`)
+- [**DogStatsD**](https://docs.datadoghq.com/developers/dogstatsd/?tab=go) (for monitoring of `falcosidekick`)
+- [**Prometheus**](https://prometheus.io/) (for both events and monitoring of `falcosidekick`)
+- [**Wavefront**](https://www.wavefront.com)
+
+### Alerting
+
+- [**AlertManager**](https://prometheus.io/docs/alerting/alertmanager/)
+- [**Opsgenie**](https://www.opsgenie.com/)
+- [**PagerDuty**](https://pagerduty.com/)
+
+### Logs
+
+- [**Elasticsearch**](https://www.elastic.co/)
+- [**Loki**](https://grafana.com/oss/loki)
+- [**AWS CloudWatchLogs**](https://aws.amazon.com/cloudwatch/features/)
+### Object Storage
+
+- [**AWS S3**](https://aws.amazon.com/s3/features/)
+- [**GCP Storage**](https://cloud.google.com/storage)
+
+### FaaS / Serverless
+
+- [**AWS Lambda**](https://aws.amazon.com/lambda/features/)
+- [**Kubeless**](https://kubeless.io/)
+- [**OpenFaaS**](https://www.openfaas.com)
+- [**GCP Cloud Run**](https://cloud.google.com/run)
+- [**GCP Cloud Functions**](https://cloud.google.com/functions)
+
+### Message queue / Streaming
+
+- [**NATS**](https://nats.io/)
+- [**STAN (NATS Streaming)**](https://docs.nats.io/nats-streaming-concepts/intro)
+- [**AWS SQS**](https://aws.amazon.com/sqs/features/)
+- [**AWS SNS**](https://aws.amazon.com/sns/features/)
+- [**GCP PubSub**](https://cloud.google.com/pubsub)
+- [**Apache Kafka**](https://kafka.apache.org/)
+- [**RabbitMQ**](https://www.rabbitmq.com/)
+- [**Azure Event Hubs**](https://azure.microsoft.com/en-in/services/event-hubs/)
+  
+### Email
+
+- **SMTP**
+
+### Web
+
+- **Webhook**
+- [**WebUI**](https://github.com/falcosecurity/falcosidekick-ui) (a Web UI for displaying latest events in real time)
 
 ## Adding `falcosecurity` repository
 
@@ -108,6 +136,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `listenport`                                | port to listen for daemon                                                                                                                                                              | `2801`                                                                                            |
 | `config.debug`                              | if *true* all outputs will print in stdout the payload they send                                                                                                                       | `false`                                                                                           |
 | `config.customfields`                       | a list of escaped comma separated custom fields to add to falco events, syntax is "key:value\,key:value"                                                                               |                                                                                                   |
+| `config.mutualtlsfilespath`                 | folder which will used to store client.crt, client.key and ca.crt files for mutual tls | `"/etc/certs"`
 | `config.checkcert`                          | check if ssl certificate of the output is valid                                                                                                                                        | `true`                                                                                            |
 | `config.slack.webhookurl`                   | Slack Webhook URL (ex: https://hooks.slack.com/services/XXXX/YYYY/ZZZZ), if not `empty`, Slack output is *enabled*                                                                     |                                                                                                   |
 | `config.slack.footer`                       | Slack Footer                                                                                                                                                                           | https://github.com/falcosecurity/falcosidekick                                                    |
@@ -122,6 +151,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.rocketchat.outputformat`            | `all` (default), `text` (only text is displayed in Rocketcaht), `fields` (only fields are displayed in Rocketchat)                                                                     | `all`                                                                                             |
 | `config.rocketchat.minimumpriority`         | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.rockerchat.messageformat`           | a Go template to format Rocketchat Text above Attachment, displayed in addition to the output from `slack.outputformat`. If empty, no Text is displayed before Attachment              |                                                                                                   |
+| `config.rockerchat.mutualtls`           | if true, checkcert flag will be ignored (server cert will always be checked)              |                                                                                                   |
+| `config.rockerchat.checkcert`           | check if ssl certificate of the output is valid           | `true`                                                                                         |
 | `config.mattermost.webhookurl`              | Mattermost Webhook URL (ex: https://XXXX/hooks/YYYY), if not `empty`, Mattermost output is *enabled*                                                                                   |                                                                                                   |
 | `config.mattermost.footer`                  | Mattermost Footer                                                                                                                                                                      | https://github.com/falcosecurity/falcosidekick                                                    |
 | `config.mattermost.icon`                    | Mattermost icon (avatar)                                                                                                                                                               | https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png |
@@ -129,6 +160,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.mattermost.outputformat`            | `all` (default), `text` (only text is displayed in Slack), `fields` (only fields are displayed in Mattermost)                                                                          | `all`                                                                                             |
 | `config.mattermost.minimumpriority`         | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.mattermost.messageformat`           | a Go template to format Mattermost Text above Attachment, displayed in addition to the output from `slack.outputformat`. If empty, no Text is displayed before Attachment              |                                                                                                   |
+| `config.mattermost.mutualtls`           | if true, checkcert flag will be ignored (server cert will always be checked) |
+| `config.mattermost.checkcert`           | check if ssl certificate of the output is valid   |  `true`                                                                                                 |
 | `config.teams.webhookurl`                   | Teams Webhook URL (ex: https://outlook.office.com/webhook/XXXXXX/IncomingWebhook/YYYYYY"), if not `empty`, Teams output is *enabled*                                                   |                                                                                                   |
 | `config.teams.activityimage`                | Teams section image                                                                                                                                                                    | https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png |
 | `config.teams.outputformat`                 | `all` (default), `text` (only text is displayed in Teams), `facts` (only facts are displayed in Teams)                                                                                 | `all`                                                                                             |
@@ -141,23 +174,37 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.discord.minimumpriority`            | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.alertmanager.hostport`              | AlertManager http://host:port, if not `empty`, AlertManager is *enabled*                                                                                                               |                                                                                                   |
 | `config.alertmanager.minimumpriority`       | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+| `config.alertmanager.mutualtls`       | if true, checkcert flag will be ignored (server cert will always be checked)   |
+| `config.alertmanager.checkcert`       | check if ssl certificate of the output is valid  | `true`
 | `config.elasticsearch.hostport`             | Elasticsearch http://host:port, if not `empty`, Elasticsearch is *enabled*                                                                                                             |                                                                                                   |
 | `config.elasticsearch.index`                | Elasticsearch index                                                                                                                                                                    | `falco`                                                                                           |
 | `config.elasticsearch.type`                 | Elasticsearch document type                                                                                                                                                            | `event`                                                                                           |
-| `config.elasticsearch.suffix`               | date suffix for index rotation : `daily`, `monthly`, `annually`, `none`                                                                                                                | `daily`                                                                                           |
+| `config.elasticsearch.suffix`               | date suffix for index rotation : `daily`, `monthly`, `annually`, `none`                                                                                                                | `daily`  
+| `config.elasticsearch.username`                | use this username to authenticate to Elasticsearch if the username is not empty                                                                                                                                                                 |                                                                                           |
+| `config.elasticsearch.password`                 | use this password to authenticate to Elasticsearch if the password is not empty ||
 | `config.elasticsearch.minimumpriority`      | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+| `config.elasticsearch.mutualtls`      | if true, checkcert flag will be ignored (server cert will always be checked)   |
+| `config.elasticsearch.checkcert`      | check if ssl certificate of the output is valid  | `true`                                                                                           |
 | `config.influxdb.hostport`                  | Influxdb http://host:port, if not `empty`, Influxdb is *enabled*                                                                                                                       |                                                                                                   |
 | `config.influxdb.database`                  | Influxdb database                                                                                                                                                                      | `falco`                                                                                           |
 | `config.influxdb.user`                      | User to use if auth is enabled in Influxdb                                                                                                                                             |                                                                                                   |
 | `config.influxdb.password`                  | Password to use if auth is enabled in Influxdb                                                                                                                                         |                                                                                                   |
 | `config.influxdb.minimumpriority`           | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+| `config.influxdb.mutualtls`           | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                           |
+| `config.influxdb.checkcert`           | check if ssl certificate of the output is valid  | `true`                                                                                            |
 | `config.loki.hostport`                      | Loki http://host:port, if not `empty`, Loki is *enabled*                                                                                                                               |                                                                                                   |
 | `config.loki.minimumpriority`               | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+| `config.loki.mutualtls`               | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                           |
+| `config.loki.checkcert`               | check if ssl certificate of the output is valid  | `true`                                                                                            |
 | `config.nats.hostport`                      | NATS "nats://host:port", if not `empty`, NATS is *enabled*                                                                                                                             |                                                                                                   |
+| `config.nats.mutualtls`                      | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                                               |                                                                                                   |
+| `config.nats.checkcert`                      | check if ssl certificate of the output is valid  | `true`                                                                                                    |
 | `config.nats.minimumpriority`               | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.stan.hostport`                      | Stan nats://{domain or ip}:{port}, if not empty, STAN output is *enabled*                                                                                                              |                                                                                                   |
 | `config.stan.clusterid`                     | Cluster name, if not empty, STAN output is *enabled*                                                                                                                                   | `debug`                                                                                           |
 | `config.stan.clientid`                      | Client ID, if not empty, STAN output is *enabled*                                                                                                                                      |                                                                                                   |
+| `config.stan.mutualtls`                      | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                                                                      |                                                                                                   |
+| `config.stan.checkcert`                      | check if ssl certificate of the output is valid  | `true`                                                                                                                                 |                                                                                                   |
 | `config.stan.minimumpriority`               | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.aws.accesskeyid`                    | AWS Access Key Id (optionnal if you use EC2 Instance Profile)                                                                                                                          |                                                                                                   |
 | `config.aws.secretaccesskey`                | AWS Secret Access Key (optionnal if you use EC2 Instance Profile)                                                                                                                      |                                                                                                   |
@@ -184,6 +231,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.smtp.minimumpriority`               | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.opsgenie.apikey`                    | Opsgenie API Key, if not empty, Opsgenie output is enabled                                                                                                                             |                                                                                                   |
 | `config.opsgenie.region`                    | (`us` or `eu`) region of your domain                                                                                                                                                   | `us`                                                                                              |
+| `config.opsgenie.mutualtls`                    | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                                                                                   | `us`                                                                                              |
+| `config.opsgenie.checkcert`                    | check if ssl certificate of the output is valid  | `true`                                                                                                                                                  | `us`                                                                                              |
 | `config.opsgenie.minimumpriority`           | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.statsd.forwarder`                   | The address for the StatsD forwarder, in the form http://host:port, if not empty StatsD is enabled                                                                                     |                                                                                                   |
 | `config.statsd.namespace`                   | A prefix for all metrics                                                                                                                                                               | `falcosidekick`                                                                                   |
@@ -192,6 +241,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.dogstatsd.tags`                     | A comma-separated list of tags to add to all metrics                                                                                                                                   |                                                                                                   |
 | `config.webhook.address`                    | Webhook address, if not empty, Webhook output is enabled                                                                                                                               |                                                                                                   |
 | `config.webhook.customHeaders`              | a list of comma separated custom headers to add, syntax is "key:value\,key:value"                                                                                                       |                                                                                                   |
+| `config.webhook.mutualtls`              | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                                       |                                                                                                   |
+| `config.webhook.checkcert`              | check if ssl certificate of the output is valid  | `true`                                                                                                       |                                                                                                   |
 | `config.webhook.minimumpriority`            | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.azure.eventHub.name`                | Name of the Hub, if not empty, EventHub is *enabled*                                                                                                                                   |                                                                                                   |
 | `config.azure.eventHub.namespace`           | Name of the space the Hub is in                                                                                                                                                        |                                                                                                   |
@@ -202,7 +253,13 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.gcp.eventhub.minimumpriority`       | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.gcp.storage.prefix`                 | Name of prefix, keys will have format: gs://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json                                                                                                                                                      |                                                                                                   |
 | `config.gcp.storage.bucket`                 | The name of the bucket                                                                                                                                                              |                                                                                                   |
-| `config.gcp.storage.minimumpriority`       | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+| `config.gcp.storage.minimumpriority`       | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |                                                                                                   |
+| `config.gcp.cloudfunctions.name`                 | The name of the Cloud Function which is in form `projects/<project_id>/locations/<region>/functions/<function_name>`                                                          |                                                                                                   |
+| `config.gcp.cloudfunctions.minimumpriority`       | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                |                                                                                                   |
+| `config.gcp.cloudrun.enpoint`                 |  the URL of the Cloud Run function                                                       |                                                                                                   |
+ |
+| `config.gcp.cloudrun.jwt`                 |  JWT for the private access to Cloud Run function                                                       |                                                                                                   |
+| `config.gcp.cloudrun.minimumpriority`       | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                |                                                                                              |
 | `config.googlechat.webhookurl`              | Google Chat Webhook URL (ex: https://chat.googleapis.com/v1/spaces/XXXXXX/YYYYYY), if not `empty`, Google Chat output is *enabled*                                                     |                                                                                                   |
 | `config.googlechat.outputformat`            | `all` (default), `text` (only text is displayed in Google chat)                                                                                                                        | `all`                                                                                             |
 | `config.googlechat.minimumpriority`         | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
@@ -211,28 +268,39 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.kafka.topic`                        | `all` (default), `text` (only text is displayed in Google chat)                                                                                                                        | `all`                                                                                             |
 | `config.kafka.partition`                    | a Go template to format Google Chat Text above Attachment, displayed in addition to the output from `config.googlechat.outputformat`. If empty, no Text is displayed before Attachment |                                                                                                   |
 | `config.kafka.minimumpriority`              | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
-| `config.pagerduty.apiKey`                   | Pagerduty API Key, if not empty, Pagerduty output is enabled                                                                                                                           |                                                                                                   |
-| `config.pagerduty.service`                  | Service to create an incident (mandatory)                                                                                                                                              |                                                                                                   |
-| `config.pagerduty.assignee`                 | A list of comma separated users to assign. Cannot be provided if pagerduty.escalationpolicy is already specified                                                                       |                                                                                                   |
-| `config.pagerduty.escalationpolicy`         | Escalation policy to assign. Cannot be provided if pagerduty.escalationpolicy is already specified                                                                                     |                                                                                                   |
+| `config.pagerduty.routingkey`                   | Pagerduty Routing Key, if not empty, Pagerduty output is enabled                                                                                                                           |                                                                                                   |                                                                   |                                                                                                   |
 | `config.pagerduty.minimumpriority`          | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.kubeless.function`                         | Name of Kubeless function, if not empty, EventHub is *enabled*                                                                                                                         |                                                                                                   |
 | `config.kubeless.namespace`                        | Namespace of Kubeless function (mandatory)                                                                                                                                             |                                                                                                   |
 | `config.kubeless.port`                             | Port of service of Kubeless function. Default is `8080`                                                                                                                                |                                                                                                   |
+| `config.kubeless.mutualtls`                             | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                                                                |                                                                                                   |
+| `config.kubeless.checkcert`                             | check if ssl certificate of the output is valid  | `true`                                                                                                                                |                                                                                                   |
 | `config.kubeless.minimumpriority`                  | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.openfaas.functionname`                     | Name of OpenFaaS function, if not empty, OpenFaaS is enabled                                                                                                                         |                                                                                                   |
 | `config.openfaas.functionnamespace`                | Namespace of OpenFaaS function, "openfaas-fn" (default)                                                                                                                                             | `openfaas-fn`
 | `config.openfaas.gatewayservice`                   | Service of OpenFaaS Gateway, "gateway" (default)                                                                                                                         |  `gateway`                                                                                                 |
-| `config.openfaas.gatewayport`                      | Port of service of OpenFaaS Gateway Default is `8080`                                                                                                                                |  ``8080                                                                                                 |
+| `config.openfaas.gatewayport`                      | Port of service of OpenFaaS Gateway Default is `8080`                                                                                                                                |  `8080`                                                                                            |
 | `config.openfaas.gatewaynamespace`                 | Namespace of OpenFaaS Gateway, "openfaas" (default)                                                                                                                                             |                                                                                                   | `openfaas`
+| `config.openfaas.mutualtls`                 | if true, checkcert flag will be ignored (server cert will always be checked)   |                                                                                                                                            |                                                                                                   | `openfaas`
+| `config.openfaas.checkcert`                 | check if ssl certificate of the output is valid  | `true`                                                                                                                                             |                                                                                                   | `openfaas`
 | `config.openfaas.minimumpriority`                  | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.cloudevents.address`                       | CloudEvents consumer http address, if not empty, CloudEvents output is *enabled*                                                                                                       |                                                                                                   |
 | `config.cloudevents.extension`                     | Extensions to add in the outbound Event, useful for routing                                                                                                                            |                                                                                                   |
-| `config.cloudevents.minimumpriority`               | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+| `config.cloudevents.minimumpriority`               | minimum priority of event for using use this output, order is `emergency`|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
 | `config.rabbitmq.url`                              | Rabbitmq URL, if not empty, Rabbitmq output is *enabled*                                                                                                       |                                                                                                   |
 | `config.rabbitmq.queue`                     | Rabbitmq Queue name                                                                                                                          |                                                                                                   |
 | `config.rabbitmq.minimumpriority`               | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
-| `webui.enabled`                             | enable Falcosidekick-UI                                                                                                                                                                | `false`                                                                                           |
+| `config.wavefront.endpointtype`   | Wavefront endpoint type, must be 'direct' or 'proxy'. If not empty, with endpointhost, Wavefront output is enabled
+| `config.wavefront.endpointhost`   | Wavefront endpoint address (only the host). If not empty, with endpointhost, Wavefront output is enabled
+| `config.wavefront.endpointtoken`   | Wavefront token. Must be used only when endpointtype is 'direct'
+| `config.wavefront.endpointmetricport`   | Port to send metrics. Only used when endpointtype is 'proxy' | 2878
+| `config.wavefront.metricname`   | Metric to be created in Wavefront. Defaults to falco.alert | falco.alert
+| `config.wavefront.batchsize`   | Wavefront batch size. If empty uses the default 10000. Only used when endpointtype is 'direct' | 10000
+| `config.wavefront.flushintervalseconds`   | Wavefront flush interval in seconds. Defaults to 1 | 1
+| `config.wavefront.minimumpriority`  | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+ `webui.enabled`                             | enable Falcosidekick-UI                                                                                                                                                                | `false`                                                                                           |
+|
+`webui.darkmode`                             | enable Falcosidekick-UI darkmode                                                                                                                                                                | `false`                                                                                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
