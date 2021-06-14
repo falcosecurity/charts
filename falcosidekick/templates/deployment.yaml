@@ -74,8 +74,8 @@ spec:
               value: {{ .Values.config.debug | quote }}
             - name: CUSTOMFIELDS
               value: {{ .Values.config.customfields | quote }}
-            - name: CHECKCERT
-              value: {{ .Values.config.checkcert | quote }}
+            - name: MUTUALTLSFILESPATH
+              value: {{ .Values.config.mutualtlsfilespath | quote }}
             {{- if .Values.config.extraEnv }}
             {{ toYaml .Values.config.extraEnv | nindent 12 }}
             {{- end }}
