@@ -7,6 +7,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 * Upgrade to Falco 0.29.0 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.29.0/CHANGELOG.md))
 * Update rulesets from Falco 0.29.0
+
 ## v1.13.2
 
 * Fixed incorrect spelling of `fullfqdn`
