@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.14.0
+
+* Upgrade to Falco 0.29.0 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.29.0/CHANGELOG.md))
+* Update rulesets from Falco 0.29.0
 ## v1.13.2
 
 * Fixed incorrect spelling of `fullfqdn`
