@@ -1565,6 +1565,7 @@
     and not calico_node
     and not weaveworks_scope
     and not user_known_change_thread_namespace_activities
+  enabled: false
   output: >
     Namespace change (setns) by unexpected program (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline
     parent=%proc.pname %container.info container_id=%container.id image=%container.image.repository:%container.image.tag)
@@ -2234,7 +2235,7 @@
   condition: >
     evt.type=setuid and evt.dir=>
     and (known_user_in_container or not container)
-    and not user.name=root
+    and not (user.name=root or user.uid=0)
     and not somebody_becoming_themself
     and not proc.name in (known_setuid_binaries, userexec_binaries, mail_binaries, docker_binaries,
                           nomachine_binaries)
@@ -2641,6 +2642,7 @@
     and not proc.name in (user_known_chmod_applications)
     and not exe_running_docker_save
     and not user_known_set_setuid_or_setgid_bit_conditions
+  enabled: false
   output: >
     Setuid or setgid bit is set via chmod (fd=%evt.arg.fd filename=%evt.arg.filename mode=%evt.arg.mode user=%user.name user_loginuid=%user.loginuid process=%proc.name
     command=%proc.cmdline container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
@@ -2745,7 +2747,7 @@
       "xmr-eu1.nanopool.org","xmr-eu2.nanopool.org",
       "xmr-jp1.nanopool.org","xmr-us-east1.nanopool.org",
       "xmr-us-west1.nanopool.org","xmr.crypto-pool.fr",
-      "xmr.pool.minergate.com"
+      "xmr.pool.minergate.com", "rx.unmineable.com"
       ]
 
 - list: https_miner_domains
@@ -3031,7 +3033,7 @@
   tags: [filesystem, mitre_privilege_escalation]
 
 - rule: Debugfs Launched in Privileged Container
-  desc: Detect file system debugger debugfs launched inside a privilegd container which might lead to container escape.
+  desc: Detect file system debugger debugfs launched inside a privileged container which might lead to container escape.
   condition: >
     spawned_process and container
     and container.privileged=true
@@ -3057,3 +3059,4 @@
 # Application rules have moved to application_rules.yaml. Please look
 # there if you want to enable them by adding to
 # falco_rules.local.yaml.
+
