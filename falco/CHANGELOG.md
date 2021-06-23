@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## v1.14.1
 
+* Update `Falcosidekick` chart to 0.3.8
+
+## v1.14.1
+
 * Update image tag to 0.29.0 in values.yaml
 
 ## v1.14.0
