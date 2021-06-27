@@ -22,6 +22,12 @@ spec:
         app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
         app.kubernetes.io/instance: {{ .Release.Name }}-ui
     spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
       {{- if .Values.webui.priorityClassName }}
       priorityClassName: "{{ .Values.webui.priorityClassName }}"
       {{- end }}
