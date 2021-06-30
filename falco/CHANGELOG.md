@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.15.1
+
+* Fixed liveness and readiness probes schema when ssl is enabled
+
 ## v1.14.1
 
 * Update `Falcosidekick` chart to 0.3.8
