@@ -22,7 +22,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/rules: {{ include (print $.Template.BasePath "/configmap-rules.yaml") . | sha256sum }}
-        {{- if .Values.certs }}
+        {{- if and .Values.certs (not .Values.certs.existingSecret) }}
         checksum/certs: {{ include (print $.Template.BasePath "/secret-certs.yaml") . | sha256sum }}
         {{- end }}
         {{- if .Values.daemonset.podAnnotations }}
@@ -227,16 +227,11 @@ spec:
         {{- if or .Values.falco.webserver.sslEnabled (and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)) }}
         - name: certs-volume
           secret:
+            {{- if .Values.certs.existingSecret }}
+            secretName: {{ .Values.certs.existingSecret }}
+            {{- else }}
             secretName: {{ template "falco.fullname" . }}-certs
-            items:
-              - key: server.key
-                path: server.key
-              - key: server.crt
-                path: server.crt
-              - key: server.pem
-                path: server.pem
-              - key: ca.crt
-                path: ca.crt
+            {{- end }}
         {{- end }}
         {{- if .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 8 }}

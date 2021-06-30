@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.15.2
+
+* Add ability to use an existing secret of key, cert, ca as well as pem bundle instead of creating it from files
+
 ## v1.15.1
 
 * Fixed liveness and readiness probes schema when ssl is enabled
