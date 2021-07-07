@@ -3,6 +3,11 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.15.3
+
+* Upgrade to Falco 0.29.1 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.29.1/CHANGELOG.md))
+* Update rulesets from Falco 0.29.1
+
 ## v1.15.2
 
 * Add ability to use an existing secret of key, cert, ca as well as pem bundle instead of creating it from files
