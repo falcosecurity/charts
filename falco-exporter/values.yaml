@@ -20,6 +20,7 @@ service:
 probesPort: 19376
 
 image:
+  registry: docker.io
   repository: falcosecurity/falco-exporter
   tag: 0.5.0
   pullPolicy: IfNotPresent

@@ -36,7 +36,7 @@ spec:
         fsGroup: {{ .Values.webui.podSecurityContext.fsGroup }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
+          image: "{{ .Values.webui.image.registry }}/{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
           imagePullPolicy: {{ .Values.webui.image.pullPolicy }}
           args:
             - "-r"

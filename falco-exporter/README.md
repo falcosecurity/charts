@@ -47,8 +47,9 @@ The following table lists the main configurable parameters of the chart and thei
 
 | Parameter                                        | Description                                                                                      | Default                            |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| `image.registry`                                 | The image registry to pull from                                                                  | `docker.io`                        |
 | `image.repository`                               | The image repository to pull from                                                                | `falcosecurity/falco-exporter`     |
-| `image.tag`                                      | The image tag to pull                                                                            | `0.3.0`                            |
+| `image.tag`                                      | The image tag to pull                                                                            | `0.5.0`                            |
 | `image.pullPolicy`                               | The image pull policy                                                                            | `IfNotPresent`                     |
 | `falco.grpcUnixSocketPath`                       | Unix socket path for connecting to a Falco gRPC server                                           | `unix:///var/run/falco/falco.sock` |
 | `falco.grpcTimeout`                              | gRPC connection timeout                                                                          | `2m`                               |
@@ -62,7 +63,7 @@ The following table lists the main configurable parameters of the chart and thei
 | `grafanaDashboard.namespace`                     | The namespace to deploy the dashboard configmap in                                               | `default`                          |
 | `grafanaDashboard.prometheusDatasourceName`      | The prometheus datasource name to be used for the dashboard                                      | `Prometheus`                       |
 | `scc.create`                                     | Create OpenShift's Security Context Constraint                                                   | `true`                             |
-| `service.mTLS.enabled`                           | Enable falco-exporter server Mutual TLS feature                                                  | `false`                          
+| `service.mTLS.enabled`                           | Enable falco-exporter server Mutual TLS feature                                                  | `false`                            |
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
