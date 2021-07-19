@@ -1,0 +1,36 @@
+name: Sync from upstream
+
+on:
+  schedule:
+    - cron: '0 7 */7 * *' # At 07:00 on every 7th day-of-month
+
+jobs:
+  sync-app-repository:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Sync falco from upstream
+        uses: giantswarm/subtree-util@main
+        with:
+          target_github_token: ${{ secrets.ARCHITECT_BOT_GITHUB_REPO_SYNC_TOKEN }}
+          target_repository: giantswarm/falco-app
+          target_path: helm/falco-app/charts/falco
+          source_path: falco
+
+      - name: Sync falco-exporter from upstream
+        uses: giantswarm/subtree-util@main
+        with:
+          target_github_token: ${{ secrets.ARCHITECT_BOT_GITHUB_REPO_SYNC_TOKEN }}
+          target_repository: giantswarm/falco-app
+          target_path: helm/falco-app/charts/falco-exporter
+          source_path: falco-exporter
+
+      - name: Sync falcosidekick from upstream
+        uses: giantswarm/subtree-util@main
+        with:
+          target_github_token: ${{ secrets.ARCHITECT_BOT_GITHUB_REPO_SYNC_TOKEN }}
+          target_repository: giantswarm/falco-app
+          target_path: helm/falco-app/charts/falcosidekick
+          source_path: falcosidekick
