@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  sync-app-repository:
+  sync-app-falco-repository:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,6 +22,11 @@ jobs:
           target_path: helm/falco-app/charts/falco
           source_path: falco
 
+  sync-app-falco-exporter-repository:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Sync falco-exporter from upstream
         uses: giantswarm/subtree-util@v0.1.2
         with:
@@ -30,6 +35,11 @@ jobs:
           target_path: helm/falco-app/charts/falco-exporter
           source_path: falco-exporter
 
+  sync-app-falcosidekick-repository:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Sync falcosidekick from upstream
         uses: giantswarm/subtree-util@v0.1.2
         with:
