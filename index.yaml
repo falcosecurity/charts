@@ -1225,6 +1225,28 @@ entries:
   falco-exporter:
   - apiVersion: v2
     appVersion: 0.5.0
+    created: "2021-07-20T10:49:20.470000279Z"
+    description: Prometheus Metrics Exporter for Falco output events
+    digest: a12ef8dd069c3e40a978a8081c0193080afb9030645a23177b7b9e440f2282e2
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: me@leonardograsso.com
+      name: leogr
+    name: falco-exporter
+    sources:
+    - https://github.com/falcosecurity/falco-exporter
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-exporter-0.5.2/falco-exporter-0.5.2.tgz
+    version: 0.5.2
+  - apiVersion: v2
+    appVersion: 0.5.0
     created: "2021-02-17T13:40:48.561339008Z"
     description: Prometheus Metrics Exporter for Falco output events
     digest: c9e2aa6da86c0972925591c83dfd5db4a3ee567c0c3f8a1024529cdc65e49145
@@ -1532,6 +1554,26 @@ entries:
     - https://github.com/falcosecurity/charts/releases/download/falco-exporter-0.3.0/falco-exporter-0.3.0.tgz
     version: 0.3.0
   falcosidekick:
+  - apiVersion: v1
+    appVersion: 2.23.1
+    created: "2021-07-20T10:49:20.548894461Z"
+    description: A simple daemon to help you with falco's outputs
+    digest: 3ecf80b5baecfce119f7d9bcc6aeb1b2264fcf04f81f05479b85be69244f32ca
+    home: https://github.com/falcosecurity/falcosidekick
+    icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: Issif
+    name: falcosidekick
+    sources:
+    - https://github.com/falcosecurity/falcosidekick
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falcosidekick-0.3.11/falcosidekick-0.3.11.tgz
+    version: 0.3.11
   - apiVersion: v1
     appVersion: 2.23.1
     created: "2021-07-18T12:12:01.870780969Z"
