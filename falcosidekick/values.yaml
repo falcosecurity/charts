@@ -124,8 +124,7 @@ config:
     checkcert: true
 
   aws:
-    accountid: ""
-    iamrole: ""
+    rolearn: ""
     accesskeyid: ""
     secretaccesskey: ""
     region: ""

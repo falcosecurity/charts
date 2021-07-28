@@ -7,7 +7,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ## 0.3.12
 
-* Add fields `config.aws.accountid` and `config.aws.iamrole`
+* Add AWS configuration field `config.aws.rolearn`
 
 ## 0.3.11
 
