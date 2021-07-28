@@ -4,6 +4,12 @@ kind: ServiceAccount
 metadata:
   name: {{ include "falcosidekick.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  {{- if .Values.config.aws.accountid }}
+    {{- if .Values.config.aws.iamrole }}
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::{{ .Values.config.aws.accountid }}:role/{{ .Values.config.aws.iamrole }}
+    {{- end }}
+  {{- end }}
   labels:
     app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
     helm.sh/chart: {{ include "falcosidekick.chart" . }}
