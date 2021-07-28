@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.15.4
+
+* Update `Falcosidekick` chart to 0.3.12
+
 ## v1.15.3
 
 * Upgrade to Falco 0.29.1 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.29.1/CHANGELOG.md))
