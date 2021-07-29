@@ -74,7 +74,7 @@ daemonset:
   # Perform rolling updates by default in the DaemonSet agent
   # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
   updateStrategy:
-    # You can also customize maxUnavailable, maxSurge or minReadySeconds if you
+    # You can also customize maxUnavailable or minReadySeconds if you
     # need it
     type: RollingUpdate
 
