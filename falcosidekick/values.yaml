@@ -303,6 +303,21 @@ tolerations: []
 
 affinity: {}
 
+# Add extra volumes to Falco UI deployment
+extraVolumes: []
+# - name: optional-mtls-volume
+#   configMap:
+#     name: falco-certs-optional
+#     optional: true
+#     items:
+#       - key: mtlscert.optional.tls
+#         path: mtlscert.optional.tls
+
+# Add extra volumeMounts to Falco container in Falco UI deployment
+extraVolumeMounts: []
+# - mountPath: /etc/certs/mtlscert.optional.tls
+#   name: optional-mtls-volume
+
 webui:
   enabled: false
   darkmode: false
