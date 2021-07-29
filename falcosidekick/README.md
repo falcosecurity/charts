@@ -308,6 +308,10 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `webui.image.repository`                               | The web UI image repository to pull from                                                                | `falcosecurity/falcosidekick-ui`     |
 | `webui.image.tag`                                      | The web UI image tag to pull                                                                            | `v1.1.0`                            |
 | `webui.image.pullPolicy`                               | The web UI image pull policy                                                                            | `IfNotPresent`                     |
+| `extraVolumes`                               | Extra volumes for sidekick deployment                                                                            |                                  |
+| `extraVolumeMounts`                               | Extra volume mounts for sidekick deployment                                                                            |                                  |
+
+
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
