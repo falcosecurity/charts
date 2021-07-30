@@ -37,3 +37,19 @@ helm repo update
 ### Installing a chart
 
 Please refer to the instruction provided by the Chart you want to install. For installing Falco via Helm, the documentation is [here](https://github.com/falcosecurity/charts/tree/master/falco#adding-falcosecurity-repository).
+
+## Contributing
+
+We are glad to receive your contributions. To help you in the process, we have prepared a [CONTRIBUTING.md](https://github.com/falcosecurity/.github/blob/master/CONTRIBUTING.md), which includes detailed information on contributing to `falcosecurity` projects. Furthermore, we implemented a mechanism to automatically release and publish our charts whenever a PR is merged (if you are curious how this process works, you can find more details in our [release.md](release.md)).
+
+So, we ask you to follow these simple steps when making your PR:
+
+- The [DCO](https://github.com/falcosecurity/.github/blob/master/CONTRIBUTING.md#developer-certificate-of-origin) is required to contribute to a `falcosecurity` project. So ensure that all your commits have been signed off. We will not be able to merge the PR if a commit is not signed off.
+- Bump the version number of the chart by modifying the `version` value in the chart's `Chart.yaml` file. This is particularly important, as it allows our CI to release a new chart version. If the version has not been increased, we will not be able to merge the PR.
+- Add a new section in the chart's `CHANGELOG.md` file with the new version number of the chart.
+- If your changes affect any chart variables, please update the chart's `README.md` file accordingly.
+
+Finally, when opening your PR, please fill in the provided PR template, including the final checklist of items to indicate that all the steps above have been performed. 
+
+
+If you have any questions, please feel free to contact us via [GitHub issues](https://github.com/falcosecurity/charts/issues).
