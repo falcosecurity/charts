@@ -32,7 +32,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 * Update `Falcosidekick` chart to 0.3.8
 
-## v1.14.1
+## v1.15.0
 
 * Update image tag to 0.29.0 in values.yaml
 
