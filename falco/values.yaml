@@ -64,6 +64,7 @@ serviceAccount:
   create: true
   # Use this value as serviceAccountName
   name:
+  annotations: {}
 
 fakeEventGenerator:
   enabled: false
