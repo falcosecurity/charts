@@ -279,8 +279,8 @@ config:
     
   fission:
     function: "" # Name of Fission function, if not empty, Fission is enabled
-    routernamespace: "" # Namespace of Fission Router, "fission" (default)
-    routerservice: "" # Service of Fission Router, "router" (default)
+    routernamespace: "fission" # Namespace of Fission Router, "fission" (default)
+    routerservice: "router" # Service of Fission Router, "router" (default)
     routerport: 80 # Port of service of Fission Router
     minimumpriority: "" # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
     checkcert: true # check if ssl certificate of the output is valid (default: true)
