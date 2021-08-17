@@ -270,7 +270,7 @@ config:
   grafana:
     hostport: ""  # http://{domain or ip}:{port}, if not empty, Grafana output is enabled
     apikey: ""  # API Key to authenticate to Grafana, if not empty, Grafana output is enabled
-    dashboardid:   # annotations are scoped to a specific dashboard. Optionnal.
+    dashboardid: ""  # annotations are scoped to a specific dashboard. Optionnal.
     panelid: ""  # annotations are scoped to a specific panel. Optionnal.
     allfieldsastags: false  # if true, all custom fields are added as tags (default: false)
     mutualtls: false  # if true, checkcert flag will be ignored (server cert will always be checked)
@@ -290,11 +290,11 @@ config:
     accesskeyid: ""  # yandex access key
     secretaccesskey: ""  # yandex secret access key
     region: ""  # yandex storage region (default: ru-central-1)
-  s3:
-    endpoint: ""  # yandex storage endpoint (default: https://storage.yandexcloud.net) 
-    bucket: "falcosidekick"  # Yandex storage, bucket name
-    prefix: ""  # name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json
-    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|erro
+    s3:
+      endpoint: ""  # yandex storage endpoint (default: https://storage.yandexcloud.net) 
+      bucket: "falcosidekick"  # Yandex storage, bucket name
+      prefix: ""  # name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json
+      minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|erro
   
   kafkarest:
     address: ""  # The full URL to the topic (example "http://kafkarest:8082/topics/test")
