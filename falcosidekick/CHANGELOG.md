@@ -5,6 +5,20 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.3.14
+
+### Major Changes
+
+* New output: Grafana (PR#254)
+* New output: Fission (PR#255 thanks to @gauravgahlot)
+* New output: Yandex Cloud S3 (PR#261 thanks to @nar3k)
+* New output: Kafka REST (PR#263 thanks to @dirien)
+
+### Minor changes
+
+* Set header x-amz-acl to bucket-owner-full-control for output AWS S3 (PR#264 thanks to @Kaizhe)
+* Docker image is now available on AWS ECR Public Gallery (PR#265 thanks to @maxgio92)
+
 ## 0.3.13
 
 ### Minor changes

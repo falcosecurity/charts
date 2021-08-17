@@ -34,6 +34,7 @@ It works as a single endpoint for as many as you want `Falco` instances :
 - [**DogStatsD**](https://docs.datadoghq.com/developers/dogstatsd/?tab=go) (for monitoring of `falcosidekick`)
 - [**Prometheus**](https://prometheus.io/) (for both events and monitoring of `falcosidekick`)
 - [**Wavefront**](https://www.wavefront.com)
+- [**Grafana**](https://grafana.com/) (annotations)
 
 ### Alerting
 
@@ -50,6 +51,7 @@ It works as a single endpoint for as many as you want `Falco` instances :
 
 - [**AWS S3**](https://aws.amazon.com/s3/features/)
 - [**GCP Storage**](https://cloud.google.com/storage)
+- [**Yandex Cloud S3**](https://cloud.yandex.com/en/services/storage)
 
 ### FaaS / Serverless
 
@@ -58,6 +60,7 @@ It works as a single endpoint for as many as you want `Falco` instances :
 - [**OpenFaaS**](https://www.openfaas.com)
 - [**GCP Cloud Run**](https://cloud.google.com/run)
 - [**GCP Cloud Functions**](https://cloud.google.com/functions)
+- [**Fission**](https://fission.io)
 
 ### Message queue / Streaming
 
@@ -69,6 +72,7 @@ It works as a single endpoint for as many as you want `Falco` instances :
 - [**Apache Kafka**](https://kafka.apache.org/)
 - [**RabbitMQ**](https://www.rabbitmq.com/)
 - [**Azure Event Hubs**](https://azure.microsoft.com/en-in/services/event-hubs/)
+- [**Kafka REST**](https://docs.confluent.io/platform/current/kafka-rest/index.html)
   
 ### Email
 
