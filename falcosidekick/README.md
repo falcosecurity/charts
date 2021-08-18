@@ -302,6 +302,33 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.wavefront.batchsize`   | Wavefront batch size. If empty uses the default 10000. Only used when endpointtype is 'direct' | 10000
 | `config.wavefront.flushintervalseconds`   | Wavefront flush interval in seconds. Defaults to 1 | 1
 | `config.wavefront.minimumpriority`  | minimum priority of event for using use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`                                                | `debug`                                                                                           |
+| `config.grafana.hostport` | http://{domain or ip}:{port}, if not empty, Grafana output is enabled |
+| `config.grafana.apikey` | API Key to authenticate to Grafana, if not empty, Grafana output is enabled |
+| `config.grafana.dashboardid`| annotations are scoped to a specific dashboard. Optionnal. |
+| `config.grafana.panelid` | annotations are scoped to a specific panel. Optionnal. |
+| `config.grafana.allfieldsastags` | if true, all custom fields are added as tags | `false`
+| `config.grafana.mutualtls` | if true, checkcert flag will be ignored (server cert will always be checked) | `false`
+| `config.grafana.checkcert` | check if ssl certificate of the output is valid | `true`
+| `config.grafana.minimumpriority` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug |
+| `config.fission.function` | Name of Fission function, if not empty, Fission is enabled |
+| `config.fission.routernamespace` | Namespace of Fission Router | `fission`
+| `config.fission.routerservice` | Service of Fission Router | `router`
+| `config.fission.routerport` | Port of service of Fission Router | `80`
+| `config.fission.minimumpriority` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug |
+| `config.fission.checkcert` | check if ssl certificate of the output is valid | `true`
+| `config.fission.mutualtls` | if true, checkcert flag will be ignored (server cert will always be checked) | `false`
+| `config.yandex.accesskeyid` |  yandex access key |
+| `config.yandex.secretaccesskey` | yandex secret access key |
+| `config.yandex.region` | yandex storage region| `u-central-1`
+| `config.yandex.s3.endpoint` | yandex storage endpoint (default: https://storage.yandexcloud.net) |
+| `config.yandex.s3.bucket` | Yandex storage, bucket name | `falcosidekick`
+| `config.yandex.s3.prefix` | name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json |
+| `config.yandex.s3.minimumpriority` | minimum priority of event for using this output, order is emergency|alert|critical|error |
+| `config.kafkarest.address` | The full URL to the topic (example "http://kafkarest:8082/topics/test") |
+| `config.kafkarest.version` | Kafka Rest Proxy API version 2|1 | `2`
+| `config.kafkarest.minimumpriority` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug |
+| `config.kafkarest.checkcert` | check if ssl certificate of the output is valid | `true`
+| `config.kafkarest.mutualtls` | if true, checkcert flag will be ignored (server cert will always be checked) | `false`
 | `image.registry`                                 | The image registry to pull from                                                                  | `docker.io`                        |
 | `image.repository`                               | The image repository to pull from                                                                | `falcosecurity/falcosidekick`     |
 | `image.tag`                                      | The image tag to pull                                                                            | `2.23.1`                            |
