@@ -7,7 +7,7 @@ replicaCount: 2
 image:
   registry: docker.io
   repository: falcosecurity/falcosidekick
-  tag: 2.23.1
+  tag: 2.24.0
   pullPolicy: IfNotPresent
 
 podSecurityContext:
