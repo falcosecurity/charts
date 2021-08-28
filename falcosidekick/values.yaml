@@ -292,7 +292,7 @@ config:
     region: ""  # yandex storage region (default: ru-central-1)
     s3:
       endpoint: ""  # yandex storage endpoint (default: https://storage.yandexcloud.net)
-      bucket: "falcosidekick"  # Yandex storage, bucket name
+      bucket: ""  # Yandex storage, bucket name
       prefix: ""  # name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json
       minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|erro
 

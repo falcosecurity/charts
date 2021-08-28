@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.3.17
+
+* Fix: Remove the value for bucket of `Yandex S3`, it enabled the output by default
+
 ## 0.3.16
 
 ### Major Changes
