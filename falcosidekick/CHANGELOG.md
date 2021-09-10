@@ -5,6 +5,12 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.4.0
+
+### Major Changes
+
+* Support Ingress API version `networking.k8s.io/v1`, see `ingress.hosts` and `webui.ingress.hosts` in [values.yaml](values.yaml) for a breaking change in the `path` parameter
+
 ## 0.3.17
 
 * Fix: Remove the value for bucket of `Yandex S3`, it enabled the output by default

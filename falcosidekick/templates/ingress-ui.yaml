@@ -1,7 +1,9 @@
 {{- if and .Values.webui.enabled .Values.webui.ingress.enabled -}}
 {{- $fullName := include "falcosidekick.fullname" . -}}
+{{- $ingressApiIsStable := eq (include "falcosidekick.ingress.isStable" .) "true" -}}
+{{- $ingressSupportsPathType := eq (include "falcosidekick.ingress.supportsPathType" .) "true" -}}
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: {{ include "falcosidekick.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
   name: {{ $fullName }}-ui
@@ -32,10 +34,20 @@ spec:
       http:
         paths:
         {{- range .paths }}
-          - path: {{ . }}
-            backend:
-              serviceName: {{ $fullName }}-ui
-              servicePort: http
+        - path: {{ .path }}
+          {{- if $ingressSupportsPathType }}
+          pathType: {{ default "ImplementationSpecific" .pathType }}
+          {{- end }}
+          backend:
+            {{- if $ingressApiIsStable }}
+            service:
+              name: {{ $fullName }}-ui
+              port:
+                name: http
+            {{- else }}
+            serviceName: {{ $fullName }}-ui
+            servicePort: http
+            {{- end }}
         {{- end }}
   {{- end }}
 {{- end }}
