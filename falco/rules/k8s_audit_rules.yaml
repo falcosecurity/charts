@@ -632,4 +632,3 @@
   priority: WARNING
   source: k8s_audit
   tags: [k8s]
-
