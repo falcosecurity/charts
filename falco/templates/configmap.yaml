@@ -49,6 +49,12 @@ data:
     json_include_output_property: {{ .Values.falco.jsonIncludeOutputProperty }}
     {{- end }}
 
+    # When using json output, whether or not to include the "tags" property
+    # itself in the json output. If set to true, outputs caused by rules
+    # with no tags will have a "tags" field set to an empty array. If set to
+    # false, the "tags" field will not be included in the json output at all.
+    json_include_tags_property: {{ .Values.falco.jsonIncludeTagsProperty }}
+
     # Send information logs to stderr and/or syslog Note these are *not* security
     # notification logs! These are just Falco lifecycle (and possibly error) logs.
     log_stderr: {{ .Values.falco.logStderr }}
@@ -202,5 +208,11 @@ data:
 
     grpc_output:
       enabled: {{ .Values.falco.grpcOutput.enabled }}
+    
+    # Container orchestrator metadata fetching params
+    metadata_download:
+      max_mb: {{ .Values.falco.metadataDownload.maxMb }}
+      chunk_wait_us: {{ .Values.falco.metadataDownload.chunkWaitUs }}
+      watch_freq_sec: {{ .Values.falco.metadataDownload.watchFreqSec }}
 
 {{ (.Files.Glob "rules/*").AsConfig | indent 2 }}

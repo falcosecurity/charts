@@ -3,7 +3,7 @@
 image:
   registry: docker.io
   repository: falcosecurity/falco
-  tag: 0.29.1
+  tag: 0.30.0
   pullPolicy: IfNotPresent
   pullSecrets: []
 
@@ -139,6 +139,12 @@ falco:
   # itself (e.g. "File below a known binary directory opened for writing
   # (user=root ....") in the json output.
   jsonIncludeOutputProperty: true
+
+  # When using json output, whether or not to include the "tags" property
+  # itself in the json output. If set to true, outputs caused by rules
+  # with no tags will have a "tags" field set to an empty array. If set to
+  # false, the "tags" field will not be included in the json output at all.
+  jsonIncludeTagsProperty: true
 
   # Send information logs to stderr and/or syslog Note these are *not* security
   # notification logs! These are just Falco lifecycle (and possibly error) logs.
@@ -319,6 +325,12 @@ falco:
   # Make sure to have a consumer for them or leave this disabled.
   grpcOutput:
     enabled: false
+
+  # Container orchestrator metadata fetching params
+  metadataDownload:
+    maxMb: 100
+    chunkWaitUs: 1000
+    watchFreqSec: 1
 
 customRules:
   {}
