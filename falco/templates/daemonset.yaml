@@ -69,12 +69,19 @@ spec:
             - {{ .Values.kubernetesSupport.apiAuth }}
             - -k
             - {{ .Values.kubernetesSupport.apiUrl }}
+            {{- if .Values.kubernetesSupport.enableNodeFilter }}
+            - --k8s-node="${FALCO_K8S_NODE_NAME}"
+            {{- end }}
             {{- end }}
             - -pk
         {{- if .Values.extraArgs }}
 {{ toYaml .Values.extraArgs | indent 12 }}
         {{- end }}
           env:
+            - name: FALCO_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           {{- if .Values.ebpf.enabled }}
             - name: FALCO_BPF_PROBE
               value: {{ .Values.ebpf.path }}
