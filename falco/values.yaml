@@ -32,6 +32,9 @@ kubernetesSupport:
   #     ':' or '#' characters in the file name.
   apiAuth: /var/run/secrets/kubernetes.io/serviceaccount/token
   apiUrl: "https://$(KUBERNETES_SERVICE_HOST)"
+  # If true, only the current node (on which Falco is running) will be considered when requesting metadata of pods
+  # to the API server. Disabling this option may have a performance penalty on large clusters.
+  enableNodeFilter: true
 
 resources:
   # Although resources needed are subjective on the actual workload we provide
