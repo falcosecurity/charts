@@ -28,6 +28,7 @@ spec:
         - name: {{ . }}
       {{- end }}
       {{- end }}
+      serviceAccountName: {{ include "falcosidekick.fullname" . }}
       {{- if .Values.webui.priorityClassName }}
       priorityClassName: "{{ .Values.webui.priorityClassName }}"
       {{- end }}
