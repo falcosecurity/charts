@@ -5,6 +5,11 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.4.2
+
+* Fix: Added the rule to use the podsecuritypolicy
+* Fix: Added `ServiceAccountName` to the UI deployment
+
 ## 0.4.1
 
 * Removes duplicate `Fission` keys from secret
