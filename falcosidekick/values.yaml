@@ -306,6 +306,8 @@ config:
 service:
   type: ClusterIP
   port: 2801
+  annotations: {}
+    # networking.gke.io/load-balancer-type: Internal
 
 ingress:
   enabled: false
