@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.6.0
+
+### Minor Changes
+
+* Upgrade falco-exporter version to v0.6.0 (see the [falco-exporter changelog](https://github.com/falcosecurity/falco-exporter/releases/tag/v0.6.0))
+
 ## v0.5.2
 
 ### Minor changes

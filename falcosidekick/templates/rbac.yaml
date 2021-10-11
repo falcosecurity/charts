@@ -33,6 +33,16 @@ rules:
     - {{ include "falcosidekick.fullname" . }}
   verbs:
     - get
+{{- if .Values.podSecurityPolicy.create}}
+- apiGroups:
+    - policy
+  resources:
+    - podsecuritypolicies
+  resourceNames:
+    - {{ template "falcosidekick.fullname" . }}
+  verbs:
+    - use
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
