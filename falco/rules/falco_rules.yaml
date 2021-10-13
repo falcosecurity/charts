@@ -3061,9 +3061,13 @@
     and container.privileged=true
     and proc.name=mount
     and not mount_info
+    and not user_known_privileged_mount
   output: Mount was executed inside a privileged container (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag)
   priority: WARNING
   tags: [container, cis, mitre_lateral_movement]
+
+- macro: user_known_privileged_mount
+  condition: (never_true)
 
 - macro: consider_userfaultfd_activities
   condition: (always_true)
