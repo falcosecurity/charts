@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.6.1
+
+### Minor Changes
+
+* Add option the add annotations to the Daemonset
+
 ## v0.6.0
 
 ### Minor Changes
