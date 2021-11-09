@@ -5,6 +5,12 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## v0.6.1
 
+## Minor Changes
+
+* Add Check availability of 'monitoring.coreos.com/v1' api version
+
+## v0.6.1
+
 ### Minor Changes
 
 * Add option the add annotations to the Daemonset
