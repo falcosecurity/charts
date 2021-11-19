@@ -1887,8 +1887,6 @@
 # overwriting this macro) to specify additional containers that are
 # allowed to perform sensitive mounts.
 #
-# In this file, it just takes one of the images in falco_sensitive_mount_images
-# and repeats it.
 - macro: user_sensitive_mount_containers
   condition: (never_true)
 
