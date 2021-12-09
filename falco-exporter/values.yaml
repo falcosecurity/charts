@@ -134,3 +134,4 @@ prometheusRules:
       enabled: true
       rate_interval: "1m"
       threshold: 0
+    additionalAlerts: {}
