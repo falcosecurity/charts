@@ -64,6 +64,7 @@ The following table lists the main configurable parameters of the chart and thei
 | `grafanaDashboard.prometheusDatasourceName`      | The prometheus datasource name to be used for the dashboard                                      | `Prometheus`                       |
 | `scc.create`                                     | Create OpenShift's Security Context Constraint                                                   | `true`                             |
 | `service.mTLS.enabled`                           | Enable falco-exporter server Mutual TLS feature                                                  | `false`                            |
+| `prometheusRules.enabled`                        | Enable the creation of falco-exporter PrometheusRules                                            | `false`                            |
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 

@@ -109,3 +109,28 @@ grafanaDashboard:
 scc:
   # true here enabled creation of Security Context Constraints in Openshift
   create: true
+
+# Create PrometheusRules for alerting on priority events
+prometheusRules:
+  enabled: false
+  alerts:
+    warning:
+      enabled: true
+      rate_interval: "5m"
+      threshold: 0
+    error:
+      enabled: true
+      rate_interval: "5m"
+      threshold: 0
+    critical:
+      enabled: true
+      rate_interval: "5m"
+      threshold: 0
+    alert:
+      enabled: true
+      rate_interval: "5m"
+      threshold: 0
+    emergency:
+      enabled: true
+      rate_interval: "1m"
+      threshold: 0
