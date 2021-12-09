@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.7.0
+
+### Major Changes
+
+* Adds ability to create custom PrometheusRules for alerting
+
 ## v0.6.2
 
 ## Minor Changes
@@ -38,6 +44,7 @@ numbering uses [semantic versioning](http://semver.org).
 * Upgrade falco-exporter version to v0.5.0
 * Add metrics about Falco drops
 * Make `unix://` prefix optional
+
 ## v0.4.2
 
 ### Minor Changes
