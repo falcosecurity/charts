@@ -88,6 +88,11 @@ daemonset:
   ## Add aditional pod annotations on pods created by DaemonSet
   podAnnotations: {}
 
+# Additional labels to add to the pods:
+# podLabels:
+#   key: value
+podLabels: {}
+
 # If is behind a proxy you can set the proxy server
 proxy:
   httpProxy:
