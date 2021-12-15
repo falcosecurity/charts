@@ -18,6 +18,9 @@ spec:
     metadata:
       labels:
         app: {{ template "falco.fullname" . }}-event-generator
+{{- with .Values.podLabels }}
+{{ toYaml . | indent 8 }}
+{{- end }}
     spec:
       serviceAccountName: {{ template "falco.serviceAccountName" .}}
       containers:
