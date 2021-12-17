@@ -13,6 +13,9 @@ spec:
     metadata:
       labels:
         {{- include "falco-exporter.selectorLabels" . | nindent 8 }}
+        {{- if .Values.daemonset.podLabels }}
+        {{ toYaml .Values.daemonset.podLabels | nindent 8 }}
+        {{- end }}
       {{- if .Values.daemonset.annotations }}
       annotations:
       {{ toYaml .Values.daemonset.annotations | nindent 8 }}

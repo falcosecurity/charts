@@ -61,6 +61,7 @@ podSecurityContext:
 daemonset:
   # Annotations to add to the DaemonSet pods
   annotations: {}
+  podLabels: {}
 
 securityContext: {}
   # capabilities:
