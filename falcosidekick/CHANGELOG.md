@@ -4,6 +4,11 @@ This file documents all notable changes to Falcosidekick Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
+## 0.4.5
+
+### Minor Changes
+
+* Allow additional pod labels on deployment and web ui deployment
 
 ## 0.4.4
 

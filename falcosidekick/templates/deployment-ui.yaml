@@ -21,6 +21,9 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
         app.kubernetes.io/instance: {{ .Release.Name }}-ui
+        {{- if .Values.webui.podLabels }}
+        {{ toYaml .Values.webui.podLabels | nindent 8 }}
+        {{- end }}
     spec:
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:

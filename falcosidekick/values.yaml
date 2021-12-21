@@ -28,6 +28,8 @@ priorityClassName: ""
 
 podAnnotations: {}
 
+podLabels: {}
+
 config:
   existingSecret: ""
   extraEnv: []
@@ -385,6 +387,8 @@ webui:
   priorityClassName: ""
 
   podAnnotations: {}
+
+  podLabels: {}
 
   service:
     # type: NodePort
