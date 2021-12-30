@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.17.1
+
+* Fixed `priority` level `info` change to `informational`
+
 ## v1.17.0
 
 * Upgrade to Falco 0.31.0 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.31.0/CHANGELOG.md))
