@@ -17,7 +17,7 @@ spec:
     rules:
     {{- if .Values.prometheusRules.enabled }}
     - alert: FalcoExporterAbsent
-      expr: absent(up{job="{{- include "falco-exporter.fullname" . }}")
+      expr: absent(up{job="{{- include "falco-exporter.fullname" . }}"})
       for: 10m
       annotations:
         summary: Falco Exporter has dissapeared from Prometheus service discovery.
