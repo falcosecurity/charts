@@ -115,6 +115,11 @@ ebpf:
     # Can be skipped if eBPF JIT is enabled from outside the container
     hostNetwork: true
 
+leastPrivileged:
+  # Constrain Falco with capabilities instead of running a privileged container.
+  # When used in conjunction with the eBPF driver, a kernel >= 5.8 is required.
+  enabled: false
+
 auditLog:
   # true here activates the K8s Audit Log feature for Falco
   enabled: false

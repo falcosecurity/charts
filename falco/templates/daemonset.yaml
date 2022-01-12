@@ -60,7 +60,14 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           securityContext:
-            privileged: true
+            privileged: {{ not .Values.leastPrivileged.enabled }}
+            {{- if .Values.leastPrivileged.enabled }}
+            capabilities:
+              add:
+              - BPF
+              - SYS_RESOURCE
+              - PERFMON
+            {{- end }}
           args:
             - /usr/bin/falco
             {{- if .Values.containerd.enabled }}
