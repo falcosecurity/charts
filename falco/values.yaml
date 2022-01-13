@@ -118,6 +118,8 @@ ebpf:
 leastPrivileged:
   # Constrain Falco with capabilities instead of running a privileged container.
   # When used in conjunction with the eBPF driver, a kernel >= 5.8 is required.
+  # Loading the kernel module driver does NOT work with leastPrivileged.enabled.
+  # Ensure the module is already loaded, or the eBPF driver is enabled.
   enabled: false
 
 auditLog:
