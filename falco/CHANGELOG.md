@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.16.4
+
+* Bump falcosidekick chart dependency
+
 ## v1.16.2
 
 * Add `serviceAccount.annotations` configuration
