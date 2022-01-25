@@ -224,6 +224,8 @@ spec:
               - key: k8s_audit_rules.yaml
                 path: k8s_audit_rules.yaml
               {{- end }}
+              - key: aws_cloudtrail_rules.yaml
+                path: aws_cloudtrail_rules.yaml
         {{- if .Values.customRules }}
         - name: rules-volume
           configMap:
