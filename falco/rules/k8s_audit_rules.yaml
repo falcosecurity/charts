@@ -152,6 +152,19 @@
   source: k8s_audit
   tags: [k8s]
 
+# These container images are allowed to run with hostnetwork=true
+- list: falco_hostnetwork_images
+  items: [
+    gcr.io/google-containers/prometheus-to-sd,
+    gcr.io/projectcalico-org/typha,
+    gcr.io/projectcalico-org/node,
+    gke.gcr.io/gke-metadata-server,
+    gke.gcr.io/kube-proxy,
+    gke.gcr.io/netd-amd64,
+    k8s.gcr.io/ip-masq-agent-amd64
+    k8s.gcr.io/prometheus-to-sd,
+    ]
+
 # Corresponds to K8s CIS Benchmark 1.7.4
 - rule: Create HostNetwork Pod
   desc: Detect an attempt to start a pod using the host network.
@@ -302,9 +315,31 @@
   items: []
 
 - list: known_sa_list
-  items: ["pod-garbage-collector","resourcequota-controller","cronjob-controller","generic-garbage-collector",
-          "daemon-set-controller","endpointslice-controller","deployment-controller", "replicaset-controller",
-          "endpoint-controller", "namespace-controller", "statefulset-controller", "disruption-controller"]
+  items: [
+    coredns,
+    coredns-autoscaler,
+    cronjob-controller,
+    daemon-set-controller,
+    deployment-controller,
+    disruption-controller,
+    endpoint-controller,
+    endpointslice-controller,
+    endpointslicemirroring-controller,
+    generic-garbage-collector,
+    horizontal-pod-autoscaler,
+    job-controller,
+    namespace-controller,
+    node-controller,
+    persistent-volume-binder,
+    pod-garbage-collector,
+    pv-protection-controller,
+    pvc-protection-controller,
+    replicaset-controller,
+    resourcequota-controller,
+    root-ca-cert-publisher,
+    service-account-controller,
+    statefulset-controller
+    ]
 
 - macro: trusted_sa
   condition: (ka.target.name in (known_sa_list, user_known_sa_list))
