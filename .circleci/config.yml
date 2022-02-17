@@ -10,6 +10,7 @@ jobs:
             shellcheck -x tests/e2e-kind.sh
             shellcheck -x .circleci/install_tools.sh
             shellcheck -x .circleci/release.sh
+
   lint-charts:
     docker:
       - image: quay.io/helmpack/chart-testing:latest
@@ -18,13 +19,17 @@ jobs:
       - run:
           name: lint
           command: ct lint --config tests/ct.yaml
+
   install-charts:
-    machine: true
+    machine:
+      image: ubuntu-2004:202111-02
+    resource_class: medium
     steps:
       - checkout
       - run:
           command: tests/e2e-kind.sh
           no_output_timeout: 1h
+
   release-charts:
     docker:
       - image: cimg/base:stable
