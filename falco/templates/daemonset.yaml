@@ -80,7 +80,8 @@ spec:
             - -k
             - {{ .Values.kubernetesSupport.apiUrl }}
             {{- if .Values.kubernetesSupport.enableNodeFilter }}
-            - --k8s-node="$(FALCO_K8S_NODE_NAME)"
+            - --k8s-node
+            - "$(FALCO_K8S_NODE_NAME)"
             {{- end }}
             {{- end }}
             - -pk
