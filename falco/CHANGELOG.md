@@ -3,6 +3,11 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.17.4
+
+* Upgrade to Falco 0.31.1 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.31.1/CHANGELOG.md))
+* Update rulesets from Falco 0.31.1
+
 ## v1.17.3
 
 * Fix quoting around `--k8s-node`
