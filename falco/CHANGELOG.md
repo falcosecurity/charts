@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.17.3
+
+* Fix quoting around `--k8s-node`
+
 ## v1.17.2
 
 * Add `leastPrivileged.enabled` configuration
