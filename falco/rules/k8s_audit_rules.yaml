@@ -366,7 +366,7 @@
   tags: [k8s]
 
 # Detect any attempt to create a ClusterRoleBinding to the cluster-admin user
-# (exapand this to any built-in cluster role that does "sensitive" things)
+# (expand this to any built-in cluster role that does "sensitive" things)
 - rule: Attach to cluster-admin Role
   desc: Detect any attempt to create a ClusterRoleBinding to the cluster-admin user
   condition: kevt and clusterrolebinding and kcreate and ka.req.binding.role=cluster-admin
@@ -572,7 +572,7 @@
 # cluster creation. This may signify a permission setting too broader.
 # As we can't check for role of the user on a general ka.* event, this
 # may or may not be an administrator. Customize the full_admin_k8s_users
-# list to your needs, and activate at your discrection.
+# list to your needs, and activate at your discretion.
 
 # # How to test:
 # # Execute any kubectl command connected using default cluster user, as:
