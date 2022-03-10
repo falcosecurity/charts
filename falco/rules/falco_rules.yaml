@@ -225,7 +225,7 @@
 # The truncated dpkg-preconfigu is intentional, process names are
 # truncated at the falcosecurity-libs level.
 - list: package_mgmt_binaries
-  items: [rpm_binaries, deb_binaries, update-alternat, gem, pip, pip3, sane-utils.post, alternatives, chef-client, apk, snapd]
+  items: [rpm_binaries, deb_binaries, update-alternat, gem, npm, pip, pip3, sane-utils.post, alternatives, chef-client, apk, snapd]
 
 - macro: package_mgmt_procs
   condition: proc.name in (package_mgmt_binaries)
@@ -564,7 +564,7 @@
 
 # Qualys seems to run a variety of shell subprocesses, at various
 # levels. This checks at a few levels without the cost of a full
-# proc.aname, which traverses the full parent heirarchy.
+# proc.aname, which traverses the full parent hierarchy.
 - macro: run_by_qualys
   condition: >
     (proc.pname=qualys-cloud-ag or
@@ -774,6 +774,9 @@
 
 - macro: centrify_writing_krb
   condition: (proc.name in (adjoin,addns) and fd.name startswith /etc/krb5)
+
+- macro: sssd_writing_krb
+  condition: (proc.name=adcli and proc.aname[2]=sssd and fd.name startswith /etc/krb5)
 
 - macro: cockpit_writing_conf
   condition: >
@@ -1103,7 +1106,7 @@
   condition: (proc.name=oc and fd.name startswith /etc/origin/node)
 
 - macro: keepalived_writing_conf
-  condition: (proc.name=keepalived and fd.name=/etc/keepalived/keepalived.conf)
+  condition: (proc.name in (keepalived, kube-keepalived) and fd.name=/etc/keepalived/keepalived.conf)
 
 - macro: etcd_manager_updating_dns
   condition: (container and proc.name=etcd-manager and fd.name=/etc/hosts)
@@ -1218,6 +1221,7 @@
     and not nginx_writing_certs
     and not chef_client_writing_conf
     and not centrify_writing_krb
+    and not sssd_writing_krb
     and not cockpit_writing_conf
     and not ipsec_writing_conf
     and not httpd_writing_ssl_conf
@@ -2189,7 +2193,7 @@
 #   output: "sshd sent error message to syslog (error=%evt.buffer)"
 #   priority: WARNING
 
-- macro: somebody_becoming_themself
+- macro: somebody_becoming_themselves
   condition: ((user.name=nobody and evt.arg.uid=nobody) or
               (user.name=www-data and evt.arg.uid=www-data) or
               (user.name=_apt and evt.arg.uid=_apt) or
@@ -2227,7 +2231,7 @@
     evt.type=setuid and evt.dir=>
     and (known_user_in_container or not container)
     and not (user.name=root or user.uid=0)
-    and not somebody_becoming_themself
+    and not somebody_becoming_themselves
     and not proc.name in (known_setuid_binaries, userexec_binaries, mail_binaries, docker_binaries,
                           nomachine_binaries)
     and not proc.name startswith "runc:"
@@ -2251,7 +2255,7 @@
     activity by any programs that can manage users, passwords, or permissions. sudo and su are excluded.
     Activity in containers is also excluded--some containers create custom users on top
     of a base linux distribution at startup.
-    Some innocuous commandlines that don't actually change anything are excluded.
+    Some innocuous command lines that don't actually change anything are excluded.
   condition: >
     spawned_process and proc.name in (user_mgmt_binaries) and
     not proc.name in (su, sudo, lastlog, nologin, unix_chkpwd) and not container and
@@ -2301,7 +2305,7 @@
 # explicitly enumerate the container images that you want to allow
 # access to EC2 metadata. In this main falco rules file, there isn't
 # any way to know all the containers that should have access, so any
-# container is alllowed, by repeating the "container" macro. In the
+# container is allowed, by repeating the "container" macro. In the
 # overridden macro, the condition would look something like
 # (container.image.repository = vendor/container-1 or
 # container.image.repository = vendor/container-2 or ...)
@@ -2564,15 +2568,15 @@
   condition: >
     (modify and (
       evt.arg.name contains "bash_history" or
-      evt.arg.name contains "zsh_history" or
+      evt.arg.name endswith "zsh_history" or
       evt.arg.name contains "fish_read_history" or
       evt.arg.name endswith "fish_history" or
       evt.arg.oldpath contains "bash_history" or
-      evt.arg.oldpath contains "zsh_history" or
+      evt.arg.oldpath endswith "zsh_history" or
       evt.arg.oldpath contains "fish_read_history" or
       evt.arg.oldpath endswith "fish_history" or
       evt.arg.path contains "bash_history" or
-      evt.arg.path contains "zsh_history" or
+      evt.arg.path endswith "zsh_history" or
       evt.arg.path contains "fish_read_history" or
       evt.arg.path endswith "fish_history"))
 
@@ -2580,7 +2584,7 @@
   condition: >
     (open_write and (
       fd.name contains "bash_history" or
-      fd.name contains "zsh_history" or
+      fd.name endswith "zsh_history" or
       fd.name contains "fish_read_history" or
       fd.name endswith "fish_history") and evt.arg.flags contains "O_TRUNC")
 
@@ -2619,7 +2623,7 @@
   items: [hyperkube, kubelet, k3s-agent]
 
 # This macro should be overridden in user rules as needed. This is useful if a given application
-# should not be ignored alltogether with the user_known_chmod_applications list, but only in
+# should not be ignored altogether with the user_known_chmod_applications list, but only in
 # specific conditions.
 - macro: user_known_set_setuid_or_setgid_bit_conditions
   condition: (never_true)
@@ -2814,7 +2818,7 @@
   desc: Miners typically connect to miner pools on common ports.
   condition: net_miner_pool and not trusted_images_query_miner_domain_dns
   enabled: false
-  output: Outbound connection to IP/Port flagged by cryptoioc.ch (command=%proc.cmdline port=%fd.rport ip=%fd.rip container=%container.info image=%container.image.repository)
+  output: Outbound connection to IP/Port flagged by https://cryptoioc.ch (command=%proc.cmdline port=%fd.rport ip=%fd.rip container=%container.info image=%container.image.repository)
   priority: CRITICAL
   tags: [network, mitre_execution]
 
@@ -3058,7 +3062,7 @@
   condition: (proc.args="" or proc.args intersects ("-V", "-l", "-h"))
 
 - rule: Mount Launched in Privileged Container
-  desc: Detect file system mount happened inside a privilegd container which might lead to container escape.
+  desc: Detect file system mount happened inside a privileged container which might lead to container escape.
   condition: >
     spawned_process and container
     and container.privileged=true
@@ -3119,6 +3123,17 @@
     container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)
   priority: NOTICE
   tags: [network, process, mitre_command_and_control]
+
+# This rule helps detect CVE-2021-4034:
+# A privilege escalation to root through memory corruption
+- rule: Polkit Local Privilege Escalation Vulnerability (CVE-2021-4034)
+  desc: "This rule detects an attempt to exploit a privilege escalation vulnerability in Polkit's pkexec. By running specially crafted code, a local user can leverage this flaw to gain root privileges on a compromised system"
+  condition:
+    spawned_process and user.uid != 0 and proc.name=pkexec and proc.args = ''
+  output:
+    "Detect Polkit pkexec Local Privilege Escalation Exploit (CVE-2021-4034) (user=%user.loginname uid=%user.loginuid command=%proc.cmdline args=%proc.args)"
+  priority: CRITICAL
+  tags: [process, mitre_privilege_escalation]
 
 # Application rules have moved to application_rules.yaml. Please look
 # there if you want to enable them by adding to
