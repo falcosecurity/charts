@@ -10,6 +10,10 @@ metadata:
     helm.sh/chart: {{ include "falcosidekick.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-ui
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- with .Values.webui.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.webui.service.type }}
   ports:
