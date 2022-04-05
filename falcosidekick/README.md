@@ -339,7 +339,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `webui.image.repository`                               | The web UI image repository to pull from                                                                | `falcosecurity/falcosidekick-ui`     |
 | `webui.image.tag`                                      | The web UI image tag to pull                                                                            | `v1.1.0`                            |
 | `webui.image.pullPolicy`                               | The web UI image pull policy                                                                            | `IfNotPresent`                     |
-| `extraVolumes`                               | Extra volumes for sidekick deployment                                                                            |                                  |
+| `webui.service.type`                                   | The web UI service type (i. e: LoadBalancer)                                                            | `ClusterIP`                     |
+| `webui.service.port`                                   | The web UI service port dor the falcosidekick-ui                                                        | `2802`                     |
+| `webui.service.nodePort`                               | The web UI service nodePort                                                                             | `30282`                     |
+| `webui.service.annotations`                            | The web UI service annotations (use this to set a internal LB, for example.)                            | `{}`                     |
+| `extraVolumes`                               | Extra volumes for sidekick deployment                                                                             |                                  |
 | `extraVolumeMounts`                               | Extra volume mounts for sidekick deployment                                                                            |                                  |
 
 
