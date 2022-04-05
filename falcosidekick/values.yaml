@@ -387,13 +387,13 @@ webui:
   podAnnotations: {}
 
   service:
-    # type: LoadBalancer
+    # type: NodePort
     type: ClusterIP
     port: 2802
     nodePort: 30282
     annotations: {}
-      # service.beta.kubernetes.io/aws-load-balancer-internal: "true"
-  
+      # service.beta.kubernetes.io/aws-load-balancer-internal: "true"    
+
   ingress:
     enabled: false
     annotations: {}
