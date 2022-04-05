@@ -21,7 +21,7 @@ spec:
       {{ if eq .Values.webui.service.type "NodePort" }}
       nodePort: {{ .Values.webui.service.nodePort }}
       {{ end }}   
-      targetPort: http
+      targetPort: {{ .Values.webui.service.targetPort }}
       protocol: TCP
       name: http
   selector:
