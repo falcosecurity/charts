@@ -1467,7 +1467,7 @@
   tags: [filesystem, software_mgmt, mitre_persistence]
 
 - macro: postgres_running_wal_e
-  condition: (proc.pname=postgres and proc.cmdline startswith "sh -c envdir /etc/wal-e.d/env /usr/local/bin/wal-e")
+  condition: (proc.pname=postgres and proc.cmdline startswith "sh -c envdir \"/run/etc/wal-e.d/env\" wal-g wal-push")
 
 - macro: redis_running_prepost_scripts
   condition: (proc.aname[2]=redis-server and (proc.cmdline contains "redis-server.post-up.d" or proc.cmdline contains "redis-server.pre-up.d"))
@@ -2360,7 +2360,12 @@
      sysdig/sysdig, falcosecurity/falco,
      fluent/fluentd-kubernetes-daemonset, prom/prometheus,
      ibm_cloud_containers,
-     public.ecr.aws/falcosecurity/falco)
+     public.ecr.aws/falcosecurity/falco, velero/velero,
+     quay.io/jetstack/cert-manager-cainjector, weaveworks/kured,
+     ingress-controller/controller, quay.io/prometheus-operator/prometheus-operator,
+     k8s.gcr.io/ingress-nginx/kube-webhook-certgen, quay.io/spotahome/redis-operator,
+     registry.opensource.zalan.do/acid/postgres-operator, registry.opensource.zalan.do/acid/postgres-operator-ui,
+     rabbitmqoperator/cluster-operator)
      or (k8s.ns.name = "kube-system"))
 
 - macro: k8s_api_server

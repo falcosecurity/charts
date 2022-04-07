@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.17.5
+
+* Filter out "easy" alerts and updated the rules to `k8s_containers` & `postgres_running_wal_e`
+
 ## v1.17.4
 
 * Upgrade to Falco 0.31.1 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.31.1/CHANGELOG.md))
