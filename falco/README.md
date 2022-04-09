@@ -132,7 +132,7 @@ The following table lists the configurable parameters of the Falco chart and the
 | `falco.programOutput.keepAlive`            | Start the program once or re-spawn when a notification arrives                                                                                                                                             | `false`                                                                                                                 |
 | `falco.programOutput.program`              | Command to execute for program output                                                                                                                                                                      | `mail -s "Falco Notification" someone@example.com`                                                                      |
 | `falco.httpOutput.enabled`                 | Enable http output for security notifications                                                                                                                                                              | `false`                                                                                                                 |
-| `falco.httpOutput.url`                     | Url to notify using the http output when a notification arrives                                                                                                                                            | `http://some.url`                                                                                                       |
+| `falco.httpOutput.url`                     | Url to notify using the http output when a notification arrives                                                                                                                                            |                                                                                                                         |
 | `falco.grpc.enabled`                       | Enable the Falco gRPC server                                                                                                                                                                               | `false`                                                                                                                 |
 | `falco.grpc.threadiness`                   | Number of threads (and context) the gRPC server will use, `0` by default, which means "auto"                                                                                                               | `0`                                                                                                                     |
 | `falco.grpc.unixSocketPath`                | Unix socket the gRPC server will create                                                                                                                                                                    | `unix:///var/run/falco/falco.sock`                                                                                      |
@@ -358,7 +358,7 @@ Create a YAML file `values.yaml` as following:
 image:
   repository: falcosecurity/falco-no-driver
 
-extraInitContainers: 
+extraInitContainers:
   - name: driver-loader
     image: docker.io/falcosecurity/falco-driver-loader:latest
     imagePullPolicy: Always
@@ -442,7 +442,7 @@ helm install falco -f values.yaml falcosecurity/falco
 
 The Falco gRPC server and the Falco gRPC Outputs APIs are not enabled by default.
 Moreover, Falco supports running a gRPC server with two main binding types:
-- Over a local **Unix socket** with no authentication 
+- Over a local **Unix socket** with no authentication
 - Over the **network** with mandatory mutual TLS authentication (mTLS)
 
 > **Tip**: Once gRPC is enabled, you can deploy [falco-exporter](https://github.com/falcosecurity/falco-exporter) to export metrics to Prometheus.
@@ -462,7 +462,7 @@ helm install falco \
 
 ### gRPC over network
 
-The gRPC server over the network can only be used with mutual authentication between the clients and the server using TLS certificates. 
+The gRPC server over the network can only be used with mutual authentication between the clients and the server using TLS certificates.
 How to generate the certificates is [documented here](https://falco.org/docs/grpc/#generate-valid-ca).
 
 To install Falco with gRPC enabled over the **network**, you have to:

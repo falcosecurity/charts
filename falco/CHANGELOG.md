@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.17.5
+
+* Changed `falco.httpOutput.url` so that it always overrides the default URL, even when falcosidekick is enabled.
+
 ## v1.17.4
 
 * Upgrade to Falco 0.31.1 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.31.1/CHANGELOG.md))
@@ -25,7 +29,7 @@ numbering uses [semantic versioning](http://semver.org).
 * Upgrade to Falco 0.31.0 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.31.0/CHANGELOG.md))
 * Update rulesets from Falco 0.31.0
 * Update several configuration options under the `falco` node to reflect the new Falco version
-* Inital plugins support
+* Initial plugins support
 
 ## v1.16.4
 
@@ -241,7 +245,7 @@ numbering uses [semantic versioning](http://semver.org).
 ### Minor Changes
 
 * Allow adding InitContainers to Falco pod with `extraInitContainers` configuration
-   
+
 ## v1.3.0
 
 ### Minor Changes
@@ -259,7 +263,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 ### Minor Changes
 
-* Allow configuration using values for `imagePullSecrets` setting 
+* Allow configuration using values for `imagePullSecrets` setting
 * Add `docker.io/falcosecurity/falco` image to `falco_privileged_images` macro
 
 ## v1.2.1
@@ -298,7 +302,7 @@ numbering uses [semantic versioning](http://semver.org).
 ### Minor Changes
 
 * Upgrade to Falco 0.23.0
-* Correct socket path for `--cri` flag 
+* Correct socket path for `--cri` flag
 * Always mount `/etc` (required by `falco-driver-loader`)
 
 ## v1.1.7

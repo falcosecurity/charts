@@ -218,7 +218,8 @@ data:
 
     http_output:
       enabled: {{ if .Values.falcosidekick.enabled }}true{{ else }}{{ .Values.falco.httpOutput.enabled }}{{ end }}
-      url: {{ if .Values.falcosidekick.enabled }}http://{{ template "falco.fullname" . }}-falcosidekick{{ if .Values.falcosidekick.fullfqdn }}.{{ .Release.Namespace }}.svc.cluster.local{{ end }}:{{ .Values.falcosidekick.listenport | default "2801" }}{{ else }}{{ .Values.falco.httpOutput.url }}{{ end }}
+      url: |
+        {{ if .Values.falco.httpOutput.url }}{{ .Values.falco.httpOutput.url }}{{ else }}http://{{ template "falco.fullname" . }}-falcosidekick{{ if .Values.falcosidekick.fullfqdn }}.{{ .Release.Namespace }}.svc.cluster.local{{ end }}:{{ .Values.falcosidekick.listenport | default "2801" }}{{ end }}
       user_agent: {{ .Values.falco.httpOutput.userAgent }}
 
 
@@ -260,7 +261,7 @@ data:
     # Make sure to have a consumer for them or leave this disabled.
     grpc_output:
       enabled: {{ .Values.falco.grpcOutput.enabled }}
-    
+
     # Container orchestrator metadata fetching params
     metadata_download:
       max_mb: {{ .Values.falco.metadataDownload.maxMb }}
