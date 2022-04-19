@@ -1249,6 +1249,7 @@
     and not mcafee_writing_cma_d
     and not avinetworks_supervisor_writing_ssh
     and not multipath_writing_conf
+    and not calico-node
 
 - rule: Write below etc
   desc: an attempt to write to any file below /etc
@@ -1836,7 +1837,8 @@
     public.ecr.aws/falcosecurity/falco,
     quay.io/calico/node,
     sysdig/sysdig,
-    sematext_images
+    sematext_images,
+    k8s.gcr.io/dns/k8s-dns-node-cache
     ]
 
 - macro: falco_privileged_containers
@@ -1876,7 +1878,8 @@
               aws_eks_image_sensitive_mount or
               container.image.repository in (trusted_images) or
               container.image.repository in (falco_sensitive_mount_images) or
-              container.image.repository startswith quay.io/sysdig/)
+              container.image.repository startswith quay.io/sysdig/ or
+              container.image.repository startswith k8scloudprovider/cinder-csi-plugin)
 
 # Add conditions to this macro (probably in a separate file,
 # overwriting this macro) to specify additional containers that are
@@ -2428,6 +2431,12 @@
     and package_mgmt_procs
     and not package_mgmt_ancestor_procs
     and not user_known_package_manager_in_container
+  exceptions:
+   - name: kube-proxy
+     fields: [proc.cmdline, container.image.repository]
+     comps: [startswith, =]
+     values:
+       - [update-alternat, k8s.gcr.io/kube-proxy]
   output: >
     Package management process launched in container (user=%user.name user_loginuid=%user.loginuid
     command=%proc.cmdline container_id=%container.id container_name=%container.name image=%container.image.repository:%container.image.tag)

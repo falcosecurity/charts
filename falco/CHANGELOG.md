@@ -5,7 +5,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## v1.17.5
 
-* Filter out "easy" alerts and updated the rules to `k8s_containers` & `postgres_running_wal_e`
+* Filter out "easy" alerts and updated the rules to `write_etc_common` , `Launch Package Management Process in Container` , `falco_privileged_images` & `falco_sensitive_mount_containers`
 
 ## v1.17.4
 
