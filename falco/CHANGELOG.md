@@ -3,9 +3,13 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.17.6
+
+Remove whitespace around `falco.httpOutput.url` to fix the error `libcurl error: URL using bad/illegal format or missing URL`.
+
 ## v1.17.5
 
-* Changed `falco.httpOutput.url` so that it always overrides the default URL, even when falcosidekick is enabled.
+* Changed `falco.httpOutput.url` so that it always overrides the default URL, even when falcosidekick is enabled. (NOTE: don't use this version, see v1.17.6)
 
 ## v1.17.4
 
