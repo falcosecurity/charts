@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.18.0
+
+* Added support for cri-o
+
 ## v1.17.6
 
 Remove whitespace around `falco.httpOutput.url` to fix the error `libcurl error: URL using bad/illegal format or missing URL`.
