@@ -70,11 +70,11 @@ spec:
             {{- end }}
           args:
             - /usr/bin/falco
-            {{- if .Values.containerd.enabled }}
+            {{- if and .Values.containerd .Values.containerd.enabled }}
             - --cri
             - /run/containerd/containerd.sock
             {{- end }}
-            {{- if .Values.crio.enabled }}
+            {{- if and .Values.crio .Values.crio.enabled }}
             - --cri
             - /run/crio/crio.sock
             {{- end }}
