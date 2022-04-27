@@ -152,7 +152,7 @@ spec:
             - mountPath: /host/run/containerd/containerd.sock
               name: containerd-socket
             {{- end}}
-            {{- if .Values.crio.enabled }}
+            {{- if and .Values.crio .Values.crio.enabled }}
             - mountPath: /host/run/crio/crio.sock
               name: crio-socket
             {{- end}}
@@ -206,7 +206,7 @@ spec:
           hostPath:
             path: {{ .Values.containerd.socket }}
         {{- end}}
-        {{- if .Values.crio.enabled }}
+        {{- if and .Values.crio .Values.crio.enabled }}
         - name: crio-socket
           hostPath:
             path: {{ .Values.crio.socket }}
