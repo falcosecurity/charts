@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.18.2
+
+* Further fix for `--reuse-values` option after the introduction of `crio.enabled`.
+
 ## v1.18.1
 
 * Workaround to make this chart work with Helm `--reuse-values` option after the introduction of `crio.enabled`.
