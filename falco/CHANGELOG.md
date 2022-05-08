@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.18.3
+
+* Fix for [issue 318](https://github.com/falcosecurity/charts/issues/318) - Missing comma in k8s_audit_rules.yaml.
+
 ## v1.18.2
 
 * Further fix for `--reuse-values` option after the introduction of `crio.enabled`.
