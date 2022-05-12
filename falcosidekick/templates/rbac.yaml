@@ -33,7 +33,28 @@ rules:
     - {{ include "falcosidekick.fullname" . }}
   verbs:
     - get
-{{- if .Values.podSecurityPolicy.create}}
+{{- if .Values.config.policyreporter.enabled  }}
+- apiGroups:
+    - "wgpolicyk8s.io"
+  resources:
+    - PolicyReport
+    - ClusterPolicyReport
+  resourceNames:
+    - "*"
+  verbs:
+    - get
+    - delete
+    - update
+{{- end }}
+- apiGroups:
+    - ""
+  resources:
+    - endpoints
+  resourceNames:
+    - {{ include "falcosidekick.fullname" . }}
+  verbs:
+    - get
+{{- if .Values.podSecurityPolicy.create }}
 - apiGroups:
     - policy
   resources:

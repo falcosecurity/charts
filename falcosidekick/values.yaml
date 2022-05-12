@@ -7,7 +7,7 @@ replicaCount: 2
 image:
   registry: docker.io
   repository: falcosecurity/falcosidekick
-  tag: 2.24.0
+  tag: 2.25.0
   pullPolicy: IfNotPresent
 
 podSecurityContext:
@@ -26,6 +26,7 @@ podSecurityPolicy:
 
 priorityClassName: ""
 
+podLabels: {}
 podAnnotations: {}
 
 config:
@@ -80,6 +81,7 @@ config:
 
   alertmanager:
     hostport: ""
+    endpoint: "/api/v1/alerts"
     minimumpriority: ""
     mutualtls: false
     checkcert: true
@@ -105,6 +107,8 @@ config:
 
   loki:
     hostport: ""
+    endpoint: "/api/prom/push"
+    tenant: ""
     minimumpriority: ""
     mutualtls: false
     checkcert: true
@@ -145,6 +149,9 @@ config:
     s3:
       bucket: ""
       prefix: ""
+      minimumpriority: ""
+    kinesis:
+      streamname: ""
       minimumpriority: ""
 
   smtp:
@@ -303,6 +310,28 @@ config:
     mutualtls: false  # if true, checkcert flag will be ignored (server cert will always be checked)
     checkcert: true  # check if ssl certificate of the output is valid (default: true)
 
+  syslog:
+    host: ""
+    port: ""
+    protocol: "tcp"
+    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+  
+  cliq:
+    webhookurl: ""
+    icon: ""
+    useemoji: true
+    outputformat: "all"
+    messageformat: ""
+    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+
+  policyreporter:
+    enabled: false
+    kubeconfig: "~/.kube/config"
+    maxevents: 1000
+    prunebypriority: false
+    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+
+
 service:
   type: ClusterIP
   port: 2801
@@ -344,7 +373,6 @@ tolerations: []
 
 affinity: {}
 
-# Add extra volumes to Falco UI deployment
 extraVolumes: []
 # - name: optional-mtls-volume
 #   configMap:
@@ -354,36 +382,24 @@ extraVolumes: []
 #       - key: mtlscert.optional.tls
 #         path: mtlscert.optional.tls
 
-# Add extra volumeMounts to Falco container in Falco UI deployment
 extraVolumeMounts: []
 # - mountPath: /etc/certs/mtlscert.optional.tls
 #   name: optional-mtls-volume
 
 webui:
   enabled: false
-  darkmode: false
+
+  replicaCount: 2
 
   image:
     registry: docker.io
     repository: falcosecurity/falcosidekick-ui
-    tag: "v1.1.0"
+    tag: "v2.0.0"
     pullPolicy: IfNotPresent
-
-  podSecurityContext:
-    runAsUser: 1234
-    fsGroup: 1234
-
-  retention: 200
-
-  # One or more secrets to be used when pulling images
-  imagePullSecrets: []
-  # - registrySecretName
-
-  podSecurityPolicy:
-    create: false
 
   priorityClassName: ""
 
+  podLabels: {}
   podAnnotations: {}
 
   service:
@@ -403,16 +419,7 @@ webui:
     hosts:
       - host: falcosidekick-ui.local
         paths:
-        - path: /ui
-          # -- pathType (e.g. ImplementationSpecific, Prefix, .. etc.)
-          # pathType: Prefix
-        - path: /events
-          # pathType: Prefix
-        - path: /healthz
-          # pathType: Prefix
-        - path: /ws
-          # pathType: Prefix
-
+        - path: /
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
@@ -435,3 +442,33 @@ webui:
   tolerations: []
 
   affinity: {}
+
+  redis:
+    image:
+      registry: docker.io
+      repository: redislabs/redisearch
+      tag: "2.2.4"
+      pullPolicy: IfNotPresent
+
+    priorityClassName: ""
+
+    podLabels: {}
+    podAnnotations: {}
+
+    resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+
+    nodeSelector: {}
+
+    tolerations: []
+
+    affinity: {}

@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-ui
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.webui.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
@@ -21,6 +21,13 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
         app.kubernetes.io/instance: {{ .Release.Name }}-ui
+      {{- if .Values.webui.podLabels }}
+{{ toYaml .Values.webui.podLabels | indent 8 }}
+      {{- end }}
+      {{- if .Values.webui.podAnnotations }}
+      annotations:
+{{ toYaml .Values.webui.podAnnotations | indent 8 }}
+      {{- end }}
     spec:
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -28,7 +35,7 @@ spec:
         - name: {{ . }}
       {{- end }}
       {{- end }}
-      serviceAccountName: {{ include "falcosidekick.fullname" . }}
+      serviceAccountName: {{ include "falcosidekick.fullname" . }}-ui
       {{- if .Values.webui.priorityClassName }}
       priorityClassName: "{{ .Values.webui.priorityClassName }}"
       {{- end }}
@@ -36,34 +43,29 @@ spec:
         runAsUser: {{ .Values.webui.podSecurityContext.runAsUser }}
         fsGroup: {{ .Values.webui.podSecurityContext.fsGroup }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-ui
           image: "{{ .Values.webui.image.registry }}/{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
           imagePullPolicy: {{ .Values.webui.image.pullPolicy }}
           args:
             - "-r"
-            - "{{ .Values.webui.retention }}"
-          {{- if .Values.webui.darkmode }}
-            - "-d"
-          {{- end }}
+            - {{ include "falcosidekick.name" . }}-ui-redis:6379
           ports:
             - name: http
               containerPort: 2802
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /api/v1/healthz
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /api/v1/healthz
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5
-          env:
-            # - name: RETENTION
-            #   value: {{ .Values.webui.retention | quote }}
+          env: {}
           resources:
             {{- toYaml .Values.webui.resources | nindent 12 }}
       {{- with .Values.webui.nodeSelector }}
@@ -75,6 +77,86 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.webui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-ui-redis
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui-redis
+    helm.sh/chart: {{ include "falcosidekick.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-ui
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui-redis
+      app.kubernetes.io/instance: {{ .Release.Name }}-ui-redis
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui-redis
+        app.kubernetes.io/instance: {{ .Release.Name }}-ui-redis
+      {{- if .Values.webui.redis.podLabels }}
+{{ toYaml .Values.webui.redis.podLabels | indent 8 }}
+      {{- end }}
+      {{- if .Values.webui.redis.podAnnotations }}
+      annotations:
+{{ toYaml .Values.webui.redis.podAnnotations | indent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
+      serviceAccountName: {{ include "falcosidekick.fullname" . }}-ui
+      {{- if .Values.webui.redis.priorityClassName }}
+      priorityClassName: "{{ .Values.webui.redis.priorityClassName }}"
+      {{- end }}
+      containers:
+        - name: redis
+          image: "{{ .Values.webui.redis.image.registry }}/{{ .Values.webui.redis.image.repository }}:{{ .Values.webui.redis.image.tag }}"
+          imagePullPolicy: {{ .Values.webui.redis.image.pullPolicy }}
+          args: []
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          livenessProbe: 
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5 
+            periodSeconds: 5 
+            timeoutSeconds: 2 
+            successThreshold: 1 
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5 
+            periodSeconds: 5 
+            timeoutSeconds: 2 
+            successThreshold: 1 
+            failureThreshold: 3
+          env: {}
+          resources:
+            {{- toYaml .Values.webui.redis.resources | nindent 12 }}
+      {{- with .Values.webui.redis.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webui.redis.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webui.redis.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
