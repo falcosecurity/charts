@@ -29,11 +29,9 @@ rules:
     - ""
   resources:
     - endpoints
-  resourceNames:
-    - {{ include "falcosidekick.fullname" . }}
   verbs:
     - get
-{{- if .Values.podSecurityPolicy.create}}
+{{- if .Values.podSecurityPolicy.create }}
 - apiGroups:
     - policy
   resources:
@@ -61,3 +59,46 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "falcosidekick.fullname" . }}
+{{- if .Values.config.policyreport.enabled  }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
+    helm.sh/chart: {{ include "falcosidekick.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+rules:
+- apiGroups:
+    - "wgpolicyk8s.io"
+  resources:
+    - policyreports
+    - clusterpolicyreports
+  verbs:
+    - get
+    - create
+    - delete
+    - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
+    helm.sh/chart: {{ include "falcosidekick.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "falcosidekick.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "falcosidekick.fullname" . }}
+{{- end }}
