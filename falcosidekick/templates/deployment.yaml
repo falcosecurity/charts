@@ -23,6 +23,9 @@ spec:
         {{- if and .Values.config.azure.podIdentityClientID .Values.config.azure.podIdentityName }}
         aadpodidbinding: {{ include "falcosidekick.fullname" . }}
         {{- end }}
+      {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+      {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
       {{- if .Values.podAnnotations }}
