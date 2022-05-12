@@ -328,7 +328,14 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | `config.kafkarest.version` | Kafka Rest Proxy API version 2|1 | `2`
 | `config.kafkarest.minimumpriority` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug |
 | `config.kafkarest.checkcert` | check if ssl certificate of the output is valid | `true`
-| `config.kafkarest.mutualtls` | if true, checkcert flag will be ignored (server cert will always be checked) | `false`
+| `config.kafkarest.mutualtls` | if true, checkcert flag will be ignored (server cert will always be checked) | `false` |
+| config.policyreport.enabled | if true; policyreport output is enabled | `false` |  |
+| config.policyreport.kubeconfig | Kubeconfig file to use (only if falcosidekick is running outside the cluster) | `"~/.kube/config"` |  |
+| config.policyreport.maxevents | the max number of events that can be in a policyreport | `1000` |  |
+| config.policyreport.minimumpriority | events with a priority above this are mapped to fail in PolicyReport Summary and lower that those are mapped to warn | `"debug"` |  |
+| config.policyreport.prunebypriority | if true; the events with lowest severity are pruned first, in FIFO order | `false` |  |
+| config.rabbitmq.minimumpriority | string | `"debug"` |  |
+| config.rabbitmq.queue | string | `""` |  |
 | `image.registry`                                 | The image registry to pull from                                                                  | `docker.io`                        |
 | `image.repository`                               | The image repository to pull from                                                                | `falcosecurity/falcosidekick`     |
 | `image.tag`                                      | The image tag to pull                                                                            | `2.23.1`                            |
