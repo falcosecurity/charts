@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.18.4
+
+* Now the url to falcosidekick on NOTES.txt on falco helm chart points to the right place.
+
 ## v1.18.3
 
 * Fix for [issue 318](https://github.com/falcosecurity/charts/issues/318) - Missing comma in k8s_audit_rules.yaml.
