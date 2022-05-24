@@ -18,6 +18,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+{{- if .Values.webui.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.webui.ingress.ingressClassName }}
+{{- end }}
 {{- if .Values.webui.ingress.tls }}
   tls:
   {{- range .Values.webui.ingress.tls }}
