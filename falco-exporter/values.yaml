@@ -59,6 +59,13 @@ podSecurityContext:
   # fsGroup: 2000
 
 daemonset:
+  # Perform rolling updates by default in the DaemonSet agent
+  # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+  updateStrategy:
+    # You can also customize maxUnavailable or minReadySeconds if you
+    # need it
+    type: RollingUpdate
+
   # Annotations to add to the DaemonSet pods
   annotations: {}
   podLabels: {}
