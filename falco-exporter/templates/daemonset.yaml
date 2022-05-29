@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       {{- include "falco-exporter.selectorLabels" . | nindent 6 }}
+  updateStrategy:
+{{ toYaml .Values.daemonset.updateStrategy | indent 4 }}
   template:
     metadata:
       labels:
