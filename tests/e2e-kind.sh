@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 
 readonly CT_VERSION=v3.3.1
-readonly KIND_VERSION=v0.9.0
+readonly KIND_VERSION=v0.14.0
 readonly CLUSTER_NAME=falco-helm-test
 
 run_ct_container() {
