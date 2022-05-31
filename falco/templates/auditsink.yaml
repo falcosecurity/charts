@@ -21,10 +21,10 @@ spec:
       service:
         namespace: {{ .Release.Namespace }}
         name: {{ template "falco.fullname" . }}
-        port: {{ .Values.falco.webserver.listenPort }}
-        path: {{ .Values.falco.webserver.k8sAuditEndpoint }}
+        port: {{ .Values.auditLog.listenPort }}
+        path: {{ .Values.auditLog.k8sAuditEndpoint }}
       {{- end }}
-      {{- if .Values.falco.webserver.sslEnabled }}
+      {{- if .Values.auditLog.sslEnabled }}
       caBundle: {{ .Values.certs.ca.crt | b64enc | quote }}
       {{- end}}
 {{- end }}
