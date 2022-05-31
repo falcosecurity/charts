@@ -241,10 +241,8 @@ spec:
                 path: falco_rules.local.yaml
               - key: application_rules.yaml
                 path: rules.available/application_rules.yaml
-              {{- if .Values.auditLog.enabled }}
               - key: k8s_audit_rules.yaml
                 path: k8s_audit_rules.yaml
-              {{- end }}
               - key: aws_cloudtrail_rules.yaml
                 path: aws_cloudtrail_rules.yaml
         {{- if .Values.customRules }}

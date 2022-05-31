@@ -198,7 +198,6 @@ data:
     webserver:
       enabled: {{ .Values.falco.webserver.enabled }}
       listen_port: {{ .Values.falco.webserver.listenPort }}
-      k8s_audit_endpoint: {{ .Values.falco.webserver.k8sAuditEndpoint }}
       k8s_healthz_endpoint: {{ .Values.falco.webserver.k8sHealthzEndpoint }}
       ssl_enabled: {{ .Values.falco.webserver.sslEnabled }}
       ssl_certificate: {{ .Values.falco.webserver.sslCertificate }}

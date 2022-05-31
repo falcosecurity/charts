@@ -126,8 +126,21 @@ leastPrivileged:
   enabled: false
 
 auditLog:
-  # true here activates the K8s Audit Log feature for Falco
+  # If true, this will enable the Audit Log support in the chart.
+  # Note that the k8saudit plugin must be enabled and configured
+  # (see below).
   enabled: false
+
+  # Please enable if the builtin k8saudit is configured for HTTPs.
+  sslEnabled: false
+  # Please use the same path configured for the builtin k8saudit (usually /k8s-audit).
+  k8sAuditEndpoint: /k8s-audit
+  # Please use the same port configured for the builtin k8saudit (usually 9765).
+  listenPort: 9765
+
+  # Enable a NodePort on the given port to listen on for the Audit Log.
+  # If false, no NodePort will be created.
+  nodePort: false
 
   dynamicBackend:
     # true here configures an AuditSink who will receive the K8s audit logs
@@ -148,6 +161,13 @@ falco:
   # - /etc/falco/rules.optional.d
 
   plugins:
+    - name: k8saudit
+      library_path: libk8saudit.so
+      init_config:
+        ""
+        # maxEventBytes: 1048576
+        # sslCertificate: /etc/falco/falco.pem
+      open_params: "http://:9765/k8s-audit"
     - name: cloudtrail
       library_path: libcloudtrail.so
       init_config: ""
@@ -307,8 +327,6 @@ falco:
   webserver:
     enabled: true
     listenPort: 8765
-    nodePort: false
-    k8sAuditEndpoint: /k8s-audit
     k8sHealthzEndpoint: /healthz
     sslEnabled: false
     sslCertificate: /etc/falco/certs/server.pem
