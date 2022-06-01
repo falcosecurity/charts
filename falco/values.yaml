@@ -131,23 +131,12 @@ auditLog:
   # (see below).
   enabled: false
 
-  # Please enable if the builtin k8saudit is configured for HTTPs.
-  sslEnabled: false
-  # Please use the same path configured for the builtin k8saudit (usually /k8s-audit).
-  k8sAuditEndpoint: /k8s-audit
   # Please use the same port configured for the builtin k8saudit (usually 9765).
   listenPort: 9765
 
   # Enable a NodePort on the given port to listen on for the Audit Log.
   # If false, no NodePort will be created.
   nodePort: false
-
-  dynamicBackend:
-    # true here configures an AuditSink who will receive the K8s audit logs
-    enabled: false
-    # define if auditsink client config should point to a fixed url, not the
-    # default webserver service
-    url: ""
 
 falco:
   # The location of the rules file(s). This can contain one or more paths to
@@ -165,6 +154,7 @@ falco:
       library_path: libk8saudit.so
       init_config:
         ""
+        # webhookMaxEventSize: 131072
         # maxEventBytes: 1048576
         # sslCertificate: /etc/falco/falco.pem
       open_params: "http://:9765/k8s-audit"
