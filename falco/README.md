@@ -94,8 +94,6 @@ The following table lists the configurable parameters of the Falco chart and the
 | `ebpf.settings.hostNetwork`                | Needed to enable eBPF JIT at runtime for performance reasons                                                                                                                                               | `true`                                                                                                                  |
 | `leastPrivileged.enabled`                  | Use capabilities instead of running a privileged container. The kernel module driver can not be loaded if enabled.                                                                                         | `false`                                                                                                                 |
 | `auditLog.enabled`                         | Enable K8s audit log support for Falco                                                                                                                                                                     | `false`                                                                                                                 |
-| `auditLog.dynamicBackend.enabled`          | Deploy the Audit Sink where Falco listens for K8s audit log events                                                                                                                                         | `false`                                                                                                                 |
-| `auditLog.dynamicBackend.url`              | Define if Audit Sink client config should point to a fixed [url](https://kubernetes.io/docs/tasks/debug-application-cluster/audit/#url) (useful for development) instead of the default webserver service. | ``                                                                                                                      |
 | `falco.rulesFile`                          | The location of the rules files                                                                                                                                                                            | `[/etc/falco/falco_rules.yaml, /etc/falco/falco_rules.local.yaml, /etc/falco/k8s_audit_rules.yaml, /etc/falco/rules.d]` |
 | `falco.timeFormatISO8601`                  | Display times using ISO 8601 instead of local time zone                                                                                                                                                    | `false`                                                                                                                 |
 | `falco.jsonOutput`                         | Output events in json or text                                                                                                                                                                              | `false`                                                                                                                 |
@@ -118,11 +116,9 @@ The following table lists the configurable parameters of the Falco chart and the
 | `falco.fileOutput.filename`                | The filename for logging notifications                                                                                                                                                                     | `./events.txt`                                                                                                          |
 | `falco.stdoutOutput.enabled`               | Enable stdout output for security notifications                                                                                                                                                            | `true`                                                                                                                  |
 | `falco.webserver.enabled`                  | Enable Falco embedded webserver to accept K8s audit events                                                                                                                                                 | `true`                                                                                                                  |
-| `falco.webserver.k8sAuditEndpoint`         | Endpoint where Falco embedded webserver accepts K8s audit events                                                                                                                                           | `/k8s-audit`                                                                                                            |
 | `falco.webserver.k8sHealthzEndpoint`       | Endpoint where Falco exposes the health status                                                                                                                                                             | `/healthz`                                                                                                              |
 | `falco.webserver.listenPort`               | Port where Falco embedded webserver listen to connections                                                                                                                                                  | `8765`                                                                                                                  |
-| `falco.webserver.nodePort`                 | Exposes the Falco embedded webserver through a NodePort                                                                                                                                                    | `false`                                                                                                                 |
-| `falco.webserver.sslEnabled`               | Enable SSL on Falco embedded webserver                                                                                                                                                                     | `false`                                                                                                                 |
+s| `falco.webserver.sslEnabled`               | Enable SSL on Falco embedded webserver                                                                                                                                                                     | `false`                                                                                                                 |
 | `falco.webserver.sslCertificate`           | Certificate bundle path for the Falco embedded webserver                                                                                                                                                   | `/etc/falco/certs/server.pem`                                                                                           |
 | `falco.livenessProbe.initialDelaySeconds`  | Tells the kubelet that it should wait X seconds before performing the first probe                                                                                                                          | `60`                                                                                                                    |
 | `falco.livenessProbe.timeoutSeconds`       | Number of seconds after which the probe times out                                                                                                                                                          | `5`                                                                                                                     |
@@ -234,53 +230,11 @@ Tue Jun  5 15:08:57 2018: Loading rules from file /etc/falco/rules.d/rules-traef
 ```
 
 And this means that our Falco installation has loaded the rules and is ready to help us.
+## Kubernetes Audit Log
 
-## Enabling K8s audit event support
+The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin. To configure this chart to use the Kubernetes Audit Log, you need to enable the `auditLog.enabled` parameter and also configure the plugin accordingly. It also completly up to you to set up the [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
 
-### Using scripts
-This has been tested with Kops and Minikube. You will need the following components:
-
-* A Kubernetes cluster greater than v1.13
-* The apiserver must be configured with Dynamic Auditing feature, do it with the following flags:
-  * `--audit-dynamic-configuration`
-  * `--feature-gates=DynamicAuditing=true`
-  * `--runtime-config=auditregistration.k8s.io/v1alpha1=true`
-
-You can do it with the [scripts provided by Falco engineers](https://github.com/falcosecurity/evolution/tree/master/examples/k8s_audit_config)
-just running:
-
-```
-cd examples/k8s_audit_config
-bash enable-k8s-audit.sh minikube dynamic
-```
-
-Or in the case of Kops:
-
-```
-cd examples/k8s_audit_config
-APISERVER_HOST=api.my-kops-cluster.com bash ./enable-k8s-audit.sh kops dynamic
-```
-
-Then you can install Falco chart enabling the enabling the `falco.webserver`
-flag:
-
-`helm install falco --set auditLog.enabled=true --set auditLog.dynamicBackend.enabled=true falcosecurity/falco`
-
-And that's it, you will start to see the K8s audit log related alerts.
-
-### Known validation failed error
-
-Perhaps you may find the case where you receive an error like the following one:
-
-```
-helm install falco --set auditLog.enabled=true falcosecurity/falco
-Error: validation failed: unable to recognize "": no matches for kind "AuditSink" in version "auditregistration.k8s.io/v1alpha1"
-```
-
-This means that the apiserver cannot recognize the `auditregistration.k8s.io`
-resource, which means that the dynamic auditing feature hasn't been enabled
-properly. You need to enable it or ensure that your using a Kubernetes version
-greater than v1.13.
+*Note that the support for the dynamic backend (also known as the `AuditSink` object) has been deprecated from Kubernetes and removed from this chart.*
 
 ### Manual setup with NodePort on kOps
 
