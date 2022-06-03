@@ -394,7 +394,7 @@ webui:
   image:
     registry: docker.io
     repository: falcosecurity/falcosidekick-ui
-    tag: "v2.0.1"
+    tag: "v2.0.2"
     pullPolicy: IfNotPresent
 
   podSecurityContext:
