@@ -144,10 +144,10 @@ falco:
   rulesFile:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
-    - /etc/falco/k8s_audit_rules.yaml
+    # - /etc/falco/k8s_audit_rules.yaml
     # - /etc/falco/aws_cloudtrail_rules.yaml
     - /etc/falco/rules.d
-  # - /etc/falco/rules.optional.d
+    # - /etc/falco/rules.optional.d
 
   plugins:
     - name: k8saudit
