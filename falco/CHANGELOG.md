@@ -3,6 +3,17 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.19.0
+
+* Upgrade to Falco 0.32.0 (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.32.0/CHANGELOG.md))
+* Various Falco config settings were updated for Falco 0.32.0
+
+### Breaking Changes
+
+* Audit Log is now supported via k8saudit plugin (when enabled, syscall instrumentation will be disabled)
+* dynamicBackend support for Audit Log is now deprecated
+* Rules files are not shipped with the chart anymore (Falco will use the rules files shipped with the container image)
+
 ## v1.18.6
 
 * Bump falcosidekick chart dependency (fix issue with the UI)
