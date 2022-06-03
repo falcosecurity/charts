@@ -31,12 +31,13 @@ After a few seconds, Falco should be running.
 
 ### About the driver
 
-Falco needs a driver (the [kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module) or the [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe)) to work.
+Falco needs a **driver** (the [kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module) or the [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe)) that taps into the stream of system calls and passes that system calls to Falco. The driver must be installed on the node where Falco is running.
 
 The container image includes a script (`falco-driver-loader`) that either tries to build the driver on-the-fly or downloads a prebuilt driver as a fallback. Usually, no action is required.
 
 If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to building the driver on the fly correctly. You can find instructions on installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
 
+Note that **the driver is not required when using plugins**.
 ## Uninstalling the Chart
 
 To uninstall the `falco` deployment:
@@ -232,7 +233,7 @@ Tue Jun  5 15:08:57 2018: Loading rules from file /etc/falco/rules.d/rules-traef
 And this means that our Falco installation has loaded the rules and is ready to help us.
 ## Kubernetes Audit Log
 
-The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin. To configure this chart to use the Kubernetes Audit Log, you need to enable the `auditLog.enabled` parameter and also configure the plugin accordingly. It also completly up to you to set up the [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
+The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin. To configure this chart to use the Kubernetes Audit Log, you need to enable the `auditLog.enabled` parameter, and you also have to configure the plugin accordingly. It is also entirely up to you to set up the [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
 
 *Note that the support for the dynamic backend (also known as the `AuditSink` object) has been deprecated from Kubernetes and removed from this chart.*
 
@@ -286,21 +287,8 @@ spec:
 Then you can install the Falco chart enabling these flags:
 
 ```shell
-# without SSL (not recommended):
-helm install falco --set auditLog.enabled=true --set falco.webserver.nodePort=32765 falcosecurity/falco
-
-# with SSL:
-helm install falco \
-  --set auditLog.enabled=true \
-  --set falco.webserver.sslEnabled=true \
-  --set falco.webserver.nodePort=32765 \
-  --set-file certs.server.key=/path/to/server.key \
-  --set-file certs.server.crt=/path/to/server.crt \
-  --set-file certs.ca.crt=/path/to/ca.crt \
-  falcosecurity/falco
+helm install falco --set auditLog.enabled=true --set auditLog.nodePort=32765 falcosecurity/falco
 ```
-
-The webserver reuses the gRPC certificate setup, which is [documented here](https://falco.org/docs/grpc/#generate-valid-ca). Generating the client certificate isn't required.
 
 ## Using an init container
 
@@ -437,7 +425,7 @@ helm install falco \
 ## Deploy Falcosidekick with Falco
 
 [`Falcosidekick`](https://github.com/falcosecurity/falcosidekick) can be installed with `Falco` by setting `--set falcosidekick.enabled=true`. This setting automatically configures all options of `Falco` for working with `Falcosidekick`.
-All values for configuration of `Falcosidekick` are available by prefixing them with `falcosidekick.`. The full list of available values is [here](https://github.com/falcosecurity/charts/tree/master/falcosidekick#configuration).
+All values for the configuration of `Falcosidekick` are available by prefixing them with `falcosidekick.`. The full list of available values is [here](https://github.com/falcosecurity/charts/tree/master/falcosidekick#configuration).
 For example, to enable the deployment of [`Falcosidekick-UI`](https://github.com/falcosecurity/falcosidekick-ui), add `--set falcosidekick.webui.enabled=true`.
 
 If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidekick` might be captured, use the full FQDN of `Falcosidekick` by using `--set falcosidekick.fullfqdn=true` to avoid that.
