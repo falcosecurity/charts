@@ -3,7 +3,7 @@
 image:
   registry: docker.io
   repository: falcosecurity/falco
-  tag: 0.31.1
+  tag: 0.32.0
   pullPolicy: IfNotPresent
   pullSecrets: []
 
@@ -139,8 +139,18 @@ auditLog:
   nodePort: false
 
 falco:
-  # The location of the rules file(s). This can contain one or more paths to
-  # separate rules files.
+  # File(s) or Directories containing Falco rules, loaded at startup.
+  # The name "rules_file" is only for backwards compatibility.
+  # If the entry is a file, it will be read directly. If the entry is a directory,
+  # every file in that directory will be read, in alphabetical order.
+  #
+  # falco_rules.yaml ships with the falco package and is overridden with
+  # every new software version. falco_rules.local.yaml is only created
+  # if it doesn't exist. If you want to customize the set of rules, add
+  # your customizations to falco_rules.local.yaml.
+  #
+  # The files will be read in the order presented here, so make sure if
+  # you have overrides they appear in later files.
   rulesFile:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
@@ -154,7 +164,6 @@ falco:
       library_path: libk8saudit.so
       init_config:
         ""
-        # webhookMaxEventSize: 131072
         # maxEventBytes: 1048576
         # sslCertificate: /etc/falco/falco.pem
       open_params: "http://:9765/k8s-audit"
@@ -172,6 +181,11 @@ falco:
   # and then change this to:
   # load_plugins: [cloudtrail, json]
   loadPlugins: []
+
+  # Watch config file and rules files for modification.
+  # When a file is modified, Falco will propagate new config,
+  # by reloading itself.
+  watchConfigFiles: true
 
   # If true, the times displayed in log messages and output messages
   # will be in ISO 8601. By default, times are displayed in the local
@@ -314,12 +328,22 @@ falco:
   # Falco contains an embedded webserver that can be used to accept K8s
   # Audit Events. These config options control the behavior of that
   # webserver. (By default, the webserver is enabled).
+  #
+  # The ssl_certificate is a combination SSL Certificate and corresponding
+  # key contained in a single file. You can generate a key/cert as follows:
+  #
+  # $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
+  # $ cat certificate.pem key.pem > falco.pem
+  # $ sudo cp falco.pem /etc/falco/falco.pem
+  #
+  # It also exposes a healthy endpoint that can be used to check if Falco is up and running
+  # By default the endpoint is /healthz
   webserver:
     enabled: true
     listenPort: 8765
     k8sHealthzEndpoint: /healthz
     sslEnabled: false
-    sslCertificate: /etc/falco/certs/server.pem
+    sslCertificate: /etc/falco/certs/falco.pem
 
   livenessProbe:
     initialDelaySeconds: 60
