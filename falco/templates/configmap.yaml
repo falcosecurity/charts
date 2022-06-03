@@ -37,6 +37,10 @@ data:
     # load_plugins: [cloudtrail, json]
     load_plugins:
 {{ toYaml .Values.falco.loadPlugins | indent 8 }}
+    # Watch config file and rules files for modification.
+    # When a file is modified, Falco will propagate new config,
+    # by reloading itself.
+    watch_config_files: {{ .Values.falco.watchConfigFiles }}
 
     # If true, the times displayed in log messages and output messages
     # will be in ISO 8601. By default, times are displayed in the local
