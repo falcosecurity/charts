@@ -12,7 +12,6 @@ numbering uses [semantic versioning](http://semver.org).
 
 * Audit Log is now supported via k8saudit plugin (when enabled, syscall instrumentation will be disabled)
 * dynamicBackend support for Audit Log is now deprecated
-* Rules files are not shipped with the chart anymore (Falco will use the rules files shipped with the container image)
 
 ## v1.18.6
 
