@@ -42,9 +42,10 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: "{{ .Values.priorityClassName }}"
       {{- end }}
+      {{- if .Values.podSecurityContext }}
       securityContext:
-        runAsUser: {{ .Values.podSecurityContext.runAsUser }}
-        fsGroup: {{ .Values.podSecurityContext.fsGroup }}
+      {{- toYaml .Values.podSecurityContext | nindent 8}}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -65,6 +66,10 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5
+          {{- if .Values.securityContext }}
+          securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- end }}
           envFrom:
             - secretRef:
                 {{- if .Values.config.existingSecret }}

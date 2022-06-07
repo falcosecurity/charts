@@ -39,9 +39,10 @@ spec:
       {{- if .Values.webui.priorityClassName }}
       priorityClassName: "{{ .Values.webui.priorityClassName }}"
       {{- end }}
+      {{- if .Values.webui.podSecurityContext }}
       securityContext:
-        runAsUser: {{ .Values.webui.podSecurityContext.runAsUser }}
-        fsGroup: {{ .Values.webui.podSecurityContext.fsGroup }}
+      {{- toYaml .Values.webui.podSecurityContext | nindent 8}}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}-ui
           image: "{{ .Values.webui.image.registry }}/{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
@@ -65,6 +66,10 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5
+          {{- if .Values.webui.securityContext }}
+          securityContext:
+          {{- toYaml .Values.webui.securityContext | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.webui.resources | nindent 12 }}
       {{- with .Values.webui.nodeSelector }}
@@ -120,6 +125,10 @@ spec:
       {{- if .Values.webui.redis.priorityClassName }}
       priorityClassName: "{{ .Values.webui.redis.priorityClassName }}"
       {{- end }}
+      {{- if .Values.webui.redis.podSecurityContext }}
+      securityContext:
+      {{- toYaml .Values.webui.redis.podSecurityContext | nindent 8}}
+      {{- end }}
       containers:
         - name: redis
           image: "{{ .Values.webui.redis.image.registry }}/{{ .Values.webui.redis.image.repository }}:{{ .Values.webui.redis.image.tag }}"
@@ -145,6 +154,10 @@ spec:
             timeoutSeconds: 2 
             successThreshold: 1 
             failureThreshold: 3
+          {{- if .Values.webui.redis.securityContext }}
+          securityContext:
+          {{- toYaml .Values.webui.redis.securityContext | nindent 12 }}
+          {{- end }}
           volumeMounts:
           - name: {{ include "falcosidekick.fullname" . }}-ui-redis-data
             mountPath: /data

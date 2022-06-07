@@ -6,6 +6,10 @@ numbering uses [semantic versioning](http://semver.org).
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
 
+## 0.5.3
+
+* Support full configuration of `securityContext` blocks in falcosidekick and falcosidekick-ui deployments, and redis statefulset.
+
 ## 0.5.2
 
 * Update Falcosidekick-UI image (fix wrong redirect to localhost when an ingress is used)
