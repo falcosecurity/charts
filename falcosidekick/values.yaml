@@ -14,6 +14,8 @@ podSecurityContext:
   runAsUser: 1234
   fsGroup: 1234
 
+securityContext: {}
+
 # One or more secrets to be used when pulling images
 imagePullSecrets: []
 # - registrySecretName
@@ -401,6 +403,8 @@ webui:
     runAsUser: 1234
     fsGroup: 1234
 
+  securityContext: {}
+
   priorityClassName: ""
 
   podLabels: {}
@@ -468,6 +472,10 @@ webui:
       port: 6379
       targetPort: 6379
       annotations: {}
+
+    podSecurityContext: {}
+
+    securityContext: {}
 
     resources: {}
       # We usually recommend not to specify default resources and to leave this as a conscious
