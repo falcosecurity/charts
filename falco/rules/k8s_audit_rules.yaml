@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 The Falco Authors.
+# Copyright (C) 2022 The Falco Authors.
 #
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-- required_engine_version: 2
+
+- required_engine_version: 12
+
+- required_plugin_versions:
+  - name: k8saudit
+    version: 0.1.0
+  - name: json
+    version: 0.3.0
 
 # Like always_true/always_false, but works with k8s audit events
 - macro: k8s_audit_always_true
@@ -51,13 +58,24 @@
     cluster-autoscaler,
     "system:addon-manager",
     "cloud-controller-manager",
-    "eks:node-manager",
     "system:kube-controller-manager"
     ]
 
+- list: eks_allowed_k8s_users
+  items: [
+    "eks:node-manager",
+    "eks:certificate-controller",
+    "eks:fargate-scheduler",
+    "eks:k8s-metrics",
+    "eks:authenticator",
+    "eks:cluster-event-watcher",
+    "eks:nodewatcher",
+    "eks:pod-identity-mutating-webhook"
+    ]
+-
 - rule: Disallowed K8s User
   desc: Detect any k8s operation by users outside of an allowed set of users.
-  condition: kevt and non_system_user and not ka.user.name in (allowed_k8s_users)
+  condition: kevt and non_system_user and not ka.user.name in (allowed_k8s_users) and not ka.user.name in (eks_allowed_k8s_users)
   output: K8s Operation performed by user not in allowed list of users (user=%ka.user.name target=%ka.target.name/%ka.target.resource verb=%ka.verb uri=%ka.uri resp=%ka.response.code)
   priority: WARNING
   source: k8s_audit
@@ -74,6 +92,9 @@
 
 - macro: response_successful
   condition: (ka.response.code startswith 2)
+
+- macro: kget
+  condition: ka.verb=get
 
 - macro: kcreate
   condition: ka.verb=create
@@ -119,6 +140,12 @@
 
 - macro: health_endpoint
   condition: ka.uri=/healthz
+
+- macro: live_endpoint
+  condition: ka.uri=/livez
+
+- macro: ready_endpoint
+  condition: ka.uri=/readyz
 
 - rule: Create Disallowed Pod
   desc: >
@@ -174,6 +201,28 @@
   source: k8s_audit
   tags: [k8s]
 
+- list: falco_hostpid_images
+  items: []
+
+- rule: Create HostPid Pod
+  desc: Detect an attempt to start a pod using the host pid namespace.
+  condition: kevt and pod and kcreate and ka.req.pod.host_pid intersects (true) and not ka.req.pod.containers.image.repository in (falco_hostpid_images)
+  output: Pod started using host pid namespace (user=%ka.user.name pod=%ka.resp.name ns=%ka.target.namespace images=%ka.req.pod.containers.image)
+  priority: WARNING
+  source: k8s_audit
+  tags: [k8s]
+
+- list: falco_hostipc_images
+  items: []
+
+- rule: Create HostIPC Pod
+  desc: Detect an attempt to start a pod using the host ipc namespace.
+  condition: kevt and pod and kcreate and ka.req.pod.host_ipc intersects (true) and not ka.req.pod.containers.image.repository in (falco_hostipc_images)
+  output: Pod started using host ipc namespace (user=%ka.user.name pod=%ka.resp.name ns=%ka.target.namespace images=%ka.req.pod.containers.image)
+  priority: WARNING
+  source: k8s_audit
+  tags: [k8s]
+
 - macro: user_known_node_port_service
   condition: (k8s_audit_never_true)
 
@@ -208,7 +257,7 @@
 - rule: Anonymous Request Allowed
   desc: >
     Detect any request made by the anonymous user that was allowed
-  condition: kevt and ka.user.name=system:anonymous and ka.auth.decision="allow" and not health_endpoint
+  condition: kevt and ka.user.name=system:anonymous and ka.auth.decision="allow" and not health_endpoint and not live_endpoint and not ready_endpoint
   output: Request by anonymous user allowed (user=%ka.user.name verb=%ka.verb uri=%ka.uri reason=%ka.auth.reason))
   priority: WARNING
   source: k8s_audit
@@ -288,7 +337,8 @@
     k8s.gcr.io/kube-apiserver,
     gke.gcr.io/kube-proxy,
     gke.gcr.io/netd-amd64,
-    k8s.gcr.io/addon-resizer,
+    gke.gcr.io/watcher-daemonset,
+    k8s.gcr.io/addon-resizer
     k8s.gcr.io/prometheus-to-sd,
     k8s.gcr.io/k8s-dns-dnsmasq-nanny-amd64,
     k8s.gcr.io/k8s-dns-kube-dns-amd64,
@@ -479,7 +529,7 @@
 - rule: K8s Serviceaccount Created
   desc: Detect any attempt to create a service account
   condition: (kactivity and kcreate and serviceaccount and response_successful)
-  output: K8s Serviceaccount Created (user=%ka.user.name user=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)
+  output: K8s Serviceaccount Created (user=%ka.user.name serviceaccount=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)
   priority: INFO
   source: k8s_audit
   tags: [k8s]
@@ -487,7 +537,7 @@
 - rule: K8s Serviceaccount Deleted
   desc: Detect any attempt to delete a service account
   condition: (kactivity and kdelete and serviceaccount and response_successful)
-  output: K8s Serviceaccount Deleted (user=%ka.user.name user=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)
+  output: K8s Serviceaccount Deleted (user=%ka.user.name serviceaccount=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)
   priority: INFO
   source: k8s_audit
   tags: [k8s]
@@ -533,10 +583,34 @@
   tags: [k8s]
 
 - rule: K8s Secret Deleted
-  desc: Detect any attempt to delete a secret Service account tokens are excluded.
+  desc: Detect any attempt to delete a secret. Service account tokens are excluded.
   condition: (kactivity and kdelete and secret and ka.target.namespace!=kube-system and non_system_user and response_successful)
   output: K8s Secret Deleted (user=%ka.user.name secret=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)
   priority: INFO
+  source: k8s_audit
+  tags: [k8s]
+
+- rule: K8s Secret Get Successfully
+  desc: >
+    Detect any attempt to get a secret. Service account tokens are excluded.
+  condition: >
+    secret and kget
+    and kactivity
+    and response_successful
+  output: K8s Secret Get Successfully (user=%ka.user.name secret=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)
+  priority: ERROR
+  source: k8s_audit
+  tags: [k8s]
+
+- rule:  K8s Secret Get Unsuccessfully Tried
+  desc: >
+    Detect an unsuccessful attempt to get the secret. Service account tokens are excluded.
+  condition: >
+    secret and kget
+    and kactivity
+    and not response_successful
+  output: K8s Secret Get Unsuccessfully Tried (user=%ka.user.name secret=%ka.target.name ns=%ka.target.namespace resp=%ka.response.code decision=%ka.auth.decision reason=%ka.auth.reason)
+  priority: WARNING
   source: k8s_audit
   tags: [k8s]
 

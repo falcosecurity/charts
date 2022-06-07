@@ -443,6 +443,9 @@
 - list: shell_config_directories
   items: [/etc/zsh]
 
+- macro: user_known_shell_config_modifiers
+  condition: (never_true)
+
 - rule: Modify Shell Configuration File
   desc: Detect attempt to modify shell configuration files
   condition: >
@@ -452,6 +455,7 @@
      fd.directory in (shell_config_directories))
     and not proc.name in (shell_binaries)
     and not exe_running_docker_save
+    and not user_known_shell_config_modifiers
   output: >
     a shell configuration file has been modified (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline pcmdline=%proc.pcmdline file=%fd.name container_id=%container.id image=%container.image.repository)
   priority:
@@ -1811,7 +1815,7 @@
           registry.access.redhat.com/sematext/agent,
           registry.access.redhat.com/sematext/logagent]
 
-# These container images are allowed to run with --privileged
+# These container images are allowed to run with --privileged and full set of capabilities
 - list: falco_privileged_images
   items: [
     docker.io/calico/node,
@@ -1829,6 +1833,7 @@
     gke.gcr.io/kube-proxy,
     gke.gcr.io/gke-metadata-server,
     gke.gcr.io/netd-amd64,
+    gke.gcr.io/watcher-daemonset,
     gcr.io/google-containers/prometheus-to-sd,
     k8s.gcr.io/ip-masq-agent-amd64,
     k8s.gcr.io/kube-proxy,
@@ -1897,6 +1902,31 @@
   output: Privileged container started (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag)
   priority: INFO
   tags: [container, cis, mitre_privilege_escalation, mitre_lateral_movement]
+
+# These capabilities were used in the past to escape from containers
+- macro: excessively_capable_container
+  condition: >
+    (thread.cap_permitted contains CAP_SYS_ADMIN
+    or thread.cap_permitted contains CAP_SYS_MODULE
+    or thread.cap_permitted contains CAP_SYS_RAWIO
+    or thread.cap_permitted contains CAP_SYS_PTRACE
+    or thread.cap_permitted contains CAP_SYS_BOOT
+    or thread.cap_permitted contains CAP_SYSLOG
+    or thread.cap_permitted contains CAP_DAC_READ_SEARCH
+    or thread.cap_permitted contains CAP_NET_ADMIN
+    or thread.cap_permitted contains CAP_BPF)
+
+- rule: Launch Excessively Capable Container
+  desc: Detect container started with a powerful set of capabilities. Exceptions are made for known trusted images.
+  condition: >
+    container_started and container
+    and excessively_capable_container
+    and not falco_privileged_containers
+    and not user_privileged_containers
+  output: Excessively capable container started (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag cap_permitted=%thread.cap_permitted)
+  priority: INFO
+  tags: [container, cis, mitre_privilege_escalation, mitre_lateral_movement]
+
 
 # For now, only considering a full mount of /etc as
 # sensitive. Ideally, this would also consider all subdirectories
@@ -2034,7 +2064,8 @@
     '"sh -c  -t -i"',
     '"sh -c openssl version"',
     '"bash -c id -Gn kafadmin"',
-    '"sh -c /bin/sh -c ''date +%%s''"'
+    '"sh -c /bin/sh -c ''date +%%s''"',
+    '"sh -c /usr/share/lighttpd/create-mime.conf.pl"'
     ]
 
 # This list allows for easy additions to the set of commands allowed
@@ -2564,26 +2595,28 @@
     WARNING
   tags: [process, mitre_persistence]
 
+# here `ash_history` will match both `bash_history` and `ash_history`
 - macro: modify_shell_history
   condition: >
     (modify and (
-      evt.arg.name contains "bash_history" or
+      evt.arg.name endswith "ash_history" or
       evt.arg.name endswith "zsh_history" or
       evt.arg.name contains "fish_read_history" or
       evt.arg.name endswith "fish_history" or
-      evt.arg.oldpath contains "bash_history" or
+      evt.arg.oldpath endswith "ash_history" or
       evt.arg.oldpath endswith "zsh_history" or
       evt.arg.oldpath contains "fish_read_history" or
       evt.arg.oldpath endswith "fish_history" or
-      evt.arg.path contains "bash_history" or
+      evt.arg.path endswith "ash_history" or
       evt.arg.path endswith "zsh_history" or
       evt.arg.path contains "fish_read_history" or
       evt.arg.path endswith "fish_history"))
 
+# here `ash_history` will match both `bash_history` and `ash_history`
 - macro: truncate_shell_history
   condition: >
     (open_write and (
-      fd.name contains "bash_history" or
+      fd.name endswith "ash_history" or
       fd.name endswith "zsh_history" or
       fd.name contains "fish_read_history" or
       fd.name endswith "fish_history") and evt.arg.flags contains "O_TRUNC")
@@ -2806,11 +2839,10 @@
   condition: (fd.sport in (miner_ports) and fd.sip.name in (miner_domains))
 
 - macro: net_miner_pool
-  condition: (evt.type in (sendto, sendmsg) and evt.dir=< and (fd.net != "127.0.0.0/8" and not fd.snet in (rfc_1918_addresses)) and ((minerpool_http) or (minerpool_https) or (minerpool_other)))
+  condition: (evt.type in (sendto, sendmsg, connect) and evt.dir=< and (fd.net != "127.0.0.0/8" and not fd.snet in (rfc_1918_addresses)) and ((minerpool_http) or (minerpool_https) or (minerpool_other)))
 
 - macro: trusted_images_query_miner_domain_dns
   condition: (container.image.repository in (docker.io/falcosecurity/falco, falcosecurity/falco, public.ecr.aws/falcosecurity/falco))
-  append: false
 
 # The rule is disabled by default.
 # Note: falco will send DNS request to resolve miner pool domain which may trigger alerts in your environment.
@@ -3061,6 +3093,9 @@
 - macro: mount_info
   condition: (proc.args="" or proc.args intersects ("-V", "-l", "-h"))
 
+- macro: user_known_mount_in_privileged_containers
+  condition: (never_true)
+
 - rule: Mount Launched in Privileged Container
   desc: Detect file system mount happened inside a privileged container which might lead to container escape.
   condition: >
@@ -3068,6 +3103,7 @@
     and container.privileged=true
     and proc.name=mount
     and not mount_info
+    and not user_known_mount_in_privileged_containers
   output: Mount was executed inside a privileged container (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline %container.info image=%container.image.repository:%container.image.tag)
   priority: WARNING
   tags: [container, cis, mitre_lateral_movement]
@@ -3103,10 +3139,7 @@
 
 -  macro: curl_download
    condition: proc.name = curl and
-              (proc.cmdline contains " > " or
-              proc.cmdline contains " >> " or
-              proc.cmdline contains " | " or
-              proc.cmdline contains " -o " or
+              (proc.cmdline contains " -o " or
               proc.cmdline contains " --output " or
               proc.cmdline contains " -O " or
               proc.cmdline contains " --remote-name ")
@@ -3134,6 +3167,16 @@
     "Detect Polkit pkexec Local Privilege Escalation Exploit (CVE-2021-4034) (user=%user.loginname uid=%user.loginuid command=%proc.cmdline args=%proc.args)"
   priority: CRITICAL
   tags: [process, mitre_privilege_escalation]
+
+
+- rule: Detect release_agent File Container Escapes
+  desc: "This rule detect an attempt to exploit a container escape using release_agent file. By running a container with certains capabilities, a privileged user can modify release_agent file and escape from the container"
+  condition:
+    open_write and container and fd.name endswith release_agent and (user.uid=0 or thread.cap_effective contains CAP_DAC_OVERRIDE) and thread.cap_effective contains CAP_SYS_ADMIN
+  output:
+    "Detect an attempt to exploit a container escape using release_agent file (user=%user.name user_loginuid=%user.loginuid filename=%fd.name %container.info image=%container.image.repository:%container.image.tag cap_effective=%thread.cap_effective)"
+  priority: CRITICAL
+  tags: [container, mitre_privilege_escalation, mitre_lateral_movement]
 
 # Application rules have moved to application_rules.yaml. Please look
 # there if you want to enable them by adding to

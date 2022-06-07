@@ -15,11 +15,9 @@
 # limitations under the License.
 #
 
-# All rules files related to plugins should require engine version 10
+# All rules files related to plugins should require at least engine version 10
 - required_engine_version: 10
 
-# These rules can be read by cloudtrail plugin version 0.1.0, or
-# anything semver-compatible.
 - required_plugin_versions:
   - name: cloudtrail
     version: 0.2.3
@@ -439,3 +437,4 @@
     - aws
     - aws_cloudtrail
   source: aws_cloudtrail
+
