@@ -38,6 +38,7 @@ The container image includes a script (`falco-driver-loader`) that either tries 
 If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to building the driver on the fly correctly. You can find instructions on installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
 
 Note that **the driver is not required when using plugins**.
+
 ## Uninstalling the Chart
 
 To uninstall the `falco` deployment:
@@ -231,6 +232,7 @@ Tue Jun  5 15:08:57 2018: Loading rules from file /etc/falco/rules.d/rules-traef
 ```
 
 And this means that our Falco installation has loaded the rules and is ready to help us.
+
 ## Kubernetes Audit Log
 
 The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin. To configure this chart to use the Kubernetes Audit Log, you need to enable the `auditLog.enabled` parameter, and you also have to configure the plugin accordingly. It is also entirely up to you to set up the [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
