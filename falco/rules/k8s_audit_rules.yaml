@@ -72,7 +72,7 @@
     "eks:nodewatcher",
     "eks:pod-identity-mutating-webhook"
     ]
--
+ 
 - rule: Disallowed K8s User
   desc: Detect any k8s operation by users outside of an allowed set of users.
   condition: kevt and non_system_user and not ka.user.name in (allowed_k8s_users) and not ka.user.name in (eks_allowed_k8s_users)
