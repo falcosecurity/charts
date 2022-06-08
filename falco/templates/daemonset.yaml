@@ -60,13 +60,20 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           securityContext:
-            privileged: {{ not .Values.leastPrivileged.enabled }}
-            {{- if .Values.leastPrivileged.enabled }}
+            {{- if not .Values.leastPrivileged.enabled }}
+            privileged: true
+            {{- if .Values.securityContext }}
+{{ omit .Values.securityContext "privileged" | toYaml | indent 12 }}
+            {{- end }}
+            {{- else }}
             capabilities:
               add:
               - BPF
               - SYS_RESOURCE
               - PERFMON
+            {{- if .Values.securityContext }}
+{{ omit .Values.securityContext "privileged" "capabilities" | toYaml | indent 12 }}
+            {{- end }}
             {{- end }}
           args:
             - /usr/bin/falco
@@ -194,6 +201,10 @@ spec:
       {{- if .Values.extraInitContainers }}
       initContainers:
 {{ toYaml .Values.extraInitContainers | indent 12 }}
+      {{- end }}
+      {{- if .Values.podSecurityContext }}
+      securityContext:
+      {{- toYaml .Values.podSecurityContext | nindent 8}}
       {{- end }}
       volumes:
         {{- if .Values.docker.enabled }}

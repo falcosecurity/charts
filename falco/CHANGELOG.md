@@ -3,6 +3,11 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.19.2
+
+* Bump Falco Sidekick dependency.
+* Add support for DaemonSet podSecurityContext and securityContext.
+
 ## v1.19.1
 
 * Fix the changelog for 1.19.0
