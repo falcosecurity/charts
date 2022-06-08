@@ -125,6 +125,14 @@ leastPrivileged:
   # Ensure the eBPF driver is enabled (i.e., setting the `ebpf.enabled` option to true).
   enabled: false
 
+# Set securityContext for the DaemonSet containers
+# This block works in combination with the `leastPrivileged` block above.
+# Read the daemonset.yaml template to understand how.
+securityContext: {}
+
+# Set securityContext for the DaemonSet pods
+podSecurityContext: {}
+
 auditLog:
   # If true, this will enable the Audit Log support in the chart.
   # Note that the k8saudit plugin must be enabled and configured
