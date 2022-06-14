@@ -70,14 +70,6 @@ serviceAccount:
   name:
   annotations: {}
 
-fakeEventGenerator:
-  enabled: false
-  args:
-    - run
-    - --loop
-    - ^syscall
-  replicas: 1
-
 daemonset:
   # Perform rolling updates by default in the DaemonSet agent
   # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
