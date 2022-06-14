@@ -2,8 +2,7 @@
     metadata:
       name: {{ include "falco.fullname" . }}
       labels:
-        app: {{ include "falco.fullname" . }}
-        role: security
+        {{- include "falco.selectorLabels" . | nindent 8 }}
 {{- with .Values.podLabels }}
 {{ toYaml . | indent 8 }}
 {{- end }}

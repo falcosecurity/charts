@@ -9,8 +9,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ include "falco.fullname" . }}
-      role: security
+      {{- include "falco.selectorLabels" . | nindent 6 }}
   template:
     {{ include "falco.podTemplate" . }}
   updateStrategy:
