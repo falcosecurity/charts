@@ -43,14 +43,4 @@ rules:
       - /healthz/*
     verbs:
       - get
-{{- if .Values.podSecurityPolicy.create }}
-  - apiGroups:
-      - policy
-    resources:
-      - podsecuritypolicies
-    resourceNames:
-      - {{ template "falco.fullname" . }}
-    verbs:
-      - use
-{{- end }}
 {{- end }}
