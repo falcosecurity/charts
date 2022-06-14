@@ -11,8 +11,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "falco.fullname" . }}
-      role: security
+      {{- include "falco.selectorLabels" . | nindent 6 }}
   template:
     {{ include "falco.podTemplate" . }}
 {{- end }}
