@@ -2,20 +2,17 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ template "falco.fullname" . }}
+  name: {{ include "falco.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "falco.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    {{- include "falco.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ template "falco.fullname" .}}
+      app: {{ include "falco.fullname" . }}
       role: security
   template:
-    {{ template "falco.podTemplate" . }}
+    {{ include "falco.podTemplate" . }}
   updateStrategy:
 {{ toYaml .Values.controller.daemonset.updateStrategy | indent 4 }}
 {{- end }}

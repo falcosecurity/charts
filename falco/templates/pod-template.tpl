@@ -1,8 +1,8 @@
 {{- define "falco.podTemplate" -}}
     metadata:
-      name: {{ template "falco.fullname" .}}
+      name: {{ include "falco.fullname" . }}
       labels:
-        app: {{ template "falco.fullname" .}}
+        app: {{ include "falco.fullname" . }}
         role: security
 {{- with .Values.podLabels }}
 {{ toYaml . | indent 8 }}
@@ -17,7 +17,7 @@
 {{ toYaml .Values.podAnnotations | indent 8 }}
         {{- end }}
     spec:
-      serviceAccountName: {{ template "falco.serviceAccountName" .}}
+      serviceAccountName: {{ include "falco.serviceAccountName" . }}
       {{- if (and .Values.ebpf.enabled .Values.ebpf.settings.hostNetwork) }}
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
@@ -40,7 +40,7 @@
 {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ template "falco.image" . }}
+          image: {{ include "falco.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
@@ -227,7 +227,7 @@
             path: /etc
         - name: config-volume
           configMap:
-            name: {{ template "falco.fullname" . }}
+            name: {{ include "falco.fullname" . }}
             items:
               - key: falco.yaml
                 path: falco.yaml
@@ -244,7 +244,7 @@
         {{- if .Values.customRules }}
         - name: rules-volume
           configMap:
-            name: {{ template "falco.fullname" . }}-rules
+            name: {{ include "falco.fullname" . }}-rules
         {{- end }}
         {{- if and .Values.falco.grpc.enabled .Values.falco.grpc.unixSocketPath }}
         - name: grpc-socket-dir
@@ -257,7 +257,7 @@
             {{- if .Values.certs.existingSecret }}
             secretName: {{ .Values.certs.existingSecret }}
             {{- else }}
-            secretName: {{ template "falco.fullname" . }}-certs
+            secretName: {{ include "falco.fullname" . }}-certs
             {{- end }}
         {{- end }}
         {{- if .Values.extraVolumes }}

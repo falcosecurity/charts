@@ -1,13 +1,11 @@
 {{- if .Values.rbac.create }}
 kind: ClusterRole
-apiVersion: {{ template "rbac.apiVersion" . }}
+apiVersion: {{ include "rbac.apiVersion" . }}
 metadata:
-  name: {{ template "falco.fullname" .}}
+  name: {{ include "falco.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "falco.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    {{- include "falco.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - extensions

@@ -2,17 +2,14 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ template "falco.fullname" .}}-grpc
+  name: {{ include "falco.fullname" . }}-grpc
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "falco.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    {{- include "falco.labels" . | nindent 4 }}
 spec:
   clusterIP: None
   selector:
-    app: {{ template "falco.fullname" .}}
+    app: {{ include "falco.fullname" . }}
   ports:
   - protocol: TCP
     port: {{ .Values.falco.grpc.listenPort }}

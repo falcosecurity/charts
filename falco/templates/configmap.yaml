@@ -1,13 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "falco.fullname" . }}
+  name: {{ include "falco.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "falco.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    {{- include "falco.labels" . | nindent 4 }}
 data:
   falco.yaml: |-
     # File(s) or Directories containing Falco rules, loaded at startup.
@@ -221,7 +218,7 @@ data:
 
     http_output:
       enabled: {{ if .Values.falcosidekick.enabled }}true{{ else }}{{ .Values.falco.httpOutput.enabled }}{{ end }}
-      url: '{{ if .Values.falco.httpOutput.url }}{{ .Values.falco.httpOutput.url }}{{ else }}http://{{ template "falco.fullname" . }}-falcosidekick{{ if .Values.falcosidekick.fullfqdn }}.{{ .Release.Namespace }}.svc.cluster.local{{ end }}:{{ .Values.falcosidekick.listenport | default "2801" }}{{ end }}'
+      url: '{{ if .Values.falco.httpOutput.url }}{{ .Values.falco.httpOutput.url }}{{ else }}http://{{ include "falco.fullname" . }}-falcosidekick{{ if .Values.falcosidekick.fullfqdn }}.{{ .Release.Namespace }}.svc.cluster.local{{ end }}:{{ .Values.falcosidekick.listenport | default "2801" }}{{ end }}'
       user_agent: {{ .Values.falco.httpOutput.userAgent }}
 
 
