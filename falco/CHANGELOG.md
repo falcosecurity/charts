@@ -3,11 +3,14 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.19.3
+
+* Add `watchConfigFiles` value to falco README
+
 ## v1.19.2
 
 * Bump Falco Sidekick dependency.
 * Add support for DaemonSet podSecurityContext and securityContext.
-* Add `watchConfigFiles` value to falco README
 
 ## v1.19.1
 
