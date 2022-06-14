@@ -125,19 +125,6 @@ securityContext: {}
 # Set securityContext for the DaemonSet pods
 podSecurityContext: {}
 
-auditLog:
-  # If true, this will enable the Audit Log support in the chart.
-  # Note that the k8saudit plugin must be enabled and configured
-  # (see below).
-  enabled: false
-
-  # Please use the same port configured for the builtin k8saudit (usually 9765).
-  listenPort: 9765
-
-  # Enable a NodePort on the given port to listen on for the Audit Log.
-  # If false, no NodePort will be created.
-  nodePort: false
-
 falco:
   # File(s) or Directories containing Falco rules, loaded at startup.
   # The name "rules_file" is only for backwards compatibility.
