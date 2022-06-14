@@ -492,4 +492,8 @@ falcosidekick:
   # enable falcosidekick deployment
   enabled: false
   fullfqdn: false
-  # for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
+  # By default enable Falco's HTTP output to forward alerts to falcosidekick when enabled. This can be set to `true` if you
+  # want to use another output such as program output to send alerts to falcosidekick while still deploying falcosidekick using the Falco
+  # Chart.
+  disableHttpOutput: false
+  # for falcosidekick configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml

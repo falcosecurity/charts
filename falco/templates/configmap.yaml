@@ -220,8 +220,8 @@ data:
 {{ .Values.falco.programOutput.program | indent 8 }}
 
     http_output:
-      enabled: {{ if .Values.falcosidekick.enabled }}true{{ else }}{{ .Values.falco.httpOutput.enabled }}{{ end }}
-      url: '{{ if .Values.falco.httpOutput.url }}{{ .Values.falco.httpOutput.url }}{{ else }}http://{{ template "falco.fullname" . }}-falcosidekick{{ if .Values.falcosidekick.fullfqdn }}.{{ .Release.Namespace }}.svc.cluster.local{{ end }}:{{ .Values.falcosidekick.listenport | default "2801" }}{{ end }}'
+      enabled: {{ or (and .Values.falcosidekick.enabled (not .Values.falcosidekick.disableHttpOutput)) .Values.falco.httpOutput.enabled }}
+      url: {{ template "falco.httpOutputUrl" . }}
       user_agent: {{ .Values.falco.httpOutput.userAgent }}
 
 

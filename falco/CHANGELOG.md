@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v1.19.4
+
+* Allow for disabling of Falco's HTTP output while also deploying Falcosidekick.
+
 ## v1.19.3
 
 * Add `watchConfigFiles` value to falco README

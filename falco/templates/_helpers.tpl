@@ -84,3 +84,26 @@ Return the appropriate apiVersion for rbac.
 {{- print "rbac.authorization.k8s.io/v1beta1" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return the proper falcosidekick URL
+*/}}
+{{- define "falco.falcosidekickUrl" -}}
+{{- $listenPort := .Values.falcosidekick.listenport | default "2801"  -}}
+{{- if .Values.falcosidekick.fullfqdn -}}
+{{- printf "http://%s-falcosidekick.%s.svc.cluster.local:%s" (include "falco.fullname" .) .Release.Namespace $listenPort -}}
+{{- else -}}
+{{- printf "http://%s-falcosidekick:%s" (include "falco.fullname" .)  $listenPort -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Falco HTTP output URL
+*/}}
+{{- define "falco.httpOutputUrl" -}}
+{{- if .Values.falco.httpOutput.url -}}
+{{ .Values.falco.httpOutput.url }}
+{{- else -}}
+{{ template "falco.falcosidekickUrl" . }}
+{{- end -}}
+{{- end -}}
