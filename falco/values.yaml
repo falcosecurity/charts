@@ -7,6 +7,23 @@ image:
   pullPolicy: IfNotPresent
   pullSecrets: []
 
+controller:
+  kind: daemonset
+  daemonset:
+    # Perform rolling updates by default in the DaemonSet agent
+    # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+    updateStrategy:
+      # You can also customize maxUnavailable or minReadySeconds if you
+      # need it
+      type: RollingUpdate
+
+extras:
+  ## Extra environment variables that will be pass onto deployment pods
+  env: {}
+
+## Add aditional pod annotations on pods created by DaemonSet
+podAnnotations: {}
+
 docker:
   enabled: true
   socket: /var/run/docker.sock
@@ -69,20 +86,6 @@ serviceAccount:
   # Use this value as serviceAccountName
   name:
   annotations: {}
-
-daemonset:
-  # Perform rolling updates by default in the DaemonSet agent
-  # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
-  updateStrategy:
-    # You can also customize maxUnavailable or minReadySeconds if you
-    # need it
-    type: RollingUpdate
-
-  ## Extra environment variables that will be pass onto deployment pods
-  env: {}
-
-  ## Add aditional pod annotations on pods created by DaemonSet
-  podAnnotations: {}
 
 # Additional labels to add to the pods:
 # podLabels:
