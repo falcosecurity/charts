@@ -1,19 +1,4 @@
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: {{ template "falco.fullname" . }}
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app: {{ template "falco.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-spec:
-  selector:
-    matchLabels:
-      app: {{ template "falco.fullname" .}}
-      role: security
-  template:
+{{- define "falco.podTemplate" -}}
     metadata:
       name: {{ template "falco.fullname" .}}
       labels:
@@ -28,8 +13,8 @@ spec:
         {{- if and .Values.certs (not .Values.certs.existingSecret) }}
         checksum/certs: {{ include (print $.Template.BasePath "/certs-secret.yaml") . | sha256sum }}
         {{- end }}
-        {{- if .Values.daemonset.podAnnotations }}
-{{ toYaml .Values.daemonset.podAnnotations | indent 8 }}
+        {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "falco.serviceAccountName" .}}
@@ -124,7 +109,7 @@ spec:
             - name: TZ
               value: {{ .Values.timezone }}
           {{- end }}
-          {{- range $key, $value := .Values.daemonset.env }}
+          {{- range $key, $value := .Values.extras.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
           {{- end }}
@@ -278,5 +263,4 @@ spec:
         {{- if .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 8 }}
         {{- end }}
-  updateStrategy:
-{{ toYaml .Values.daemonset.updateStrategy | indent 4 }}
+{{- end -}}

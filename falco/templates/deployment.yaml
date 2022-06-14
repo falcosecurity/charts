@@ -1,6 +1,6 @@
-{{- if eq .Values.controller.kind "daemonset" }}
+{{- if eq .Values.controller.kind "deployment" }}
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: {{ template "falco.fullname" . }}
   namespace: {{ .Release.Namespace }}
@@ -10,12 +10,11 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: {{ template "falco.fullname" .}}
       role: security
   template:
     {{ template "falco.podTemplate" . }}
-  updateStrategy:
-{{ toYaml .Values.controller.daemonset.updateStrategy | indent 4 }}
 {{- end }}
