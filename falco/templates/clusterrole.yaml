@@ -50,9 +50,6 @@ rules:
       - podsecuritypolicies
     resourceNames:
       - {{ template "falco.fullname" . }}
-{{- if .Values.fakeEventGenerator.enabled }}
-      - event-generator-{{ template "falco.fullname" . }}
-{{- end }}
     verbs:
       - use
 {{- end }}
