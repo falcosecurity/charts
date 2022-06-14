@@ -1,29 +1,4 @@
-{{- if .Values.auditLog.enabled }}
-kind: Service
-apiVersion: v1
-metadata:
-  name: {{ template "falco.fullname" .}}
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app: {{ template "falco.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-spec:
-  {{- if .Values.auditLog.nodePort }}
-  type: NodePort
-  {{- end }}
-  selector:
-    app: {{ template "falco.fullname" .}}
-  ports:
-  - protocol: TCP
-    port: {{ .Values.auditLog.listenPort }}
-    {{- with .Values.auditLog.nodePort }}
-    nodePort: {{ . }}
-    {{- end }}
-{{- end }}
 {{- if and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)}}
----
 kind: Service
 apiVersion: v1
 metadata:
