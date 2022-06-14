@@ -7,6 +7,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 * Bump Falco Sidekick dependency.
 * Add support for DaemonSet podSecurityContext and securityContext.
+* Add `watchConfigFiles` value to falco README
 
 ## v1.19.1
 
