@@ -24,9 +24,9 @@ spec:
 {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/rules: {{ include (print $.Template.BasePath "/configmap-rules.yaml") . | sha256sum }}
+        checksum/rules: {{ include (print $.Template.BasePath "/rules-configmap.yaml") . | sha256sum }}
         {{- if and .Values.certs (not .Values.certs.existingSecret) }}
-        checksum/certs: {{ include (print $.Template.BasePath "/secret-certs.yaml") . | sha256sum }}
+        checksum/certs: {{ include (print $.Template.BasePath "/certs-secret.yaml") . | sha256sum }}
         {{- end }}
         {{- if .Values.daemonset.podAnnotations }}
 {{ toYaml .Values.daemonset.podAnnotations | indent 8 }}
