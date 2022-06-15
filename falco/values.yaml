@@ -1,11 +1,106 @@
 # Default values for Falco.
 
+###############################
+# General deployment settings #
+###############################
+
 image:
   registry: docker.io
   repository: falcosecurity/falco
   tag: 0.32.0
   pullPolicy: IfNotPresent
   pullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+rbac:
+  # Create and use rbac resources
+  create: true
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# Add additional pod annotations
+podAnnotations: {}
+
+# Add additional pod labels
+podLabels: {}
+
+# Set pod priorityClassName
+podPriorityClassName:
+
+# Set securityContext for the pods
+podSecurityContext: {}
+
+# Set securityContext for the DaemonSet/Deployment containers
+# This block works in combination with the `leastPrivileged` block above.
+securityContext: {}
+
+scc:
+  # true here enabled creation of Security Context Constraints in Openshift
+  create: true
+
+resources:
+  # Although resources needed are subjective on the actual workload we provide
+  # a sane defaults ones. If you have more questions or concerns, please refer
+  # to #falco slack channel for more info about it
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+
+nodeSelector: {}
+
+affinity: {}
+
+# Allow Falco to run on Kubernetes 1.6 masters.
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+
+healthChecks:
+  livenessProbe:
+    initialDelaySeconds: 60
+    timeoutSeconds: 5
+    periodSeconds: 15
+  readinessProbe:
+    initialDelaySeconds: 30
+    timeoutSeconds: 5
+    periodSeconds: 15
+
+# If is behind a proxy you can set the proxy server
+proxy:
+  httpProxy:
+  httpsProxy:
+  noProxy:
+
+# Set timezone
+timezone:
+
+extra:
+  # Extra environment variables that will be pass onto Falco containers
+  env: {}
+  # Extra command-line arguments
+  args: []
+  # Additional initContainers for Falco pods
+  initContainers: []
+  # Extra volumes to Falco DaemonSet/Deployment
+  volumes: []
+  # Extra volumeMounts to Falco containers
+  extraVolumeMounts: []
+
+#################################
+# Installation strategy presets #
+#################################
 
 controller:
   kind: daemonset
@@ -16,13 +111,6 @@ controller:
       # You can also customize maxUnavailable or minReadySeconds if you
       # need it
       type: RollingUpdate
-
-extras:
-  ## Extra environment variables that will be pass onto deployment pods
-  env: {}
-
-## Add aditional pod annotations on pods created by DaemonSet
-podAnnotations: {}
 
 docker:
   enabled: true
@@ -57,49 +145,6 @@ kubernetesSupport:
   # to the API server. Disabling this option may have a performance penalty on large clusters.
   enableNodeFilter: true
 
-resources:
-  # Although resources needed are subjective on the actual workload we provide
-  # a sane defaults ones. If you have more questions or concerns, please refer
-  # to #falco slack channel for more info about it
-  requests:
-    cpu: 100m
-    memory: 512Mi
-  limits:
-    cpu: 1000m
-    memory: 1024Mi
-
-extraArgs: []
-nodeSelector: {}
-affinity: {}
-
-rbac:
-  # Create and use rbac resources
-  create: true
-
-serviceAccount:
-  # Create and use serviceAccount resources
-  create: true
-  # Use this value as serviceAccountName
-  name:
-  annotations: {}
-
-# Additional labels to add to the pods:
-# podLabels:
-#   key: value
-podLabels: {}
-
-# If is behind a proxy you can set the proxy server
-proxy:
-  httpProxy:
-  httpsProxy:
-  noProxy:
-
-# Set daemonset timezone
-timezone:
-
-# Set daemonset priorityClassName
-priorityClassName:
-
 ebpf:
   # Enable eBPF support for Falco
   enabled: false
@@ -116,13 +161,42 @@ leastPrivileged:
   # Ensure the eBPF driver is enabled (i.e., setting the `ebpf.enabled` option to true).
   enabled: false
 
-# Set securityContext for the DaemonSet containers
-# This block works in combination with the `leastPrivileged` block above.
-# Read the daemonset.yaml template to understand how.
-securityContext: {}
+customRules:
+  {}
+  # Although Falco comes with a nice default rule set for detecting weird
+  # behavior in containers, our users are going to customize the run-time
+  # security rule sets or policies for the specific container images and
+  # applications they run. This feature can be handled in this section.
+  #
+  # Example:
+  #
+  # rules-traefik.yaml: |-
+  #   [ rule body ]
 
-# Set securityContext for the DaemonSet pods
-podSecurityContext: {}
+# certificates used by webserver and grpc server
+# paste certificate content or use helm with --set-file
+# or use existing secret containing key, crt, ca as well as pem bundle
+certs:
+  existingSecret: ""
+  server:
+    key: ""
+    crt: ""
+  ca:
+    crt: ""
+
+########################
+# Falco integrations   #
+########################
+
+falcosidekick:
+  # enable falcosidekick deployment
+  enabled: false
+  fullfqdn: false
+  # for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
+
+######################
+# Falco main config  #
+######################
 
 falco:
   # File(s) or Directories containing Falco rules, loaded at startup.
@@ -331,16 +405,6 @@ falco:
     sslEnabled: false
     sslCertificate: /etc/falco/certs/falco.pem
 
-  livenessProbe:
-    initialDelaySeconds: 60
-    timeoutSeconds: 5
-    periodSeconds: 15
-
-  readinessProbe:
-    initialDelaySeconds: 30
-    timeoutSeconds: 5
-    periodSeconds: 15
-
   # Possible additional things you might want to do with program output:
   #   - send to a slack webhook:
   #     program: "\"jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX\""
@@ -415,59 +479,3 @@ falco:
     maxMb: 100
     chunkWaitUs: 1000
     watchFreqSec: 1
-
-customRules:
-  {}
-  # Although Falco comes with a nice default rule set for detecting weird
-  # behavior in containers, our users are going to customize the run-time
-  # security rule sets or policies for the specific container images and
-  # applications they run. This feature can be handled in this section.
-  #
-  # Example:
-  #
-  # rules-traefik.yaml: |-
-  #   [ rule body ]
-
-# certificates used by webserver and grpc server
-# paste certificate content or use helm with --set-file
-# or use existing secret containing key, crt, ca as well as pem bundle
-certs:
-  existingSecret: ""
-  server:
-    key: ""
-    crt: ""
-  ca:
-    crt: ""
-
-# Allow Falco to run on Kubernetes 1.6 masters.
-tolerations:
-  - effect: NoSchedule
-    key: node-role.kubernetes.io/master
-
-scc:
-  # true here enabled creation of Security Context Constraints in Openshift
-  create: true
-
-# Add initContainers to Falco pod
-extraInitContainers: []
-
-# Add extra volumes to Falco daemonset
-extraVolumes: []
-# - name: optional-rules-volume
-#   configMap:
-#     name: falco-rules-optional
-#     optional: true
-#     items:
-#       - key: falco_rules.optional.yaml
-#         path: falco_rules.optional.yaml
-
-# Add extra volumeMounts to Falco container in Falco daemonset
-extraVolumeMounts: []
-# - mountPath: /etc/falco/rules.optional.d
-#   name: optional-rules-volume
-
-falcosidekick:
-  # enable falcosidekick deployment
-  enabled: false
-  fullfqdn: false
-  # for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
