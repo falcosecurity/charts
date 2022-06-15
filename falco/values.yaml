@@ -5,10 +5,11 @@
 ###############################
 
 image:
-  registry: docker.io
-  repository: falcosecurity/falco
-  tag: 0.32.0
   pullPolicy: IfNotPresent
+  registry: docker.io
+  repository: falcosecurity/falco-no-driver
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -96,7 +97,7 @@ extra:
   # Extra volumes to Falco DaemonSet/Deployment
   volumes: []
   # Extra volumeMounts to Falco containers
-  extraVolumeMounts: []
+  volumeMounts: []
 
 #################################
 # Installation strategy presets #
