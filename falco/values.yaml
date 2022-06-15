@@ -9,8 +9,8 @@ image:
   repository: falcosecurity/falco
   tag: 0.32.0
   pullPolicy: IfNotPresent
-  pullSecrets: []
 
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 

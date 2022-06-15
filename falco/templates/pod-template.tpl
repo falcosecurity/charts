@@ -40,7 +40,7 @@ spec:
   tolerations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .Values.image.pullSecrets }}
+  {{- with .Values.imagePullSecrets }}
   imagePullSecrets: 
     {{- toYaml . | nindent 4 }}
   {{- end }}
