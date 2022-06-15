@@ -111,6 +111,8 @@ controller:
       # You can also customize maxUnavailable or minReadySeconds if you
       # need it
       type: RollingUpdate
+  deployment:
+    replicas: 1
 
 docker:
   enabled: true

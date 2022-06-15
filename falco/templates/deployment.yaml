@@ -2,13 +2,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-metadata:
   name: {{ include "falco.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "falco.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.controller.deployment.replicas }}
   selector:
     matchLabels:
       {{- include "falco.selectorLabels" . | nindent 6 }}
