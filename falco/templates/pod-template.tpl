@@ -22,7 +22,7 @@
       dnsPolicy: ClusterFirstWithHostNet
       {{- end }}
 {{- if .Values.priorityClassName }}
-      priorityClassName: "{{ .Values.priorityClassName }}"
+      priorityClassName: "{{ .Values.podPriorityClassName }}"
 {{- end }}
 {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -80,8 +80,8 @@
             {{- end }}
             {{- end }}
             - -pk
-        {{- if .Values.extraArgs }}
-{{ toYaml .Values.extraArgs | indent 12 }}
+        {{- if .Values.extra.args }}
+{{ toYaml .Values.extra.args | indent 12 }}
         {{- end }}
           env:
             - name: FALCO_K8S_NODE_NAME
@@ -108,15 +108,15 @@
             - name: TZ
               value: {{ .Values.timezone }}
           {{- end }}
-          {{- range $key, $value := .Values.extras.env }}
+          {{- range $key, $value := .Values.extra.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
           {{- end }}
           {{- if .Values.falco.webserver.enabled }}
           livenessProbe:
-            initialDelaySeconds: {{ .Values.falco.livenessProbe.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.falco.livenessProbe.timeoutSeconds }}
-            periodSeconds: {{ .Values.falco.livenessProbe.periodSeconds }}
+            initialDelaySeconds: {{ .Values.healthChecks.livenessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.livenessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.healthChecks.livenessProbe.periodSeconds }}
             httpGet:
               path: {{ .Values.falco.webserver.k8sHealthzEndpoint }}
               port: {{ .Values.falco.webserver.listenPort }}
@@ -124,9 +124,9 @@
               scheme: HTTPS
               {{- end }}
           readinessProbe:
-            initialDelaySeconds: {{ .Values.falco.readinessProbe.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.falco.readinessProbe.timeoutSeconds }}
-            periodSeconds: {{ .Values.falco.readinessProbe.periodSeconds }}
+            initialDelaySeconds: {{ .Values.healthChecks.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.healthChecks.readinessProbe.periodSeconds }}
             httpGet:
               path: {{ .Values.falco.webserver.k8sHealthzEndpoint }}
               port: {{ .Values.falco.webserver.listenPort }}
@@ -179,12 +179,12 @@
               name: certs-volume
               readOnly: true
             {{- end }}
-            {{- if .Values.extraVolumeMounts }}
-{{ toYaml .Values.extraVolumeMounts | indent 12 }}
+            {{- if .Values.extra.volumeMounts }}
+{{ toYaml .Values.extra.volumeMounts | indent 12 }}
             {{- end }}
-      {{- if .Values.extraInitContainers }}
+      {{- if .Values.extra.initContainers }}
       initContainers:
-{{ toYaml .Values.extraInitContainers | indent 12 }}
+{{ toYaml .Values.extra.initContainers | indent 12 }}
       {{- end }}
       {{- if .Values.podSecurityContext }}
       securityContext:
@@ -259,7 +259,7 @@
             secretName: {{ include "falco.fullname" . }}-certs
             {{- end }}
         {{- end }}
-        {{- if .Values.extraVolumes }}
-{{ toYaml .Values.extraVolumes | indent 8 }}
+        {{- if .Values.extra.volumes }}
+{{ toYaml .Values.extra.volumes | indent 8 }}
         {{- end }}
 {{- end -}}
