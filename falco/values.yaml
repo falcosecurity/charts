@@ -115,7 +115,17 @@ controller:
   deployment:
     replicas: 1
 
-# Settings for "driver" scenario requirement
+# Network services configuration (scenario requirement)
+services:
+  # Example configuration for the "k8sauditlog" plugin
+  # - name: k8saudit-webhook
+  #   type: NodePort
+  #   ports:
+  #     - port: 9765 # See plugin open_params
+  #       nodePort: 30007
+  #       protocol: TCP
+
+# Driver settings (scenario requirement)
 driver:
   enabled: true
   kind: ebpf
