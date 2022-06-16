@@ -99,9 +99,9 @@ extra:
   # Extra volumeMounts to Falco containers
   volumeMounts: []
 
-#################################
-# Installation strategy presets #
-#################################
+#########################
+# Scenario requirements #
+#########################
 
 controller:
   kind: daemonset
@@ -114,6 +114,26 @@ controller:
       type: RollingUpdate
   deployment:
     replicas: 1
+
+# Settings for "driver" scenario requirement
+driver:
+  enabled: true
+  kind: ebpf
+  ebpf:
+    path:
+    # Needed to enable eBPF JIT at runtime for performance reasons.
+    # Can be skipped if eBPF JIT is enabled from outside the container
+    hostNetwork: true
+  loader:
+    enabled: true
+    initContainer:
+      enabled: true
+      image:
+        pullPolicy: IfNotPresent
+        registry: docker.io
+        repository: falcosecurity/falco-driver-loader
+        # Overrides the image tag whose default is the chart appVersion.
+        tag: ""
 
 docker:
   enabled: true
@@ -147,16 +167,6 @@ kubernetesSupport:
   # If true, only the current node (on which Falco is running) will be considered when requesting metadata of pods
   # to the API server. Disabling this option may have a performance penalty on large clusters.
   enableNodeFilter: true
-
-ebpf:
-  # Enable eBPF support for Falco
-  enabled: false
-  path:
-
-  settings:
-    # Needed to enable eBPF JIT at runtime for performance reasons.
-    # Can be skipped if eBPF JIT is enabled from outside the container
-    hostNetwork: true
 
 leastPrivileged:
   # Constrain Falco with capabilities instead of running a privileged container.

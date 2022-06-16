@@ -65,12 +65,22 @@ Create the name of the service account to use
 Return the proper Falco image name
 */}}
 {{- define "falco.image" -}}
-{{- $registryName := .Values.image.registry -}}
 {{- with .Values.image.registry -}}
     {{- . }}/
 {{- end -}}
 {{- .Values.image.repository }}:
 {{- .Values.image.tag | default .Chart.AppVersion -}}
+{{- end -}}
+
+{{/*
+Return the proper Falco driver loader image name
+*/}}
+{{- define "falco.driverLoader.image" -}}
+{{- with .Values.driver.loader.initContainer.image.registry -}}
+    {{- . }}/
+{{- end -}}
+{{- .Values.driver.loader.initContainer.image.repository }}:
+{{- .Values.driver.loader.initContainer.image.tag | default .Chart.AppVersion -}}
 {{- end -}}
 
 {{/*
