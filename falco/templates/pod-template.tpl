@@ -21,10 +21,12 @@ spec:
   securityContext:
     {{- toYaml . | nindent 4}}
   {{- end }}
-  {{- if (and .Values.ebpf.enabled .Values.ebpf.settings.hostNetwork) }}
+  {{- if .Values.driver.enabled -}}
+  {{- if and .Values.driver.ebpf.enabled .Values.driver.ebpf.hostNetwork }}
   hostNetwork: true
   dnsPolicy: ClusterFirstWithHostNet
   {{- end }}
+  {{- end -}}
   {{- if .Values.priorityClassName }}
   priorityClassName: {{ .Values.priorityClassName }}
   {{- end }}
@@ -95,9 +97,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-      {{- if .Values.ebpf.enabled }}
+      {{- if or (not .Values.driver.enabled) (and .Values.driver.loader.enabled .Values.driver.loader.initContainer.enabled) }}
+        - name: SKIP_DRIVER_LOADER
+          value:
+      {{- end }}
+      {{- if and .Values.driver.enabled (eq .Values.driver.kind "ebpf") }}
         - name: FALCO_BPF_PROBE
-          value: {{ .Values.ebpf.path }}
+          value: {{ .Values.driver.ebpf.path }}
       {{- end }}
       {{- if .Values.proxy.httpProxy }}
         - name: http_proxy
@@ -142,23 +148,11 @@ spec:
           {{- end }}
       {{- end }}
       volumeMounts:
-        {{- if .Values.docker.enabled }}
-        - mountPath: /host/var/run/docker.sock
-          name: docker-socket
-        {{- end}}
-        {{- if .Values.containerd.enabled }}
-        - mountPath: /host/run/containerd/containerd.sock
-          name: containerd-socket
-        {{- end}}
-        {{- if and .Values.crio .Values.crio.enabled }}
-        - mountPath: /host/run/crio/crio.sock
-          name: crio-socket
-        {{- end}}
-        - mountPath: /host/dev
-          name: dev-fs
-          readOnly: true
+        - mountPath: /root/.falco
+          name: root-falco-fs
         - mountPath: /host/proc
           name: proc-fs
+        {{- if and .Values.driver.enabled (not .Values.driver.loader.initContainer.enabled) }}
           readOnly: true
         - mountPath: /host/boot
           name: boot-fs
@@ -171,6 +165,24 @@ spec:
         - mountPath: /host/etc
           name: etc-fs
           readOnly: true
+        {{- end}}  
+        {{- if and .Values.driver.enabled (eq .Values.driver.kind "module") }}
+        - mountPath: /host/dev
+          name: dev-fs
+          readOnly: true
+        {{- end}}
+        {{- if .Values.docker.enabled }}
+        - mountPath: /host/var/run/docker.sock
+          name: docker-socket
+        {{- end}}
+        {{- if .Values.containerd.enabled }}
+        - mountPath: /host/run/containerd/containerd.sock
+          name: containerd-socket
+        {{- end}}
+        {{- if and .Values.crio .Values.crio.enabled }}
+        - mountPath: /host/run/crio/crio.sock
+          name: crio-socket
+        {{- end}}
         - mountPath: /etc/falco
           name: config-volume
         {{- if .Values.customRules }}
@@ -189,11 +201,37 @@ spec:
         {{- with .Values.extra.volumeMounts }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
-  {{- with .Values.extra.initContainers }}
   initContainers:
+  {{- with .Values.extra.initContainers }}
     {{- toYaml .Values.extra.initContainers | nindent 8 }}
   {{- end }}
+  {{- if .Values.driver.enabled -}}
+  {{- if and .Values.driver.loader.enabled .Values.driver.loader.initContainer.enabled }}
+    {{- include "falco.driverLoader.initContainer" . | nindent 4 }}
+  {{- end -}}
+  {{- end}}
   volumes:
+    - name: root-falco-fs
+      emptyDir: {}
+    {{- if .Values.driver.enabled }}  
+    - name: boot-fs
+      hostPath:
+        path: /boot
+    - name: lib-modules
+      hostPath:
+        path: /lib/modules
+    - name: usr-fs
+      hostPath:
+        path: /usr
+    - name: etc-fs
+      hostPath:
+        path: /etc
+    {{- end}}
+    {{- if and .Values.driver.enabled (eq .Values.driver.kind "module") }}
+    - name: dev-fs
+      hostPath:
+        path: /dev
+    {{- end}}
     {{- if .Values.docker.enabled }}
     - name: docker-socket
       hostPath:
@@ -209,24 +247,9 @@ spec:
       hostPath:
         path: {{ .Values.crio.socket }}
     {{- end}}
-    - name: dev-fs
-      hostPath:
-        path: /dev
     - name: proc-fs
       hostPath:
         path: /proc
-    - name: boot-fs
-      hostPath:
-        path: /boot
-    - name: lib-modules
-      hostPath:
-        path: /lib/modules
-    - name: usr-fs
-      hostPath:
-        path: /usr
-    - name: etc-fs
-      hostPath:
-        path: /etc
     - name: config-volume
       configMap:
         name: {{ include "falco.fullname" . }}
@@ -265,4 +288,36 @@ spec:
     {{- with .Values.extra.volumes }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
+{{- end -}}
+
+{{- define "falco.driverLoader.initContainer" -}}
+- name: {{ .Chart.Name }}-driver-loader
+  image: {{ include "falco.driverLoader.image" . }}
+  imagePullPolicy: {{ .Values.driver.loader.initContainer.image.pullPolicy }}
+  {{- if eq .Values.driver.kind "module" }}
+  securityContext:
+    privileged: true
+  {{- end }}
+  volumeMounts:
+    - mountPath: /root/.falco
+      name: root-falco-fs
+    - mountPath: /host/proc
+      name: proc-fs
+      readOnly: true
+    - mountPath: /host/boot
+      name: boot-fs
+      readOnly: true
+    - mountPath: /host/lib/modules
+      name: lib-modules
+    - mountPath: /host/usr
+      name: usr-fs
+      readOnly: true
+    - mountPath: /host/etc
+      name: etc-fs
+      readOnly: true
+  env:
+  {{- if eq .Values.driver.kind "ebpf" }}
+    - name: FALCO_BPF_PROBE
+      value: {{ .Values.driver.ebpf.path }}
+  {{- end }}
 {{- end -}}
