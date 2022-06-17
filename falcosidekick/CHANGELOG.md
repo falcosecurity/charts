@@ -8,6 +8,12 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ## 0.5.3
 
+* Upgrade image to fix Panic of `Prometheus` output when `customfields` is set
+* Add `extralabels` for `Loki` and `Prometheus` outputs to set fields to use as labels
+* Add `expiresafter` for `AlertManager` output
+
+## 0.5.3
+
 * Support full configuration of `securityContext` blocks in falcosidekick and falcosidekick-ui deployments, and redis statefulset.
 
 ## 0.5.2
