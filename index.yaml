@@ -2487,6 +2487,26 @@ entries:
     version: 0.3.0
   falcosidekick:
   - apiVersion: v1
+    appVersion: 2.26.0
+    created: "2022-06-20T08:21:38.410016792Z"
+    description: Connect Falco to your ecosystem
+    digest: abb0117d60a539c9ff1369d8b804812e99b8f9eb84019d99024ab7b0a97b79c6
+    home: https://github.com/falcosecurity/falcosidekick
+    icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: Issif
+    name: falcosidekick
+    sources:
+    - https://github.com/falcosecurity/falcosidekick
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falcosidekick-0.5.4/falcosidekick-0.5.4.tgz
+    version: 0.5.4
+  - apiVersion: v1
     appVersion: 2.25.0
     created: "2022-06-08T11:57:32.446405087Z"
     description: Connect Falco to your ecosystem
