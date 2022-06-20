@@ -48,6 +48,10 @@ create_kind_cluster() {
     docker_exec kubectl cluster-info
     echo
 
+    echo 'Waiting for nodes to be ready...'
+    docker_exec kubectl wait --for=condition=Ready nodes --all --timeout=300s
+    echo
+
     docker_exec kubectl get nodes
     echo
 
@@ -56,11 +60,22 @@ create_kind_cluster() {
 }
 
 install_charts() {
-    git diff --quiet --exit-code HEAD -- falco-exporter
-    status=$?
-    [ $status -eq 1 ] && echo "falco-expoter changed installing falco as well..." && docker_exec ct install --charts falco,falco-exporter
     docker_exec ct install
     echo
+}
+
+install_falco_if_needed(){
+    status=0
+    git diff --quiet HEAD master -- falco-exporter || status=1
+    if [ $status -eq 1 ]; then
+        echo "falco-exporter changed installing falco as well..."
+        docker_exec helm repo add falcosecurity https://falcosecurity.github.io/charts
+        docker_exec helm repo update
+        docker_exec helm install falco falcosecurity/falco -f falco/ci/ci-values.yaml --set falco.grpc.enabled=true --set falco.grpcOutput.enabled=true
+        docker_exec kubectl get po -A
+        sleep 120
+        docker_exec kubectl get po -A
+    fi
 }
 
 main() {
@@ -75,6 +90,7 @@ main() {
 
     echo 'Chart changes detected.'
     create_kind_cluster
+    install_falco_if_needed
     install_charts
 }
 
