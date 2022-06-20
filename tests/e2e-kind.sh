@@ -56,6 +56,9 @@ create_kind_cluster() {
 }
 
 install_charts() {
+    git diff --quiet --exit-code HEAD -- falco-exporter
+    status=$?
+    [ $status -eq 1 ] && echo "falco-expoter changed installing falco as well..." && docker_exec ct install --charts falco,falco-exporter
     docker_exec ct install
     echo
 }
