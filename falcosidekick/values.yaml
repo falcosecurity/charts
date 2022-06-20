@@ -308,7 +308,11 @@ config:
       endpoint: ""  # yandex storage endpoint (default: https://storage.yandexcloud.net)
       bucket: ""  # Yandex storage, bucket name
       prefix: ""  # name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json
-      minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|erro
+      minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug
+    datastreams:
+      endpoint: ""  # Yandex Data Streams endpoint (default: https://yds.serverless.yandexcloud.net)
+      streamname: ""  # stream name in format /${region}/${folder_id}/${ydb_id}/${stream_name}
+      minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug
 
   kafkarest:
     address: ""  # The full URL to the topic (example "http://kafkarest:8082/topics/test")
