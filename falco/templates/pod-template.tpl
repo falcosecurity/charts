@@ -53,21 +53,7 @@ spec:
       resources:
         {{- toYaml .Values.resources | nindent 8 }}
       securityContext:
-        {{- if not .Values.leastPrivileged.enabled }}
-        privileged: true
-        {{- if .Values.securityContext }}
-          {{- omit .Values.securityContext "privileged" | toYaml | nindent 8 }}
-        {{- end }}
-        {{- else }}
-        capabilities:
-          add:
-          - BPF
-          - SYS_RESOURCE
-          - PERFMON
-        {{- if .Values.securityContext }}
-          {{- omit .Values.securityContext "privileged" "capabilities" | toYaml | nindent 8 }}
-        {{- end }}
-        {{- end }}
+        {{- include "falco.securityContext" . | nindent 8 }}
       args:
         - /usr/bin/falco
         {{- with .Values.collectors }}
@@ -316,4 +302,21 @@ spec:
     - name: FALCO_BPF_PROBE
       value: {{ .Values.driver.ebpf.path }}
   {{- end }}
+{{- end -}}
+
+{{- define "falco.securityContext" -}}
+{{- $securityContext := default dict -}}
+{{- if .Values.driver.enabled -}}
+  {{- if eq .Values.driver.kind "module" -}}
+    {{- $securityContext := set $securityContext "privileged" true -}}
+  {{- end -}}
+  {{- if eq .Values.driver.kind "ebpf" -}}
+    {{- if .Values.driver.ebpf.leastPrivileged -}}
+      {{- $securityContext := set $securityContext "capabilities" (dict "add" (list "BPF" "SYS_RESOURCE" "PERFMON" "SYS_PTRACE")) -}}
+    {{- else -}}
+      {{- $securityContext := set $securityContext "privileged" true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- toYaml $securityContext }}
 {{- end -}}
