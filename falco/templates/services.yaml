@@ -1,4 +1,4 @@
-{{- with $dot := . -}}
+{{- with $dot := . }}
 {{- range $service := $dot.Values.services }}
 ---
 apiVersion: v1
@@ -14,4 +14,4 @@ spec:
   selector:
     {{- include "falco.selectorLabels" $dot | nindent 4 }}
 {{- end }}
-{{- end -}}
+{{- end }}
