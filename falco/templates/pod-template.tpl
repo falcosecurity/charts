@@ -105,22 +105,6 @@ spec:
         - name: FALCO_BPF_PROBE
           value: {{ .Values.driver.ebpf.path }}
       {{- end }}
-      {{- if .Values.proxy.httpProxy }}
-        - name: http_proxy
-          value: {{ .Values.proxy.httpProxy }}
-      {{- end }}
-      {{- if .Values.proxy.httpsProxy }}
-        - name: https_proxy
-          value: {{ .Values.proxy.httpsProxy }}
-      {{- end }}
-      {{- if .Values.proxy.noProxy }}
-        - name: no_proxy
-          value: {{ .Values.proxy.noProxy }}
-      {{- end }}
-      {{- if .Values.timezone }}
-        - name: TZ
-          value: {{ .Values.timezone }}
-      {{- end }}
       {{- range $key, $value := .Values.extra.env }}
         - name: "{{ $key }}"
           value: "{{ $value }}"

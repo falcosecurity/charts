@@ -77,16 +77,6 @@ healthChecks:
     initialDelaySeconds: 30
     timeoutSeconds: 5
     periodSeconds: 15
-
-# If is behind a proxy you can set the proxy server
-proxy:
-  httpProxy:
-  httpsProxy:
-  noProxy:
-
-# Set timezone
-timezone:
-
 extra:
   # Extra environment variables that will be pass onto Falco containers
   env: {}
