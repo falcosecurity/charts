@@ -1,0 +1,35 @@
+nodeSelector:
+  node-role.kubernetes.io/master: ""
+
+# Allow Falco to run on Kubernetes 1.6 masters.
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+
+driver:
+  enabled: false
+
+controller:
+  kind: deployment
+
+services:
+  - name: k8saudit-webhook
+    type: NodePort
+    ports:
+      - port: 9765 # See plugin open_params
+        nodePort: 30007
+        protocol: TCP
+
+falco:
+  plugins:
+    - name: k8saudit
+      library_path: libk8saudit.so
+      init_config:
+        ""
+        # maxEventBytes: 1048576
+        # sslCertificate: /etc/falco/falco.pem
+      open_params: "http://:9765/k8s-audit"
+    - name: json
+      library_path: libjson.so
+      init_config: ""
+  loadPlugins: [k8saudit, json]
