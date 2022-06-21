@@ -21,12 +21,12 @@ spec:
   securityContext:
     {{- toYaml . | nindent 4}}
   {{- end }}
-  {{- if .Values.driver.enabled -}}
+  {{- if .Values.driver.enabled }}
   {{- if and .Values.driver.ebpf.enabled .Values.driver.ebpf.hostNetwork }}
   hostNetwork: true
   dnsPolicy: ClusterFirstWithHostNet
   {{- end }}
-  {{- end -}}
+  {{- end }}
   {{- if .Values.priorityClassName }}
   priorityClassName: {{ .Values.priorityClassName }}
   {{- end }}
@@ -70,25 +70,29 @@ spec:
         {{- end }}
       args:
         - /usr/bin/falco
-        {{- if and .Values.containerd .Values.containerd.enabled }}
+        {{- with .Values.collectors }}
+        {{- if .enabled }}
+        {{- if .containerd.enabled }}
         - --cri
         - /run/containerd/containerd.sock
         {{- end }}
-        {{- if and .Values.crio .Values.crio.enabled }}
+        {{- if .crio.enabled }}
         - --cri
         - /run/crio/crio.sock
         {{- end }}
-        {{- if .Values.kubernetesSupport.enabled }}
+        {{- if .kubernetes.enabled }}
         - -K
-        - {{ .Values.kubernetesSupport.apiAuth }}
+        - {{ .kubernetes.apiAuth }}
         - -k
-        - {{ .Values.kubernetesSupport.apiUrl }}
-        {{- if .Values.kubernetesSupport.enableNodeFilter }}
+        - {{ .kubernetes.apiUrl }}
+        {{- if .kubernetes.enableNodeFilter }}
         - --k8s-node
         - "$(FALCO_K8S_NODE_NAME)"
         {{- end }}
         {{- end }}
         - -pk
+        {{- end }}
+        {{- end }}
     {{- with .Values.extra.args }}
       {{- toYaml . | nindent 8 }}
     {{- end }}
@@ -149,24 +153,28 @@ spec:
         - mountPath: /host/etc
           name: etc-fs
           readOnly: true
-        {{- end}}  
+        {{- end }}  
         {{- if and .Values.driver.enabled (eq .Values.driver.kind "module") }}
         - mountPath: /host/dev
           name: dev-fs
           readOnly: true
-        {{- end}}
-        {{- if .Values.docker.enabled }}
+        {{- end }}
+        {{- with .Values.collectors }}
+        {{- if .enabled }}
+        {{- if .docker.enabled }}
         - mountPath: /host/var/run/docker.sock
           name: docker-socket
-        {{- end}}
-        {{- if .Values.containerd.enabled }}
+        {{- end }}
+        {{- if .containerd.enabled }}
         - mountPath: /host/run/containerd/containerd.sock
           name: containerd-socket
-        {{- end}}
-        {{- if and .Values.crio .Values.crio.enabled }}
+        {{- end }}
+        {{- if .crio.enabled }}
         - mountPath: /host/run/crio/crio.sock
           name: crio-socket
-        {{- end}}
+        {{- end }}
+        {{- end }}
+        {{- end }}
         - mountPath: /etc/falco
           name: config-volume
         {{- if .Values.customRules }}
@@ -189,11 +197,11 @@ spec:
   {{- with .Values.extra.initContainers }}
     {{- toYaml .Values.extra.initContainers | nindent 8 }}
   {{- end }}
-  {{- if .Values.driver.enabled -}}
+  {{- if .Values.driver.enabled }}
   {{- if and .Values.driver.loader.enabled .Values.driver.loader.initContainer.enabled }}
     {{- include "falco.driverLoader.initContainer" . | nindent 4 }}
-  {{- end -}}
-  {{- end}}
+  {{- end }}
+  {{- end }}
   volumes:
     - name: root-falco-fs
       emptyDir: {}
@@ -210,27 +218,31 @@ spec:
     - name: etc-fs
       hostPath:
         path: /etc
-    {{- end}}
+    {{- end }}
     {{- if and .Values.driver.enabled (eq .Values.driver.kind "module") }}
     - name: dev-fs
       hostPath:
         path: /dev
-    {{- end}}
-    {{- if .Values.docker.enabled }}
+    {{- end }}
+    {{- with .Values.collectors }}
+    {{- if .enabled }}
+    {{- if .docker.enabled }}
     - name: docker-socket
       hostPath:
-        path: {{ .Values.docker.socket }}
-    {{- end}}
-    {{- if .Values.containerd.enabled }}
+        path: {{ .docker.socket }}
+    {{- end }}
+    {{- if .containerd.enabled }}
     - name: containerd-socket
       hostPath:
-        path: {{ .Values.containerd.socket }}
-    {{- end}}
-    {{- if and .Values.crio .Values.crio.enabled }}
+        path: {{ .containerd.socket }}
+    {{- end }}
+    {{- if .crio.enabled }}
     - name: crio-socket
       hostPath:
-        path: {{ .Values.crio.socket }}
-    {{- end}}
+        path: {{ .crio.socket }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
     - name: proc-fs
       hostPath:
         path: /proc

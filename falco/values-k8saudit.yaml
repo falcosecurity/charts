@@ -9,6 +9,9 @@ tolerations:
 driver:
   enabled: false
 
+collectors:
+  enabled: false
+
 controller:
   kind: deployment
 
