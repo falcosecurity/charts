@@ -305,7 +305,7 @@ spec:
 {{- end -}}
 
 {{- define "falco.securityContext" -}}
-{{- $securityContext := default dict -}}
+{{- $securityContext := dict -}}
 {{- if .Values.driver.enabled -}}
   {{- if eq .Values.driver.kind "module" -}}
     {{- $securityContext := set $securityContext "privileged" true -}}
@@ -318,5 +318,9 @@ spec:
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- toYaml $securityContext }}
+{{- if not (empty (.Values.containerSecurityContext)) -}}
+  {{-  toYaml .Values.containerSecurityContext }}
+{{- else -}}
+  {{- toYaml $securityContext }}
+{{- end -}}
 {{- end -}}
