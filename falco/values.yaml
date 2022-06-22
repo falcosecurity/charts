@@ -38,11 +38,39 @@ podLabels: {}
 podPriorityClassName:
 
 # Set securityContext for the pods
+# These security settings are overriden by the ones specified for the specific
+# containers when there is overlap.
 podSecurityContext: {}
 
-# Set securityContext for the Falco containers
-# Note this takes precedence over other automatic configurations.
-securityContext: {}
+# Set securityContext for the Falco container.
+#
+# Note that `containerSecurityContext`:
+#  - will not apply to init containers, if any;
+#  - takes precedence over other automatic configurations (see below).
+#
+# Based on the `driver` configuration the auto generated settings are:
+# 1) driver.enabled = false:
+#    securityContext: {}
+#
+# 2) driver.enabled = true and driver.kind = module:
+#    securityContext:
+#     privileged: true
+#
+# 3) driver.enabled = true and driver.kind = ebpf:
+#    securityContext:
+#     privileged: true
+#
+# 4) driver.enabled = true and driver.kind = ebpf and driver.ebpf.leastPrivileged = true
+#    securityContext:
+#     capabilities:
+#      add:
+#      - BPF
+#      - SYS_RESOURCE
+#      - PERFMON
+#      - SYS_PTRACE
+#
+# For more info see the "falco.securityContext" helper in "pod-template.tpl"
+containerSecurityContext: {}
 
 scc:
   # true here enabled creation of Security Context Constraints in Openshift
@@ -127,7 +155,7 @@ driver:
     # Constrain Falco with capabilities instead of running a privileged container.
     # This option is only supported with the eBPF driver and a kernel >= 5.8.
     # Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`).
-    leastPrivileged: false
+    leastPrivileged: true
   loader:
     enabled: true
     initContainer:
