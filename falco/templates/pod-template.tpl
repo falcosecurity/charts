@@ -22,7 +22,7 @@ spec:
     {{- toYaml . | nindent 4}}
   {{- end }}
   {{- if .Values.driver.enabled }}
-  {{- if and .Values.driver.ebpf.enabled .Values.driver.ebpf.hostNetwork }}
+  {{- if and (eq .Values.driver.kind "ebpf") .Values.driver.ebpf.hostNetwork }}
   hostNetwork: true
   dnsPolicy: ClusterFirstWithHostNet
   {{- end }}
