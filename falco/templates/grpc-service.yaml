@@ -1,4 +1,4 @@
-{{- if and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)}}
+{{- if and .Values.falco.grpc.enabled .Values.falco.grpc.bind_address (not (hasPrefix "unix://" .Values.falco.grpc.bind_address)) }}
 kind: Service
 apiVersion: v1
 metadata:
@@ -12,5 +12,5 @@ spec:
     app: {{ include "falco.fullname" . }}
   ports:
   - protocol: TCP
-    port: {{ .Values.falco.grpc.listenPort }}
+    port: {{ include "grpc.port" . }}
 {{- end }}
