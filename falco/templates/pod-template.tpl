@@ -105,9 +105,9 @@ spec:
         timeoutSeconds: {{ .Values.healthChecks.livenessProbe.timeoutSeconds }}
         periodSeconds: {{ .Values.healthChecks.livenessProbe.periodSeconds }}
         httpGet:
-          path: {{ .Values.falco.webserver.k8sHealthzEndpoint }}
-          port: {{ .Values.falco.webserver.listenPort }}
-          {{- if .Values.falco.webserver.sslEnabled }}
+          path: {{ .Values.falco.webserver.k8s_healthz_endpoint }}
+          port: {{ .Values.falco.webserver.listen_port }}
+          {{- if .Values.falco.webserver.ssl_enabled }}
           scheme: HTTPS
           {{- end }}
       readinessProbe:
@@ -115,9 +115,9 @@ spec:
         timeoutSeconds: {{ .Values.healthChecks.readinessProbe.timeoutSeconds }}
         periodSeconds: {{ .Values.healthChecks.readinessProbe.periodSeconds }}
         httpGet:
-          path: {{ .Values.falco.webserver.k8sHealthzEndpoint }}
-          port: {{ .Values.falco.webserver.listenPort }}
-          {{- if .Values.falco.webserver.sslEnabled }}
+          path: {{ .Values.falco.webserver.k8s_healthz_endpoint }}
+          port: {{ .Values.falco.webserver.listen_port }}
+          {{- if .Values.falco.webserver.ssl_enabled }}
           scheme: HTTPS
           {{- end }}
       {{- end }}
@@ -167,15 +167,12 @@ spec:
         - mountPath: /etc/falco/rules.d
           name: rules-volume
         {{- end }}
-        {{- if and .Values.falco.grpc.enabled .Values.falco.grpc.unixSocketPath }}
-        - mountPath: {{ include "falco.unixSocketDir" . }}
-          name: grpc-socket-dir
-        {{- end }}
-        {{- if or .Values.falco.webserver.sslEnabled (and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)) }}
+        {{- if or .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
         - mountPath: /etc/falco/certs
           name: certs-volume
           readOnly: true
         {{- end }}
+        {{- include "falco.unixSocketVolumeMount"  . | nindent 8 -}}
         {{- with .Values.mounts.volumeMounts }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -253,12 +250,7 @@ spec:
       configMap:
         name: {{ include "falco.fullname" . }}-rules
     {{- end }}
-    {{- if and .Values.falco.grpc.enabled .Values.falco.grpc.unixSocketPath }}
-    - name: grpc-socket-dir
-      hostPath:
-        path: {{ include "falco.unixSocketDir" . }}
-    {{- end }}
-    {{- if or .Values.falco.webserver.sslEnabled (and .Values.falco.grpc.enabled (not .Values.falco.grpc.unixSocketPath)) }}
+    {{- if or .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
     - name: certs-volume
       secret:
         {{- if .Values.certs.existingSecret }}
@@ -267,6 +259,7 @@ spec:
         secretName: {{ include "falco.fullname" . }}-certs
         {{- end }}
     {{- end }}
+    {{- include "falco.unixSocketVolume" . | nindent 4 -}}
     {{- with .Values.mounts.volumes }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -323,4 +316,20 @@ spec:
 {{- else -}}
   {{- toYaml $securityContext }}
 {{- end -}}
+{{- end -}}
+
+
+{{- define "falco.unixSocketVolumeMount" -}}
+{{- if and .Values.falco.grpc.enabled .Values.falco.grpc.bind_address (hasPrefix "unix://" .Values.falco.grpc.bind_address) }}
+- mountPath: {{ include "falco.unixSocketDir" . }}
+  name: grpc-socket-dir
+{{- end }}
+{{- end -}}
+
+{{- define "falco.unixSocketVolume" -}}
+{{- if and .Values.falco.grpc.enabled .Values.falco.grpc.bind_address (hasPrefix "unix://" .Values.falco.grpc.bind_address) }}
+- name: grpc-socket-dir
+  hostPath:
+    path: {{ include "falco.unixSocketDir" . }}
+{{- end }}
 {{- end -}}
