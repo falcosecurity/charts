@@ -87,8 +87,8 @@ Return the proper Falco driver loader image name
 Extract the unixSocket's directory path
 */}}
 {{- define "falco.unixSocketDir" -}}
-{{- if .Values.falco.grpc.unixSocketPath -}}
-{{- .Values.falco.grpc.unixSocketPath | trimPrefix "unix://" | dir -}}
+{{- if and .Values.falco.grpc.enabled .Values.falco.grpc.bind_address (hasPrefix "unix://" .Values.falco.grpc.bind_address) -}}
+{{- .Values.falco.grpc.bind_address | trimPrefix "unix://" | dir -}}
 {{- end -}}
 {{- end -}}
 

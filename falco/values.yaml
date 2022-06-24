@@ -248,9 +248,8 @@ falcosidekick:
   # for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
 
 ######################
-# Falco main config  #
+# falco.yaml config  #
 ######################
-
 falco:
   # File(s) or Directories containing Falco rules, loaded at startup.
   # The name "rules_file" is only for backwards compatibility.
@@ -264,17 +263,24 @@ falco:
   #
   # The files will be read in the order presented here, so make sure if
   # you have overrides they appear in later files.
-  rulesFile:
+  rules_file:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/rules.d
-    # - /etc/falco/rules.optional.d
 
+  #
+  # Plugins that are available for use. These plugins are not loaded by
+  # default, as they require explicit configuration to point to
+  # cloudtrail log files.
+  #
+
+  # To learn more about the supported formats for
+  # init_config/open_params for the cloudtrail plugin, see the README at
+  # https://github.com/falcosecurity/plugins/blob/master/plugins/cloudtrail/README.md.
   plugins:
     - name: k8saudit
       library_path: libk8saudit.so
       init_config:
-        ""
         # maxEventBytes: 1048576
         # sslCertificate: /etc/falco/falco.pem
       open_params: "http://:9765/k8s-audit"
@@ -291,42 +297,42 @@ falco:
   # set a meaningful init_config/open_params for the cloudtrail plugin
   # and then change this to:
   # load_plugins: [cloudtrail, json]
-  loadPlugins: []
+  load_plugins: []
 
   # Watch config file and rules files for modification.
   # When a file is modified, Falco will propagate new config,
   # by reloading itself.
-  watchConfigFiles: true
+  watch_config_files: true
 
   # If true, the times displayed in log messages and output messages
   # will be in ISO 8601. By default, times are displayed in the local
   # time zone, as governed by /etc/localtime.
-  timeFormatISO8601: false
+  time_format_iso_8601: false
 
   # Whether to output events in json or text
-  jsonOutput: false
+  json_output: false
 
   # When using json output, whether or not to include the "output" property
   # itself (e.g. "File below a known binary directory opened for writing
   # (user=root ....") in the json output.
-  jsonIncludeOutputProperty: true
+  json_include_output_property: true
 
   # When using json output, whether or not to include the "tags" property
   # itself in the json output. If set to true, outputs caused by rules
   # with no tags will have a "tags" field set to an empty array. If set to
   # false, the "tags" field will not be included in the json output at all.
-  jsonIncludeTagsProperty: true
+  json_include_tags_property: true
 
   # Send information logs to stderr and/or syslog Note these are *not* security
   # notification logs! These are just Falco lifecycle (and possibly error) logs.
-  logStderr: true
-  logSyslog: true
+  log_stderr: true
+  log_syslog: true
 
   # Minimum log level to include in logs. Note: these levels are
   # separate from the priority field of rules. This refers only to the
-  # log level of Falco's internal logging. Can be one of "emergency",
+  # log level of falco's internal logging. Can be one of "emergency",
   # "alert", "critical", "error", "warning", "notice", "info", "debug".
-  logLevel: info
+  log_level: info
 
   # Minimum rule priority level to load and run. All rules having a
   # priority more severe than this level will be loaded/run.  Can be one
@@ -335,8 +341,8 @@ falco:
   priority: debug
 
   # Whether or not output to any of the output channels below is
-  # buffered.
-  bufferedOutputs: false
+  # buffered. Defaults to false
+  buffered_outputs: false
 
   # Falco uses a shared buffer between the kernel and userspace to pass
   # system call information. When Falco detects that this buffer is
@@ -359,13 +365,14 @@ falco:
   #
   # For debugging/testing it is possible to simulate the drops using
   # the `simulate_drops: true`. In this case the threshold does not apply.
-  syscallEventDrops:
+
+  syscall_event_drops:
     threshold: .1
     actions:
       - log
       - alert
     rate: .03333
-    maxBurst: 1
+    max_burst: 1
 
   # Falco uses a shared buffer between the kernel and userspace to receive
   # the events (eg., system call information) in userspace.
@@ -381,8 +388,9 @@ falco:
   # after which you want Falco to alert.
   # By default this value is set to 1000 consecutive timeouts without an event at all.
   # How this value maps to a time interval depends on the CPU frequency.
-  syscallEventTimeouts:
-    maxConsecutives: 1000
+
+  syscall_event_timeouts:
+    max_consecutives: 1000
 
   # Falco continuously monitors outputs performance. When an output channel does not allow
   # to deliver an alert within a given deadline, an error is reported indicating
@@ -402,23 +410,25 @@ falco:
   output_timeout: 2000
 
   # A throttling mechanism implemented as a token bucket limits the
-  # rate of Falco notifications. This throttling is controlled by the following configuration
+  # rate of falco notifications. This throttling is controlled by the following configuration
   # options:
   #  - rate: the number of tokens (i.e. right to send a notification)
   #    gained per second. Defaults to 1.
   #  - max_burst: the maximum number of tokens outstanding. Defaults to 1000.
   #
-  # With these defaults, Falco could send up to 1000 notifications after
+  # With these defaults, falco could send up to 1000 notifications after
   # an initial quiet period, and then up to 1 notification per second
   # afterward. It would gain the full burst back after 1000 seconds of
   # no activity.
+
   outputs:
     rate: 1
-    maxBurst: 1000
+    max_burst: 1000
 
   # Where security notifications should go.
   # Multiple outputs can be enabled.
-  syslogOutput:
+
+  syslog_output:
     enabled: true
 
   # If keep_alive is set to true, the file will be opened once and
@@ -426,14 +436,15 @@ falco:
   # line. If keep_alive is set to false, the file will be re-opened
   # for each output message.
   #
-  # Also, the file will be closed and reopened if Falco is signaled with
+  # Also, the file will be closed and reopened if falco is signaled with
   # SIGUSR1.
-  fileOutput:
+
+  file_output:
     enabled: false
-    keepAlive: false
+    keep_alive: false
     filename: ./events.txt
 
-  stdoutOutput:
+  stdout_output:
     enabled: true
 
   # Falco contains an embedded webserver that can be used to accept K8s
@@ -451,47 +462,35 @@ falco:
   # By default the endpoint is /healthz
   webserver:
     enabled: true
-    listenPort: 8765
-    k8sHealthzEndpoint: /healthz
-    sslEnabled: false
-    sslCertificate: /etc/falco/certs/falco.pem
+    listen_port: 8765
+    k8s_healthz_endpoint: /healthz
+    ssl_enabled: false
+    ssl_certificate: /etc/falco/falco.pem
 
   # Possible additional things you might want to do with program output:
   #   - send to a slack webhook:
-  #     program: "\"jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX\""
+  #         program: "jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX"
   #   - logging (alternate method than syslog):
-  #     program: logger -t falco-test
+  #         program: logger -t falco-test
   #   - send over a network connection:
-  #     program: nc host.example.com 80
+  #         program: nc host.example.com 80
 
   # If keep_alive is set to true, the program will be started once and
   # continuously written to, with each output message on its own
   # line. If keep_alive is set to false, the program will be re-spawned
   # for each output message.
   #
-  # Also, the program will be closed and reopened if Falco is signaled with
+  # Also, the program will be closed and reopened if falco is signaled with
   # SIGUSR1.
-  programOutput:
+  program_output:
     enabled: false
-    keepAlive: false
-    program: mail -s "Falco Notification" someone@example.com
-    # program: |
-    #   jq 'if .priority == "Emergency" or .priority == "Critical" or .priority == "Error" then
-    #     { attachments: [{ text: .output, color: "danger" }]}
-    #   elif .priority == "Warning" or .priority == "Notice" then
-    #     { attachments: [{ text: .output, color: "warning" }]}
-    #   elif .priority == "Informational" then
-    #     { attachments: [{ text: .output, color: "good" }]}
-    #   else
-    #     { attachments: [{ text: .output }]}
-    #   end' | curl -d @- -X POST https://hooks.slack.com/services/xxxxxxxxx/xxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxx
+    keep_alive: false
+    program: "jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX"
 
-  httpOutput:
+  http_output:
     enabled: false
-    # When set, this will override an auto-generated URL which matches the falcosidekick Service.
-    # When including Falco inside a parent helm chart, you must set this since the auto-generated URL won't match (#280).
-    url: ""
-    userAgent: "falcosecurity/falco"
+    url: http://some.url
+    user_agent: "falcosecurity/falco"
 
   # Falco supports running a gRPC server with two main binding types
   # 1. Over the network with mandatory mutual TLS authentication (mTLS)
@@ -505,28 +504,31 @@ falco:
   # By default the gRPC server is off.
   # You can configure the address to bind and expose it.
   # By modifying the threadiness configuration you can fine-tune the number of threads (and context) it will use.
+  # grpc:
+  #   enabled: true
+  #   bind_address: "0.0.0.0:5060"
+  #   # when threadiness is 0, Falco sets it by automatically figuring out the number of online cores
+  #   threadiness: 0
+  #   private_key: "/etc/falco/certs/server.key"
+  #   cert_chain: "/etc/falco/certs/server.crt"
+  #   root_certs: "/etc/falco/certs/ca.crt"
+
+  # gRPC server using an unix socket
   grpc:
     enabled: false
+    bind_address: "unix:///var/run/falco/falco.sock"
+    # when threadiness is 0, Falco automatically guesses it depending on the number of online cores
     threadiness: 0
-
-    # gRPC unix socket with no authentication
-    unixSocketPath: "unix:///var/run/falco/falco.sock"
-
-    # gRPC over the network (mTLS) / required when unixSocketPath is empty
-    listenPort: 5060
-    privateKey: "/etc/falco/certs/server.key"
-    certChain: "/etc/falco/certs/server.crt"
-    rootCerts: "/etc/falco/certs/ca.crt"
 
   # gRPC output service.
   # By default it is off.
   # By enabling this all the output events will be kept in memory until you read them with a gRPC client.
   # Make sure to have a consumer for them or leave this disabled.
-  grpcOutput:
+  grpc_output:
     enabled: false
 
   # Container orchestrator metadata fetching params
-  metadataDownload:
-    maxMb: 100
-    chunkWaitUs: 1000
-    watchFreqSec: 1
+  metadata_download:
+    max_mb: 100
+    chunk_wait_us: 1000
+    watch_freq_sec: 1
