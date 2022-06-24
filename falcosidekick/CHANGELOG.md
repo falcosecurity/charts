@@ -6,7 +6,13 @@ numbering uses [semantic versioning](http://semver.org).
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
 
-## 0.5.3
+## 0.5.5
+
+* Add `webui.externalRedis` with `enabled`, `url` and `port` to values to set an external Redis database with RediSearch > v2 for the WebUI
+* Add `webui.redis.enabled` option to disable the deployment of the database.
+* `webui.redis.enabled ` and `webui.externalRedis.enabled` are mutually exclusive
+
+## 0.5.4
 
 * Upgrade image to fix Panic of `Prometheus` output when `customfields` is set
 * Add `extralabels` for `Loki` and `Prometheus` outputs to set fields to use as labels

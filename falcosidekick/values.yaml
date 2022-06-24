@@ -456,7 +456,13 @@ webui:
 
   affinity: {}
 
+  externalRedis:  # External Redis server with Redisearch > v2
+    enabled: false  # Enable or disable the usage of an external Redis. Is mutually exclusive with webui.redis.enabled.
+    url: ""  # URL of the external Redis
+    port: 6379  # Port used by the external Redis
+
   redis:
+    enabled: true  # Is mutually exclusive with webui.externalRedis.enabled
     image:
       registry: docker.io
       repository: redislabs/redisearch
