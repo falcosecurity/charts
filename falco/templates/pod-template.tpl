@@ -176,7 +176,7 @@ spec:
           name: certs-volume
           readOnly: true
         {{- end }}
-        {{- with .Values.extra.volumeMounts }}
+        {{- with .Values.mounts.volumeMounts }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
   initContainers:
@@ -267,7 +267,7 @@ spec:
         secretName: {{ include "falco.fullname" . }}-certs
         {{- end }}
     {{- end }}
-    {{- with .Values.extra.volumes }}
+    {{- with .Values.mounts.volumes }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
 {{- end -}}
