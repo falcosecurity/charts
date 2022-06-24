@@ -24,6 +24,9 @@ services:
         protocol: TCP
 
 falco:
+  rulesFile:
+    - /etc/falco/k8s_audit_rules.yaml
+    - /etc/falco/rules.d
   plugins:
     - name: k8saudit
       library_path: libk8saudit.so

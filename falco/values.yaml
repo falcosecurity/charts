@@ -105,23 +105,14 @@ healthChecks:
     initialDelaySeconds: 30
     timeoutSeconds: 5
     periodSeconds: 15
-extra:
-  # Extra environment variables that will be pass onto Falco containers
-  env: {}
-  # Extra command-line arguments
-  args: []
-  # Additional initContainers for Falco pods
-  initContainers: []
-  # Extra volumes to Falco DaemonSet/Deployment
-  volumes: []
-  # Extra volumeMounts to Falco containers
-  volumeMounts: []
 
 #########################
 # Scenario requirements #
 #########################
 
+# Sensors dislocation configuration (scenario requirement)
 controller:
+  # Available options: deployment, daemonset
   kind: daemonset
   daemonset:
     # Perform rolling updates by default in the DaemonSet agent
@@ -142,6 +133,11 @@ services:
   #     - port: 9765 # See plugin open_params
   #       nodePort: 30007
   #       protocol: TCP
+
+# File access configuration (scenario requirement)
+mounts:
+  volumes: []
+  volumeMounts: []
 
 # Driver settings (scenario requirement)
 driver:
@@ -167,6 +163,7 @@ driver:
         # Overrides the image tag whose default is the chart appVersion.
         tag: ""
 
+# Collectors for data enrichment (scenario requirement)
 collectors:
   enabled: true
 
@@ -183,7 +180,9 @@ collectors:
     socket: /run/crio/crio.sock
 
   kubernetes:
-    # Enables Kubernetes meta data collection via a connection to the Kubernetes API server.
+    # Enable Kubernetes meta data collection via a connection to the Kubernetes API server.
+    # When this option is disabled, Falco falls back to the container annotations to grap the meta data.
+    # In such a case, only the ID, name, namespace, labels of the pod will be available.
     enabled: true
     # The apiAuth value is to provide the authentication method Falco should use to connect to the Kubernetes API.
     # The argument's documentation from Falco is provided here for reference:
@@ -203,17 +202,17 @@ collectors:
     # to the API server. Disabling this option may have a performance penalty on large clusters.
     enableNodeFilter: true
 
-customRules:
-  {}
-  # Although Falco comes with a nice default rule set for detecting weird
-  # behavior in containers, our users are going to customize the run-time
-  # security rule sets or policies for the specific container images and
-  # applications they run. This feature can be handled in this section.
-  #
-  # Example:
-  #
-  # rules-traefik.yaml: |-
-  #   [ rule body ]
+###########################
+# Extras and customization #
+############################
+
+extra:
+  # Extra environment variables that will be pass onto Falco containers
+  env: {}
+  # Extra command-line arguments
+  args: []
+  # Additional initContainers for Falco pods
+  initContainers: []
 
 # certificates used by webserver and grpc server
 # paste certificate content or use helm with --set-file
@@ -225,6 +224,18 @@ certs:
     crt: ""
   ca:
     crt: ""
+
+customRules:
+  {}
+  # Although Falco comes with a nice default rule set for detecting weird
+  # behavior in containers, our users are going to customize the run-time
+  # security rule sets or policies for the specific container images and
+  # applications they run. This feature can be handled in this section.
+  #
+  # Example:
+  #
+  # rules-traefik.yaml: |-
+  #   [ rule body ]
 
 ########################
 # Falco integrations   #
@@ -256,8 +267,6 @@ falco:
   rulesFile:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
-    # - /etc/falco/k8s_audit_rules.yaml
-    # - /etc/falco/aws_cloudtrail_rules.yaml
     - /etc/falco/rules.d
     # - /etc/falco/rules.optional.d
 
