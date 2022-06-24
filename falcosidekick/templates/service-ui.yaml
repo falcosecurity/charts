@@ -27,6 +27,7 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
     app.kubernetes.io/instance: {{ .Release.Name }}-ui
+{{- if .Values.webui.redis.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -52,4 +53,5 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui-redis
     app.kubernetes.io/instance: {{ .Release.Name }}-ui-redis
+{{- end }}
 {{- end }}
