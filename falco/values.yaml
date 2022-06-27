@@ -187,7 +187,7 @@ falco:
   # loaded and enabled by default. If you want to use the above plugins,
   # set a meaningful init_config/open_params for the cloudtrail plugin
   # and then change this to:
-  # load_plugins: [cloudtrail, json]
+  # loadPlugins: [cloudtrail, json]
   loadPlugins: []
 
   # Watch config file and rules files for modification.
