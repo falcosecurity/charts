@@ -1,0 +1,12 @@
+{{- if not .Values.config.loop -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "event-generator.fullname" . }}
+  labels:
+    {{- include "event-generator.labels" . | nindent 4 }}
+spec:
+  backoffLimit: 1
+  template:
+    {{- include "event-generator.podTemplate" . | nindent 4 }}
+{{- end -}}

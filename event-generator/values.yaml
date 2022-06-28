@@ -1,0 +1,69 @@
+# Default values for event-generator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Number of replicas of the event-generator (meaningful when installed as a deployment).
+replicasCount: 1
+
+image:
+  # -- Repository from where the image is pulled.
+  repository: falcosecurity/event-generator
+  # -- Pull policy for the event-generator image
+  pullPolicy: IfNotPresent
+  # -- Images' tag to select a development/custom version of event-generator instead of a release.
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# -- Secrets used to pull the image from a private repository.
+imagePullSecrets: []
+# -- Used to override the chart name.
+nameOverride: ""
+# -- Used to override the chart full name.
+fullnameOverride: ""
+
+# -- Annotations to be added to the pod.
+podAnnotations: {}
+
+# -- Security context for the pod.
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# -- Security context for the containers.
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# -- Selectors to choose a given node where to run the pods.
+nodeSelector: {}
+
+# -- Tolerations to allow the pods to be scheduled on nodes whose taints the pod tolerates.
+tolerations: []
+
+# -- Affinity, like the nodeSelector but with more expressive syntax.
+affinity: {}
+
+config:
+  # -- The event-generator accepts two commands (run, test): 
+  # run: runs actions.
+  # test: runs and tests actions.
+  # For more info see: https://github.com/falcosecurity/event-generator
+  command: test
+  # -- Regular expression used to select the actions to be run.
+  actions: "^syscall"
+  # -- Runs in a loop the actions.
+  # If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job.
+  loop: false
+  # -- The length of time to wait before running an action. Non-zero values should contain 
+  # a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms)
+  sleep: ""
+  
+  grpc:
+    # -- Set it to true if you are deploying in "test" mode.
+    enabled: true
+    # -- Path to the Falco grpc socket.
+    bindAddress: "unix:///var/run/falco/falco.sock"
+  
