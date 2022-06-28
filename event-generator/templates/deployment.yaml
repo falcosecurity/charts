@@ -1,0 +1,15 @@
+{{- if .Values.config.loop -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "event-generator.fullname" . }}
+  labels:
+    {{- include "event-generator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicasCount }}
+  selector:
+    matchLabels:
+      {{- include "event-generator.selectorLabels" . | nindent 6 }}
+  template:
+    {{- include "event-generator.podTemplate" . | nindent 4 }}
+{{- end -}}
