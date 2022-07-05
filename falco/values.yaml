@@ -142,7 +142,7 @@ mounts:
 # Driver settings (scenario requirement)
 driver:
   enabled: true
-  kind: ebpf
+  kind: module
   ebpf:
     path:
     # Needed to enable eBPF JIT at runtime for performance reasons.
