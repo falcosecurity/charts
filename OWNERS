@@ -3,15 +3,8 @@ approvers:
   - Issif
   - cpanato
 reviewers:
-  - leodido
-  - fntlnz
-  - kris-nova
-  - leogr
-  - nibalizer
   - nestorsalceda
   - bencer
-  - Issif
-  - cpanato
 emeritus_approvers:
   - leodido
   - fntlnz
