@@ -1,9 +1,5 @@
 approvers:
-  - leodido
-  - fntlnz
-  - kris-nova
   - leogr
-  - nibalizer
   - Issif
   - cpanato
 reviewers:
@@ -16,3 +12,8 @@ reviewers:
   - bencer
   - Issif
   - cpanato
+emeritus_approvers:
+  - leodido
+  - fntlnz
+  - kris-nova
+  - nibalizer
