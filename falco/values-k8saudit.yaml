@@ -38,4 +38,4 @@ falco:
     - name: json
       library_path: libjson.so
       init_config: ""
-  loadPlugins: [k8saudit, json]
+  load_plugins: [k8saudit, json]
