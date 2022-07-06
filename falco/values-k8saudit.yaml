@@ -1,5 +1,4 @@
-nodeSelector:
-  node-role.kubernetes.io/master: ""
+nodeSelector: {}
 
 # Allow Falco to run on Kubernetes 1.6 masters.
 tolerations:
