@@ -8,6 +8,7 @@ endif
 #generate helm documentation
 docs: helm-docs
 	$(HELM_DOCS) -t README.gotmpl -o ./generated/helm-values.md
+	cat ./generated/helm-values.md >> README.md
 
 helm-docs:
 ifeq (, $(shell which helm-docs))
