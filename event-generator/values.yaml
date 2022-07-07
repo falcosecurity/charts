@@ -12,7 +12,7 @@ image:
   pullPolicy: IfNotPresent
   # -- Images' tag to select a development/custom version of event-generator instead of a release.
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 # -- Secrets used to pull the image from a private repository.
 imagePullSecrets: []
@@ -53,7 +53,7 @@ config:
   # For more info see: https://github.com/falcosecurity/event-generator
   command: test
   # -- Regular expression used to select the actions to be run.
-  actions: "^syscall"
+  actions: "^k8saudit"
   # -- Runs in a loop the actions.
   # If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job.
   loop: false
