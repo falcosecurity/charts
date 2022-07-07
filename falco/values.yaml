@@ -241,14 +241,13 @@ customRules:
 # Falco integrations   #
 ########################
 
- # for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
+# for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
 falcosidekick:
   # enable falcosidekick deployment
   enabled: false
   fullfqdn: false
   # Default value: 2801
   listenPort: ""
- 
 
 ######################
 # falco.yaml config  #
@@ -283,7 +282,8 @@ falco:
   plugins:
     - name: k8saudit
       library_path: libk8saudit.so
-      init_config: ""
+      init_config:
+        ""
         # maxEventBytes: 1048576
         # sslCertificate: /etc/falco/falco.pem
       open_params: "http://:9765/k8s-audit"
