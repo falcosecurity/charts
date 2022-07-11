@@ -5,45 +5,49 @@
 ###############################
 
 image:
+  # -- The image pull policy.
   pullPolicy: IfNotPresent
+  # -- The image registry to pull from.
   registry: docker.io
+  # -- The image repository to pull from
   repository: falcosecurity/falco-no-driver
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  # -- The image tag to pull. Overrides the image tag whose default is the chart appVersion.
+  tag: "0.32.0"
 
+# -- Secrets containing credentials when pulling from private/secure registries.
 imagePullSecrets: []
+# -- Put here the new name if you want to override the release name used for Falco components.
 nameOverride: ""
+# -- Same as nameOverride but for the fullname.
 fullnameOverride: ""
 
 rbac:
-  # Create and use rbac resources
+  # Create and use rbac resources when set to true. Needed to fetch k8s metadata from the api-server.
   create: true
 
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created.
   create: true
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account.
   annotations: {}
-  # The name of the service account to use.
+  # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-# Add additional pod annotations
+# -- Add additional pod annotations
 podAnnotations: {}
 
-# Add additional pod labels
+# -- Add additional pod labels
 podLabels: {}
 
-# Set pod priorityClassName
+# -- Set pod priorityClassName
 podPriorityClassName:
 
-# Set securityContext for the pods
+# -- Set securityContext for the pods
 # These security settings are overriden by the ones specified for the specific
 # containers when there is overlap.
 podSecurityContext: {}
 
-# Set securityContext for the Falco container.
-#
 # Note that `containerSecurityContext`:
 #  - will not apply to init containers, if any;
 #  - takes precedence over other automatic configurations (see below).
@@ -69,41 +73,50 @@ podSecurityContext: {}
 #      - PERFMON
 #      - SYS_PTRACE
 #
-# For more info see the "falco.securityContext" helper in "pod-template.tpl"
+# -- Set securityContext for the Falco container.For more info see the "falco.securityContext" helper in "pod-template.tpl"
 containerSecurityContext: {}
 
 scc:
-  # true here enabled creation of Security Context Constraints in Openshift
+  # -- Create OpenShift's Security Context Constraint.
   create: true
 
 resources:
-  # Although resources needed are subjective on the actual workload we provide
+  # -- Although resources needed are subjective on the actual workload we provide
   # a sane defaults ones. If you have more questions or concerns, please refer
-  # to #falco slack channel for more info about it
+  # to #falco slack channel for more info about it.
   requests:
     cpu: 100m
     memory: 512Mi
+  # -- Maximum amount of resources that Falco container could get.
   limits:
     cpu: 1000m
     memory: 1024Mi
-
+# -- Selectors used to deploy Falco on a given node/nodes.
 nodeSelector: {}
 
+# -- Affinity constraint for pods' scheduling.
 affinity: {}
 
-# Allow Falco to run on Kubernetes 1.6 masters.
+# -- Tolerations to allow Falco to run on Kubernetes 1.6 masters.
 tolerations:
   - effect: NoSchedule
     key: node-role.kubernetes.io/master
 
+# -- Parameters used
 healthChecks:
   livenessProbe:
+    # -- Tells the kubelet that it should wait X seconds before performing the first probe.
     initialDelaySeconds: 60
+    # -- Number of seconds after which the probe times out.
     timeoutSeconds: 5
+    # -- Specifies that the kubelet should perform the check every x seconds.
     periodSeconds: 15
   readinessProbe:
+    # -- Tells the kubelet that it should wait X seconds before performing the first probe.
     initialDelaySeconds: 30
+    # -- Number of seconds after which the probe times out.
     timeoutSeconds: 5
+    # -- Specifies that the kubelet should perform the check every x seconds.
     periodSeconds: 15
 
 #########################
@@ -112,19 +125,23 @@ healthChecks:
 
 # Sensors dislocation configuration (scenario requirement)
 controller:
-  # Available options: deployment, daemonset
+  # Available options: deployment, daemonset.
   kind: daemonset
   daemonset:
-    # Perform rolling updates by default in the DaemonSet agent
-    # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+    
     updateStrategy:
       # You can also customize maxUnavailable or minReadySeconds if you
       # need it
+      # -- Perform rolling updates by default in the DaemonSet agent
+      # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
       type: RollingUpdate
   deployment:
+    # -- Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing.
+    # For more info check the section on Plugins in the README.md file.
     replicas: 1
 
-# Network services configuration (scenario requirement)
+# -- Network services configuration (scenario requirement)
+# Add here your services to be deployed together with Falco.
 services:
   # Example configuration for the "k8sauditlog" plugin
   # - name: k8saudit-webhook
@@ -136,55 +153,76 @@ services:
 
 # File access configuration (scenario requirement)
 mounts:
+  # -- A list of volumes you want to add to the Falco pods.
   volumes: []
+  # -- A list of volumes you want to add to the Falco pods.
   volumeMounts: []
 
 # Driver settings (scenario requirement)
 driver:
+  # -- Set it to false if you want to deploy Falco without the drivers.
+  # Always set it to false when using Falco with plugins.
   enabled: true
+  # -- Tell Falco which driver to use. Available options: module (kernel driver) and ebpf (eBPF probe).
   kind: module
+  # -- Configuration section for ebpf driver.
   ebpf:
+    # -- Path where the eBPF probe is located. It comes handy when the probe have been installed in the nodes using tools other than the init
+    # container deployed with the chart.
     path:
-    # Needed to enable eBPF JIT at runtime for performance reasons.
+    # -- Needed to enable eBPF JIT at runtime for performance reasons.
     # Can be skipped if eBPF JIT is enabled from outside the container
     hostNetwork: true
-    # Constrain Falco with capabilities instead of running a privileged container.
+    # -- Constrain Falco with capabilities instead of running a privileged container.
     # This option is only supported with the eBPF driver and a kernel >= 5.8.
     # Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`).
     leastPrivileged: true
+  # -- Configuration for the Falco init container.
   loader:
+    # -- Enable/disable the init container.
     enabled: true
     initContainer:
+       # -- Enable/disable the init container.
       enabled: true
       image:
+        # -- The image pull policy.
         pullPolicy: IfNotPresent
+        # -- The image registry to pull from.
         registry: docker.io
+        # -- The image repository to pull from.
         repository: falcosecurity/falco-driver-loader
-        # Overrides the image tag whose default is the chart appVersion.
-        tag: ""
+        #  -- Overrides the image tag whose default is the chart appVersion.
+        tag: "0.32.0"
 
 # Collectors for data enrichment (scenario requirement)
 collectors:
+  # -- Enable/disable all the metadata collectors.
   enabled: true
 
   docker:
+    # -- Enable Docker support.
     enabled: true
+    # -- The path of the Docker daemon socket.
     socket: /var/run/docker.sock
 
   containerd:
+    # -- Enable ContainerD support.
     enabled: true
+    # -- The path of the ContainerD socket.
     socket: /run/containerd/containerd.sock
 
   crio:
+    # -- Enable CRI-O support.
     enabled: true
+    # -- The path of the CRI-O socket.
     socket: /run/crio/crio.sock
 
   kubernetes:
-    # Enable Kubernetes meta data collection via a connection to the Kubernetes API server.
+    # -- Enable Kubernetes meta data collection via a connection to the Kubernetes API server.
     # When this option is disabled, Falco falls back to the container annotations to grap the meta data.
     # In such a case, only the ID, name, namespace, labels of the pod will be available.
     enabled: true
-    # The apiAuth value is to provide the authentication method Falco should use to connect to the Kubernetes API.
+    # -- The apiAuth value is to provide the authentication method Falco should use to connect to the Kubernetes API.
     # The argument's documentation from Falco is provided here for reference:
     #
     #  <bt_file> | <cert_file>:<key_file[#password]>[:<ca_cert_file>], --k8s-api-cert <bt_file> | <cert_file>:<key_file[#password]>[:<ca_cert_file>]
@@ -196,9 +234,11 @@ collectors:
     #     for this option, it will be interpreted as the name of a file containing bearer token.
     #     Note that the format of this command-line option prohibits use of files whose names contain
     #     ':' or '#' characters in the file name.
+    # -- Provide the authentication method Falco should use to connect to the Kubernetes API.
     apiAuth: /var/run/secrets/kubernetes.io/serviceaccount/token
+    ## -- Provide the URL Falco should use to connect to the Kubernetes API.
     apiUrl: "https://$(KUBERNETES_SERVICE_HOST)"
-    # If true, only the current node (on which Falco is running) will be considered when requesting metadata of pods
+    # -- If true, only the current node (on which Falco is running) will be considered when requesting metadata of pods
     # to the API server. Disabling this option may have a performance penalty on large clusters.
     enableNodeFilter: true
 
@@ -207,24 +247,28 @@ collectors:
 ############################
 
 extra:
-  # Extra environment variables that will be pass onto Falco containers
+  # -- Extra environment variables that will be pass onto Falco containers.
   env: {}
-  # Extra command-line arguments
+  # -- Extra command-line arguments.
   args: []
-  # Additional initContainers for Falco pods
+  # -- Additional initContainers for Falco pods.
   initContainers: []
 
-# certificates used by webserver and grpc server
+# -- certificates used by webserver and grpc server.
 # paste certificate content or use helm with --set-file
 # or use existing secret containing key, crt, ca as well as pem bundle
 certs:
+  # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
   existingSecret: ""
   server:
+    # -- Key used by gRPC and webserver.
     key: ""
+    # -- Certificate used by gRPC and webserver.
     crt: ""
   ca:
+    # -- CA certificate used by gRPC, webserver and AuditSink validation.
     crt: ""
-
+# -- Third party rules enabled for Falco. More info on the dedicated section in README.md file.
 customRules:
   {}
   # Although Falco comes with a nice default rule set for detecting weird
@@ -241,12 +285,13 @@ customRules:
 # Falco integrations   #
 ########################
 
-# for configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
+# -- For configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml
 falcosidekick:
-  # enable falcosidekick deployment
+  # -- Enable falcosidekick deployment.
   enabled: false
+  # -- Enable usage of full FQDN of falcosidekick service (useful when a Proxy is used).
   fullfqdn: false
-  # Default value: 2801
+  # -- Listen port. Default value: 2801
   listenPort: ""
 
 ######################
@@ -265,6 +310,7 @@ falco:
   #
   # The files will be read in the order presented here, so make sure if
   # you have overrides they appear in later files.
+  # -- The location of the rules files that will be consumed by Falco.
   rules_file:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
@@ -279,6 +325,9 @@ falco:
   # To learn more about the supported formats for
   # init_config/open_params for the cloudtrail plugin, see the README at
   # https://github.com/falcosecurity/plugins/blob/master/plugins/cloudtrail/README.md.
+  # -- Plugins configuration. Add here all plugins and their configuration. Please 
+  # consult the plugins documentation for more info. Remember to add the plugins name in 
+  # "load_plugins: []" in order to load them in Falco.
   plugins:
     - name: k8saudit
       library_path: libk8saudit.so
@@ -300,50 +349,54 @@ falco:
   # set a meaningful init_config/open_params for the cloudtrail plugin
   # and then change this to:
   # load_plugins: [cloudtrail, json]
+  # -- Add here the names of the plugins that you want to be loaded by Falco. Please make sure that
+  # plugins have ben configured under the "plugins" section before adding them here.
   load_plugins: []
 
-  # Watch config file and rules files for modification.
+  # -- Watch config file and rules files for modification.
   # When a file is modified, Falco will propagate new config,
   # by reloading itself.
   watch_config_files: true
 
-  # If true, the times displayed in log messages and output messages
+  # -- If true, the times displayed in log messages and output messages
   # will be in ISO 8601. By default, times are displayed in the local
   # time zone, as governed by /etc/localtime.
   time_format_iso_8601: false
 
-  # Whether to output events in json or text
+  # -- Whether to output events in json or text.
   json_output: false
 
-  # When using json output, whether or not to include the "output" property
+  # -- When using json output, whether or not to include the "output" property
   # itself (e.g. "File below a known binary directory opened for writing
   # (user=root ....") in the json output.
   json_include_output_property: true
 
-  # When using json output, whether or not to include the "tags" property
+  # -- When using json output, whether or not to include the "tags" property
   # itself in the json output. If set to true, outputs caused by rules
   # with no tags will have a "tags" field set to an empty array. If set to
   # false, the "tags" field will not be included in the json output at all.
   json_include_tags_property: true
 
-  # Send information logs to stderr and/or syslog Note these are *not* security
+  # -- Send information logs to syslog. Note these are *not* security
   # notification logs! These are just Falco lifecycle (and possibly error) logs.
   log_stderr: true
+  # -- Send information logs to stderr. Note these are *not* security
+  # notification logs! These are just Falco lifecycle (and possibly error) logs.
   log_syslog: true
 
-  # Minimum log level to include in logs. Note: these levels are
+  # -- Minimum log level to include in logs. Note: these levels are
   # separate from the priority field of rules. This refers only to the
   # log level of falco's internal logging. Can be one of "emergency",
   # "alert", "critical", "error", "warning", "notice", "info", "debug".
   log_level: info
 
-  # Minimum rule priority level to load and run. All rules having a
+  # -- Minimum rule priority level to load and run. All rules having a
   # priority more severe than this level will be loaded/run.  Can be one
   # of "emergency", "alert", "critical", "error", "warning", "notice",
   # "informational", "debug".
   priority: debug
 
-  # Whether or not output to any of the output channels below is
+  # -- Whether or not output to any of the output channels below is
   # buffered. Defaults to false
   buffered_outputs: false
 
@@ -370,11 +423,17 @@ falco:
   # the `simulate_drops: true`. In this case the threshold does not apply.
 
   syscall_event_drops:
+    # -- The messages are emitted when the percentage of dropped system calls
+    # with respect the number of events in the last second
+    # is greater than the given threshold (a double in the range [0, 1]).
     threshold: .1
+    # -- Actions to be taken when system calls were dropped from the circular buffer.
     actions:
       - log
       - alert
+    # -- Rate at which log/alert messages are emitted.
     rate: .03333
+    # -- Max burst of messages emitted.
     max_burst: 1
 
   # Falco uses a shared buffer between the kernel and userspace to receive
@@ -393,6 +452,8 @@ falco:
   # How this value maps to a time interval depends on the CPU frequency.
 
   syscall_event_timeouts:
+    # -- Maximum number of consecutive timeouts without an event
+    # after which you want Falco to alert.
     max_consecutives: 1000
 
   # Falco continuously monitors outputs performance. When an output channel does not allow
@@ -409,7 +470,7 @@ falco:
   #
   # With a 2000ms default, the notification consumer can block the Falco output
   # for up to 2 seconds without reaching the timeout.
-
+  # -- Duration in milliseconds to wait before considering the output timeout deadline exceed.
   output_timeout: 2000
 
   # A throttling mechanism implemented as a token bucket limits the
@@ -425,13 +486,16 @@ falco:
   # no activity.
 
   outputs:
+    # -- Number of tokens gained per second.
     rate: 1
+    # -- Maximum number of tokens outstanding.
     max_burst: 1000
 
   # Where security notifications should go.
   # Multiple outputs can be enabled.
 
   syslog_output:
+    # -- Enable syslog output for security notifications.
     enabled: true
 
   # If keep_alive is set to true, the file will be opened once and
@@ -443,16 +507,19 @@ falco:
   # SIGUSR1.
 
   file_output:
+    # -- Enable file output for security notifications.
     enabled: false
+    # -- Open file once or every time a new notification arrives.
     keep_alive: false
+    # -- The filename for logging notifications.
     filename: ./events.txt
 
   stdout_output:
+    # -- Enable stdout output for security notifications.
     enabled: true
 
-  # Falco contains an embedded webserver that can be used to accept K8s
-  # Audit Events. These config options control the behavior of that
-  # webserver. (By default, the webserver is enabled).
+  # Falco contains an embedded webserver that exposes a healthy endpoint that can be used to check if Falco is up and running.
+  # By default the endpoint is /healthz
   #
   # The ssl_certificate is a combination SSL Certificate and corresponding
   # key contained in a single file. You can generate a key/cert as follows:
@@ -460,14 +527,16 @@ falco:
   # $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
   # $ cat certificate.pem key.pem > falco.pem
   # $ sudo cp falco.pem /etc/falco/falco.pem
-  #
-  # It also exposes a healthy endpoint that can be used to check if Falco is up and running
-  # By default the endpoint is /healthz
   webserver:
+    # -- Enable Falco embedded webserver.
     enabled: true
+    # -- Port where Falco embedded webserver listen to connections.
     listen_port: 8765
+    # -- Endpoint where Falco exposes the health status.
     k8s_healthz_endpoint: /healthz
+    # -- Enable SSL on Falco embedded webserver.
     ssl_enabled: false
+    # -- Certificate bundle path for the Falco embedded webserver.
     ssl_certificate: /etc/falco/falco.pem
 
   # Possible additional things you might want to do with program output:
@@ -486,14 +555,18 @@ falco:
   # Also, the program will be closed and reopened if falco is signaled with
   # SIGUSR1.
   program_output:
+    # -- Enable program output for security notifications.
     enabled: false
+    # -- Start the program once or re-spawn when a notification arrives.
     keep_alive: false
+    # -- Command to execute for program output.
     program: "jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX"
 
   http_output:
+    # -- Enable http output for security notifications.
     enabled: false
-    # When set, this will override an auto-generated URL which matches the falcosidekick Service.
-    # When including Falco inside a parent helm chart, you must set this since the auto-generated URL won't match (#280).
+    # -- When set, this will override an auto-generated URL which matches the falcosidekick Service.
+    # -- When including Falco inside a parent helm chart, you must set this since the auto-generated URL won't match (#280).
     url: ""
     user_agent: "falcosecurity/falco"
 
@@ -518,11 +591,13 @@ falco:
   #   cert_chain: "/etc/falco/certs/server.crt"
   #   root_certs: "/etc/falco/certs/ca.crt"
 
-  # gRPC server using an unix socket
+  # -- gRPC server using an unix socket
   grpc:
+    # -- Enable the Falco gRPC server.
     enabled: false
+    # -- Bind address for the grpc server.
     bind_address: "unix:///var/run/falco/falco.sock"
-    # when threadiness is 0, Falco automatically guesses it depending on the number of online cores
+    # -- Number of threads (and context) the gRPC server will use, 0 by default, which means "auto".
     threadiness: 0
 
   # gRPC output service.
@@ -530,10 +605,14 @@ falco:
   # By enabling this all the output events will be kept in memory until you read them with a gRPC client.
   # Make sure to have a consumer for them or leave this disabled.
   grpc_output:
+    # -- Enable the gRPC output and events will be kept in memory until you read them with a gRPC client.
     enabled: false
 
   # Container orchestrator metadata fetching params
   metadata_download:
+    # -- Max allowed response size (in Mb) when fetching metadata from Kubernetes.
     max_mb: 100
+    # -- Sleep time (in μs) for each download chunck when fetching metadata from Kubernetes.
     chunk_wait_us: 1000
+    # -- Watch frequency (in seconds) when fetching metadata from Kubernetes.
     watch_freq_sec: 1
