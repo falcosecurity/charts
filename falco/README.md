@@ -4,9 +4,7 @@
 
 ## Introduction
 
-This chart adds Falco to all nodes in your cluster using a DaemonSet.
-
-It also provides a Deployment for generating Falco alerts. This is useful for testing purposes.
+The deployment of Falco in a Kubernetes cluster is managed through a **Helm chart**. This chart manages the life cycle of Falco in a cluster by handling all the k8s objects needed by Falco to be seamlessly integrated in your environment. Based on the configuration in `values.yaml` file, the chart will render and install the required k8s objects. Keep in mind that Falco could be deployed in your cluster using a `daemonset` or a `deployment`. See next sections for more info.
 
 ## Adding `falcosecurity` repository
 
@@ -19,162 +17,88 @@ helm repo update
 
 ## Installing the Chart
 
-To install the chart with the release name `falco` run:
+To install the chart with the release name `falco` in namespace `falco` run:
 
 ```bash
-helm install falco falcosecurity/falco
+kubectl create ns falco
+helm install falco falcosecurity/falco --namespace falco
 ```
 
-After a few seconds, Falco should be running.
+After a few minutes Falco instances should be running on all your nodes. The status of Falco pods can be inspected through *kubectl*:
+```bash
+kubectl get pods -n falco -o wide
+```
+If every thing went smoothly, you should observe an output similar to the following, indicating that all Falco instances are up and running in you cluster:
 
+```bash
+NAME          READY   STATUS    RESTARTS   AGE     IP          NODE            NOMINATED NODE   READINESS GATES
+falco-57w7q   1/1     Running   0          3m12s   10.244.0.1   control-plane   <none>           <none>
+falco-h4596   1/1     Running   0          3m12s   10.244.1.2   worker-node-1   <none>           <none>
+falco-kb55h   1/1     Running   0          3m12s   10.244.2.3   worker-node-2   <none>           <none>
+```
+The cluster in our example has three nodes, one *control-plane* node and two *worker* nodes. The default configuration in `values.yaml` of our helm chart deploys Falco using a `daemonset`. That's the reason why we have one Falco pod in each node. 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
 
-### About the driver
+### Falco, Event Sources and Kubernetes
+Starting from Falco 0.31.0 the [new plugin system](https://falco.org/docs/plugins/) is stable and production ready. The **plugin system** can be seen as the next step in the evolution of Falco. Historically, Falco monitored system events from the **kernel** trying to detect malicious behavior on Linux systems. It also had the capability to process k8s Audit Logs to detect suspicious activity in kubernetes clusters. Since Falco 0.32.0 all the related code to the k8s Audit Logs in Falco was removed and ported in a [plugin](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit). At the time being Falco supports different event sources coming from **plugins** or the **drivers** (system events). 
+
+Note that **multiple event sources can not be handled in the same Falco instance**. For instance, you can not have Falco deployed leveraging **drivers** for syscalls events and at the same time load **plugins**. Here you can find the [tracking issue](https://github.com/falcosecurity/falco/issues/2074) about multiple **event sources** in the same Falco instance.
+If you need to handle **syscalls** and **plugins** events than consider deploying different Falco instances, one for each use case.
+#### About the Driver
 
 Falco needs a **driver** (the [kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module) or the [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe)) that taps into the stream of system calls and passes that system calls to Falco. The driver must be installed on the node where Falco is running.
 
-The container image includes a script (`falco-driver-loader`) that either tries to build the driver on-the-fly or downloads a prebuilt driver as a fallback. Usually, no action is required.
+By default the drivers are managed using an *init container* which includes a script (`falco-driver-loader`) that either tries to build the driver on-the-fly or downloads a prebuilt driver as a fallback. Usually, no action is required.
 
 If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to building the driver on the fly correctly. You can find instructions on installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
 
-Note that **the driver is not required when using plugins**.
+### About Plugins
+[Plugins](https://falco.org/docs/plugins/) are used to extend Falco to support new **data sources**. The current **plugin framework** supports *plugins* with the following *capabilities*:
+
+* Event sourcing capability;
+* Field extraction capability;
+
+Plugin capabilities are *composable*, we can have a single plugin with both the capabilities. Or on the other hand we can load two different plugins each with its capability, one plugin as a source of events and another as an extractor. A good example of this are the [Kubernetes Audit Events](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) and the [Falcosecurity Json](https://github.com/falcosecurity/plugins/tree/master/plugins/json) *plugins*. By deploying them both we have support for the **K8s Audit Logs** in Falco
+
+Note that **the driver is not required when using plugins**. When *plugins* are enabled Falco is deployed without the *init container*.
+
+### Deploying Falco in Kubernetes
+After the clarification of the different **event sources** and how they are consumed by Falco using the **drivers** and the **plugins**, now lets discuss about how Falco is deployed in Kubernetes.
+
+The chart deploys Falco using a `daemonset` or a `deployment` depending on the **event sources**.
+
+####Daemonset
+When using the [drivers](#about-the-driver), Falco is deployed as `daemonset`. By using a `daemonset`, k8s assures that a Falco instance will be running in each of our nodes even when we add new nodes to our cluster. So it is the perfect match when we need to monitor all the nodes in our cluster. 
+Using the default values of the helm chart we get Falco deployed with the [kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module).
+
+If the [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe) is desired, we just need to set `driver.kind=ebpf` as as show in the following snippet:
+
+```yaml
+driver:
+  enabled: true
+  kind: ebpf
+```
+There are other configurations related the eBPF probe, for more info please check the `values.yaml` file. After you have made made your changes to the configuration file you just need to run:
+
+```bash
+helm install falco falcosecurity/falco --namespace "your-custom-name-space"
+```
+
+####Deployment
+In the scenario when Falco is used with **plugins** as data sources, then the best option is to deploy it as a k8s `deployment`. **Plugins** could be of two types, the ones that follow the **push model** or the **pull model**. A plugin that adopts the firs model expects to receive the data from a remote source in a given endpoint. They just expose and endpoint and wait for data to be posted, for example [Kubernetes Audit Events](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) expects the data to be sent by the *k8s api server* when configured in such way. On the other hand other plugins that abide by the **pull model** retrieves the data from a given remote service. 
+The following points explain why a k8s `deployent` is suitable when deploying Falco with plugins:
+
+* need to be reachable when ingesting logs directly from remote services;
+* need only one active replica, otherwise events will be sent/received to/from different Falco instances;
+
 
 ## Uninstalling the Chart
 
-To uninstall the `falco` deployment:
+To uninstall a Falco release from your Kubernetes cluster always you helm. It will take care to remove all components deployed by the chart and clean up your environment. The following command will remove a release called `falco` in namespace `falco`;
 
 ```bash
-helm uninstall falco
+helm uninstall falco --namespace falco
 ```
-
-The command removes all the Kubernetes components associated with the chart and deletes the release.
-
-## Configuration
-
-The following table lists the configurable parameters of the Falco chart and their default values.
-
-| Parameter                                  | Description                                                                                                                                                                                                | Default                                                                                                                 |
-|--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| `image.registry`                           | The image registry to pull from                                                                                                                                                                            | `docker.io`                                                                                                             |
-| `image.repository`                         | The image repository to pull from                                                                                                                                                                          | `falcosecurity/falco`                                                                                                   |
-| `image.tag`                                | The image tag to pull                                                                                                                                                                                      | `0.31.1`                                                                                                                |
-| `image.pullPolicy`                         | The image pull policy                                                                                                                                                                                      | `IfNotPresent`                                                                                                          |
-| `image.pullSecrets`                        | The image pull secretes                                                                                                                                                                                    | `[]`                                                                                                                    |
-| `containerd.enabled`                       | Enable ContainerD support                                                                                                                                                                                  | `true`                                                                                                                  |
-| `containerd.socket`                        | The path of the ContainerD socket                                                                                                                                                                          | `/run/containerd/containerd.sock`                                                                                       |
-| `crio.enabled`                                  | Enable CRI-O support                                                                                               | `true`                                                                                                                                    |
-| `crio.socket`                                   | The path of the CRI-O socket                                                                                       | `/run/crio/crio.sock`                                                                                                                     |
-| `docker.enabled`                           | Enable Docker support                                                                                                                                                                                      | `true`                                                                                                                  |
-| `docker.socket`                            | The path of the Docker daemon socket                                                                                                                                                                       | `/var/run/docker.sock`                                                                                                  |
-| `kubernetesSupport.enabled`                | Enable Kubernetes meta data collection via a connection to the Kubernetes API server                                                                                                                       | `true`                                                                                                                  |
-| `kubernetesSupport.apiAuth`                | Provide the authentication method Falco should use to connect to the Kubernetes API                                                                                                                        | `/var/run/secrets/kubernetes.io/serviceaccount/token`                                                                   |
-| `kubernetesSupport.apiUrl`                 | Provide the URL Falco should use to connect to the Kubernetes API                                                                                                                                          | `https://$(KUBERNETES_SERVICE_HOST)`                                                                                    |
-| `kubernetesSupport.enableNodeFilter`       | If true, only the current node (on which Falco is running) will be considered when requesting metadata of pods                                                                                             | `true`                                                                                                                  |
-| `podLabels`                                | Customized pod labels                                                                                                                                                                                      | `{}`                                                                                                                    |
-| `resources.requests.cpu`                   | CPU requested for being run in a node                                                                                                                                                                      | `100m`                                                                                                                  |
-| `resources.requests.memory`                | Memory requested for being run in a node                                                                                                                                                                   | `512Mi`                                                                                                                 |
-| `resources.limits.cpu`                     | CPU limit                                                                                                                                                                                                  | `1000m`                                                                                                                 |
-| `resources.limits.memory`                  | Memory limit                                                                                                                                                                                               | `1024Mi`                                                                                                                |
-| `extraArgs`                                | Specify additional container args                                                                                                                                                                          | `[]`                                                                                                                    |
-| `rbac.create`                              | If true, create & use RBAC resources                                                                                                                                                                       | `true`                                                                                                                  |
-| `serviceAccount.create`                    | Create serviceAccount                                                                                                                                                                                      | `true`                                                                                                                  |
-| `serviceAccount.name`                      | Use this value as serviceAccountName                                                                                                                                                                       | ` `                                                                                                                     |
-| `fakeEventGenerator.enabled`               | Run [falcosecurity/event-generator](https://github.com/falcosecurity/event-generator) for sample events                                                                                                    | `false`                                                                                                                 |
-| `fakeEventGenerator.args`                  | Arguments for `falcosecurity/event-generator`                                                                                                                                                              | `run --loop ^syscall`                                                                                                   |
-| `fakeEventGenerator.replicas`              | How many replicas of `falcosecurity/event-generator` to run                                                                                                                                                | `1`                                                                                                                     |
-| `daemonset.updateStrategy.type`            | The updateStrategy for updating the daemonset                                                                                                                                                              | `RollingUpdate`                                                                                                         |
-| `daemonset.env`                            | Extra environment variables passed to daemonset pods                                                                                                                                                       | `{}`                                                                                                                    |
-| `daemonset.podAnnotations`                 | Extra pod annotations to be added to pods created by the daemonset                                                                                                                                         | `{}`                                                                                                                    |
-| `podSecurityPolicy.create`                 | If true, create & use podSecurityPolicy                                                                                                                                                                    | `false`                                                                                                                 |
-| `proxy.httpProxy`                          | Set the Proxy server if is behind a firewall                                                                                                                                                               | ` `                                                                                                                     |
-| `proxy.httpsProxy`                         | Set the Proxy server if is behind a firewall                                                                                                                                                               | ` `                                                                                                                     |
-| `proxy.noProxy`                            | Set the Proxy server if is behind a firewall                                                                                                                                                               | ` `                                                                                                                     |
-| `timezone`                                 | Set the daemonset's timezone                                                                                                                                                                               | ` `                                                                                                                     |
-| `priorityClassName`                        | Set the daemonset's priorityClassName                                                                                                                                                                      | ` `                                                                                                                     |
-| `ebpf.enabled`                             | Enable eBPF support for Falco instead of `falco-probe` kernel module                                                                                                                                       | `false`                                                                                                                 |
-| `ebpf.path`                                | Path of the eBPF probe                                                                                                                                                                                     | ` `                                                                                                                     |
-| `ebpf.settings.hostNetwork`                | Needed to enable eBPF JIT at runtime for performance reasons                                                                                                                                               | `true`                                                                                                                  |
-| `leastPrivileged.enabled`                  | Use capabilities instead of running a privileged container. The kernel module driver can not be loaded if enabled.                                                                                         | `false`                                                                                                                 |
-| `securityContext`                          | Set securityContext for the DaemonSet containers. This block works in combination with the `leastPrivileged` block above. Read the daemonset.yaml template to understand how.                              | `{}`                                                                                                                    |
-| `podSecurityContext`                       | Set securityContext for the DaemonSet pods.                                                                                                                                                                | `{}`                                                                                                                   |
-| `auditLog.enabled`                         | Enable K8s audit log support for Falco                                                                                                                                                                     | `false`                                                                                                                 |
-|  `falco.watchConfigFiles`                  | Watch config file and rules files for modification. When a file is modified, Falco will propagate new config, by reloading itself. | `true` |
-| `falco.rulesFile`                          | The location of the rules files                                                                                                                                                                            | `[/etc/falco/falco_rules.yaml, /etc/falco/falco_rules.local.yaml, /etc/falco/k8s_audit_rules.yaml, /etc/falco/rules.d]` |
-| `falco.timeFormatISO8601`                  | Display times using ISO 8601 instead of local time zone                                                                                                                                                    | `false`                                                                                                                 |
-| `falco.jsonOutput`                         | Output events in json or text                                                                                                                                                                              | `false`                                                                                                                 |
-| `falco.jsonIncludeOutputProperty`          | Include output property in json output                                                                                                                                                                     | `true`                                                                                                                  |
-| `falco.jsonIncludeTagsProperty`            | Include tags property in json output                                                                                                                                                                       | `true`                                                                                                                  |
-| `falco.logStderr`                          | Send Falco debugging information logs to stderr                                                                                                                                                            | `true`                                                                                                                  |
-| `falco.logSyslog`                          | Send Falco debugging information logs to syslog                                                                                                                                                            | `true`                                                                                                                  |
-| `falco.logLevel`                           | The minimum level of Falco debugging information to include in logs                                                                                                                                        | `info`                                                                                                                  |
-| `falco.priority`                           | The minimum rule priority level to load and run                                                                                                                                                            | `debug`                                                                                                                 |
-| `falco.bufferedOutputs`                    | Use buffered outputs to channels                                                                                                                                                                           | `false`                                                                                                                 |
-| `falco.syscallEventDrops.actions`          | Actions to be taken when system calls were dropped from the circular buffer                                                                                                                                | `[log, alert]`                                                                                                          |
-| `falco.syscallEventDrops.rate`             | Rate at which log/alert messages are emitted                                                                                                                                                               | `.03333`                                                                                                                |
-| `falco.syscallEventDrops.maxBurst`         | Max burst of messages emitted                                                                                                                                                                              | `10`                                                                                                                    |
-| `falco.outputs.output_timeout`             | Duration in milliseconds to wait before considering the output timeout deadline exceed                                                                                                                     | `2000`                                                                                                                  |
-| `falco.outputs.rate`                       | Number of tokens gained per second                                                                                                                                                                         | `1`                                                                                                                     |
-| `falco.outputs.maxBurst`                   | Maximum number of tokens outstanding                                                                                                                                                                       | `1000`                                                                                                                  |
-| `falco.syslogOutput.enabled`               | Enable syslog output for security notifications                                                                                                                                                            | `true`                                                                                                                  |
-| `falco.fileOutput.enabled`                 | Enable file output for security notifications                                                                                                                                                              | `false`                                                                                                                 |
-| `falco.fileOutput.keepAlive`               | Open file once or every time a new notification arrives                                                                                                                                                    | `false`                                                                                                                 |
-| `falco.fileOutput.filename`                | The filename for logging notifications                                                                                                                                                                     | `./events.txt`                                                                                                          |
-| `falco.stdoutOutput.enabled`               | Enable stdout output for security notifications                                                                                                                                                            | `true`                                                                                                                  |
-| `falco.webserver.enabled`                  | Enable Falco embedded webserver to accept K8s audit events                                                                                                                                                 | `true`                                                                                                                  |
-| `falco.webserver.k8sHealthzEndpoint`       | Endpoint where Falco exposes the health status                                                                                                                                                             | `/healthz`                                                                                                              |
-| `falco.webserver.listenPort`               | Port where Falco embedded webserver listen to connections                                                                                                                                                  | `8765`                                                                                                                  |
-| `falco.webserver.sslEnabled`               | Enable SSL on Falco embedded webserver                                                                                                                                                                     | `false`                                                                                                                 |
-| `falco.webserver.sslCertificate`           | Certificate bundle path for the Falco embedded webserver                                                                                                                                                   | `/etc/falco/certs/falco.pem`                                                                                           |
-| `falco.livenessProbe.initialDelaySeconds`  | Tells the kubelet that it should wait X seconds before performing the first probe                                                                                                                          | `60`                                                                                                                    |
-| `falco.livenessProbe.timeoutSeconds`       | Number of seconds after which the probe times out                                                                                                                                                          | `5`                                                                                                                     |
-| `falco.livenessProbe.periodSeconds`        | Specifies that the kubelet should perform the check every x seconds                                                                                                                                        | `15`                                                                                                                    |
-| `falco.readinessProbe.initialDelaySeconds` | Tells the kubelet that it should wait X seconds before performing the first probe                                                                                                                          | `30`                                                                                                                    |
-| `falco.readinessProbe.timeoutSeconds`      | Number of seconds after which the probe times out                                                                                                                                                          | `5`                                                                                                                     |
-| `falco.readinessProbe.periodSeconds`       | Specifies that the kubelet should perform the check every x seconds                                                                                                                                        | `15`                                                                                                                    |
-| `falco.programOutput.enabled`              | Enable program output for security notifications                                                                                                                                                           | `false`                                                                                                                 |
-| `falco.programOutput.keepAlive`            | Start the program once or re-spawn when a notification arrives                                                                                                                                             | `false`                                                                                                                 |
-| `falco.programOutput.program`              | Command to execute for program output                                                                                                                                                                      | `mail -s "Falco Notification" someone@example.com`                                                                      |
-| `falco.httpOutput.enabled`                 | Enable http output for security notifications                                                                                                                                                              | `false`                                                                                                                 |
-| `falco.httpOutput.url`                     | Url to notify using the http output when a notification arrives                                                                                                                                            |                                                                                                                         |
-| `falco.grpc.enabled`                       | Enable the Falco gRPC server                                                                                                                                                                               | `false`                                                                                                                 |
-| `falco.grpc.threadiness`                   | Number of threads (and context) the gRPC server will use, `0` by default, which means "auto"                                                                                                               | `0`                                                                                                                     |
-| `falco.grpc.unixSocketPath`                | Unix socket the gRPC server will create                                                                                                                                                                    | `unix:///var/run/falco/falco.sock`                                                                                      |
-| `falco.grpc.listenPort`                    | Port where Falco gRPC server listen to connections                                                                                                                                                         | `5060`                                                                                                                  |
-| `falco.grpc.privateKey`                    | Key file path for the Falco gRPC server                                                                                                                                                                    | `/etc/falco/certs/server.key`                                                                                           |
-| `falco.grpc.certChain`                     | Cert file path for the Falco gRPC server                                                                                                                                                                   | `/etc/falco/certs/server.crt`                                                                                           |
-| `falco.grpc.rootCerts`                     | CA root file path for the Falco gRPC server                                                                                                                                                                | `/etc/falco/certs/ca.crt`                                                                                               |
-| `falco.grpcOutput.enabled`                 | Enable the gRPC output and events will be kept in memory until you read them with a gRPC client.                                                                                                           | `false`                                                                                                                 |
-| `falco.metadataDownload.maxMb`             | Max allowed response size (in Mb) when fetching metadata from Kubernetes                                                                                                                                   | `100`                                                                                                                   |
-| `falco.metadataDownload.chunkWaitUs`       | Sleep time (in μs) for each download chunck when fetching metadata from Kubernetes                                                                                                                         | `1000`                                                                                                                  |
-| `falco.metadataDownload.watchFreqSec`      | Watch frequency (in seconds) when fetching metadata from Kubernetes                                                                                                                                        | `1`                                                                                                                     |
-| `customRules`                              | Third party rules enabled for Falco                                                                                                                                                                        | `{}`                                                                                                                    |
-| `certs.existingSecret`                     | Existing secret containing the following key, crt and ca as well as the bundle pem.                                                                                                                        | ` `                                                                                                                     |
-| `certs.server.key`                         | Key used by gRPC and webserver                                                                                                                                                                             | ` `                                                                                                                     |
-| `certs.server.crt`                         | Certificate used by gRPC and webserver                                                                                                                                                                     | ` `                                                                                                                     |
-| `certs.ca.crt`                             | CA certificate used by gRPC, webserver and AuditSink validation                                                                                                                                            | ` `                                                                                                                     |
-| `nodeSelector`                             | The node selection constraint                                                                                                                                                                              | `{}`                                                                                                                    |
-| `affinity`                                 | The affinity constraint                                                                                                                                                                                    | `{}`                                                                                                                    |
-| `tolerations`                              | The tolerations for scheduling                                                                                                                                                                             | `node-role.kubernetes.io/master:NoSchedule`                                                                             |
-| `scc.create`                               | Create OpenShift's Security Context Constraint                                                                                                                                                             | `true`                                                                                                                  |
-| `extraInitContainers`                      | A list of initContainers you want to add to the falco pod in the daemonset.                                                                                                                                | `[]`                                                                                                                    |
-| `extraVolumes`                             | A list of volumes you want to add to the falco daemonset.                                                                                                                                                  | `[]`                                                                                                                    |
-| `extraVolumeMounts`                        | A list of volumeMounts you want to add to the falco container in the falco daemonset.                                                                                                                      | `[]`                                                                                                                    |
-| `falcosidekick.enabled`                    | Enable `falcosidekick` deployment                                                                                                                                                                          | `false`                                                                                                                 |
-| `falcosidekick.fullfqdn`                   | Enable usage of full FQDN of `falcosidekick` service (useful when a Proxy is used)                                                                                                                         | `false`                                                                                                                 |
-
-Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
-
-```bash
-helm install falco --set falco.jsonOutput=true falcosecurity/falco
-```
-
-Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
-
-```bash
-helm install falco -f values.yaml falcosecurity/falco
-```
-
-> **Tip**: You can use the default [values.yaml](values.yaml)
 
 ## Loading custom rules
 
@@ -238,8 +162,86 @@ And this means that our Falco installation has loaded the rules and is ready to 
 
 ## Kubernetes Audit Log
 
-The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin. To configure this chart to use the Kubernetes Audit Log, you need to enable the `auditLog.enabled` parameter, and you also have to configure the plugin accordingly. It is also entirely up to you to set up the [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
+The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin. It is entirely up to you to set up the [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
 
+The following snippet shows how to deploy Falco with the [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin:
+```yaml
+driver:
+  enabled: false
+
+collectors:
+  enabled: false
+
+controller:
+  kind: deployment
+
+services:
+  - name: k8saudit-webhook
+    type: NodePort
+    ports:
+      - port: 9765 # See plugin open_params
+        nodePort: 30007
+        protocol: TCP
+
+falco:
+  rulesFile:
+    - /etc/falco/k8s_audit_rules.yaml
+    - /etc/falco/rules.d
+  plugins:
+    - name: k8saudit
+      library_path: libk8saudit.so
+      init_config:
+        ""
+        # maxEventBytes: 1048576
+        # sslCertificate: /etc/falco/falco.pem
+      open_params: "http://:9765/k8s-audit"
+    - name: json
+      library_path: libjson.so
+      init_config: ""
+  load_plugins: [k8saudit, json]
+```
+What the above configuration does is:
+* disable the drivers by setting `driver.enabled=false`;
+* disable the collectors by setting `collectors.enabled=false`;
+* deploy the Falco using a k8s *deploment* by setting `controller.kind=deployment`;
+* makes our Falco instance reachable by the `k8s api-server` by configuring a service for it in `services`;
+* load the correct ruleset for our plugin in `falco.rulesFile`;
+* configure the plugins to be loaded, in this case the `k8saudit` and `json`;
+* and finally we add our plugins in the `load_plugins` to be loaded by Falco.
+
+The configuration can be found in the `values-k8saudit.yaml` file ready to be used:
+
+
+```bash
+#make sure the falco namespace exists
+kubectl create ns falco
+helm install falco falcosecurity/falco --namespace falco -f ./values-k8saudit.yaml
+```
+After a few minutes a Falco instance should be running on your cluster. The status of Falco pod can be inspected through *kubectl*:
+```bash
+kubectl get pods -n falco -o wide
+```
+If every thing went smoothly, you should observe an output similar to the following, indicating that the Falco instance is up and running:
+
+```bash
+NAME                     READY   STATUS    RESTARTS   AGE    IP           NODE            NOMINATED NODE   READINESS GATES
+falco-64484d9579-qckms   1/1     Running   0          101s   10.244.2.2   worker-node-2   <none>           <none>
+```
+
+Furthermore you can check that Falco logs through *kubectl logs*
+
+```bash
+kubectl logs -n falco falco-64484d9579-qckms
+```
+In the logs you should have something similar to the following, indcating that Falco has loaded the required plugins:
+```bash
+Fri Jul  8 16:07:24 2022: Falco version 0.32.0 (driver version 39ae7d40496793cf3d3e7890c9bbdc202263836b)
+Fri Jul  8 16:07:24 2022: Falco initialized with configuration file /etc/falco/falco.yaml
+Fri Jul  8 16:07:24 2022: Loading plugin (k8saudit) from file /usr/share/falco/plugins/libk8saudit.so
+Fri Jul  8 16:07:24 2022: Loading plugin (json) from file /usr/share/falco/plugins/libjson.so
+Fri Jul  8 16:07:24 2022: Loading rules from file /etc/falco/k8s_audit_rules.yaml:
+Fri Jul  8 16:07:24 2022: Starting internal webserver, listening on port 8765
+```
 *Note that the support for the dynamic backend (also known as the `AuditSink` object) has been deprecated from Kubernetes and removed from this chart.*
 
 ### Manual setup with NodePort on kOps
@@ -288,105 +290,6 @@ spec:
     roles:
     - Master
 ```
-
-Then you can install the Falco chart enabling these flags:
-
-```shell
-helm install falco --set auditLog.enabled=true --set auditLog.nodePort=32765 falcosecurity/falco
-```
-
-## Using an init container
-
-This chart allows adding init containers and extra volume mounts. One common usage of the init container is to specify a different image for loading the driver (ie. [falcosecurity/driver-loader](https://hub.docker.com/repository/docker/falcosecurity/falco-driver-loader)). So then a slim image can be used for running Falco (ie. [falcosecurity/falco-no-driver](https://hub.docker.com/repository/docker/falcosecurity/falco-no-driver)).
-
-### Using `falcosecurity/driver-loader` image
-
-Create a YAML file `values.yaml` as following:
-
-```yaml
-image:
-  repository: falcosecurity/falco-no-driver
-
-extraInitContainers:
-  - name: driver-loader
-    image: docker.io/falcosecurity/falco-driver-loader:latest
-    imagePullPolicy: Always
-    securityContext:
-      privileged: true
-    volumeMounts:
-      - mountPath: /host/proc
-        name: proc-fs
-        readOnly: true
-      - mountPath: /host/boot
-        name: boot-fs
-        readOnly: true
-      - mountPath: /host/lib/modules
-        name: lib-modules
-      - mountPath: /host/usr
-        name: usr-fs
-        readOnly: true
-      - mountPath: /host/etc
-        name: etc-fs
-        readOnly: true
-```
-
-Then:
-
-```shell
-helm install falco -f values.yaml falcosecurity/falco
-```
-
-### Using `falcosecurity/driver-loader` image with eBPF
-
-Create a YAML file `values.yaml` as following:
-
-```yaml
-image:
-  repository: falcosecurity/falco-no-driver
-
-extraInitContainers:
-  - name: driver-loader
-    image: docker.io/falcosecurity/falco-driver-loader:latest
-    imagePullPolicy: Always
-    volumeMounts:
-      - mountPath: /host/proc
-        name: proc-fs
-        readOnly: true
-      - mountPath: /host/boot
-        name: boot-fs
-        readOnly: true
-      - mountPath: /host/lib/modules
-        name: lib-modules
-      - mountPath: /host/usr
-        name: usr-fs
-        readOnly: true
-      - mountPath: /host/etc
-        name: etc-fs
-        readOnly: true
-      - mountPath: /root/.falco
-        name: driver-fs
-    env:
-      - name: FALCO_BPF_PROBE
-        value:
-
-extraVolumes:
-  - name: driver-fs
-    emptyDir: {}
-
-extraVolumeMounts:
-  - mountPath: /root/.falco
-    name: driver-fs
-
-ebpf:
-  enabled: true
-```
-
-Then:
-
-```shell
-helm install falco -f values.yaml falcosecurity/falco
-```
-
 ## Enabling gRPC
 
 The Falco gRPC server and the Falco gRPC Outputs APIs are not enabled by default.
@@ -405,7 +308,7 @@ To install Falco with gRPC enabled over a **unix socket**, you have to:
 ```shell
 helm install falco \
   --set falco.grpc.enabled=true \
-  --set falco.grpcOutput.enabled=true \
+  --set falco.grpc_utput.enabled=true \
   falcosecurity/falco
 ```
 
