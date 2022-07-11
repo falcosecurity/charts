@@ -128,7 +128,7 @@ controller:
   # Available options: deployment, daemonset.
   kind: daemonset
   daemonset:
-    
+
     updateStrategy:
       # You can also customize maxUnavailable or minReadySeconds if you
       # need it
@@ -325,8 +325,8 @@ falco:
   # To learn more about the supported formats for
   # init_config/open_params for the cloudtrail plugin, see the README at
   # https://github.com/falcosecurity/plugins/blob/master/plugins/cloudtrail/README.md.
-  # -- Plugins configuration. Add here all plugins and their configuration. Please 
-  # consult the plugins documentation for more info. Remember to add the plugins name in 
+  # -- Plugins configuration. Add here all plugins and their configuration. Please
+  # consult the plugins documentation for more info. Remember to add the plugins name in
   # "load_plugins: []" in order to load them in Falco.
   plugins:
     - name: k8saudit
