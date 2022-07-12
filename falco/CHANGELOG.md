@@ -11,7 +11,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 * Upgrade Falco to 0.32.1
 * Massive refactoring of the chart implementation
-* Add ability to use either a daemonset or a deployment (depeding on the installation scenario)
+* Add ability to use either a daemonset or a deployment (depending on the installation scenario)
 * Add ability to specify custom network services
 * New settings for the drivers configuration
 * New Makefile to generate helm documentation
