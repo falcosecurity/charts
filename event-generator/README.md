@@ -32,7 +32,7 @@ In order to install the event-generator in a custom namespace run:
 kubectl create ns "ns-event-generator"
 helm install event-generator falcosecurity/event-generator --namespace "ns-event-generator"
 ```
-When the event-generator is installed using the default values in `values.yaml` file it is deployed using a k8s job, running the `test` command and, generates activity only for the k8s audit. 
+When the event-generator is installed using the default values in `values.yaml` file it is deployed using a k8s job, running the `run` command and, generates activity only for the k8s audit. 
 For more info check the next section.
 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment

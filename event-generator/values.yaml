@@ -51,7 +51,7 @@ config:
   # run: runs actions.
   # test: runs and tests actions.
   # For more info see: https://github.com/falcosecurity/event-generator.
-  command: test
+  command: run
   # -- Regular expression used to select the actions to be run.
   actions: "^k8saudit"
   # -- Runs in a loop the actions.
@@ -63,6 +63,6 @@ config:
 
   grpc:
     # -- Set it to true if you are deploying in "test" mode.
-    enabled: true
+    enabled: false
     # -- Path to the Falco grpc socket.
     bindAddress: "unix:///var/run/falco/falco.sock"
