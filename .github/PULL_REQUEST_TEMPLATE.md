@@ -39,6 +39,8 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area falcosidekick-chart
 
+> /area event-generator-chart
+
 <!--
 Please remove the leading whitespace before the `/area <>` you uncommented.
 -->
