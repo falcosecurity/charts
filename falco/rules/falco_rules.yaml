@@ -2983,12 +2983,15 @@
 - macro: user_known_stand_streams_redirect_activities
   condition: (never_true)
 
+- macro: dup
+  condition: evt.type in (dup, dup2, dup3)
+
 - rule: Redirect STDOUT/STDIN to Network Connection in Container
   desc: Detect redirecting stdout/stdin to network connection in container (potential reverse shell).
-  condition: evt.type=dup and evt.dir=> and container and fd.num in (0, 1, 2) and fd.type in ("ipv4", "ipv6") and not user_known_stand_streams_redirect_activities
+  condition: dup and container and evt.rawres in (0, 1, 2) and fd.type in ("ipv4", "ipv6") and not user_known_stand_streams_redirect_activities
   output: >
     Redirect stdout/stdin to network connection (user=%user.name user_loginuid=%user.loginuid %container.info process=%proc.name parent=%proc.pname cmdline=%proc.cmdline terminal=%proc.tty container_id=%container.id image=%container.image.repository fd.name=%fd.name fd.num=%fd.num fd.type=%fd.type fd.sip=%fd.sip)
-  priority: WARNING
+  priority: NOTICE
 
 # The two Container Drift rules below will fire when a new executable is created in a container.
 # There are two ways to create executables - file is created with execution permissions or permissions change of existing file.
@@ -3137,8 +3140,8 @@
 - macro: user_known_ingress_remote_file_copy_activities
   condition: (never_true)
 
--  macro: curl_download
-   condition: proc.name = curl and
+- macro: curl_download
+  condition: proc.name = curl and
               (proc.cmdline contains " -o " or
               proc.cmdline contains " --output " or
               proc.cmdline contains " -O " or
@@ -3177,6 +3180,19 @@
     "Detect an attempt to exploit a container escape using release_agent file (user=%user.name user_loginuid=%user.loginuid filename=%fd.name %container.info image=%container.image.repository:%container.image.tag cap_effective=%thread.cap_effective)"
   priority: CRITICAL
   tags: [container, mitre_privilege_escalation, mitre_lateral_movement]
+
+# Rule for detecting potential Log4Shell (CVE-2021-44228) exploitation
+# Note: Not compatible with Java 17+, which uses read() syscalls
+- macro: java_network_read
+  condition: (evt.type=recvfrom and fd.type in (ipv4, ipv6) and proc.name=java)
+
+- rule: Java Process Class File Download
+  desc: Detected Java process downloading a class file which could indicate a successful exploit of the log4shell Log4j vulnerability (CVE-2021-44228)
+  condition: >
+        java_network_read and evt.buffer bcontains cafebabe
+  output: Java process class file download (user=%user.name user_loginname=%user.loginname user_loginuid=%user.loginuid event=%evt.type connection=%fd.name server_ip=%fd.sip server_port=%fd.sport proto=%fd.l4proto process=%proc.name command=%proc.cmdline parent=%proc.pname buffer=%evt.buffer container_id=%container.id image=%container.image.repository)
+  priority: CRITICAL
+  tags: [mitre_initial_access]
 
 # Application rules have moved to application_rules.yaml. Please look
 # there if you want to enable them by adding to
