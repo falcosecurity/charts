@@ -4,7 +4,7 @@
 
 ## Introduction
 
-The deployment of Falco in a Kubernetes cluster is managed through a **Helm chart**. This chart manages the life cycle of Falco in a cluster by handling all the k8s objects needed by Falco to be seamlessly integrated in your environment. Based on the configuration in `values.yaml` file, the chart will render and install the required k8s objects. Keep in mind that Falco could be deployed in your cluster using a `daemonset` or a `deployment`. See next sections for more info.
+The deployment of Falco in a Kubernetes cluster is managed through a **Helm chart**. This chart manages the lifecycle of Falco in a cluster by handling all the k8s objects needed by Falco to be seamlessly integrated in your environment. Based on the configuration in `values.yaml` file, the chart will render and install the required k8s objects. Keep in mind that Falco could be deployed in your cluster using a `daemonset` or a `deployment`. See next sections for more info.
 
 ## Adding `falcosecurity` repository
 
@@ -20,15 +20,14 @@ helm repo update
 To install the chart with the release name `falco` in namespace `falco` run:
 
 ```bash
-kubectl create ns falco
-helm install falco falcosecurity/falco --namespace falco
+helm install falco falcosecurity/falco --namespace falco --create-namespace
 ```
 
 After a few minutes Falco instances should be running on all your nodes. The status of Falco pods can be inspected through *kubectl*:
 ```bash
 kubectl get pods -n falco -o wide
 ```
-If every thing went smoothly, you should observe an output similar to the following, indicating that all Falco instances are up and running in you cluster:
+If everything went smoothly, you should observe an output similar to the following, indicating that all Falco instances are up and running in you cluster:
 
 ```bash
 NAME          READY   STATUS    RESTARTS   AGE     IP          NODE            NOMINATED NODE   READINESS GATES
@@ -37,12 +36,12 @@ falco-h4596   1/1     Running   0          3m12s   10.244.1.2   worker-node-1   
 falco-kb55h   1/1     Running   0          3m12s   10.244.2.3   worker-node-2   <none>           <none>
 ```
 The cluster in our example has three nodes, one *control-plane* node and two *worker* nodes. The default configuration in `values.yaml` of our helm chart deploys Falco using a `daemonset`. That's the reason why we have one Falco pod in each node. 
-> **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
+> **Tip**: List Falco release using `helm list -n falco`, a release is a name used to track a specific deployment
 
 ### Falco, Event Sources and Kubernetes
-Starting from Falco 0.31.0 the [new plugin system](https://falco.org/docs/plugins/) is stable and production ready. The **plugin system** can be seen as the next step in the evolution of Falco. Historically, Falco monitored system events from the **kernel** trying to detect malicious behavior on Linux systems. It also had the capability to process k8s Audit Logs to detect suspicious activity in kubernetes clusters. Since Falco 0.32.0 all the related code to the k8s Audit Logs in Falco was removed and ported in a [plugin](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit). At the time being Falco supports different event sources coming from **plugins** or the **drivers** (system events). 
+Starting from Falco 0.31.0 the [new plugin system](https://falco.org/docs/plugins/) is stable and production ready. The **plugin system** can be seen as the next step in the evolution of Falco. Historically, Falco monitored system events from the **kernel** trying to detect malicious behaviors on Linux systems. It also had the capability to process k8s Audit Logs to detect suspicious activities in kubernetes clusters. Since Falco 0.32.0 all the related code to the k8s Audit Logs in Falco was removed and ported in a [plugin](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit). At the time being Falco supports different event sources coming from **plugins** or the **drivers** (system events). 
 
-Note that **multiple event sources can not be handled in the same Falco instance**. For instance, you can not have Falco deployed leveraging **drivers** for syscalls events and at the same time load **plugins**. Here you can find the [tracking issue](https://github.com/falcosecurity/falco/issues/2074) about multiple **event sources** in the same Falco instance.
+Note that **multiple event sources can not be handled in the same Falco instance**. It means, you can not have Falco deployed leveraging **drivers** for syscalls events and at the same time loading **plugins**. Here you can find the [tracking issue](https://github.com/falcosecurity/falco/issues/2074) about multiple **event sources** in the same Falco instance.
 If you need to handle **syscalls** and **plugins** events than consider deploying different Falco instances, one for each use case.
 #### About the Driver
 
@@ -50,7 +49,7 @@ Falco needs a **driver** (the [kernel module](https://falco.org/docs/event-sourc
 
 By default the drivers are managed using an *init container* which includes a script (`falco-driver-loader`) that either tries to build the driver on-the-fly or downloads a prebuilt driver as a fallback. Usually, no action is required.
 
-If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to building the driver on the fly correctly. You can find instructions on installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
+If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to build the driver on the fly correctly. You can find instructions for installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
 
 ### About Plugins
 [Plugins](https://falco.org/docs/plugins/) are used to extend Falco to support new **data sources**. The current **plugin framework** supports *plugins* with the following *capabilities*:
@@ -78,15 +77,15 @@ driver:
   enabled: true
   kind: ebpf
 ```
-There are other configurations related the eBPF probe, for more info please check the `values.yaml` file. After you have made made your changes to the configuration file you just need to run:
+There are other configurations related to the eBPF probe, for more info please check the `values.yaml` file. After you have made your changes to the configuration file you just need to run:
 
 ```bash
-helm install falco falcosecurity/falco --namespace "your-custom-name-space"
+helm install falco falcosecurity/falco --namespace "your-custom-name-space" --create-namespace
 ```
 
 ####Deployment
 In the scenario when Falco is used with **plugins** as data sources, then the best option is to deploy it as a k8s `deployment`. **Plugins** could be of two types, the ones that follow the **push model** or the **pull model**. A plugin that adopts the firs model expects to receive the data from a remote source in a given endpoint. They just expose and endpoint and wait for data to be posted, for example [Kubernetes Audit Events](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) expects the data to be sent by the *k8s api server* when configured in such way. On the other hand other plugins that abide by the **pull model** retrieves the data from a given remote service. 
-The following points explain why a k8s `deployent` is suitable when deploying Falco with plugins:
+The following points explain why a k8s `deployment` is suitable when deploying Falco with plugins:
 
 * need to be reachable when ingesting logs directly from remote services;
 * need only one active replica, otherwise events will be sent/received to/from different Falco instances;
@@ -214,14 +213,13 @@ The configuration can be found in the `values-k8saudit.yaml` file ready to be us
 
 ```bash
 #make sure the falco namespace exists
-kubectl create ns falco
-helm install falco falcosecurity/falco --namespace falco -f ./values-k8saudit.yaml
+helm install falco falcosecurity/falco --namespace falco -f ./values-k8saudit.yaml --create-namespace
 ```
 After a few minutes a Falco instance should be running on your cluster. The status of Falco pod can be inspected through *kubectl*:
 ```bash
 kubectl get pods -n falco -o wide
 ```
-If every thing went smoothly, you should observe an output similar to the following, indicating that the Falco instance is up and running:
+If everything went smoothly, you should observe an output similar to the following, indicating that the Falco instance is up and running:
 
 ```bash
 NAME                     READY   STATUS    RESTARTS   AGE    IP           NODE            NOMINATED NODE   READINESS GATES
@@ -334,7 +332,7 @@ helm install falco \
 
 [`Falcosidekick`](https://github.com/falcosecurity/falcosidekick) can be installed with `Falco` by setting `--set falcosidekick.enabled=true`. This setting automatically configures all options of `Falco` for working with `Falcosidekick`.
 All values for the configuration of `Falcosidekick` are available by prefixing them with `falcosidekick.`. The full list of available values is [here](https://github.com/falcosecurity/charts/tree/master/falcosidekick#configuration).
-For example, to enable the deployment of [`Falcosidekick-UI`](https://github.com/falcosecurity/falcosidekick-ui), add `--set falcosidekick.webui.enabled=true`.
+For example, to enable the deployment of [`Falcosidekick-UI`](https://github.com/falcosecurity/falcosidekick-ui), add `--set falcosidekick.enabled=true --set falcosidekick.webui.enabled=true`.
 
 If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidekick` might be captured, use the full FQDN of `Falcosidekick` by using `--set falcosidekick.fullfqdn=true` to avoid that.
 
