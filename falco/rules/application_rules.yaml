@@ -44,7 +44,6 @@
 #   output: "Outbound network traffic from Elasticsearch on unexpected port (connection=%fd.name)"
 #   priority: WARNING
 
-
 # ActiveMQ ports
 - macro: activemq_cluster_port
   condition: fd.sport=61616
@@ -64,7 +63,6 @@
 #   condition: user.name = activemq and outbound and not activemq_cluster_port
 #   output: "Outbound network traffic from ActiveMQ on unexpected port (connection=%fd.name)"
 #   priority: WARNING
-
 
 # Cassandra ports
 # https://docs.datastax.com/en/cassandra/2.0/cassandra/security/secureFireWall_r.html
@@ -155,7 +153,6 @@
 #   output: "Unexpected Memcached outbound connection (connection=%fd.name)"
 #   priority: WARNING
 
-
 # MongoDB ports
 - macro: mongodb_server_port
   condition: fd.sport = 27017
@@ -165,7 +162,6 @@
   condition: fd.sport = 27019
 - macro: mongodb_webserver_port
   condition: fd.sport = 28017
-
 # - rule: Mongodb unexpected network inbound traffic
 #   desc: inbound network traffic to mongodb on a port other than the standard ports
 #   condition: >

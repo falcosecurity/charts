@@ -12,7 +12,7 @@ image:
   # -- The image repository to pull from
   repository: falcosecurity/falco-no-driver
   # -- The image tag to pull. Overrides the image tag whose default is the chart appVersion.
-  tag: "0.32.0"
+  tag: ""
 
 # -- Secrets containing credentials when pulling from private/secure registries.
 imagePullSecrets: []
@@ -128,7 +128,6 @@ controller:
   # Available options: deployment, daemonset.
   kind: daemonset
   daemonset:
-
     updateStrategy:
       # You can also customize maxUnavailable or minReadySeconds if you
       # need it
@@ -182,7 +181,7 @@ driver:
     # -- Enable/disable the init container.
     enabled: true
     initContainer:
-       # -- Enable/disable the init container.
+      # -- Enable/disable the init container.
       enabled: true
       image:
         # -- The image pull policy.
@@ -192,7 +191,7 @@ driver:
         # -- The image repository to pull from.
         repository: falcosecurity/falco-driver-loader
         #  -- Overrides the image tag whose default is the chart appVersion.
-        tag: "0.32.0"
+        tag: ""
 
 # Collectors for data enrichment (scenario requirement)
 collectors:
@@ -332,14 +331,14 @@ falco:
     - name: k8saudit
       library_path: libk8saudit.so
       init_config:
-        ""
-        # maxEventBytes: 1048576
-        # sslCertificate: /etc/falco/falco.pem
+      #   maxEventSize: 262144
+      #   webhookMaxBatchSize: 12582912
+      #   sslCertificate: /etc/falco/falco.pem
       open_params: "http://:9765/k8s-audit"
     - name: cloudtrail
       library_path: libcloudtrail.so
-      init_config: ""
-      open_params: ""
+      # see docs for init_config and open_params:
+      # https://github.com/falcosecurity/plugins/blob/master/plugins/cloudtrail/README.md
     - name: json
       library_path: libjson.so
       init_config: ""
@@ -389,6 +388,17 @@ falco:
   # log level of falco's internal logging. Can be one of "emergency",
   # "alert", "critical", "error", "warning", "notice", "info", "debug".
   log_level: info
+
+  # Falco is capable of managing the logs coming from libs. If enabled,
+  # the libs logger send its log records the same outputs supported by
+  # Falco (stderr and syslog). Disabled by default.
+  libs_logger:
+    enabled: false
+    # Minimum log severity to include in the libs logs. Note: this value is
+    # separate from the log level of the Falco logger and does not affect it.
+    # Can be one of "fatal", "critical", "error", "warning", "notice",
+    # "info", "debug", "trace".
+    severity: debug
 
   # -- Minimum rule priority level to load and run. All rules having a
   # priority more severe than this level will be loaded/run.  Can be one
