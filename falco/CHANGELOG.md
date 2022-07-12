@@ -3,6 +3,32 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.0
+
+**Note**
+*This release is a complete refactor of the Falco Helm Chart. Thus, it introduces some breaking changes.*
+*Please, do not reuse values from previous chart installations.*
+
+* Upgrade Falco to 0.32.1
+* Massive refactoring of the chart implementation
+* Add ability to use either a daemonset or a deployment (depeding on the installation scenario)
+* Add ability to specify custom network services
+* New settings for the drivers configuration
+* New Makefile to generate helm documentation
+* Add values-k8saudit.yaml preset for the k8saudit plugin
+* Fix use `load_plugins` instead of `loadPlugins` in Falco configuration
+* Update `containerSecurityContext` (former `securityContext`) now takes precedence over auto configs
+* Move `leastPriviledged` mode under eBPF and add missing `SYS_PTRACE` cap
+* Update group values for metadata collection under "collectors"
+* Remove several settings in favour of `extra.env`
+* Use chart `appVersion` as default image tag
+* Move setting from `image.pullSecrets` to `imagePullSecrets`
+* Add an option to set desidered replicas
+* Improve selector labels
+* Modernize labels and improve internal helpers
+* Deprecate PSP (template removed)
+* Fake event generator removed from this chart
+
 ## v1.19.4
 
 * Bump Falco Sidekick dependency.
