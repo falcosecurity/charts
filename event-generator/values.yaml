@@ -53,10 +53,10 @@ config:
   # For more info see: https://github.com/falcosecurity/event-generator.
   command: run
   # -- Regular expression used to select the actions to be run.
-  actions: "^k8saudit"
+  actions: "^syscall"
   # -- Runs in a loop the actions.
   # If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job.
-  loop: false
+  loop: true
   # -- The length of time to wait before running an action. Non-zero values should contain
   # a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms)
   sleep: ""
