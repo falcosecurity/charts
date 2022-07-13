@@ -113,7 +113,7 @@ Return the appropriate apiVersion for rbac.
     {{- if .Values.falcosidekick.fullfqdn -}}
        {{- printf "http://%s-falcosidekick.%s.svc.cluster.local:%s" $falcoName .Release.Namespace $listenPort -}}
     {{- else -}}
-        {{- printf "http://%s-falcosidekick.svc.cluster.local:%s" $falcoName $listenPort -}}
+        {{- printf "http://%s-falcosidekick:%s" $falcoName $listenPort -}}
     {{- end -}}
 {{- else -}}
     {{- .Values.falco.http_output.url -}}
