@@ -3,6 +3,11 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.1
+Add description for configuration variable in values.yaml
+Add linting target in Makefile
+Remove configuration values table from README.md
+Fix section titles in README.md
 ## v2.0.0
 
 **Note**
