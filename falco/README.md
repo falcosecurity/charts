@@ -66,7 +66,7 @@ After the clarification of the different **event sources** and how they are cons
 
 The chart deploys Falco using a `daemonset` or a `deployment` depending on the **event sources**.
 
-####Daemonset
+#### Daemonset
 When using the [drivers](#about-the-driver), Falco is deployed as `daemonset`. By using a `daemonset`, k8s assures that a Falco instance will be running in each of our nodes even when we add new nodes to our cluster. So it is the perfect match when we need to monitor all the nodes in our cluster. 
 Using the default values of the helm chart we get Falco deployed with the [kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module).
 
@@ -83,7 +83,7 @@ There are other configurations related to the eBPF probe, for more info please c
 helm install falco falcosecurity/falco --namespace "your-custom-name-space" --create-namespace
 ```
 
-####Deployment
+#### Deployment
 In the scenario when Falco is used with **plugins** as data sources, then the best option is to deploy it as a k8s `deployment`. **Plugins** could be of two types, the ones that follow the **push model** or the **pull model**. A plugin that adopts the firs model expects to receive the data from a remote source in a given endpoint. They just expose and endpoint and wait for data to be posted, for example [Kubernetes Audit Events](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) expects the data to be sent by the *k8s api server* when configured in such way. On the other hand other plugins that abide by the **pull model** retrieves the data from a given remote service. 
 The following points explain why a k8s `deployment` is suitable when deploying Falco with plugins:
 
