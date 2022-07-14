@@ -1,31 +1,25 @@
-# Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
-ifeq (,$(shell go env GOBIN))
-GOBIN=$(shell go env GOPATH)/bin
-else
-GOBIN=$(shell go env GOBIN)
-endif
-
 #generate helm documentation
-docs: helm-docs
-	$(HELM_DOCS) -t README.gotmpl -o ./generated/helm-values.md
-	cat ./generated/helm-values.md >> README.md
+DOCS_IMAGE_VERSION="v1.11.0"
 
-helm-docs:
-ifeq (, $(shell which helm-docs))
-	@{ \
-	set -e ;\
-	HELM_DOCS_TMP_DIR=$$(mktemp -d) ;\
-	cd $$HELM_DOCS_TMP_DIR ;\
-	version=1.5.0 ;\
-    arch=x86_64 ;\
-    echo  $$HELM_DOCS_PATH ;\
-    echo https://github.com/norwoodj/helm-docs/releases/download/v$${version}/helm-docs_$${version}_linux_$${arch}.tar.gz ;\
-    curl -LO https://github.com/norwoodj/helm-docs/releases/download/v$${version}/helm-docs_$${version}_linux_$${arch}.tar.gz ;\
-    tar -zxvf helm-docs_$${version}_linux_$${arch}.tar.gz ;\
-    mv helm-docs $(GOBIN)/helm-docs ;\
-	rm -rf $$HELM_DOCS_TMP_DIR ;\
-	}
-HELM_DOCS=$(GOBIN)/helm-docs
-else
-HELM_DOCS=$(shell which helm-docs)
-endif
+#Here we use the "latest" tag since our CI uses the same(https://github.com/falcosecurity/charts/blob/2f04bccb5cacbbf3ecc2d2659304b74f865f41dd/.circleci/config.yml#L16).
+LINT_IMAGE_VERSION="latest"
+
+docs:
+	docker run \
+	--rm \
+	--workdir=/helm-docs \
+	--volume "$$(pwd):/helm-docs" \
+	-u $$(id -u) \
+	jnorwood/helm-docs:$(DOCS_IMAGE_VERSION) \
+	helm-docs -t ./README.gotmpl -o ./generated/helm-values.md
+
+lint: helm-repo-update
+	docker run \
+	-it \
+	--workdir=/data \
+	--volume $$(pwd)/..:/data \
+	quay.io/helmpack/chart-testing:latest \
+	ct lint --config ./tests/ct.yaml --charts ./falco --chart-dirs .
+
+helm-repo-update:
+	helm repo update
