@@ -393,8 +393,9 @@ falco:
   # the libs logger send its log records the same outputs supported by
   # Falco (stderr and syslog). Disabled by default.
   libs_logger:
+    # -- Enable the libs logger.
     enabled: false
-    # Minimum log severity to include in the libs logs. Note: this value is
+    # -- Minimum log severity to include in the libs logs. Note: this value is
     # separate from the log level of the Falco logger and does not affect it.
     # Can be one of "fatal", "critical", "error", "warning", "notice",
     # "info", "debug", "trace".
