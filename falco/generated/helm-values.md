@@ -56,8 +56,8 @@
 | falco.json_include_output_property | bool | `true` | When using json output, whether or not to include the "output" property itself (e.g. "File below a known binary directory opened for writing (user=root ....") in the json output. |
 | falco.json_include_tags_property | bool | `true` | When using json output, whether or not to include the "tags" property itself in the json output. If set to true, outputs caused by rules with no tags will have a "tags" field set to an empty array. If set to false, the "tags" field will not be included in the json output at all. |
 | falco.json_output | bool | `false` | Whether to output events in json or text. |
-| falco.libs_logger.enabled | bool | `false` |  |
-| falco.libs_logger.severity | string | `"debug"` |  |
+| falco.libs_logger.enabled | bool | `false` | Enable the libs logger. |
+| falco.libs_logger.severity | string | `"debug"` | Minimum log severity to include in the libs logs. Note: this value is separate from the log level of the Falco logger and does not affect it. Can be one of "fatal", "critical", "error", "warning", "notice", "info", "debug", "trace". |
 | falco.load_plugins | list | `[]` | Add here the names of the plugins that you want to be loaded by Falco. Please make sure that plugins have ben configured under the "plugins" section before adding them here. |
 | falco.log_level | string | `"info"` | Minimum log level to include in logs. Note: these levels are separate from the priority field of rules. This refers only to the log level of falco's internal logging. Can be one of "emergency", "alert", "critical", "error", "warning", "notice", "info", "debug". |
 | falco.log_stderr | bool | `true` | Send information logs to syslog. Note these are *not* security notification logs! These are just Falco lifecycle (and possibly error) logs. |
