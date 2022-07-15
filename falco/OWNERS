@@ -1,6 +1,3 @@
-approvers:
-- bencer
-- nestorsalceda
-reviewers:
-- bencer
-- nestorsalceda
+emeritus_approvers:
+  - bencer
+  - nestorsalceda
