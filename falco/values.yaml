@@ -192,6 +192,8 @@ driver:
         repository: falcosecurity/falco-driver-loader
         #  -- Overrides the image tag whose default is the chart appVersion.
         tag: ""
+      # -- Extra environment variables that will be pass onto Falco driver loader init container.
+      env: {}
 
 # Collectors for data enrichment (scenario requirement)
 collectors:

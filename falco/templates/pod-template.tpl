@@ -295,6 +295,10 @@ spec:
     - name: FALCO_BPF_PROBE
       value: {{ .Values.driver.ebpf.path }}
   {{- end }}
+  {{- range $key, $value := .Values.driver.loader.initContainer.env }}
+    - name: "{{ $key }}"
+      value: "{{ $value }}"
+  {{- end }}
 {{- end -}}
 
 {{- define "falco.securityContext" -}}
