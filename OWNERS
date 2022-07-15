@@ -1,18 +1,12 @@
 approvers:
-  - leodido
-  - fntlnz
-  - kris-nova
   - leogr
-  - nibalizer
   - Issif
   - cpanato
 reviewers:
+  - nestorsalceda
+  - bencer
+emeritus_approvers:
   - leodido
   - fntlnz
   - kris-nova
-  - leogr
   - nibalizer
-  - nestorsalceda
-  - bencer
-  - Issif
-  - cpanato
