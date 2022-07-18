@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.4
+
+* Fix templating for init containers in pod-template.tpl
+
 ## v2.0.3
 
 * Add ability to specify extra environment variables to driver loader initContainer
