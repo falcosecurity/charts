@@ -29,6 +29,9 @@ spec:
         {{- if .Values.config.loop }}
         - --loop
         {{- end }}
+        {{- if .Values.config.sleep }}
+        - --sleep={{- .Values.config.sleep }}
+        {{- end }}
         {{- if .Values.config.grpc.enabled }}
         - --grpc-unix-socket={{- .Values.config.grpc.bindAddress }}
         {{- end }}

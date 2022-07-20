@@ -9,3 +9,9 @@ numbering uses [semantic versioning](http://semver.org).
 ### Major Changes
 
 * Initial release of event-generator Helm Chart
+
+## v0.1.1
+
+### Minor Changes
+
+* Adding `-sleep` flag to the `pod-template.yaml` 
