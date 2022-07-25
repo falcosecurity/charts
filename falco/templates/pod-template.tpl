@@ -124,8 +124,10 @@ spec:
       volumeMounts:
         - mountPath: /root/.falco
           name: root-falco-fs
+        {{- if or .Values.driver.enabled .Values.mounts.enforceProcMount }}
         - mountPath: /host/proc
           name: proc-fs
+        {{- end }}
         {{- if and .Values.driver.enabled (not .Values.driver.loader.initContainer.enabled) }}
           readOnly: true
         - mountPath: /host/boot
@@ -226,9 +228,11 @@ spec:
     {{- end }}
     {{- end }}
     {{- end }}
+    {{- if or .Values.driver.enabled .Values.mounts.enforceProcMount }}
     - name: proc-fs
       hostPath:
         path: /proc
+    {{- end }}
     - name: config-volume
       configMap:
         name: {{ include "falco.fullname" . }}
