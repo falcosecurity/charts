@@ -325,12 +325,12 @@ config:
     checkcert: true
 
   nodered:
-    address: "" # Webhook address, if not empty, Webhook output is enabled
-    user: "" # User if Basic Auth is enabled for 'http in' node in Node-RED
-    password: "" # Password if Basic Auth is enabled for 'http in' node in Node-RED
-    customHeaders: "" # Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value"
-    minimumpriority: "" # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
-    checkcert: true # check if ssl certificate of the output is valid (default: true)
+    address: ""  # Webhook address, if not empty, Webhook output is enabled
+    user: ""  # User if Basic Auth is enabled for 'http in' node in Node-RED
+    password: ""  # Password if Basic Auth is enabled for 'http in' node in Node-RED
+    customHeaders: ""  # Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value"
+    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    checkcert: true  # check if ssl certificate of the output is valid (default: true)
 
   azure:
     # -- Azure Subscription ID
@@ -574,6 +574,16 @@ config:
     prunebypriority: false
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
+
+  mqtt:
+    broker: ""  # Broker address, can start with tcp:// or ssl://, if not empty, MQTT output is enabled
+    topic: "falco/events"  # Topic for messages (default: falco/events)
+    qos: 0  # QOS for messages (default: 0)
+    retained: false  # If true, messages are retained (default: false)
+    user: ""  # User if the authentication is enabled in the broker
+    password: ""  # Password if the authentication is enabled in the broker
+    checkcert: true  # check if ssl certificate of the output is valid (default: true)
+    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
 
 
 service:

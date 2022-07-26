@@ -12,6 +12,7 @@ as a list of comma separated labels and annotations to add to the AlertManager t
 * Add `smtp.autmechanism` and associated fields to be able to use any SASL mechanism.
 * Add `yandex.datastreams` and associated fields.
 * Add `nodered` and associated fields.
+* Add `mqtt` and associated fields.
 
 
 ## 0.5.7
