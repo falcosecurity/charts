@@ -104,7 +104,7 @@ There are many reasons why we would have to inspect the messages emitted by the 
 ```bash
 kubectl logs -n falco falco-pod-name
 ```
-where `falco-pods-name` is the name of the Falco pod running in you cluster. 
+where `falco-pods-name` is the name of the Falco pod running in your cluster. 
 The command described above will just display the logs emitted by falco until the moment you run the command. The `-f` flag comes handy when we are doing live testing or debugging and we want to have the Falco logs as soon as they are emitted. The following command:
 ```bash
 kubectl logs -f -n falco falco-pod-name

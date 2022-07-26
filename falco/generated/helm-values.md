@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.0.5`
+`Chart version: v2.0.6`
 ## Values
 
 | Key | Type | Default | Description |
