@@ -5,6 +5,13 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.5.8
+
+* Add `alertmanager.extralabels` and `alertmanager.extraannotations` to the values,
+as a list of comma separated labels and annotations to add to the AlertManager trigger.
+* Add `smtp.autmechanism` and associated fields to be able to use any SASL mechanism.
+
+
 ## 0.5.7
 
 * Removing unused Kafka config values
