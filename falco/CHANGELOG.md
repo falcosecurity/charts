@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.6
+
+* Add ability to enable `tty` for the falco container. Needed to force falco logs to be immediately displayed as they are emitted. Useful in test/debug scenarios.
+
 ## v2.0.5
 
 * Mount `/proc` only when syscall data source is enabled (default). This behaviour can be overridden via `mounts.enforceProcMount` for edge cases where the `/proc` `hostPath` mount is required without having the syscall data source enabled at the same time.

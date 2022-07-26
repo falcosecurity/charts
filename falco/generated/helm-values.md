@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.0.3`
+`Chart version: v2.0.5`
 ## Values
 
 | Key | Type | Default | Description |
@@ -106,6 +106,7 @@
 | image.repository | string | `"falcosecurity/falco-no-driver"` | The image repository to pull from |
 | image.tag | string | `""` | The image tag to pull. Overrides the image tag whose default is the chart appVersion. |
 | imagePullSecrets | list | `[]` | Secrets containing credentials when pulling from private/secure registries. |
+| mounts.enforceProcMount | bool | `false` | By default, `/proc` from the host is only mounted into the Falco pod when `driver.enabled` is set to `true`. This flag allows it to override this behaviour for edge cases where `/proc` is needed but syscall data source is not enabled at the same time (e.g. for specific plugins). |
 | mounts.volumeMounts | list | `[]` | A list of volumes you want to add to the Falco pods. |
 | mounts.volumes | list | `[]` | A list of volumes you want to add to the Falco pods. |
 | nameOverride | string | `""` | Put here the new name if you want to override the release name used for Falco components. |
@@ -123,3 +124,4 @@
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | services | string | `nil` | Network services configuration (scenario requirement) Add here your services to be deployed together with Falco. |
 | tolerations | list | `[{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"}]` | Tolerations to allow Falco to run on Kubernetes 1.6 masters. |
+| tty | bool | `false` | Attach the Falco process to a tty inside the container. Needed to flush Falco logs as soon as they are emitted. Set it to "true" when you need the Falco logs to be immediately displayed. |

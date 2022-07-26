@@ -100,6 +100,7 @@ spec:
           value: "{{ $value }}"
       {{- end }}
       {{- if .Values.falco.webserver.enabled }}
+      tty: {{ .Values.tty }}
       livenessProbe:
         initialDelaySeconds: {{ .Values.healthChecks.livenessProbe.initialDelaySeconds }}
         timeoutSeconds: {{ .Values.healthChecks.livenessProbe.timeoutSeconds }}
