@@ -11,6 +11,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 as a list of comma separated labels and annotations to add to the AlertManager trigger.
 * Add `smtp.autmechanism` and associated fields to be able to use any SASL mechanism.
 * Add `yandex.datastreams` and associated fields.
+* Add `nodered` and associated fields.
 
 
 ## 0.5.7

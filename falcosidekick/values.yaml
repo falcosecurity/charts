@@ -324,6 +324,14 @@ config:
     # -- check if ssl certificate of the output is valid
     checkcert: true
 
+  nodered:
+    address: "" # Webhook address, if not empty, Webhook output is enabled
+    user: "" # User if Basic Auth is enabled for 'http in' node in Node-RED
+    password: "" # Password if Basic Auth is enabled for 'http in' node in Node-RED
+    customHeaders: "" # Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value"
+    minimumpriority: "" # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    checkcert: true # check if ssl certificate of the output is valid (default: true)
+
   azure:
     # -- Azure Subscription ID
     subscriptionID: ""
