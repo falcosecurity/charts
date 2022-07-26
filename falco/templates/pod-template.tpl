@@ -27,8 +27,8 @@ spec:
   dnsPolicy: ClusterFirstWithHostNet
   {{- end }}
   {{- end }}
-  {{- if .Values.priorityClassName }}
-  priorityClassName: {{ .Values.priorityClassName }}
+  {{- if .Values.podPriorityClassName }}
+  priorityClassName: {{ .Values.podPriorityClassName }}
   {{- end }}
   {{- with .Values.nodeSelector }}
   nodeSelector:
