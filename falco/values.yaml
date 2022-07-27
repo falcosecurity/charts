@@ -177,11 +177,11 @@ driver:
     path:
     # -- Needed to enable eBPF JIT at runtime for performance reasons.
     # Can be skipped if eBPF JIT is enabled from outside the container
-    hostNetwork: true
+    hostNetwork: false
     # -- Constrain Falco with capabilities instead of running a privileged container.
     # This option is only supported with the eBPF driver and a kernel >= 5.8.
     # Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`).
-    leastPrivileged: true
+    leastPrivileged: false
   # -- Configuration for the Falco init container.
   loader:
     # -- Enable/disable the init container.
