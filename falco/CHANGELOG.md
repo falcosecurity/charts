@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.7
+
+* Fix templating for priorityClassName in pod-template.tpl
+
 ## v2.0.6
 
 * Add ability to enable `tty` for the falco container. Needed to force falco logs to be immediately displayed as they are emitted. Useful in test/debug scenarios.
