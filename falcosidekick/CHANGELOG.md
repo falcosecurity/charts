@@ -13,6 +13,7 @@ as a list of comma separated labels and annotations to add to the AlertManager t
 * Add `yandex.datastreams` and associated fields.
 * Add `nodered` and associated fields.
 * Add `mqtt` and associated fields.
+* Update `elasticsearch.type` default value to `_doc`
 
 
 ## 0.5.7
