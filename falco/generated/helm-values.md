@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.0.6`
+`Chart version: v2.0.8`
 ## Values
 
 | Key | Type | Default | Description |
@@ -26,9 +26,9 @@
 | controller.deployment.replicas | int | `1` | Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing. For more info check the section on Plugins in the README.md file. |
 | controller.kind | string | `"daemonset"` |  |
 | customRules | object | `{}` | Third party rules enabled for Falco. More info on the dedicated section in README.md file. |
-| driver.ebpf | object | `{"hostNetwork":true,"leastPrivileged":true,"path":null}` | Configuration section for ebpf driver. |
-| driver.ebpf.hostNetwork | bool | `true` | Needed to enable eBPF JIT at runtime for performance reasons. Can be skipped if eBPF JIT is enabled from outside the container |
-| driver.ebpf.leastPrivileged | bool | `true` | Constrain Falco with capabilities instead of running a privileged container. This option is only supported with the eBPF driver and a kernel >= 5.8. Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`). |
+| driver.ebpf | object | `{"hostNetwork":false,"leastPrivileged":false,"path":null}` | Configuration section for ebpf driver. |
+| driver.ebpf.hostNetwork | bool | `false` | Needed to enable eBPF JIT at runtime for performance reasons. Can be skipped if eBPF JIT is enabled from outside the container |
+| driver.ebpf.leastPrivileged | bool | `false` | Constrain Falco with capabilities instead of running a privileged container. This option is only supported with the eBPF driver and a kernel >= 5.8. Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`). |
 | driver.ebpf.path | string | `nil` | Path where the eBPF probe is located. It comes handy when the probe have been installed in the nodes using tools other than the init container deployed with the chart. |
 | driver.enabled | bool | `true` | Set it to false if you want to deploy Falco without the drivers. Always set it to false when using Falco with plugins. |
 | driver.kind | string | `"module"` | Tell Falco which driver to use. Available options: module (kernel driver) and ebpf (eBPF probe). |
