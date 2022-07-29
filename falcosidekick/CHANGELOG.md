@@ -15,7 +15,6 @@ as a list of comma separated labels and annotations to add to the AlertManager t
 * Add `mqtt` and associated fields.
 * Update `elasticsearch.type` default value to `_doc`
 
-
 ## 0.5.7
 
 * Removing unused Kafka config values

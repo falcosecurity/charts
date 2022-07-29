@@ -145,6 +145,10 @@ config:
     mutualtls: false
     # -- check if ssl certificate of the output is valid
     checkcert: true
+    # -- list of comma separated custom labels to add to AlertManager trigger. Syntax is "label:value,label:value"
+    extralabels: ""
+    # -- list of comma separated custom annotations to add to AlertManager trigger. Syntax is "label:value,label:value"
+    extraannotations: ""  #
 
   elasticsearch:
     # -- Elasticsearch <http://host:port>, if not `empty`, Elasticsearch is *enabled*
@@ -152,7 +156,7 @@ config:
     # -- Elasticsearch index
     index: "falco"
     # -- Elasticsearch document type
-    type: "event"
+    type: "_doc"
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
     # -- if true, checkcert flag will be ignored (server cert will always be checked)
@@ -273,10 +277,18 @@ config:
   smtp:
     # -- "host:port" address of SMTP server, if not empty, SMTP output is *enabled*
     hostport: ""
-    # -- user to access SMTP server
+    # -- SASL Mechanisms : plain, oauthbearer, external, anonymous or "" (disable SASL). Default: plain
+    authmechanism: "plain"
+    # -- User to access SMTP server with Plain Mechanism
     user: ""
-    # -- password to access SMTP server
+    # -- Password to access SMTP server  with Plain Mechanism
     password: ""
+    # -- OAuthBearer token for OAuthBearer Mechanism
+    token: ""
+    # -- Identity string for Plain and External Mechanisms
+    identity: ""
+    # -- Trace string for Anonymous Mechanism
+    trace: ""
     # -- Sender address (mandatory if SMTP output is *enabled*)
     from: ""
     # -- comma-separated list of Recipident addresses, can't be empty (mandatory if SMTP output is *enabled*)
@@ -325,12 +337,18 @@ config:
     checkcert: true
 
   nodered:
-    address: ""  # Webhook address, if not empty, Webhook output is enabled
-    user: ""  # User if Basic Auth is enabled for 'http in' node in Node-RED
-    password: ""  # Password if Basic Auth is enabled for 'http in' node in Node-RED
-    customHeaders: ""  # Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value"
-    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
-    checkcert: true  # check if ssl certificate of the output is valid (default: true)
+    # -- Webhook address, if not empty, Webhook output is enabled
+    address: ""
+    # --  User if Basic Auth is enabled for 'http in' node in Node-RED
+    user: ""
+    # -- Password if Basic Auth is enabled for 'http in' node in Node-RED
+    password: ""
+    # -- Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value"
+    customHeaders: ""
+    # -- minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    minimumpriority: ""
+    # -- check if ssl certificate of the output is valid (default: true)
+    checkcert: true
 
   azure:
     # -- Azure Subscription ID
@@ -526,6 +544,13 @@ config:
       prefix: ""
       # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
       minimumpriority: ""
+    datastreams:
+      # -- Yandex Data Streams endpoint
+      endpoint: "https://yds.serverless.yandexcloud.net"
+      # -- Stream name in format /${region}/${folder_id}/${ydb_id}/${stream_name}
+      streamname: ""
+      # -- minimum priority of event for using this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""`
+      minimumpriority: ""
 
   kafkarest:
     # -- The full URL to the topic (example "http://kafkarest:8082/topics/test")
@@ -576,14 +601,22 @@ config:
     minimumpriority: ""
 
   mqtt:
-    broker: ""  # Broker address, can start with tcp:// or ssl://, if not empty, MQTT output is enabled
-    topic: "falco/events"  # Topic for messages (default: falco/events)
-    qos: 0  # QOS for messages (default: 0)
-    retained: false  # If true, messages are retained (default: false)
-    user: ""  # User if the authentication is enabled in the broker
-    password: ""  # Password if the authentication is enabled in the broker
-    checkcert: true  # check if ssl certificate of the output is valid (default: true)
-    minimumpriority: ""  # minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    # -- Broker address, can start with tcp:// or ssl://, if not empty, MQTT output is enabled
+    broker: ""  #
+    # -- Topic for messages (default: falco/events)
+    topic: "falco/events"
+    # -- QOS for messages (default: 0)
+    qos: 0
+    # -- If true, messages are retained (default: false)
+    retained: false
+    # -- User if the authentication is enabled in the broker
+    user: ""
+    # -- Password if the authentication is enabled in the broker
+    password: ""
+    # -- Check if ssl certificate of the output is valid (default: true)
+    checkcert: true
+    # -- Minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    minimumpriority: ""
 
 
 service:
