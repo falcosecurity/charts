@@ -425,6 +425,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.redis.service.targetPort | int | `6379` | The web UI Redis service targetPort |
 | webui.redis.service.type | string | `"ClusterIP"` | The web UI Redis service type (i. e: LoadBalancer) |
 | webui.redis.storageClass | string | `""` | Storage class of the PVC for the redis pod |
+| webui.redis.storageEnabled | bool | `true` | Enable the PVC for the redis pod |
 | webui.redis.storageSize | string | `"1Gi"` | Size of the PVC for the redis pod |
 | webui.redis.tolerations | list | `[]` | Tolerations for pod assignment |
 | webui.replicaCount | int | `2` | number of running pods |
@@ -438,7 +439,6 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.tolerations | list | `[]` | Tolerations for pod assignment |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
-
 > **Tip**: You can use the default [values.yaml](values.yaml)
 
 ## Metrics
