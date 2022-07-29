@@ -168,9 +168,11 @@ spec:
           securityContext:
           {{- toYaml .Values.webui.redis.securityContext | nindent 12 }}
           {{- end }}
+          {{- if .Values.webui.redis.storageEnabled }}
           volumeMounts:
           - name: {{ include "falcosidekick.fullname" . }}-ui-redis-data
             mountPath: /data
+          {{- end }}
           resources:
             {{- toYaml .Values.webui.redis.resources | nindent 12 }}
       {{- with .Values.webui.redis.nodeSelector }}
@@ -185,6 +187,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  {{- if .Values.webui.redis.storageEnabled }}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "falcosidekick.fullname" . }}-ui-redis-data
@@ -196,5 +199,6 @@ spec:
         {{- if .Values.webui.redis.storageClass }}
         storageClassName: {{ .Values.webui.redis.storageClass }}
         {{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}

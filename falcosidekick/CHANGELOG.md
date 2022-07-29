@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.5.8
+
+* Support `storageEnabled` for `redis` to allow ephemeral installs
+
 ## 0.5.7
 
 * Removing unused Kafka config values
