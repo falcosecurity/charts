@@ -148,6 +148,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.alertmanager.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.alertmanager.endpoint | string | `"/api/v1/alerts"` | alertmanager endpoint on which falcosidekick posts alerts, choice is: `"/api/v1/alerts" or "/api/v2/alerts" , default is "/api/v1/alerts"` |
 | config.alertmanager.expireafter | string | `""` | if set to a non-zero value, alert expires after that time in seconds (default: 0) |
+| config.alertmanager.extraannotations | string | `""` | list of comma separated custom annotations to add to AlertManager trigger. Syntax is "label:value,label:value" |
+| config.alertmanager.extralabels | string | `""` | list of comma separated custom labels to add to AlertManager trigger. Syntax is "label:value,label:value" |
 | config.alertmanager.hostport | string | `""` | AlertManager <http://host:port>, if not `empty`, AlertManager is *enabled* |
 | config.alertmanager.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.alertmanager.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
@@ -186,7 +188,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.cloudevents.address | string | `""` | CloudEvents consumer http address, if not empty, CloudEvents output is *enabled* |
 | config.cloudevents.extension | string | `""` | Extensions to add in the outbound Event, useful for routing |
 | config.cloudevents.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
-| config.customfields | string | `""` | a list of escaped comma separated custom fields to add to falco events, syntax is "key:value\,key:value" |
+| config.customfields | string | `""` | a list of escaped comma separated custom fields to add to falco events. If the value starts with % the relative env var is used. The syntax is "key:value\,key:value". |
 | config.datadog.apikey | string | `""` | Datadog API Key, if not `empty`, Datadog output is *enabled* |
 | config.datadog.host | string | `""` | Datadog host. Override if you are on the Datadog EU site. Defaults to american site with "<https://api.datadoghq.com>" |
 | config.datadog.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
@@ -203,7 +205,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.elasticsearch.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.elasticsearch.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.elasticsearch.password | string | `""` | use this password to authenticate to Elasticsearch if the password is not empty |
-| config.elasticsearch.type | string | `"event"` | Elasticsearch document type |
+| config.elasticsearch.type | string | `"_doc"` | Elasticsearch document type |
 | config.elasticsearch.username | string | `""` | use this username to authenticate to Elasticsearch if the username is not empty |
 | config.existingSecret | string | `""` | Existing secret with configuration |
 | config.extraEnv | list | `[]` | Extra environment variables |
@@ -275,11 +277,25 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.mattermost.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Slack), `fields` (only fields are displayed in Mattermost) |
 | config.mattermost.username | string | `""` | Mattermost username |
 | config.mattermost.webhookurl | string | `""` | Mattermost Webhook URL (ex: <https://XXXX/hooks/YYYY>), if not `empty`, Mattermost output is *enabled* |
+| config.mqtt.broker | string | `""` | Broker address, can start with tcp:// or ssl://, if not empty, MQTT output is enabled |
+| config.mqtt.checkcert | bool | `true` | Check if ssl certificate of the output is valid (default: true) |
+| config.mqtt.minimumpriority | string | `""` | Minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default) |
+| config.mqtt.password | string | `""` | Password if the authentication is enabled in the broker |
+| config.mqtt.qos | int | `0` | QOS for messages (default: 0) |
+| config.mqtt.retained | bool | `false` | If true, messages are retained (default: false) |
+| config.mqtt.topic | string | `"falco/events"` | Topic for messages (default: falco/events) |
+| config.mqtt.user | string | `""` | User if the authentication is enabled in the broker |
 | config.mutualtlsfilespath | string | `"/etc/certs"` | folder which will used to store client.crt, client.key and ca.crt files for mutual tls (default: "/etc/certs") |
 | config.nats.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.nats.hostport | string | `""` | NATS "nats://host:port", if not `empty`, NATS is *enabled* |
 | config.nats.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.nats.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
+| config.nodered.address | string | `""` | Webhook address, if not empty, Webhook output is enabled |
+| config.nodered.checkcert | bool | `true` | check if ssl certificate of the output is valid (default: true) |
+| config.nodered.customHeaders | string | `""` | Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value" |
+| config.nodered.minimumpriority | string | `""` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default) |
+| config.nodered.password | string | `""` | Password if Basic Auth is enabled for 'http in' node in Node-RED |
+| config.nodered.user | string | `""` | User if Basic Auth is enabled for 'http in' node in Node-RED |
 | config.openfaas.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.openfaas.functionname | string | `""` | Name of OpenFaaS function, if not empty, OpenFaaS is *enabled* |
 | config.openfaas.functionnamespace | string | `"openfaas-fn"` | Namespace of OpenFaaS function, "openfaas-fn" (default) |
@@ -319,13 +335,17 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.slack.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Slack), `fields` (only fields are displayed in Slack) |
 | config.slack.username | string | `""` | Slack username |
 | config.slack.webhookurl | string | `""` | Slack Webhook URL (ex: <https://hooks.slack.com/services/XXXX/YYYY/ZZZZ>), if not `empty`, Slack output is *enabled* |
+| config.smtp.authmechanism | string | `"plain"` | SASL Mechanisms : plain, oauthbearer, external, anonymous or "" (disable SASL). Default: plain |
 | config.smtp.from | string | `""` | Sender address (mandatory if SMTP output is *enabled*) |
 | config.smtp.hostport | string | `""` | "host:port" address of SMTP server, if not empty, SMTP output is *enabled* |
+| config.smtp.identity | string | `""` | Identity string for Plain and External Mechanisms |
 | config.smtp.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.smtp.outputformat | string | `"html"` | html, text |
-| config.smtp.password | string | `""` | password to access SMTP server |
+| config.smtp.password | string | `""` | Password to access SMTP server  with Plain Mechanism |
 | config.smtp.to | string | `""` | comma-separated list of Recipident addresses, can't be empty (mandatory if SMTP output is *enabled*) |
-| config.smtp.user | string | `""` | user to access SMTP server |
+| config.smtp.token | string | `""` | OAuthBearer token for OAuthBearer Mechanism |
+| config.smtp.trace | string | `""` | Trace string for Anonymous Mechanism |
+| config.smtp.user | string | `""` | User to access SMTP server with Plain Mechanism |
 | config.stan.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.stan.clientid | string | `""` | Client ID, if not empty, STAN output is *enabled* |
 | config.stan.clusterid | string | `""` | Cluster name, if not empty, STAN output is *enabled* |
@@ -356,6 +376,9 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.webhook.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.webhook.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.yandex.accesskeyid | string | `""` | yandex access key |
+| config.yandex.datastreams.endpoint | string | `"https://yds.serverless.yandexcloud.net"` | Yandex Data Streams endpoint |
+| config.yandex.datastreams.minimumpriority | string | `""` | minimum priority of event for using this output, order is `emergency|alert|critical|error|warning|notice|informational|debug or ""` |
+| config.yandex.datastreams.streamname | string | `""` | Stream name in format /${region}/${folder_id}/${ydb_id}/${stream_name} |
 | config.yandex.region | string | `""` | yandex storage region (default: ru-central-1) |
 | config.yandex.s3.bucket | string | `""` | Yandex storage, bucket name |
 | config.yandex.s3.endpoint | string | `""` | yandex storage endpoint (default: https://storage.yandexcloud.net) |
@@ -368,7 +391,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
 | image.registry | string | `"docker.io"` | The image registry to pull from |
 | image.repository | string | `"falcosecurity/falcosidekick"` | The image repository to pull from |
-| image.tag | string | `"2.26.0"` | The image tag to pull |
+| image.tag | string | `"2.27.0"` | The image tag to pull |
 | imagePullSecrets | list | `[]` | Secrets for the registry |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Whether to create the ingress |
@@ -438,7 +461,6 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.tolerations | list | `[]` | Tolerations for pod assignment |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
-
 > **Tip**: You can use the default [values.yaml](values.yaml)
 
 ## Metrics
