@@ -71,7 +71,7 @@ install_falco_if_needed(){
         echo "falco-exporter changed installing falco as well..."
         docker_exec helm repo add falcosecurity https://falcosecurity.github.io/charts
         docker_exec helm repo update
-        docker_exec helm install falco falcosecurity/falco -f falco/ci/ci-values.yaml --set falco.grpc.enabled=true --set falco.grpcOutput.enabled=true
+        docker_exec helm install falco falcosecurity/falco -f tests/falco-test-ci.yaml
         docker_exec kubectl get po -A
         sleep 120
         docker_exec kubectl get po -A
