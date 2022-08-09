@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.13
+
+* Upgrade Falco to 0.32.2
+
 ## v2.0.12
 
 * Fully disable the driver when running in CI
