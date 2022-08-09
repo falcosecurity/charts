@@ -1,0 +1,19 @@
+# CI values for Falco.
+# To deploy Falco on CI we need to set an argument to bypass the installation
+# of the kernel module, so we bypass that.
+extra:
+  args:
+  - --userspace
+
+falco:
+  grpc:
+    enabled: true
+  grpcOutput:
+    enabled: true
+
+driver:
+  enabled: false
+
+# enforce /proc mounting since Falco still tries to scan it
+mounts:
+  enforceProcMount: true
