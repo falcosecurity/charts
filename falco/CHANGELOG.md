@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.11
+
+* Correct `ci/ci-values.yaml` file.
+
 ## v2.0.10
 
 * Fix name of the falco certs secret.
