@@ -200,6 +200,7 @@ driver:
         tag: ""
       # -- Extra environment variables that will be pass onto Falco driver loader init container.
       env: {}
+      args: []
 
 # Collectors for data enrichment (scenario requirement)
 collectors:

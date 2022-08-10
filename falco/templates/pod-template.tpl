@@ -283,6 +283,10 @@ spec:
 - name: {{ .Chart.Name }}-driver-loader
   image: {{ include "falco.driverLoader.image" . }}
   imagePullPolicy: {{ .Values.driver.loader.initContainer.image.pullPolicy }}
+  {{- with .Values.driver.loader.initContainer.args }}
+  args:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- if eq .Values.driver.kind "module" }}
   securityContext:
     privileged: true
