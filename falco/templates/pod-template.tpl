@@ -142,11 +142,15 @@ spec:
         - mountPath: /host/etc
           name: etc-fs
           readOnly: true
-        {{- end }}  
+        {{- end }}
         {{- if and .Values.driver.enabled (eq .Values.driver.kind "module") }}
         - mountPath: /host/dev
           name: dev-fs
           readOnly: true
+        {{- end }}
+        {{- if and .Values.driver.enabled (and (eq .Values.driver.kind "ebpf") (contains "falco-no-driver" .Values.image.repository)) }}
+        - name: debugfs
+          mountPath: /sys/kernel/debug
         {{- end }}
         {{- with .Values.collectors }}
         {{- if .enabled }}
@@ -209,6 +213,11 @@ spec:
     - name: dev-fs
       hostPath:
         path: /dev
+    {{- end }}
+    {{- if and .Values.driver.enabled (and (eq .Values.driver.kind "ebpf") (contains "falco-no-driver" .Values.image.repository)) }}
+    - name: debugfs
+      hostPath:
+        path: /sys/kernel/debug
     {{- end }}
     {{- with .Values.collectors }}
     {{- if .enabled }}

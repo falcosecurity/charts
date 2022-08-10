@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.14
+
+* Fix debugfs mount when `falco-no-driver` image and ebpf driver is used
+
 ## v2.0.13
 
 * Upgrade Falco to 0.32.2
@@ -18,6 +22,7 @@ numbering uses [semantic versioning](http://semver.org).
 ## v2.0.10
 
 * Fix name of the falco certs secret.
+
 ## v2.0.9
 
 * Fix the `certs-secret.yaml` template by correctly pointing to the root context when using the helpers.
