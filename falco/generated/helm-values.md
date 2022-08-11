@@ -1,7 +1,5 @@
 # Configuration values for falco chart
-
-`Chart version: v2.0.13`
-
+`Chart version: v2.0.16`
 ## Values
 
 | Key | Type | Default | Description |
@@ -34,13 +32,16 @@
 | driver.ebpf.path | string | `nil` | Path where the eBPF probe is located. It comes handy when the probe have been installed in the nodes using tools other than the init container deployed with the chart. |
 | driver.enabled | bool | `true` | Set it to false if you want to deploy Falco without the drivers. Always set it to false when using Falco with plugins. |
 | driver.kind | string | `"module"` | Tell Falco which driver to use. Available options: module (kernel driver) and ebpf (eBPF probe). |
-| driver.loader | object | `{"enabled":true,"initContainer":{"enabled":true,"env":{},"image":{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falco-driver-loader","tag":""}}}` | Configuration for the Falco init container. |
+| driver.loader | object | `{"enabled":true,"initContainer":{"args":[],"enabled":true,"env":{},"image":{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falco-driver-loader","tag":""},"resources":{},"securityContext":{}}}` | Configuration for the Falco init container. |
 | driver.loader.enabled | bool | `true` | Enable/disable the init container. |
+| driver.loader.initContainer.args | list | `[]` | Arguments to pass to the Falco driver loader init container. |
 | driver.loader.initContainer.enabled | bool | `true` | Enable/disable the init container. |
 | driver.loader.initContainer.env | object | `{}` | Extra environment variables that will be pass onto Falco driver loader init container. |
 | driver.loader.initContainer.image.pullPolicy | string | `"IfNotPresent"` | The image pull policy. |
 | driver.loader.initContainer.image.registry | string | `"docker.io"` | The image registry to pull from. |
 | driver.loader.initContainer.image.repository | string | `"falcosecurity/falco-driver-loader"` | The image repository to pull from. |
+| driver.loader.initContainer.resources | object | `{}` | Resources requests and limits for the Falco driver loader init container. |
+| driver.loader.initContainer.securityContext | object | `{}` | Security context for the Falco driver loader init container. Overrides the default security context. If driver.mode == "module" you must at least set `privileged: true`. |
 | extra.args | list | `[]` | Extra command-line arguments. |
 | extra.env | object | `{}` | Extra environment variables that will be pass onto Falco containers. |
 | extra.initContainers | list | `[]` | Additional initContainers for Falco pods. |
