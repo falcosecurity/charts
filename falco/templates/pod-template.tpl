@@ -287,8 +287,14 @@ spec:
   args:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- if eq .Values.driver.kind "module" }}
+  {{- with .Values.driver.loader.initContainer.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   securityContext:
+  {{- if .Values.driver.loader.initContainer.securityContext }}
+    {{- toYaml .Values.driver.loader.initContainer.securityContext | nindent 4 }}
+  {{- else if eq .Values.driver.kind "module" }}
     privileged: true
   {{- end }}
   volumeMounts:
