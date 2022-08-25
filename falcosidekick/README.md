@@ -362,6 +362,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.teams.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.teams.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Teams), `facts` (only facts are displayed in Teams) |
 | config.teams.webhookurl | string | `""` | Teams Webhook URL (ex: <https://outlook.office.com/webhook/XXXXXX/IncomingWebhook/YYYYYY>"), if not `empty`, Teams output is *enabled* |
+| config.templatedfields | string | `""` | a list of comma separated templated fields to add to falco events and metrics, it uses Go template + output_fields values. The syntax is "key:value,key:value". |
 | config.wavefront.batchsize | int | `10000` | Wavefront batch size. If empty uses the default 10000. Only used when endpointtype is 'direct' |
 | config.wavefront.endpointhost | string | `""` | Wavefront endpoint address (only the host). If not empty, with endpointhost, Wavefront output is *enabled* |
 | config.wavefront.endpointmetricport | int | `2878` | Port to send metrics. Only used when endpointtype is 'proxy' |

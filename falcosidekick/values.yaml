@@ -55,6 +55,8 @@ config:
   debug: false
   # -- a list of escaped comma separated custom fields to add to falco events. If the value starts with % the relative env var is used. The syntax is "key:value\,key:value".
   customfields: ""
+  # -- a list of comma separated templated fields to add to falco events and metrics, it uses Go template + output_fields values. The syntax is "key:value,key:value".
+  templatedfields: ""
 
   # -- folder which will used to store client.crt, client.key and ca.crt files for mutual tls (default: "/etc/certs")
   mutualtlsfilespath: "/etc/certs"
