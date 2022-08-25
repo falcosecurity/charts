@@ -187,8 +187,8 @@ config:
   loki:
     # -- Loki <http://host:port>, if not `empty`, Loki is *enabled*
     hostport: ""
-    # -- Loki endpoint URL path, default is "/api/prom/push" more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush>
-    endpoint: "/api/prom/push"
+    # -- Loki endpoint URL path, default is "/loki/api/v1/push" more info : https://grafana.com/docs/loki/latest/api/#post-apiprompush
+    endpoint: "/loki/api/v1/push"
     # -- Loki tenant, if not `empty`, Loki tenant is *enabled*
     tenant: ""
     # -- comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields

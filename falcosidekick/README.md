@@ -262,7 +262,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.kubeless.namespace | string | `""` | Namespace of Kubeless function (mandatory) |
 | config.kubeless.port | int | `8080` | Port of service of Kubeless function. Default is `8080` |
 | config.loki.checkcert | bool | `true` | check if ssl certificate of the output is valid |
-| config.loki.endpoint | string | `"/api/prom/push"` | Loki endpoint URL path, default is "/api/prom/push" more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush> |
+| config.loki.endpoint | string | `"/loki/api/v1/push"` | Loki endpoint URL path, default is "/loki/api/v1/push" more info : https://grafana.com/docs/loki/latest/api/#post-apiprompush |
 | config.loki.extralabels | string | `""` | comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields |
 | config.loki.hostport | string | `""` | Loki <http://host:port>, if not `empty`, Loki is *enabled* |
 | config.loki.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
