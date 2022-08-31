@@ -3,7 +3,6 @@ kind: ClusterRoleBinding
 apiVersion: {{ include "rbac.apiVersion" . }}
 metadata:
   name: {{ include "falco.fullname" . }}
-  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "falco.labels" . | nindent 4 }}
 subjects:
