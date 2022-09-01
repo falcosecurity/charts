@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.5.9
+
+* Fix: remove `namespace` from `clusterrole` and `clusterrolebinding` metadata
+
 ## 0.5.8
 
 * Support `storageEnabled` for `redis` to allow ephemeral installs
