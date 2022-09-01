@@ -24,6 +24,34 @@ entries:
   falco:
   - apiVersion: v2
     appVersion: 0.32.2
+    created: "2022-09-01T09:31:39.148852679Z"
+    dependencies:
+    - condition: falcosidekick.enabled
+      name: falcosidekick
+      repository: https://falcosecurity.github.io/charts
+      version: 0.5.4
+    description: Falco
+    digest: 45d626778fbea1421be587f53fb5ac7444cbdde1c740e68679b6322458ec9601
+    home: https://falco.org
+    icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/falco/horizontal/color/falco-horizontal-color.svg
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: falco
+    sources:
+    - https://github.com/falcosecurity/falco
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-2.0.17/falco-2.0.17.tgz
+    version: 2.0.17
+  - apiVersion: v2
+    appVersion: 0.32.2
     created: "2022-08-12T08:10:51.366985996Z"
     dependencies:
     - condition: falcosidekick.enabled
@@ -3055,6 +3083,26 @@ entries:
     - https://github.com/falcosecurity/charts/releases/download/falco-exporter-0.3.0/falco-exporter-0.3.0.tgz
     version: 0.3.0
   falcosidekick:
+  - apiVersion: v1
+    appVersion: 2.26.0
+    created: "2022-09-01T09:31:39.260116747Z"
+    description: Connect Falco to your ecosystem
+    digest: 682b423d8ec982d2b4bc7b9a69cef5272da51cf5fcef51b0f2c87a72e22e7fa3
+    home: https://github.com/falcosecurity/falcosidekick
+    icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: Issif
+    name: falcosidekick
+    sources:
+    - https://github.com/falcosecurity/falcosidekick
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falcosidekick-0.5.9/falcosidekick-0.5.9.tgz
+    version: 0.5.9
   - apiVersion: v1
     appVersion: 2.26.0
     created: "2022-08-03T07:58:45.661291518Z"
