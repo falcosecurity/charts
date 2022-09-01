@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.17
+
+* Fix: remove `namespace` from `clusterrole` and `clusterrolebinding` metadata
+
 ## v2.0.16
 
 * Allow setting `resources` and `securityContext` on the `falco-driver-loader` init container
