@@ -14,6 +14,10 @@ as a list of comma separated labels and annotations to add to the AlertManager t
 * Add `nodered` and associated fields.
 * Add `mqtt` and associated fields.
 * Update `elasticsearch.type` default value to `_doc`
+* Add `zincsearch` and associated fields.
+* Add `gotify` and associated fields.
+* Add `slack.channel` options.
+* Update `inluxdb` to add `bucket`, `organization`, `precision` and `token` options
 
 ## 0.5.7
 
