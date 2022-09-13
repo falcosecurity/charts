@@ -175,8 +175,16 @@ config:
   influxdb:
     # -- Influxdb <http://host:port>, if not `empty`, Influxdb is *enabled*
     hostport: ""
-    # -- Influxdb database
+    # -- Influxdb database (api v1 only)
     database: "falco"
+    # -- Influxdb organization
+    organization: ""
+    # -- Influxdb Metrics bucket
+    bucket: "falco"
+    # -- Influxdb Write precision
+    precision: "ns"
+    # -- Influxdb Token
+    token: ""
     # -- User to use if auth is *enabled* in Influxdb
     user: ""
     # -- Password to use if auth is *enabled* in Influxdb

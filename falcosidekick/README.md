@@ -245,12 +245,16 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.grafana.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.grafana.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.grafana.panelid | string | `""` | annotations are scoped to a specific panel. Optionnal. |
+| config.influxdb.bucket | string | `"falco"` | Influxdb Metrics bucket |
 | config.influxdb.checkcert | bool | `true` | check if ssl certificate of the output is valid |
-| config.influxdb.database | string | `"falco"` | Influxdb database |
+| config.influxdb.database | string | `"falco"` | Influxdb database (api v1 only) |
 | config.influxdb.hostport | string | `""` | Influxdb <http://host:port>, if not `empty`, Influxdb is *enabled* |
 | config.influxdb.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.influxdb.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
+| config.influxdb.organization | string | `""` | Influxdb organization |
 | config.influxdb.password | string | `""` | Password to use if auth is *enabled* in Influxdb |
+| config.influxdb.precision | string | `"ns"` | Influxdb Write precision |
+| config.influxdb.token | string | `""` | Influxdb Token |
 | config.influxdb.user | string | `""` | User to use if auth is *enabled* in Influxdb |
 | config.kafka.hostport | string | `""` | The Host:Port of the Kafka (ex: kafka:9092). if not empty, Kafka output is *enabled* |
 | config.kafka.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
