@@ -396,6 +396,12 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.yandex.s3.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.yandex.s3.prefix | string | `""` | name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json |
 | config.yandex.secretaccesskey | string | `""` | yandex secret access key |
+| config.zincsearch.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.zincsearch.hostport | string | `""` | Zincsearch <http://host:port>, if not `empty`, Zincsearch is *enabled* |
+| config.zincsearch.index | string | `"falco"` | Zincsearch index |
+| config.zincsearch.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.zincsearch.password | string | `""` | use this password to authenticate to Zincsearch |
+| config.zincsearch.username | string | `""` | use this username to authenticate to Zincsearch |
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |

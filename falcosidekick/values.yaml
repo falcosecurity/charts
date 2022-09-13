@@ -172,6 +172,20 @@ config:
     # -- use this password to authenticate to Elasticsearch if the password is not empty
     password: ""
 
+  zincsearch:
+    # -- Zincsearch <http://host:port>, if not `empty`, Zincsearch is *enabled*
+    hostport: ""
+    # -- Zincsearch index
+    index: "falco"
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+    # -- check if ssl certificate of the output is valid
+    checkcert: true
+    # -- use this username to authenticate to Zincsearch
+    username: ""
+    # -- use this password to authenticate to Zincsearch
+    password: ""
+
   influxdb:
     # -- Influxdb <http://host:port>, if not `empty`, Influxdb is *enabled*
     hostport: ""
