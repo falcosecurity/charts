@@ -349,7 +349,7 @@ config:
     password: ""
     # -- Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value"
     customHeaders: ""
-    # -- minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    # -- minimum priority of event for using this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
     # -- check if ssl certificate of the output is valid (default: true)
     checkcert: true
@@ -619,8 +619,21 @@ config:
     password: ""
     # -- Check if ssl certificate of the output is valid (default: true)
     checkcert: true
-    # -- Minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    # -- Minimum priority of event for using this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
+
+  gotify:
+    # -- Gotify Host and port http://{domain or ip}:{port}, if not empty, Gotify output is *enabled*
+    hostport: ""
+    # -- Gotify API Token
+    token: ""
+    # -- Gotify Format of the messages (plaintext, markdown, json)
+    format: "markdown"
+    # -- Check if ssl certificate of the output is valid (default: true)
+    checkcert: true
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+
 
 
 service:

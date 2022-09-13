@@ -232,6 +232,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.googlechat.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.googlechat.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Google chat) |
 | config.googlechat.webhookurl | string | `""` | Google Chat Webhook URL (ex: <https://chat.googleapis.com/v1/spaces/XXXXXX/YYYYYY>), if not `empty`, Google Chat output is *enabled* |
+| config.gotify.checkcert | bool | `true` | Check if ssl certificate of the output is valid (default: true) |
+| config.gotify.format | string | `"markdown"` | Gotify Format of the messages (plaintext, markdown, json) |
+| config.gotify.hostport | string | `""` | Gotify Host and port http://{domain or ip}:{port}, if not empty, Gotify output is *enabled* |
+| config.gotify.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.gotify.token | string | `""` | Gotify API Token |
 | config.grafana.allfieldsastags | bool | `false` | if true, all custom fields are added as tags (default: false) |
 | config.grafana.apikey | string | `""` | API Key to authenticate to Grafana, if not empty, Grafana output is *enabled* |
 | config.grafana.checkcert | bool | `true` | check if ssl certificate of the output is valid |
@@ -279,7 +284,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.mattermost.webhookurl | string | `""` | Mattermost Webhook URL (ex: <https://XXXX/hooks/YYYY>), if not `empty`, Mattermost output is *enabled* |
 | config.mqtt.broker | string | `""` | Broker address, can start with tcp:// or ssl://, if not empty, MQTT output is enabled |
 | config.mqtt.checkcert | bool | `true` | Check if ssl certificate of the output is valid (default: true) |
-| config.mqtt.minimumpriority | string | `""` | Minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default) |
+| config.mqtt.minimumpriority | string | `""` | Minimum priority of event for using this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.mqtt.password | string | `""` | Password if the authentication is enabled in the broker |
 | config.mqtt.qos | int | `0` | QOS for messages (default: 0) |
 | config.mqtt.retained | bool | `false` | If true, messages are retained (default: false) |
@@ -293,7 +298,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.nodered.address | string | `""` | Webhook address, if not empty, Webhook output is enabled |
 | config.nodered.checkcert | bool | `true` | check if ssl certificate of the output is valid (default: true) |
 | config.nodered.customHeaders | string | `""` | Custom headers to add in POST, useful for Authentication | list of comma separated headers to, syntax is "key:value,key:value" |
-| config.nodered.minimumpriority | string | `""` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default) |
+| config.nodered.minimumpriority | string | `""` | minimum priority of event for using this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.nodered.password | string | `""` | Password if Basic Auth is enabled for 'http in' node in Node-RED |
 | config.nodered.user | string | `""` | User if Basic Auth is enabled for 'http in' node in Node-RED |
 | config.openfaas.checkcert | bool | `true` | check if ssl certificate of the output is valid |
