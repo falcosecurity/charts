@@ -328,6 +328,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.rocketchat.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Rocketcaht), `fields` (only fields are displayed in Rocketchat) |
 | config.rocketchat.username | string | `""` | Rocketchat username |
 | config.rocketchat.webhookurl | string | `""` | Rocketchat Webhook URL (ex: <https://XXXX/hooks/YYYY>), if not `empty`, Rocketchat output is *enabled* |
+| config.slack.channel | string | `""` | Slack Channel |
 | config.slack.footer | string | `""` | Slack Footer |
 | config.slack.icon | string | `""` | Slack icon (avatar) |
 | config.slack.messageformat | string | `""` | a Go template to format Slack Text above Attachment, displayed in addition to the output from `slack.outputformat`. If empty, no Text is displayed before Attachment |

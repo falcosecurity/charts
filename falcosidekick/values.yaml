@@ -65,6 +65,8 @@ config:
   slack:
     # -- Slack Webhook URL (ex: <https://hooks.slack.com/services/XXXX/YYYY/ZZZZ>), if not `empty`, Slack output is *enabled*
     webhookurl: ""
+    # -- Slack Channel
+    channel: ""
     # -- Slack Footer
     footer: ""
     # -- Slack icon (avatar)
