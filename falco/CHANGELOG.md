@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.0.18
+
+* Bump `falcosidekick` dependency to 0.5.9
+
 ## v2.0.17
 
 * Fix: remove `namespace` from `clusterrole` and `clusterrolebinding` metadata
