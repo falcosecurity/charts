@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.0.16`
+`Chart version: v2.0.18`
 ## Values
 
 | Key | Type | Default | Description |
@@ -59,7 +59,7 @@
 | falco.http_output.user_agent | string | `"falcosecurity/falco"` |  |
 | falco.json_include_output_property | bool | `true` | When using json output, whether or not to include the "output" property itself (e.g. "File below a known binary directory opened for writing (user=root ....") in the json output. |
 | falco.json_include_tags_property | bool | `true` | When using json output, whether or not to include the "tags" property itself in the json output. If set to true, outputs caused by rules with no tags will have a "tags" field set to an empty array. If set to false, the "tags" field will not be included in the json output at all. |
-| falco.json_output | bool | `false` | Whether to output events in json or text. |
+| falco.json_output | bool | `false` | If "true", print falco alert messages and rules file loading/validation results as json, which allows for easier consumption by downstream programs. Default is "false". |
 | falco.libs_logger.enabled | bool | `false` | Enable the libs logger. |
 | falco.libs_logger.severity | string | `"debug"` | Minimum log severity to include in the libs logs. Note: this value is separate from the log level of the Falco logger and does not affect it. Can be one of "fatal", "critical", "error", "warning", "notice", "info", "debug", "trace". |
 | falco.load_plugins | list | `[]` | Add here the names of the plugins that you want to be loaded by Falco. Please make sure that plugins have ben configured under the "plugins" section before adding them here. |
@@ -79,6 +79,7 @@
 | falco.program_output.program | string | `"jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX"` | Command to execute for program output. |
 | falco.rules_file | list | `["/etc/falco/falco_rules.yaml","/etc/falco/falco_rules.local.yaml","/etc/falco/rules.d"]` | The location of the rules files that will be consumed by Falco. |
 | falco.stdout_output.enabled | bool | `true` | Enable stdout output for security notifications. |
+| falco.syscall_buf_size_preset | int | `5` | This is an index that controls the dimension of the syscall buffers. |
 | falco.syscall_event_drops.actions | list | `["log","alert"]` | Actions to be taken when system calls were dropped from the circular buffer. |
 | falco.syscall_event_drops.max_burst | int | `1` | Max burst of messages emitted. |
 | falco.syscall_event_drops.rate | float | `0.03333` | Rate at which log/alert messages are emitted. |
@@ -119,7 +120,7 @@
 | podPriorityClassName | string | `nil` | Set pod priorityClassName |
 | podSecurityContext | object | `{}` | Set securityContext for the pods These security settings are overriden by the ones specified for the specific containers when there is overlap. |
 | rbac.create | bool | `true` |  |
-| resources.limits | object | `{"cpu":"1000m","memory":"1024Mi"}` | Maximum amount of resources that Falco container could get. |
+| resources.limits | object | `{"cpu":"1000m","memory":"1024Mi"}` | Maximum amount of resources that Falco container could get. If you are enabling more than one source in falco, than consider to increase the cpu limits. |
 | resources.requests | object | `{"cpu":"100m","memory":"512Mi"}` | Although resources needed are subjective on the actual workload we provide a sane defaults ones. If you have more questions or concerns, please refer to #falco slack channel for more info about it. |
 | scc.create | bool | `true` | Create OpenShift's Security Context Constraint. |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account. |
