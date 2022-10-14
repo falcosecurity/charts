@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.0.18`
+`Chart version: v2.1.0`
 ## Values
 
 | Key | Type | Default | Description |
@@ -79,7 +79,7 @@
 | falco.program_output.program | string | `"jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX"` | Command to execute for program output. |
 | falco.rules_file | list | `["/etc/falco/falco_rules.yaml","/etc/falco/falco_rules.local.yaml","/etc/falco/rules.d"]` | The location of the rules files that will be consumed by Falco. |
 | falco.stdout_output.enabled | bool | `true` | Enable stdout output for security notifications. |
-| falco.syscall_buf_size_preset | int | `5` | This is an index that controls the dimension of the syscall buffers. |
+| falco.syscall_buf_size_preset | int | `4` | This is an index that controls the dimension of the syscall buffers. |
 | falco.syscall_event_drops.actions | list | `["log","alert"]` | Actions to be taken when system calls were dropped from the circular buffer. |
 | falco.syscall_event_drops.max_burst | int | `1` | Max burst of messages emitted. |
 | falco.syscall_event_drops.rate | float | `0.03333` | Rate at which log/alert messages are emitted. |
