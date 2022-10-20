@@ -149,3 +149,21 @@ Get port from .Values.falco.grpc.bind_addres.
     {{- fail $error -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Disable the syscall source if some conditions are met.
+By default the syscall source is always enabled in falco. If no syscall source is enabled, falco
+exits. Here we check that no producers for syscalls event has been configured, and if true
+we just disable the sycall source.
+*/}}
+{{- define "falco.configSyscallSource" -}}
+{{- $userspaceDisabled := true -}}
+{{- $driverDisabled :=  (not .Values.driver.enabled) -}}
+{{- if or (has "-u" .Values.extra.args) (has "--userspace" .Values.extra.args) -}}
+{{- $userspaceDisabled = false -}}
+{{- end -}}
+{{- if and $driverDisabled $userspaceDisabled }}
+- --disable-source
+- syscall
+{{- end -}}
+{{- end -}}

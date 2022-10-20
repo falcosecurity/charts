@@ -56,10 +56,7 @@ spec:
         {{- include "falco.securityContext" . | nindent 8 }}
       args:
         - /usr/bin/falco
-        {{- if not .Values.driver.enabled }}
-        - --disable-source
-        - syscall
-        {{- end }}
+        {{- include "falco.configSyscallSource" . | indent 8 }}
         {{- with .Values.collectors }}
         {{- if .enabled }}
         {{- if .containerd.enabled }}
