@@ -6,9 +6,10 @@ numbering uses [semantic versioning](http://semver.org).
 ## v2.0.19
 
 * Bump Falco to 0.33.0
-* Explicitly disable `syscall` source when driver is disabled
+* Implicitly disable `syscall` source when not required
 * Update `values.yaml` to reflect the new configuration options in Falco 0.33.0
 * Mount `/sys/module/falco` when deployed using the `kernel module`
+* Update rulesets for falco and plugins
 
 ## v2.0.18
 
