@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.1.0`
+`Chart version: v2.2.0`
 ## Values
 
 | Key | Type | Default | Description |
@@ -49,8 +49,8 @@
 | falco.file_output.enabled | bool | `false` | Enable file output for security notifications. |
 | falco.file_output.filename | string | `"./events.txt"` | The filename for logging notifications. |
 | falco.file_output.keep_alive | bool | `false` | Open file once or every time a new notification arrives. |
-| falco.grpc | object | `{"bind_address":"unix:///var/run/falco/falco.sock","enabled":false,"threadiness":0}` | gRPC server using an unix socket |
-| falco.grpc.bind_address | string | `"unix:///var/run/falco/falco.sock"` | Bind address for the grpc server. |
+| falco.grpc | object | `{"bind_address":"unix:///run/falco/falco.sock","enabled":false,"threadiness":0}` | gRPC server using an unix socket |
+| falco.grpc.bind_address | string | `"unix:///run/falco/falco.sock"` | Bind address for the grpc server. |
 | falco.grpc.enabled | bool | `false` | Enable the Falco gRPC server. |
 | falco.grpc.threadiness | int | `0` | Number of threads (and context) the gRPC server will use, 0 by default, which means "auto". |
 | falco.grpc_output.enabled | bool | `false` | Enable the gRPC output and events will be kept in memory until you read them with a gRPC client. |

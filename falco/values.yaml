@@ -683,7 +683,7 @@ falco:
     # -- Enable the Falco gRPC server.
     enabled: false
     # -- Bind address for the grpc server.
-    bind_address: "unix:///var/run/falco/falco.sock"
+    bind_address: "unix:///run/falco/falco.sock"
     # -- Number of threads (and context) the gRPC server will use, 0 by default, which means "auto".
     threadiness: 0
 
