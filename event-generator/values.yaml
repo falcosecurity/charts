@@ -65,4 +65,4 @@ config:
     # -- Set it to true if you are deploying in "test" mode.
     enabled: false
     # -- Path to the Falco grpc socket.
-    bindAddress: "unix:///var/run/falco/falco.sock"
+    bindAddress: "unix:///run/falco/falco.sock"
