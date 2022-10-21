@@ -22,7 +22,7 @@ probesPort: 19376
 image:
   registry: docker.io
   repository: falcosecurity/falco-exporter
-  tag: 0.7.0
+  tag: 0.8.0
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -32,7 +32,7 @@ fullnameOverride: ""
 priorityClassName:
 
 falco:
-  grpcUnixSocketPath: "unix:///var/run/falco/falco.sock"
+  grpcUnixSocketPath: "unix:///run/falco/falco.sock"
   grpcTimeout: 2m
 
 serviceAccount:
