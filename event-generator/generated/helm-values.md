@@ -6,11 +6,11 @@ A Helm chart used to deploy the event-generator in Kubernetes cluster.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity, like the nodeSelector but with more expressive syntax. |
-| config.actions | string | `"^k8saudit"` | Regular expression used to select the actions to be run. |
-| config.command | string | `"test"` | The event-generator accepts two commands (run, test): run: runs actions. test: runs and tests actions. For more info see: https://github.com/falcosecurity/event-generator. |
-| config.grpc.bindAddress | string | `"unix:///var/run/falco/falco.sock"` | Path to the Falco grpc socket. |
-| config.grpc.enabled | bool | `true` | Set it to true if you are deploying in "test" mode. |
-| config.loop | bool | `false` | Runs in a loop the actions. If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job. |
+| config.actions | string | `"^syscall"` | Regular expression used to select the actions to be run. |
+| config.command | string | `"run"` | The event-generator accepts two commands (run, test): run: runs actions. test: runs and tests actions. For more info see: https://github.com/falcosecurity/event-generator. |
+| config.grpc.bindAddress | string | `"unix:///run/falco/falco.sock"` | Path to the Falco grpc socket. |
+| config.grpc.enabled | bool | `false` | Set it to true if you are deploying in "test" mode. |
+| config.loop | bool | `true` | Runs in a loop the actions. If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job. |
 | config.sleep | string | `""` | The length of time to wait before running an action. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms) |
 | fullnameOverride | string | `""` | Used to override the chart full name. |
 | image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the event-generator image |
