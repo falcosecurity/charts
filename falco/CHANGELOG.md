@@ -3,7 +3,11 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
-## v2.0.19
+## v2.2.0
+
+* Change the grpc socket path from `unix:///var/run/falco/falco.soc` to `unix:///run/falco/falco.sock`. Please note that this change is potentially a breaking change if upgrading falco from a previous version and you have external consumers of the grpc socket.
+
+## v2.1.0
 
 * Bump Falco to 0.33.0
 * Implicitly disable `syscall` source when not required
