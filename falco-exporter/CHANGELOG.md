@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.9.1
+
+### Minor Changes
+
+* Fix PSP allowed host path prefix to match grpc socket path change.
+
 ## v0.8.3
 
 ### Major Changes
