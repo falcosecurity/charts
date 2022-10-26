@@ -204,7 +204,7 @@ services:
         protocol: TCP
 
 falco:
-  rulesFile:
+  rules_file:
     - /etc/falco/k8s_audit_rules.yaml
     - /etc/falco/rules.d
   plugins:
@@ -225,7 +225,7 @@ What the above configuration does is:
 * disable the collectors by setting `collectors.enabled=false`;
 * deploy the Falco using a k8s *deploment* by setting `controller.kind=deployment`;
 * makes our Falco instance reachable by the `k8s api-server` by configuring a service for it in `services`;
-* load the correct ruleset for our plugin in `falco.rulesFile`;
+* load the correct ruleset for our plugin in `falco.rules_file`;
 * configure the plugins to be loaded, in this case the `k8saudit` and `json`;
 * and finally we add our plugins in the `load_plugins` to be loaded by Falco.
 
