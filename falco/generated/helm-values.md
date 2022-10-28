@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.2.0`
+`Chart version: v2.2.1`
 ## Values
 
 | Key | Type | Default | Description |
@@ -72,7 +72,7 @@
 | falco.output_timeout | int | `2000` | Duration in milliseconds to wait before considering the output timeout deadline exceed. |
 | falco.outputs.max_burst | int | `1000` | Maximum number of tokens outstanding. |
 | falco.outputs.rate | int | `1` | Number of tokens gained per second. |
-| falco.plugins | list | `[{"init_config":null,"library_path":"libk8saudit.so","name":"k8saudit","open_params":"http://:9765/k8s-audit"},{"library_path":"libcloudtrail.so","name":"cloudtrail"},{"init_config":"","library_path":"libjson.so","name":"json"}]` | Plugins configuration. Add here all plugins and their configuration. Please consult the plugins documentation for more info. Remember to add the plugins name in "load_plugins: []" in order to load them in Falco. |
+| falco.plugins | list | `[{"init_config":"","library_path":"libk8saudit.so","name":"k8saudit","open_params":"http://:9765/k8s-audit"},{"library_path":"libcloudtrail.so","name":"cloudtrail"},{"init_config":"","library_path":"libjson.so","name":"json"}]` | Plugins configuration. Add here all plugins and their configuration. Please consult the plugins documentation for more info. Remember to add the plugins name in "load_plugins: []" in order to load them in Falco. |
 | falco.priority | string | `"debug"` | Minimum rule priority level to load and run. All rules having a priority more severe than this level will be loaded/run.  Can be one of "emergency", "alert", "critical", "error", "warning", "notice", "informational", "debug". |
 | falco.program_output.enabled | bool | `false` | Enable program output for security notifications. |
 | falco.program_output.keep_alive | bool | `false` | Start the program once or re-spawn when a notification arrives. |
