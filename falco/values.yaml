@@ -410,10 +410,10 @@ falco:
   # false, the "tags" field will not be included in the json output at all.
   json_include_tags_property: true
 
-  # -- Send information logs to syslog. Note these are *not* security
+  # -- Send information logs to stderr. Note these are *not* security
   # notification logs! These are just Falco lifecycle (and possibly error) logs.
   log_stderr: true
-  # -- Send information logs to stderr. Note these are *not* security
+  # -- Send information logs to syslog. Note these are *not* security
   # notification logs! These are just Falco lifecycle (and possibly error) logs.
   log_syslog: true
 
