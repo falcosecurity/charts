@@ -20,6 +20,8 @@ imagePullSecrets: []
 nameOverride: ""
 # -- Same as nameOverride but for the fullname.
 fullnameOverride: ""
+# -- Override the deployment namespace
+namespaceOverride: ""
 
 rbac:
   # Create and use rbac resources when set to true. Needed to fetch k8s metadata from the api-server.
