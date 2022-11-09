@@ -3,7 +3,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: {{ include "falco.fullname" . }}-grpc
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "falco.namespace" . }}
   labels:
     {{- include "falco.labels" . | nindent 4 }}
 spec:
