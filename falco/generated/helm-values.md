@@ -98,6 +98,12 @@
 | falcosidekick.fullfqdn | bool | `false` | Enable usage of full FQDN of falcosidekick service (useful when a Proxy is used). |
 | falcosidekick.listenPort | string | `""` | Listen port. Default value: 2801 |
 | fullnameOverride | string | `""` | Same as nameOverride but for the fullname. |
+| gvisor | object | `{"enabled":false,"runsc":{"config":"/run/containerd/runsc/config.toml","path":"/home/containerd/usr/local/sbin","root":"/run/containerd/runsc"}}` | Gvisor configuration. Based on your system you need to set the appropriate values. Please, rembember to add pod tolerations and affinities in order to schedule the Falco pods in the gVisor enabled nodes.  |
+| gvisor.enabled | bool | `false` | Set it to true if you want to deploy Falco with gVisor support. |
+| gvisor.runsc | object | `{"config":"/run/containerd/runsc/config.toml","path":"/home/containerd/usr/local/sbin","root":"/run/containerd/runsc"}` | Runsc container runtime configuration. Falco needs to interact with it in order to intercept the activity of the sandboxed pods. |
+| gvisor.runsc.config | string | `"/run/containerd/runsc/config.toml"` | Absolute path of the `runsc` configuration file, used by Falco to set its configuration and make aware `gVisor` of its presence. |
+| gvisor.runsc.path | string | `"/home/containerd/usr/local/sbin"` | Absolute path of the `runsc` binary in the k8s nodes. |
+| gvisor.runsc.root | string | `"/run/containerd/runsc"` | Absolute path of the root directory of the `runsc` container runtime. It is of vital importance for Falco since `runsc` stores there the information of the workloads handled by it; |
 | healthChecks | object | `{"livenessProbe":{"initialDelaySeconds":60,"periodSeconds":15,"timeoutSeconds":5},"readinessProbe":{"initialDelaySeconds":30,"periodSeconds":15,"timeoutSeconds":5}}` | Parameters used |
 | healthChecks.livenessProbe.initialDelaySeconds | int | `60` | Tells the kubelet that it should wait X seconds before performing the first probe. |
 | healthChecks.livenessProbe.periodSeconds | int | `15` | Specifies that the kubelet should perform the check every x seconds. |
