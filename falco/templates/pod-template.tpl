@@ -46,6 +46,10 @@ spec:
   imagePullSecrets: 
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- if .Values.gvisor.enabled }}
+  hostNetwork: true
+  hostPID: true
+  {{- end }}
   containers:
     - name: {{ .Chart.Name }}
       image: {{ include "falco.image" . }}
@@ -56,6 +60,12 @@ spec:
         {{- include "falco.securityContext" . | nindent 8 }}
       args:
         - /usr/bin/falco
+        {{- if .Values.gvisor.enabled }}
+        - --gvisor-config
+        - /gvisor-config/pod-init.json
+        - --gvisor-root
+        - /host{{ .Values.gvisor.runsc.root }}/k8s.io
+        {{- end }}
         {{- include "falco.configSyscallSource" . | indent 8 }}
         {{- with .Values.collectors }}
         {{- if .enabled }}
@@ -100,8 +110,8 @@ spec:
         - name: "{{ $key }}"
           value: "{{ $value }}"
       {{- end }}
-      {{- if .Values.falco.webserver.enabled }}
       tty: {{ .Values.tty }}
+      {{- if .Values.falco.webserver.enabled }}
       livenessProbe:
         initialDelaySeconds: {{ .Values.healthChecks.livenessProbe.initialDelaySeconds }}
         timeoutSeconds: {{ .Values.healthChecks.livenessProbe.timeoutSeconds }}
@@ -186,9 +196,23 @@ spec:
         {{- with .Values.mounts.volumeMounts }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- if .Values.gvisor.enabled }}
+        - mountPath: /usr/local/bin/runsc
+          name: runsc-path
+          readOnly: true
+        - mountPath: /host{{ .Values.gvisor.runsc.root }}
+          name: runsc-root
+        - mountPath: /host{{ .Values.gvisor.runsc.config }}
+          name: runsc-config
+        - mountPath: /gvisor-config
+          name: falco-gvisor-config
+        {{- end }}
   initContainers:
   {{- with .Values.extra.initContainers }}
     {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if and .Values.gvisor.enabled }}
+  {{- include "falco.gvisor.initContainer" . | nindent 4 }}
   {{- end }}
   {{- if .Values.driver.enabled }}
   {{- if and .Values.driver.loader.enabled .Values.driver.loader.initContainer.enabled }}
@@ -249,6 +273,21 @@ spec:
       hostPath:
         path: /proc
     {{- end }}
+    {{- if .Values.gvisor.enabled }}
+    - name: runsc-path
+      hostPath:
+        path: {{ .Values.gvisor.runsc.path }}/runsc
+        type: File
+    - name: runsc-root
+      hostPath:
+        path: {{ .Values.gvisor.runsc.root }}
+    - name: runsc-config
+      hostPath:
+        path: {{ .Values.gvisor.runsc.config }}
+        type: File
+    - name: falco-gvisor-config
+      emptyDir: {}
+    {{- end }}
     - name: config-volume
       configMap:
         name: {{ include "falco.fullname" . }}
@@ -283,7 +322,7 @@ spec:
     {{- with .Values.mounts.volumes }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
-{{- end -}}
+    {{- end -}}
 
 {{- define "falco.driverLoader.initContainer" -}}
 - name: {{ .Chart.Name }}-driver-loader
