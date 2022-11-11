@@ -48,7 +48,7 @@ So, we ask you to follow these simple steps when making your PR:
 - The [DCO](https://github.com/falcosecurity/.github/blob/master/CONTRIBUTING.md#developer-certificate-of-origin) is required to contribute to a `falcosecurity` project. So ensure that all your commits have been signed off. We will not be able to merge the PR if a commit is not signed off.
 - Bump the version number of the chart by modifying the `version` value in the chart's `Chart.yaml` file. This is particularly important, as it allows our CI to release a new chart version. If the version has not been increased, we will not be able to merge the PR.
 - Add a new section in the chart's `CHANGELOG.md` file with the new version number of the chart.
-- If your changes affect any chart variables, please update the chart's `README.md` file accordingly.
+- If your changes affect any chart variables, please update the chart's `README.md` file accordingly and run `make docs` in the chart folder.
 
 Finally, when opening your PR, please fill in the provided PR template, including the final checklist of items to indicate that all the steps above have been performed. 
 
