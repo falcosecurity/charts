@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.2.0`
+`Chart version: v2.3.0`
 ## Values
 
 | Key | Type | Default | Description |
@@ -114,6 +114,7 @@
 | mounts.volumeMounts | list | `[]` | A list of volumes you want to add to the Falco pods. |
 | mounts.volumes | list | `[]` | A list of volumes you want to add to the Falco pods. |
 | nameOverride | string | `""` | Put here the new name if you want to override the release name used for Falco components. |
+| namespaceOverride | string | `""` | Override the deployment namespace |
 | nodeSelector | object | `{}` | Selectors used to deploy Falco on a given node/nodes. |
 | podAnnotations | object | `{}` | Add additional pod annotations |
 | podLabels | object | `{}` | Add additional pod labels |
