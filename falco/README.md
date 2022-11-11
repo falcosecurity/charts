@@ -51,7 +51,7 @@ By default the drivers are managed using an *init container* which includes a sc
 
 If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to build the driver on the fly correctly. You can find instructions for installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
 
-### About Plugins
+#### About Plugins
 [Plugins](https://falco.org/docs/plugins/) are used to extend Falco to support new **data sources**. The current **plugin framework** supports *plugins* with the following *capabilities*:
 
 * Event sourcing capability;
@@ -61,6 +61,28 @@ Plugin capabilities are *composable*, we can have a single plugin with both the 
 
 Note that **the driver is not required when using plugins**. When *plugins* are enabled Falco is deployed without the *init container*.
 
+#### About gVisor
+gVisor is an application kernel, written in Go, that implements a substantial portion of the Linux system call interface. It provides an additional layer of isolation between running applications and the host operating system. For more information please consult the [official docs](https://gvisor.dev/docs/). In version `0.32.1`, Falco first introduced support for gVisor by leveraging the stream of system call information coming from gVisor.
+Falco requires the version of [runsc](https://gvisor.dev/docs/user_guide/install/) to be equal to or above `20220704.0`. The following snippet shows the gVisor configuration variables found in `values.yaml`:
+```yaml
+gvisor:
+  enabled: true
+  runsc:
+    path: /home/containerd/usr/local/sbin
+    root: /run/containerd/runsc
+    config: /run/containerd/runsc/config.toml
+```
+Falco uses the [runsc](https://gvisor.dev/docs/user_guide/install/) binary to interact with sandboxed containers. The following variables need to be set:
+* `runsc.path`: absolute path of the `runsc` binary in the k8s nodes;
+* `runsc.root`: absolute path of the root directory of the `runsc` container runtime. It is of vital importance for Falco since `runsc` stores there the information of the workloads handled by it;
+* `runsc.config`: absolute path of the `runsc` configuration file, used by Falco to set its configuration and make aware `gVisor` of its presence.
+
+If you want to know more how Falco uses those configuration paths please have a look at the `falco.gvisor.initContainer` helper in [helpers.tpl](./templates/_helpers.tpl).
+A preset `values.yaml` file [values-gvisor-gke.yaml](./values-gvisor-gke.yaml) is provided and can be used as it is to deploy Falco with gVisor support in a [GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/sandbox-pods) cluster. It is also a good starting point for custom deployments.
+
+##### Falco+gVisor additional resources
+An exhaustive blog post about Falco and gVisor can be found on the [Falco blog](https://falco.org/blog/intro-gvisor-falco/).
+If you need help on how to set gVisor in your environment please have a look at the [gVisor official docs](https://gvisor.dev/docs/user_guide/quick_start/kubernetes/)
 ### Deploying Falco in Kubernetes
 After the clarification of the different **event sources** and how they are consumed by Falco using the **drivers** and the **plugins**, now lets discuss about how Falco is deployed in Kubernetes.
 
