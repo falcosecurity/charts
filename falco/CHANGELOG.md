@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.3.1
+
+* Fixed incorrect spelling of `been`
+
 ## v2.3.0
 
 * Add variable namespaceOverride to allow setting release namespace in values

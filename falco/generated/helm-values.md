@@ -62,7 +62,7 @@
 | falco.json_output | bool | `false` | If "true", print falco alert messages and rules file loading/validation results as json, which allows for easier consumption by downstream programs. Default is "false". |
 | falco.libs_logger.enabled | bool | `false` | Enable the libs logger. |
 | falco.libs_logger.severity | string | `"debug"` | Minimum log severity to include in the libs logs. Note: this value is separate from the log level of the Falco logger and does not affect it. Can be one of "fatal", "critical", "error", "warning", "notice", "info", "debug", "trace". |
-| falco.load_plugins | list | `[]` | Add here the names of the plugins that you want to be loaded by Falco. Please make sure that plugins have ben configured under the "plugins" section before adding them here. |
+| falco.load_plugins | list | `[]` | Add here the names of the plugins that you want to be loaded by Falco. Please make sure that plugins have been configured under the "plugins" section before adding them here. |
 | falco.log_level | string | `"info"` | Minimum log level to include in logs. Note: these levels are separate from the priority field of rules. This refers only to the log level of falco's internal logging. Can be one of "emergency", "alert", "critical", "error", "warning", "notice", "info", "debug". |
 | falco.log_stderr | bool | `true` | Send information logs to syslog. Note these are *not* security notification logs! These are just Falco lifecycle (and possibly error) logs. |
 | falco.log_syslog | bool | `true` | Send information logs to stderr. Note these are *not* security notification logs! These are just Falco lifecycle (and possibly error) logs. |
