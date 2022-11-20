@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.4.1`
+`Chart version: v2.4.2`
 ## Values
 
 | Key | Type | Default | Description |
@@ -134,5 +134,5 @@
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created. |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | services | string | `nil` | Network services configuration (scenario requirement) Add here your services to be deployed together with Falco. |
-| tolerations | list | `[{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"}]` | Tolerations to allow Falco to run on Kubernetes 1.6 masters. |
+| tolerations | list | `[{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"effect":"NoSchedule","key":"node-role.kubernetes.io/control-plane"}]` | Tolerations to allow Falco to run on Kubernetes masters. |
 | tty | bool | `false` | Attach the Falco process to a tty inside the container. Needed to flush Falco logs as soon as they are emitted. Set it to "true" when you need the Falco logs to be immediately displayed. |
