@@ -23,6 +23,8 @@ To install the chart with the release name `falco` in namespace `falco` run:
 helm install falco falcosecurity/falco --namespace falco --create-namespace
 ```
 
+Optionally `helm install --verify` can be used to verify the Chart integrity.
+
 After a few minutes Falco instances should be running on all your nodes. The status of Falco pods can be inspected through *kubectl*:
 ```bash
 kubectl get pods -n falco -o wide

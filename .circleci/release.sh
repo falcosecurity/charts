@@ -8,9 +8,16 @@ set -o pipefail
 : "${CR_REPO_URL:?Environment variable CR_REPO_URL must be set}"
 : "${GIT_USERNAME:?Environment variable GIT_USERNAME must be set}"
 : "${GIT_REPOSITORY_NAME:?Environment variable GIT_REPOSITORY_NAME must be set}"
+: "${GPG_KEY:?Environment variable GPG_KEY must be set}"
+: "${GPG_PASSPHRASE:?Environment variable GPG_PASSPHRASE must be set}"
 
 readonly REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel)}"
 export CR_TOKEN="$GITHUB_TOKEN"
+
+gpg_dir="~/.gnupg"
+gpg_key="Falco Maintainers"
+gpg_key_file="$gpg_dir/key.gpg"
+gpg_passphrase_file="$gpg_dir/passphrase"
 
 main() {
     pushd "$REPO_ROOT" > /dev/null
@@ -51,6 +58,8 @@ main() {
         for chart in "${changed_charts[@]}"; do
             echo "Packaging chart '$chart'..."
             package_chart "$chart"
+            echo "Preparing GPG to sign '$chart'..."
+            prepare_gpgkey
         done
 
         release_charts
@@ -68,7 +77,8 @@ main() {
 
 package_chart() {
     local chart="$1"
-    helm package "$chart" --destination .cr-release-packages --dependency-update
+    helm package "$chart" --destination .cr-release-packages --dependency-update \
+        --sign --key ${gpg_key} --keyring ${gpg_key_file} --passphrase_file ${gpg_passphrase_file}
 }
 
 release_charts() {
@@ -86,6 +96,12 @@ update_index() {
     git add index.yaml
     git commit --message="Update index.yaml" --signoff
     git push origin gh-pages
+}
+
+prepare_gpgkey() {
+    mkdir -p ${gpg_dir}
+    base64 -d <<< "$GPG_KEYRING" > "$keyring"
+    echo "$GPG_PASSPHRASE" > "$passphrase_file"
 }
 
 main
