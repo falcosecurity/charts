@@ -3,6 +3,11 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.4.0
+
+* Add support for Falco+gVisor
+* Add new preset `values.yaml `file for gVisor-enabled GKE clusters
+
 ## v2.3.1
 
 * Fixed incorrect spelling of `been`
