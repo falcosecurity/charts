@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.4.1
+
+* Fixed error in values.yaml comments
+
 ## v2.4.0
 
 * Add support for Falco+gVisor
