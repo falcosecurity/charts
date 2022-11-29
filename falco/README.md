@@ -80,6 +80,22 @@ Falco uses the [runsc](https://gvisor.dev/docs/user_guide/install/) binary to in
 If you want to know more how Falco uses those configuration paths please have a look at the `falco.gvisor.initContainer` helper in [helpers.tpl](./templates/_helpers.tpl).
 A preset `values.yaml` file [values-gvisor-gke.yaml](./values-gvisor-gke.yaml) is provided and can be used as it is to deploy Falco with gVisor support in a [GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/sandbox-pods) cluster. It is also a good starting point for custom deployments.
 
+##### Example: running Falco on GKE, with or without gVisor-enabled pods
+
+If you use GKE with k8s version at least `v1.24-xxx` or `v1.25-yyy` with gVisor sandboxed pods, you can install a Falco instance to monitor them with, e.g.:
+
+```
+helm install falco-gvisor falcosecurity/falco -f https://raw.githubusercontent.com/falcosecurity/charts/master/falco/values-gvisor-gke.yaml --namespace falco-gvisor --create-namespace
+```
+
+Note that the instance of Falco above will only monitor gVisor sandboxed workloads on gVisor-enabled node pools. If you also need to monitor regular workloads on regular node pools you can use the eBPF driver as usual:
+
+```
+helm install falco falcosecurity/falco --set driver.kind=ebpf --namespace falco --create-namespace
+```
+
+The two instances of Falco will operate independently and can be installed, uninstalled or configured as needed. If you were already monitoring your regular node pools with eBPF you don't need to reinstall it.
+
 ##### Falco+gVisor additional resources
 An exhaustive blog post about Falco and gVisor can be found on the [Falco blog](https://falco.org/blog/intro-gvisor-falco/).
 If you need help on how to set gVisor in your environment please have a look at the [gVisor official docs](https://gvisor.dev/docs/user_guide/quick_start/kubernetes/)
