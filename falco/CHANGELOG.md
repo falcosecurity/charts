@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.4.3
+
+* Update README for gVisor and GKE
+
 ## v2.4.2
 
 * Add toleration for node-role.kubernetes.io/control-plane
