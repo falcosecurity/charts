@@ -82,7 +82,7 @@ A preset `values.yaml` file [values-gvisor-gke.yaml](./values-gvisor-gke.yaml) i
 
 ##### Example: running Falco on GKE, with or without gVisor-enabled pods
 
-If you use GKE with k8s version at least `v1.24-xxx` or `v1.25-yyy` with gVisor sandboxed pods, you can install a Falco instance to monitor them with, e.g.:
+If you use GKE with k8s version at least `1.24.4-gke.1800` or `1.25.0-gke.200` with gVisor sandboxed pods, you can install a Falco instance to monitor them with, e.g.:
 
 ```
 helm install falco-gvisor falcosecurity/falco -f https://raw.githubusercontent.com/falcosecurity/charts/master/falco/values-gvisor-gke.yaml --namespace falco-gvisor --create-namespace
