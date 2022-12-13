@@ -6,6 +6,10 @@
 
 The deployment of Falco in a Kubernetes cluster is managed through a **Helm chart**. This chart manages the lifecycle of Falco in a cluster by handling all the k8s objects needed by Falco to be seamlessly integrated in your environment. Based on the configuration in `values.yaml` file, the chart will render and install the required k8s objects. Keep in mind that Falco could be deployed in your cluster using a `daemonset` or a `deployment`. See next sections for more info.
 
+## Atention
+
+Before installing Falco in a Kubernetes cluster a user should check that the kernel version used in the nodes are supported by the community, also before reporting any issue with Falco (missing kernel image, CrashLoopBackOff and similar) make sure to read [about the driver](#about-the-driver) section and adjust your setup as required.
+
 ## Adding `falcosecurity` repository
 
 Before installing the chart, add the `falcosecurity` charts repository:
@@ -49,7 +53,13 @@ Falco needs a **driver** (the [kernel module](https://falco.org/docs/event-sourc
 
 By default the drivers are managed using an *init container* which includes a script (`falco-driver-loader`) that either tries to build the driver on-the-fly or downloads a prebuilt driver as a fallback. Usually, no action is required.
 
-If a prebuilt driver is not available for your distribution/kernel, Falco needs **kernel headers** installed on the host as a prerequisite to build the driver on the fly correctly. You can find instructions for installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
+Kernel versions and flavors are automatically discovered by the kernel-crawler. At the time being, it runs weekly, on each Monday mornings. We have a site where users can check for the discovered kernel flavors and version, [example for Amazon Linux 2](https://falcosecurity.github.io/kernel-crawler/?arch=x86_64&target=AmazonLinux2).
+
+The discovery of a kernel version by the [kernel-crawler](https://falcosecurity.github.io/kernel-crawler/) does not imply that pre-built kernel modules and bpf probes are available. That is because the jobs running on our test-infra runs periodically and are not in sync with the kernel-crawler runs. Please keep in mind that the building process is based on best effort. Users can check the existence of prebuilt modules at the following [link](https://download.falco.org/driver/site/index.html?lib=3.0.1%2Bdriver&target=all&arch=all&kind=all).
+
+If a prebuilt driver is not available for your distribution/kernel, users can build the modules by them self or install the kernel headers on the nodes, and the init container (falco-driver-loader) will try and build the module on the fly.
+
+Falco needs **kernel headers** installed on the host as a prerequisite to build the driver on the fly correctly. You can find instructions for installing the kernel headers for your system under the [Install section](https://falco.org/docs/getting-started/installation/) of the official documentation.
 
 #### About Plugins
 [Plugins](https://falco.org/docs/plugins/) are used to extend Falco to support new **data sources**. The current **plugin framework** supports *plugins* with the following *capabilities*:
