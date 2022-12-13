@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.5.1
+
+* Update README to clarify driver behavior for chart
+
 ## v2.5.0
 
 * Support custom dictionaries when setting environment variables
