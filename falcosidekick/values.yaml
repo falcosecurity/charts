@@ -11,7 +11,7 @@ image:
   # -- The image repository to pull from
   repository: falcosecurity/falcosidekick
   # -- The image tag to pull
-  tag: 2.26.0
+  tag: 2.27.0
   # -- The image pull policy
   pullPolicy: IfNotPresent
 
@@ -55,6 +55,8 @@ config:
   debug: false
   # -- a list of escaped comma separated custom fields to add to falco events, syntax is "key:value\,key:value"
   customfields: ""
+  # -- a list of escaped comma separated Go templated fields to add to falco events, syntax is "key:template\,key:template"
+  templatedfields: ""
 
   # -- folder which will used to store client.crt, client.key and ca.crt files for mutual tls (default: "/etc/certs")
   mutualtlsfilespath: "/etc/certs"
@@ -63,6 +65,8 @@ config:
   slack:
     # -- Slack Webhook URL (ex: <https://hooks.slack.com/services/XXXX/YYYY/ZZZZ>), if not `empty`, Slack output is *enabled*
     webhookurl: ""
+    # -- Slack channel (optionnal)
+    channel: ""
     # -- Slack Footer
     footer: ""
     # -- Slack icon (avatar)
@@ -141,6 +145,10 @@ config:
     minimumpriority: ""
     # -- if set to a non-zero value, alert expires after that time in seconds (default: 0)
     expireafter: ""
+    # -- comma separated list of labels composed of a ':' separated name and value that is added to the Alerts. Example: my_label_1:my_value_1, my_label_1:my_value_2
+    extralabels: ""
+    # -- comma separated list of annotations composed of a ':' separated name and value that is added to the Alerts. Example: my_annotation_1:my_value_1, my_annotation_1:my_value_2
+    extraannotations: ""
     # -- if true, checkcert flag will be ignored (server cert will always be checked)
     mutualtls: false
     # -- check if ssl certificate of the output is valid
@@ -152,29 +160,37 @@ config:
     # -- Elasticsearch index
     index: "falco"
     # -- Elasticsearch document type
-    type: "event"
-    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
-    minimumpriority: ""
-    # -- if true, checkcert flag will be ignored (server cert will always be checked)
-    mutualtls: false
-    # -- check if ssl certificate of the output is valid
-    checkcert: true
+    type: "_doc"
+    # date suffix for index rotation : daily, monthly, annually, none
+    suffix: "daily"
     # -- use this username to authenticate to Elasticsearch if the username is not empty
     username: ""
     # -- use this password to authenticate to Elasticsearch if the password is not empty
     password: ""
+    # -- if true, checkcert flag will be ignored (server cert will always be checked)
+    mutualtls: false
+    # -- check if ssl certificate of the output is valid
+    checkcert: true
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
 
   influxdb:
     # -- Influxdb <http://host:port>, if not `empty`, Influxdb is *enabled*
     hostport: ""
     # -- Influxdb database
     database: "falco"
+    # -- Influxdb organization
+    organization: ""
+    # -- write precision
+    precision: "ns"
     # -- User to use if auth is *enabled* in Influxdb
     user: ""
     # -- Password to use if auth is *enabled* in Influxdb
     password: ""
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
+    # -- API token to use if auth in enabled in Influxdb (disables user and password)
+    token: ""
     # -- if true, checkcert flag will be ignored (server cert will always be checked)
     mutualtls: false
     # -- check if ssl certificate of the output is valid
@@ -183,8 +199,12 @@ config:
   loki:
     # -- Loki <http://host:port>, if not `empty`, Loki is *enabled*
     hostport: ""
-    # -- Loki endpoint URL path, default is "/api/prom/push" more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush>
-    endpoint: "/api/prom/push"
+    # -- user for Grafana Logs
+    user: ""
+    # -- API Key for Grafana Logs
+    apikey: ""
+    # -- Loki endpoint URL path, more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush>
+    endpoint: "/loki/api/v1/push"
     # -- Loki tenant, if not `empty`, Loki tenant is *enabled*
     tenant: ""
     # -- comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields
@@ -233,6 +253,8 @@ config:
     secretaccesskey: ""
     # -- AWS Region (optionnal if you use EC2 Instance Profile)
     region: ""
+    # -- check the identity credentials, set to false for locale developments
+    checkidentity: true
     cloudwatchlogs:
       # -- AWS CloudWatch Logs Group name, if not empty, CloudWatch Logs output is *enabled*
       loggroup: ""
@@ -269,14 +291,37 @@ config:
       streamname: ""
       # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
       minimumpriority: ""
+    securitylake:
+      # -- Bucket for AWS SecurityLake data, if not empty, AWS SecurityLake output is enabled
+      bucket: ""
+      # -- Bucket Region
+      region: ""
+      # -- Prefix for keys
+      prefix: ""
+      # -- Account ID
+      accountid: ""
+      # -- Time in minutes between two puts to S3 (must be between 5 and 60min)
+      interval: 5
+      # -- Max number of events by parquet file
+      batchsize: 1000
+      # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+      minimumpriority: ""
 
   smtp:
     # -- "host:port" address of SMTP server, if not empty, SMTP output is *enabled*
     hostport: ""
+    # -- SASL Mechanisms : plain, oauthbearer, external, anonymous or "" (disable SASL)
+    authmechanism: "plain"
     # -- user to access SMTP server
     user: ""
     # -- password to access SMTP server
     password: ""
+    # -- OAuthBearer token for OAuthBearer Mechanism
+    token: ""
+    # -- identity string for Plain and External Mechanisms
+    identity: ""
+    # -- trace string for Anonymous Mechanism
+    trace: ""
     # -- Sender address (mandatory if SMTP output is *enabled*)
     from: ""
     # -- comma-separated list of Recipident addresses, can't be empty (mandatory if SMTP output is *enabled*)
@@ -394,6 +439,22 @@ config:
     hostport: ""
     # -- Name of the topic, if not empty, Kafka output is enabled
     topic: ""
+    # -- SASL authentication mechanism, if empty, no authentication (PLAIN|SCRAM_SHA256|SCRAM_SHA512)
+    sasl: ""
+    # -- use this username to authenticate to Kafka via SASL
+    username: ""
+    # -- use this password to authenticate to Kafka via SASL
+    password: ""
+    # -- produce messages without blocking
+    async: false
+    # -- number of acknowledges from partition replicas required before receiving
+    requiredacks: NONE
+    # -- enable message compression using this algorithm, no compression (GZIP|SNAPPY|LZ4|ZSTD|NONE)
+    compression: "NONE"
+    # -- partition balancing strategy when producing
+    balancer: "round_robin"
+    # -- specify a client.id when communicating with the broker for tracing
+    clientid: ""
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
 
@@ -518,6 +579,13 @@ config:
       prefix: ""
       # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
       minimumpriority: ""
+    datastreams:
+      # -- yandex data streams endpoint (default: https://yds.serverless.yandexcloud.net)
+      endpoint: ""
+      # -- stream name in format /${region}/${folder_id}/${ydb_id}/${stream_name}
+      streamname: ""
+      # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+      minimumpriority: ""
 
   kafkarest:
     # -- The full URL to the topic (example "http://kafkarest:8082/topics/test")
@@ -538,6 +606,8 @@ config:
     port: ""
     # -- Syslog transport protocol. It can be either "tcp" or "udp"
     protocol: "tcp"
+    # -- Syslog payload format. It can be either "json" or "cef"
+    format: "json"
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
 
@@ -567,6 +637,101 @@ config:
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
 
+  nodered:
+    # -- Node-RED address, if not empty, Node-RED output is enabled
+    address: ""
+    # -- User if Basic Auth is enabled for 'http in' node in Node-RED
+    user: ""
+    # -- Password if Basic Auth is enabled for 'http in' node in Node-RED
+    password: ""
+    # -- Custom headers to add in POST, useful for Authentication, syntax is "key:value\,key:value"
+    customheaders: ""
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+    # -- check if ssl certificate of the output is valid
+    checkcert: true
+
+  mqtt:
+    # -- Broker address, can start with tcp:// or ssl://, if not empty, MQTT output is enabled
+    broker: ""
+    # -- Topic for messages
+    topic: "falco/events"
+    # -- QOS for messages
+    qos: 0
+    # -- If true, messages are retained
+    retained: false
+    # -- User if the authentication is enabled in the broker
+    user: ""
+    # -- Password if the authentication is enabled in the broker
+    password: ""
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+    # -- check if ssl certificate of the output is valid
+    checkcert: true
+
+  zincsearch:
+    # -- http://{domain or ip}:{port}, if not empty, ZincSearch output is enabled
+    hostport: ""
+    # -- index
+    index: "falco"
+    # -- use this username to authenticate to ZincSearch
+    username: ""
+    # -- use this password to authenticate to ZincSearch
+    password: ""
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+    # -- check if ssl certificate of the output is valid
+    checkcert: true
+
+  gotify:
+    # -- http://{domain or ip}:{port}, if not empty, Gotify output is enabled
+    hostport: ""
+    # -- API Token
+    token: ""
+    # -- Format of the messages (plaintext, markdown, json)
+    format: "markdown"
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+    # -- check if ssl certificate of the output is valid
+    checkcert: true
+
+  tekton:
+    # -- EventListener address, if not empty, Tekton output is enabled
+    eventlistener: ""
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+    # -- check if ssl certificate of the output is valid
+    checkcert: true
+
+  spyderbat:
+    # -- Organization to send output to, if not empty, Spyderbat output is enabled
+    orguid: ""
+    # -- Spyderbat API key with access to the organization
+    apikey: ""
+    # -- Spyderbat API url
+    apiurl: "https://api.spyderbat.com"
+    # -- Spyderbat source ID, max 32 characters
+    source: "falcosidekick"
+    # -- Spyderbat source description and display name if not empty, max 256 characters
+    sourcedescription: ""
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+
+  timescaledb:
+    # -- TimescaleDB host, if not empty, TImescaleDB output is enabled
+    host: ""
+    # -- TimescaleDB port (default: 5432)
+    port: 5432
+    # -- Username to authenticate with TimescaleDB
+    user: "postgres"
+    # -- Password to authenticate with TimescaleDB
+    password: "postgres"
+    # -- TimescaleDB database used
+    database: ""
+    # -- Hypertable to store data events (default: falco_events) See TimescaleDB setup for more info
+    hypertablename: "falco_events"
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
 
 service:
   # -- Service type
@@ -639,13 +804,19 @@ webui:
   enabled: false
   # -- number of running pods
   replicaCount: 2
+  # -- Log level ("debug", "info", "warning", "error")
+  loglevel: "info"
+  # -- TTL for keys (0 for no ttl)
+  ttl: 0
+  # -- User in format <login>:<password>
+  user: "admin:admin"
   image:
     # -- The web UI image registry to pull from
     registry: docker.io
     # -- The web UI image repository to pull from
     repository: falcosecurity/falcosidekick-ui
     # -- The web UI image tag to pull
-    tag: "v2.0.2"
+    tag: "v2.1.0"
     # -- The web UI image pull policy
     pullPolicy: IfNotPresent
 

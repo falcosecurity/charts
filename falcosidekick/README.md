@@ -148,10 +148,20 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.alertmanager.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.alertmanager.endpoint | string | `"/api/v1/alerts"` | alertmanager endpoint on which falcosidekick posts alerts, choice is: `"/api/v1/alerts" or "/api/v2/alerts" , default is "/api/v1/alerts"` |
 | config.alertmanager.expireafter | string | `""` | if set to a non-zero value, alert expires after that time in seconds (default: 0) |
+| config.alertmanager.extraannotations | string | `""` | comma separated list of annotations composed of a ':' separated name and value that is added to the Alerts. Example: my_annotation_1:my_value_1, my_annotation_1:my_value_2 |
+| config.alertmanager.extralabels | string | `""` | comma separated list of labels composed of a ':' separated name and value that is added to the Alerts. Example: my_label_1:my_value_1, my_label_1:my_value_2 |
 | config.alertmanager.hostport | string | `""` | AlertManager <http://host:port>, if not `empty`, AlertManager is *enabled* |
 | config.alertmanager.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.alertmanager.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
+| config.aws."securitylake.".accountid | string | `""` | Account ID |
+| config.aws."securitylake.".batchsize | int | `1000` | Max number of events by parquet file |
+| config.aws."securitylake.".bucket | string | `""` | Bucket for AWS SecurityLake data, if not empty, AWS SecurityLake output is enabled |
+| config.aws."securitylake.".interval | int | `5` | Time in minutes between two puts to S3 (must be between 5 and 60min) |
+| config.aws."securitylake.".minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.aws."securitylake.".prefix | string | `""` | Prefix for keys |
+| config.aws."securitylake.".region | string | `""` | Bucket Region |
 | config.aws.accesskeyid | string | `""` | AWS Access Key Id (optionnal if you use EC2 Instance Profile) |
+| config.aws.checkidentity | bool | `true` | check the identity credentials, set to false for locale developments |
 | config.aws.cloudwatchlogs.loggroup | string | `""` | AWS CloudWatch Logs Group name, if not empty, CloudWatch Logs output is *enabled* |
 | config.aws.cloudwatchlogs.logstream | string | `""` | AWS CloudWatch Logs Stream name, if empty, Falcosidekick will try to create a log stream |
 | config.aws.cloudwatchlogs.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
@@ -203,7 +213,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.elasticsearch.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.elasticsearch.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.elasticsearch.password | string | `""` | use this password to authenticate to Elasticsearch if the password is not empty |
-| config.elasticsearch.type | string | `"event"` | Elasticsearch document type |
+| config.elasticsearch.suffix | string | `"daily"` |  |
+| config.elasticsearch.type | string | `"_doc"` | Elasticsearch document type |
 | config.elasticsearch.username | string | `""` | use this username to authenticate to Elasticsearch if the username is not empty |
 | config.existingSecret | string | `""` | Existing secret with configuration |
 | config.extraEnv | list | `[]` | Extra environment variables |
@@ -230,6 +241,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.googlechat.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.googlechat.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Google chat) |
 | config.googlechat.webhookurl | string | `""` | Google Chat Webhook URL (ex: <https://chat.googleapis.com/v1/spaces/XXXXXX/YYYYYY>), if not `empty`, Google Chat output is *enabled* |
+| config.gotify.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.gotify.format | string | `"markdown"` | Format of the messages (plaintext, markdown, json) |
+| config.gotify.hostport | string | `""` | http://{domain or ip}:{port}, if not empty, Gotify output is enabled |
+| config.gotify.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.gotify.token | string | `""` | API Token |
 | config.grafana.allfieldsastags | bool | `false` | if true, all custom fields are added as tags (default: false) |
 | config.grafana.apikey | string | `""` | API Key to authenticate to Grafana, if not empty, Grafana output is *enabled* |
 | config.grafana.checkcert | bool | `true` | check if ssl certificate of the output is valid |
@@ -243,11 +259,22 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.influxdb.hostport | string | `""` | Influxdb <http://host:port>, if not `empty`, Influxdb is *enabled* |
 | config.influxdb.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.influxdb.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
+| config.influxdb.organization | string | `""` | Influxdb organization |
 | config.influxdb.password | string | `""` | Password to use if auth is *enabled* in Influxdb |
+| config.influxdb.precision | string | `"ns"` | write precision |
+| config.influxdb.token | string | `""` | API token to use if auth in enabled in Influxdb (disables user and password) |
 | config.influxdb.user | string | `""` | User to use if auth is *enabled* in Influxdb |
+| config.kafka.async | bool | `false` | produce messages without blocking |
+| config.kafka.balancer | string | `"round_robin"` | partition balancing strategy when producing |
+| config.kafka.clientid | string | `""` | specify a client.id when communicating with the broker for tracing |
+| config.kafka.compression | string | `"NONE"` | enable message compression using this algorithm, no compression (GZIP|SNAPPY|LZ4|ZSTD|NONE) |
 | config.kafka.hostport | string | `""` | The Host:Port of the Kafka (ex: kafka:9092). if not empty, Kafka output is *enabled* |
 | config.kafka.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.kafka.password | string | `""` | use this password to authenticate to Kafka via SASL |
+| config.kafka.requiredacks | string | `"NONE"` | number of acknowledges from partition replicas required before receiving |
+| config.kafka.sasl | string | `""` | SASL authentication mechanism, if empty, no authentication (PLAIN|SCRAM_SHA256|SCRAM_SHA512) |
 | config.kafka.topic | string | `""` | Name of the topic, if not empty, Kafka output is enabled |
+| config.kafka.username | string | `""` | use this username to authenticate to Kafka via SASL |
 | config.kafkarest.address | string | `""` | The full URL to the topic (example "http://kafkarest:8082/topics/test") |
 | config.kafkarest.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.kafkarest.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
@@ -259,13 +286,15 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.kubeless.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.kubeless.namespace | string | `""` | Namespace of Kubeless function (mandatory) |
 | config.kubeless.port | int | `8080` | Port of service of Kubeless function. Default is `8080` |
+| config.loki.apikey | string | `""` | API Key for Grafana Logs |
 | config.loki.checkcert | bool | `true` | check if ssl certificate of the output is valid |
-| config.loki.endpoint | string | `"/api/prom/push"` | Loki endpoint URL path, default is "/api/prom/push" more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush> |
+| config.loki.endpoint | string | `"/loki/api/v1/push"` | Loki endpoint URL path, more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush> |
 | config.loki.extralabels | string | `""` | comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields |
 | config.loki.hostport | string | `""` | Loki <http://host:port>, if not `empty`, Loki is *enabled* |
 | config.loki.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.loki.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.loki.tenant | string | `""` | Loki tenant, if not `empty`, Loki tenant is *enabled* |
+| config.loki.user | string | `""` | user for Grafana Logs |
 | config.mattermost.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.mattermost.footer | string | `""` | Mattermost Footer |
 | config.mattermost.icon | string | `""` | Mattermost icon (avatar) |
@@ -275,11 +304,25 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.mattermost.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Slack), `fields` (only fields are displayed in Mattermost) |
 | config.mattermost.username | string | `""` | Mattermost username |
 | config.mattermost.webhookurl | string | `""` | Mattermost Webhook URL (ex: <https://XXXX/hooks/YYYY>), if not `empty`, Mattermost output is *enabled* |
+| config.mqtt.broker | string | `""` | Broker address, can start with tcp:// or ssl://, if not empty, MQTT output is enabled |
+| config.mqtt.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.mqtt.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.mqtt.password | string | `""` | Password if the authentication is enabled in the broker |
+| config.mqtt.qos | int | `0` | QOS for messages |
+| config.mqtt.retained | bool | `false` | If true, messages are retained |
+| config.mqtt.topic | string | `"falco/events"` | Topic for messages |
+| config.mqtt.user | string | `""` | User if the authentication is enabled in the broker |
 | config.mutualtlsfilespath | string | `"/etc/certs"` | folder which will used to store client.crt, client.key and ca.crt files for mutual tls (default: "/etc/certs") |
 | config.nats.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.nats.hostport | string | `""` | NATS "nats://host:port", if not `empty`, NATS is *enabled* |
 | config.nats.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.nats.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
+| config.nodered.address | string | `""` | Node-RED address, if not empty, Node-RED output is enabled |
+| config.nodered.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.nodered.customHeaders | string | `""` | Custom headers to add in POST, useful for Authentication, syntax is "key:value\,key:value" |
+| config.nodered.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.nodered.password | string | `""` | Password if Basic Auth is enabled for 'http in' node in Node-RED |
+| config.nodered.user | string | `""` | User if Basic Auth is enabled for 'http in' node in Node-RED |
 | config.openfaas.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.openfaas.functionname | string | `""` | Name of OpenFaaS function, if not empty, OpenFaaS is *enabled* |
 | config.openfaas.functionnamespace | string | `"openfaas-fn"` | Namespace of OpenFaaS function, "openfaas-fn" (default) |
@@ -312,6 +355,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.rocketchat.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Rocketcaht), `fields` (only fields are displayed in Rocketchat) |
 | config.rocketchat.username | string | `""` | Rocketchat username |
 | config.rocketchat.webhookurl | string | `""` | Rocketchat Webhook URL (ex: <https://XXXX/hooks/YYYY>), if not `empty`, Rocketchat output is *enabled* |
+| config.slack.channel | string | `""` | Slack channel (optionnal) |
 | config.slack.footer | string | `""` | Slack Footer |
 | config.slack.icon | string | `""` | Slack icon (avatar) |
 | config.slack.messageformat | string | `""` | a Go template to format Slack Text above Attachment, displayed in addition to the output from `slack.outputformat`. If empty, no Text is displayed before Attachment |
@@ -319,13 +363,23 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.slack.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Slack), `fields` (only fields are displayed in Slack) |
 | config.slack.username | string | `""` | Slack username |
 | config.slack.webhookurl | string | `""` | Slack Webhook URL (ex: <https://hooks.slack.com/services/XXXX/YYYY/ZZZZ>), if not `empty`, Slack output is *enabled* |
+| config.smtp.authmechanism | string | `"plain"` | SASL Mechanisms : plain, oauthbearer, external, anonymous or "" (disable SASL) |
 | config.smtp.from | string | `""` | Sender address (mandatory if SMTP output is *enabled*) |
 | config.smtp.hostport | string | `""` | "host:port" address of SMTP server, if not empty, SMTP output is *enabled* |
+| config.smtp.identity | string | `""` | identity string for Plain and External Mechanisms |
 | config.smtp.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.smtp.outputformat | string | `"html"` | html, text |
 | config.smtp.password | string | `""` | password to access SMTP server |
 | config.smtp.to | string | `""` | comma-separated list of Recipident addresses, can't be empty (mandatory if SMTP output is *enabled*) |
+| config.smtp.token | string | `""` | OAuthBearer token for OAuthBearer Mechanism |
+| config.smtp.trace | string | `""` | trace string for Anonymous Mechanism |
 | config.smtp.user | string | `""` | user to access SMTP server |
+| config.spyderbat.apikey | string | `""` | Spyderbat API key with access to the organization |
+| config.spyderbat.apiurl | string | `"https://api.spyderbat.com"` | Spyderbat API url |
+| config.spyderbat.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.spyderbat.orguid | string | `""` | Organization to send output to, if not empty, Spyderbat output is enabled |
+| config.spyderbat.source | string | `"falcosidekick"` | Spyderbat source ID, max 32 characters |
+| config.spyderbat.sourcedescription | string | `""` | Spyderbat source description and display name if not empty, max 256 characters |
 | config.stan.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.stan.clientid | string | `""` | Client ID, if not empty, STAN output is *enabled* |
 | config.stan.clusterid | string | `""` | Cluster name, if not empty, STAN output is *enabled* |
@@ -334,6 +388,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.stan.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.statsd.forwarder | string | `""` | The address for the StatsD forwarder, in the form <http://host:port>, if not empty StatsD is *enabled* |
 | config.statsd.namespace | string | `"falcosidekick."` | A prefix for all metrics |
+| config.syslog.format | string | `"json"` | Syslog payload format. It can be either "json" or "cef" |
 | config.syslog.host | string | `""` | Syslog Host, if not empty, Syslog output is *enabled* |
 | config.syslog.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.syslog.port | string | `""` | Syslog endpoint port number |
@@ -342,6 +397,17 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.teams.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.teams.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Teams), `facts` (only facts are displayed in Teams) |
 | config.teams.webhookurl | string | `""` | Teams Webhook URL (ex: <https://outlook.office.com/webhook/XXXXXX/IncomingWebhook/YYYYYY>"), if not `empty`, Teams output is *enabled* |
+| config.tekton.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.tekton.eventlistener | string | `""` | EventListener address, if not empty, Tekton output is enabled |
+| config.tekton.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.templatedfields | string | `""` | a list of escaped comma separated Go templated fields to add to falco events, syntax is "key:template\,key:template" |
+| config.timescaledb.database | string | `""` | TimescaleDB database used |
+| config.timescaledb.host | string | `""` | TimescaleDB host, if not empty, TImescaleDB output is enabled |
+| config.timescaledb.hypertablename | string | `"falco_events"` | Hypertable to store data events (default: falco_events) See TimescaleDB setup for more info  |
+| config.timescaledb.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.timescaledb.password | string | `"postgres"` | Password to authenticate with TimescaleDB |
+| config.timescaledb.port | int | `5432` | TimescaleDB port (default: 5432) |
+| config.timescaledb.user | string | `"postgres"` | Username to authenticate with TimescaleDB |
 | config.wavefront.batchsize | int | `10000` | Wavefront batch size. If empty uses the default 10000. Only used when endpointtype is 'direct' |
 | config.wavefront.endpointhost | string | `""` | Wavefront endpoint address (only the host). If not empty, with endpointhost, Wavefront output is *enabled* |
 | config.wavefront.endpointmetricport | int | `2878` | Port to send metrics. Only used when endpointtype is 'proxy' |
@@ -356,19 +422,28 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.webhook.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.webhook.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.yandex.accesskeyid | string | `""` | yandex access key |
+| config.yandex.datastreams.endpoint | string | `""` | yandex data streams endpoint (default: https://yds.serverless.yandexcloud.net) |
+| config.yandex.datastreams.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.yandex.datastreams.streamname | string | `""` | stream name in format /${region}/${folder_id}/${ydb_id}/${stream_name} |
 | config.yandex.region | string | `""` | yandex storage region (default: ru-central-1) |
 | config.yandex.s3.bucket | string | `""` | Yandex storage, bucket name |
 | config.yandex.s3.endpoint | string | `""` | yandex storage endpoint (default: https://storage.yandexcloud.net) |
 | config.yandex.s3.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.yandex.s3.prefix | string | `""` | name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json |
 | config.yandex.secretaccesskey | string | `""` | yandex secret access key |
+| config.zincsearch.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.zincsearch.hostport | string | `""` | http://{domain or ip}:{port}, if not empty, ZincSearch output is enabled |
+| config.zincsearch.index | string | `"falco"` | index |
+| config.zincsearch.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.zincsearch.password | string | `""` | use this password to authenticate to ZincSearch |
+| config.zincsearch.username | string | `""` | use this username to authenticate to ZincSearch |
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
 | image.registry | string | `"docker.io"` | The image registry to pull from |
 | image.repository | string | `"falcosecurity/falcosidekick"` | The image repository to pull from |
-| image.tag | string | `"2.26.0"` | The image tag to pull |
+| image.tag | string | `"2.27.0"` | The image tag to pull |
 | imagePullSecrets | list | `[]` | Secrets for the registry |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Whether to create the ingress |
@@ -397,11 +472,12 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
 | webui.image.registry | string | `"docker.io"` | The web UI image registry to pull from |
 | webui.image.repository | string | `"falcosecurity/falcosidekick-ui"` | The web UI image repository to pull from |
-| webui.image.tag | string | `"v2.0.2"` | The web UI image tag to pull |
+| webui.image.tag | string | `"v2.1.0"` | The web UI image tag to pull |
 | webui.ingress.annotations | object | `{}` | Web UI ingress annotations |
 | webui.ingress.enabled | bool | `false` | Whether to create the Web UI ingress |
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
 | webui.ingress.tls | list | `[]` | Web UI ingress TLS configuration |
+| webui.loglevel | string | `"info"` | Log level ("debug", "info", "warning", "error") |
 | webui.nodeSelector | object | `{}` | Web UI nodeSelector field |
 | webui.podAnnotations | object | `{}` | additions annotations on the pods web UI |
 | webui.podLabels | object | `{}` | additions labels on the pods web UI |
@@ -437,6 +513,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.service.targetPort | int | `2802` | The web UI service targetPort |
 | webui.service.type | string | `"ClusterIP"` | The web UI service type |
 | webui.tolerations | list | `[]` | Tolerations for pod assignment |
+| webui.ttl | int | `0` | TTL for keys (0 for no ttl) |
+| webui.user | string | `"admin:admin"` | User in format <login>:<password> |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 > **Tip**: You can use the default [values.yaml](values.yaml)

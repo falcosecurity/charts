@@ -82,6 +82,8 @@ spec:
               value: {{ .Values.config.debug | quote }}
             - name: CUSTOMFIELDS
               value: {{ .Values.config.customfields | quote }}
+            - name: TEMPLATEDFIELDS
+              value: {{ .Values.config.templatedfields | quote }}
             - name: MUTUALTLSFILESPATH
               value: {{ .Values.config.mutualtlsfilespath | quote }}
             {{- if .Values.config.extraEnv }}
