@@ -5,6 +5,33 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.5.10
+
+* upgrade Falcosidekick image to 2.27.0
+* upgrade Falcosidekick-UI image to 2.1.0
+* Add `Yandex Data Streams` output
+* Add `Node-Red` output
+* Add `MQTT` output
+* Add `Zincsearch` output
+* Add `Gotify` output
+* Add `Spyderbat` output
+* Add `Tekton` output
+* Add `TimescaleDB` output
+* Add `AWS Security Lake` output
+* Add `config.templatedfields` to set templated fields
+* Add `config.slack.channel` to override `Slack` channel
+* Add `config.alertmanager.extralabels` and `config.alertmanager.extraannotations` for `AlertManager` output
+* Add `config.influxdb.token`, `config.influxdb.organization` and `config.influxdb.precision` for `InfluxDB` output
+* Add `config.aws.checkidentity` to disallow STS checks
+* Add `config.smtp.authmechanism`, `config.smtp.token`, `config.smtp.identity`, `config.smtp.trace` to manage `SMTP` auth
+* Update default doc type for `Elastichsearch`
+* Add `config.loki.user`, `config.loki.apikey` to manage auth to Grafana Cloud for `Loki` output
+* Add `config.kafka.sasl`, `config.kafka.async`, `config.kafka.compression`, `config.kafka.balancer`, `config.kafka.clientid` to manage auth and communication for `Kafka` output
+* Add `config.syslog.format` to manage the format of `Syslog` payload
+* Add `webui.ttl` to set TTL of keys in Falcosidekick-UI
+* Add `webui.loglevel` to set log level in Falcosidekick-UI
+* Add `webui.user` to set log user:password in Falcosidekick-UI
+
 ## 0.5.9
 
 * Fix: remove `namespace` from `clusterrole` and `clusterrolebinding` metadata

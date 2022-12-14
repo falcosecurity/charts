@@ -59,6 +59,18 @@ spec:
             {{- else if .Values.webui.externalRedis.enabled }}
             - "{{ required "External Redis is enabled. Please set the URL to the database." .Values.webui.externalRedis.url }}:{{ .Values.webui.externalRedis.port | default "6379" }}"
             {{- end}}
+            {{- if .Values.webui.ttl }}
+            - "-t"
+            - {{- .Values.webui.ttl }}
+            {{- end}}
+            {{- if .Values.webui.loglevel }}
+            - "-l"
+            - {{- .Values.webui.loglevel }}
+            {{- end}}
+            {{- if .Values.webui.user }}
+            - "-u"
+            - {{- .Values.webui.user }}
+            {{- end}}
           ports:
             - name: http
               containerPort: 2802
