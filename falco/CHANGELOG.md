@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.4.4
+
+* Changed Falco default behaviour to newly run as unprivileged user (`runAsUser: 1000`, `runAsNonRoot: true`) as long as Falco does not have the syscall event source enabled.
+
 ## v2.4.3
 
 * Update README for gVisor and GKE

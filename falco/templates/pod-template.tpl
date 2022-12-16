@@ -383,6 +383,9 @@ spec:
       {{- $securityContext := set $securityContext "privileged" true -}}
     {{- end -}}
   {{- end -}}
+{{- else -}}
+  {{- $securityContext := set $securityContext "runAsUser" 1000 -}}
+  {{- $securityContext := set $securityContext "runAsNonRoot" true -}}
 {{- end -}}
 {{- if not (empty (.Values.containerSecurityContext)) -}}
   {{-  toYaml .Values.containerSecurityContext }}
