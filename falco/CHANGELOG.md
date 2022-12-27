@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.4.4
+
+* Update README for gRPC
+
 ## v2.4.3
 
 * Update README for gVisor and GKE
