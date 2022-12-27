@@ -8,7 +8,7 @@ extra:
 falco:
   grpc:
     enabled: true
-  grpcOutput:
+  grpc_output:
     enabled: true
 
 driver:

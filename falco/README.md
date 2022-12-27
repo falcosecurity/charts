@@ -379,7 +379,7 @@ To install Falco with gRPC enabled over the **network**, you have to:
 ```shell
 helm install falco \
   --set falco.grpc.enabled=true \
-  --set falco.grpcOutput.enabled=true \
+  --set falco.grpc_output.enabled=true \
   --set falco.grpc.unixSocketPath="" \
   --set-file certs.server.key=/path/to/server.key \
   --set-file certs.server.crt=/path/to/server.crt \
