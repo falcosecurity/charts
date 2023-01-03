@@ -106,9 +106,8 @@ spec:
         - name: FALCO_BPF_PROBE
           value: {{ .Values.driver.ebpf.path }}
       {{- end }}
-      {{- range $key, $value := .Values.extra.env }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
+      {{- if .Values.extra.env }}
+      {{- include "falco.renderTemplate" ( dict "value" .Values.extra.env "context" $) | nindent 8 }}
       {{- end }}
       tty: {{ .Values.tty }}
       {{- if .Values.falco.webserver.enabled }}
@@ -364,9 +363,8 @@ spec:
     - name: FALCO_BPF_PROBE
       value: {{ .Values.driver.ebpf.path }}
   {{- end }}
-  {{- range $key, $value := .Values.driver.loader.initContainer.env }}
-    - name: "{{ $key }}"
-      value: "{{ $value }}"
+  {{- if .Values.driver.loader.initContainer.env }}
+  {{- include "falco.renderTemplate" ( dict "value" .Values.driver.loader.initContainer.env "context" $) | nindent 4 }}
   {{- end }}
 {{- end -}}
 

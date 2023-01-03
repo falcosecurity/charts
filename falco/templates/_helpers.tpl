@@ -58,6 +58,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Renders a value that contains template.
+Usage:
+{{ include "falco.renderTemplate" ( dict "value" .Values.path.to.the.Value "context" $) }}
+*/}}
+{{- define "falco.renderTemplate" -}}
+    {{- if typeIs "string" .value }}
+        {{- tpl .value .context }}
+    {{- else }}
+        {{- tpl (.value | toYaml) .context }}
+    {{- end }}
+{{- end -}}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "falco.serviceAccountName" -}}

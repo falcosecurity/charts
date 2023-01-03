@@ -207,7 +207,7 @@ driver:
         #  -- Overrides the image tag whose default is the chart appVersion.
         tag: ""
       # -- Extra environment variables that will be pass onto Falco driver loader init container.
-      env: {}
+      env: []
       # -- Arguments to pass to the Falco driver loader init container.
       args: []
       # -- Resources requests and limits for the Falco driver loader init container.
@@ -283,7 +283,7 @@ collectors:
 
 extra:
   # -- Extra environment variables that will be pass onto Falco containers.
-  env: {}
+  env: []
   # -- Extra command-line arguments.
   args: []
   # -- Additional initContainers for Falco pods.
