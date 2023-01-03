@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.5.0
+
+* Support custom dictionaries when setting environment variables
+
+Note: this is a breaking change. If you were passing _objects_ to `extra.env` or `driver.loader.initContainer.env` , you will need to update your values file to pass _lists_.
+
 ## v2.4.7
 
 * Add `controller.annotations` configuration
