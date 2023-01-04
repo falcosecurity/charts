@@ -113,6 +113,7 @@ serviceMonitor:
 
 grafanaDashboard:
   enabled: false
+  folder:
   namespace: default
   prometheusDatasourceName: Prometheus
 scc:
