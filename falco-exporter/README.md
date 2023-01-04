@@ -60,6 +60,7 @@ The following table lists the main configurable parameters of the chart and thei
 | `serviceMonitor.interval`                        | Specify a user defined interval for the Service Monitor                                          | `""`                               |
 | `serviceMonitor.scrapeTimeout`                   | Specify a user defined scrape timeout for the Service Monitor                                    | `""`                               |
 | `grafanaDashboard.enabled`                       | Enable the falco security dashboard, see https://github.com/falcosecurity/falco-exporter#grafana | `false`                            |
+| `grafanaDashboard.folder`                        | The grafana folder to deplay the dashboard in                                                    |     `""`                                 |
 | `grafanaDashboard.namespace`                     | The namespace to deploy the dashboard configmap in                                               | `default`                          |
 | `grafanaDashboard.prometheusDatasourceName`      | The prometheus datasource name to be used for the dashboard                                      | `Prometheus`                       |
 | `scc.create`                                     | Create OpenShift's Security Context Constraint                                                   | `true`                             |
