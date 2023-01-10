@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.4.5
+
+* Bump `falcosidekick` dependency to 0.5.10
+
 ## v2.4.4
 
 * Update README for gRPC
