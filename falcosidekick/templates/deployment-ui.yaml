@@ -61,15 +61,15 @@ spec:
             {{- end}}
             {{- if .Values.webui.ttl }}
             - "-t"
-            - {{- .Values.webui.ttl }}
+            - {{ .Values.webui.ttl }}
             {{- end}}
             {{- if .Values.webui.loglevel }}
             - "-l"
-            - {{- .Values.webui.loglevel }}
+            - {{ .Values.webui.loglevel }}
             {{- end}}
             {{- if .Values.webui.user }}
             - "-u"
-            - {{- .Values.webui.user }}
+            - {{ .Values.webui.user }}
             {{- end}}
           ports:
             - name: http
