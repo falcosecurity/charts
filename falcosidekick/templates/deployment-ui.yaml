@@ -61,7 +61,7 @@ spec:
             {{- end}}
             {{- if .Values.webui.ttl }}
             - "-t"
-            - {{- .Values.webui.ttl }}
+            - {{ .Values.webui.ttl }}
             {{- end}}
             {{- if .Values.webui.loglevel }}
             - "-l"
