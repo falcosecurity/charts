@@ -1,8 +1,9 @@
+{{- if eq .Values.controller.kind "daemonset" }}
 Falco agents are spinning up on each node in your cluster. After a few
 seconds, they are going to start monitoring your containers looking for
 security issues.
 {{printf "\n" }}
-
+{{- end}}
 {{- if .Values.integrations }}
 WARNING: The following integrations have been deprecated and removed
  - gcscc
