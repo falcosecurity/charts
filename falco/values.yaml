@@ -329,6 +329,83 @@ falcosidekick:
   # -- Listen port. Default value: 2801
   listenPort: ""
 
+####################
+# falcoctl config  #
+####################
+falcoctl:
+  image:
+    # -- The image pull policy.
+    pullPolicy: IfNotPresent
+    # -- The image registry to pull from.
+    registry: docker.io
+    # -- The image repository to pull from.
+    repository: falcosecurity/falcoctl
+    #  -- Overrides the image tag whose default is the chart appVersion.
+    tag: "0.4.0"
+  artifact:
+    # -- Runs "falcoctl artifact install" command as an init container. It is used to install artfacts before
+    # Falco starts. It provides them to Falco by using an emptyDir volume.
+    install:
+      enabled: true
+      # -- Extra environment variables that will be pass onto falcoctl-artifact-install init container.
+      env: {}
+      # -- Arguments to pass to the falcoctl-artifact-install init container.
+      args: ["--verbose"]
+      # -- Resources requests and limits for the falcoctl-artifact-install init container.
+      resources: {}
+      # -- Security context for the falcoctl init container.
+      securityContext: {}
+    # -- Runs "falcoctl artifact follow" command as a sidecar container. It is used to automatically check for
+    # updates given a list of artifacts. If an update is found it downloads and installs it in a shared folder (emptyDir)
+    # that is accessible by Falco. Rulesfiles are automatically detected and loaded by Falco once they are installed in the
+    # correct folder by falcoctl. To prevent new versions of artifacts from breaking Falco, the tool checks if it is compatible
+    # with the running version of Falco before installing it.
+    follow:
+      enabled: true
+      # -- Extra environment variables that will be pass onto falcoctl-artifact-follow sidecar container.
+      env: {}
+      # -- Arguments to pass to the falcoctl-artifact-follow sidecar container.
+      args: ["--verbose"]
+      # -- Resources requests and limits for the falcoctl-artifact-follow sidecar container.
+      resources: {}
+      # -- Security context for the falcoctl-artifact-follow sidecar container.
+      securityContext: {}
+  # -- Configuration file of the falcoctl tool. It is saved in a configmap and mounted on the falcotl containers.
+  config:
+    # -- List of indexes that falcoctl downloads and uses to locate and download artiafcts. For more info see:
+    # https://github.com/falcosecurity/falcoctl/blob/main/proposals/20220916-rules-and-plugin-distribution.md#index-file-overview
+    indexes:
+    - name: falcosecurity
+      url: https://falcosecurity.github.io/falcoctl/index.yaml
+    # -- Configuration used by the artifact commands.
+    artifact:
+      # -- List of artifact types that falcoctl will handle. If the configured refs resolves to an artifact whose type is not contained
+      # in the list it will refuse to downloade and install that artifact.
+      allowedTypes:
+        - rulesfile
+      install:
+        # -- Do not resolve the depenencies for artifacts. By default is true, but for our use case we disable it.
+        resolveDeps: false
+        # -- List of artifacts to be installed by the falcoctl init container.
+        refs: [falco-rules:0]
+        # -- Directory where the rulesfiles are saved. The path is relative to the container, which in this case is an emptyDir
+        # mounted also by the Falco pod.
+        rulesfilesDir: /rulesfiles
+        # -- Same as the one above but for the artifacts.
+        pluginsDir: /plugins
+      follow:
+      # -- List of artifacts to be followed by the falcoctl sidecar container.
+        refs: [falco-rules:0]
+        # -- How often the tool checks for new versions of the followed artifacts.
+        every: 6h
+        # -- HTTP endpoint that serves the api versions of the Falco instance. It is used to check if the new versions are compatible
+        # with the running Falco instance.
+        falcoversions: http://localhost:8765/versions
+        # -- See the fields of the artifact.install section.
+        rulesfilesDir: /rulesfiles
+        # -- See the fields of the artifact.install section.
+        pluginsDir: /plugins
+
 ######################
 # falco.yaml config  #
 ######################
@@ -386,6 +463,9 @@ falco:
   # load_plugins: [cloudtrail, json]
   # -- Add here the names of the plugins that you want to be loaded by Falco. Please make sure that
   # plugins have been configured under the "plugins" section before adding them here.
+  # Please make sure to configure the falcoctl tool to download and install the very same plugins
+  # you are loading here. You should add the references in the falcoctl.config.artifact.install.refs array
+  # for each plugin you are loading.
   load_plugins: []
 
   # -- Watch config file and rules files for modification.

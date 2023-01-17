@@ -133,6 +133,16 @@ spec:
           {{- end }}
       {{- end }}
       volumeMounts:
+      {{- if or .Values.falcoctl.artifact.install.enabled .Values.falcoctl.artifact.follow.enabled }}
+      {{- if has "rulesfile" .Values.falcoctl.config.artifact.allowedTypes }}
+        - mountPath: /etc/falco
+          name: rulesfiles-install-dir
+      {{- end }}
+      {{- if has "plugin" .Values.falcoctl.config.artifact.allowedTypes }}
+        - mountPath: /usr/share/falco/plugins
+          name: plugins-install-dir
+      {{- end }}
+      {{- end }}
         - mountPath: /root/.falco
           name: root-falco-fs
         {{- if or .Values.driver.enabled .Values.mounts.enforceProcMount }}
@@ -206,6 +216,9 @@ spec:
         - mountPath: /gvisor-config
           name: falco-gvisor-config
         {{- end }}
+  {{- if .Values.falcoctl.artifact.follow.enabled }}
+    {{- include "falcoctl.sidecar" . | nindent 4 }}
+  {{- end }}
   initContainers:
   {{- with .Values.extra.initContainers }}
     {{- toYaml . | nindent 4 }}
@@ -218,7 +231,14 @@ spec:
     {{- include "falco.driverLoader.initContainer" . | nindent 4 }}
   {{- end }}
   {{- end }}
+  {{- if .Values.falcoctl.artifact.install.enabled }}
+    {{- include "falcoctl.initContainer" . | nindent 4 }}
+  {{- end }}
   volumes:
+    - name: plugins-install-dir
+      emptyDir: {}
+    - name: rulesfiles-install-dir
+      emptyDir: {}
     - name: root-falco-fs
       emptyDir: {}
     {{- if .Values.driver.enabled }}  
@@ -287,6 +307,12 @@ spec:
     - name: falco-gvisor-config
       emptyDir: {}
     {{- end }}
+    - name: falcoctl-config-volume
+      configMap: 
+        name: {{ include "falco.fullname" . }}-falcoctl
+        items:
+          - key: falcoctl.yaml
+            path: falcoctl.yaml
     - name: config-volume
       configMap:
         name: {{ include "falco.fullname" . }}
