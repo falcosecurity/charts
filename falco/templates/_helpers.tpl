@@ -104,6 +104,13 @@ Return the proper Falco driver loader image name
 {{- end -}}
 
 {{/*
+Return the proper Falcoctl image name
+*/}}
+{{- define "falcoctl.image" -}}
+{{ printf "%s/%s:%s" .Values.falcoctl.image.registry .Values.falcoctl.image.repository .Values.falcoctl.image.tag }}
+{{- end -}}
+
+{{/*
 Extract the unixSocket's directory path
 */}}
 {{- define "falco.unixSocketDir" -}}
@@ -241,4 +248,67 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       name: runsc-config
     - mountPath: /gvisor-config
       name: falco-gvisor-config
+{{- end -}}
+
+
+{{- define "falcoctl.initContainer" -}}
+- name: falcoctl-artifact-install
+  image: {{ include "falcoctl.image" . }}
+  imagePullPolicy: {{ .Values.falcoctl.image.pullPolicy }}
+  args: 
+    - artifact
+    - install
+  {{- with .Values.falcoctl.artifact.install.args }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.falcoctl.artifact.install.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  securityContext:
+  {{- if .Values.falcoctl.artifact.install.securityContext }}
+    {{- toYaml .Values.falcoctl.artifact.install.securityContext | nindent 4 }}
+  {{- end }}
+  volumeMounts:
+    - mountPath: {{ .Values.falcoctl.config.artifact.install.pluginsDir }}
+      name: plugins-install-dir
+    - mountPath: {{ .Values.falcoctl.config.artifact.install.rulesfilesDir }}
+      name: rulesfiles-install-dir
+    - mountPath: /etc/falcoctl
+      name: falcoctl-config-volume
+  env:
+  {{- if .Values.falcoctl.artifact.install.env }}
+  {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.install.env "context" $) | nindent 4 }}
+  {{- end }}
+{{- end -}}
+
+{{- define "falcoctl.sidecar" -}}
+- name: falcoctl-artifact-follow
+  image: {{ include "falcoctl.image" . }}
+  imagePullPolicy: {{ .Values.falcoctl.image.pullPolicy }}
+  args:
+    - artifact
+    - follow
+  {{- with .Values.falcoctl.artifact.follow.args }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.falcoctl.artifact.follow.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  securityContext:
+  {{- if .Values.falcoctl.artifact.follow.securityContext }}
+    {{- toYaml .Values.falcoctl.artifact.follow.securityContext | nindent 4 }}
+  {{- end }}
+  volumeMounts:
+    - mountPath: {{ .Values.falcoctl.config.artifact.follow.pluginsDir }}
+      name: plugins-install-dir
+    - mountPath: {{ .Values.falcoctl.config.artifact.follow.rulesfilesDir }}
+      name: rulesfiles-install-dir
+    - mountPath: /etc/falcoctl
+      name: falcoctl-config-volume
+  env:
+  {{- if .Values.falcoctl.artifact.follow.env }}
+  {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.follow.env "context" $) | nindent 4 }}
+  {{- end }}
 {{- end -}}
