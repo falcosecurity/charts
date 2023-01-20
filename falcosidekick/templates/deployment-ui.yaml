@@ -61,7 +61,7 @@ spec:
             {{- end}}
             {{- if .Values.webui.ttl }}
             - "-t"
-            - {{ .Values.webui.ttl }}
+            - {{ .Values.webui.ttl | quote }}
             {{- end}}
             {{- if .Values.webui.loglevel }}
             - "-l"
@@ -160,21 +160,21 @@ spec:
             - name: redis
               containerPort: 6379
               protocol: TCP
-          livenessProbe: 
+          livenessProbe:
             tcpSocket:
               port: 6379
-            initialDelaySeconds: 5 
-            periodSeconds: 5 
-            timeoutSeconds: 2 
-            successThreshold: 1 
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
             failureThreshold: 3
           readinessProbe:
             tcpSocket:
               port: 6379
-            initialDelaySeconds: 5 
-            periodSeconds: 5 
-            timeoutSeconds: 2 
-            successThreshold: 1 
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
             failureThreshold: 3
           {{- if .Values.webui.redis.securityContext }}
           securityContext:
