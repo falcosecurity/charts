@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.4.7
+
+* Add `controller.annotations` configuration
+
 ## v2.4.6
 
 * Bump `falcosidekick` dependency to 0.5.11
