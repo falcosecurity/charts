@@ -137,6 +137,8 @@ tty: false
 controller:
   # Available options: deployment, daemonset.
   kind: daemonset
+  # Annotations to add to the daemonset or deployment
+  annotations: {}
   daemonset:
     updateStrategy:
       # You can also customize maxUnavailable or minReadySeconds if you
