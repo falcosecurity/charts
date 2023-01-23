@@ -190,8 +190,24 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
-        - mountPath: /etc/falco
-          name: config-volume
+        - mountPath: /etc/falco/falco.yaml
+          name: falco-yaml
+          subPath: falco.yaml
+        - mountPath: /etc/falco/falco_rules.yaml
+          name: falco-rules
+          subPath: falco_rules.yaml
+        - mountPath: /etc/falco/falco_rules.local.yaml
+          name: falco-rules-local-yaml
+          subPath: falco_rules.local.yaml
+        - mountPath: /etc/falco/rules.available/application_rules.yaml
+          name: application-rules-yaml
+          subPath: rules.available/application_rules.yaml
+        - mountPath: /etc/falco/k8s_audit_rules.yaml
+          name:  k8s-audit-rules-yaml
+          subPath:  k8s_audit_rules.yaml
+        - mountPath: /etc/falco/aws_cloudtrail_rules.yaml
+          name: aws-cloudtrail-rules-yaml
+          subPath: aws_cloudtrail_rules.yaml
         {{- if .Values.customRules }}
         - mountPath: /etc/falco/rules.d
           name: rules-volume
@@ -235,10 +251,12 @@ spec:
     {{- include "falcoctl.initContainer" . | nindent 4 }}
   {{- end }}
   volumes:
+    {{- if or .Values.falcoctl.artifact.install.enabled .Values.falcoctl.artifact.follow.enabled }}
     - name: plugins-install-dir
       emptyDir: {}
     - name: rulesfiles-install-dir
       emptyDir: {}
+    {{- end }}
     - name: root-falco-fs
       emptyDir: {}
     {{- if .Values.driver.enabled }}  
@@ -313,22 +331,42 @@ spec:
         items:
           - key: falcoctl.yaml
             path: falcoctl.yaml
-    - name: config-volume
+    - name: falco-yaml
       configMap:
         name: {{ include "falco.fullname" . }}
         items:
-          - key: falco.yaml
-            path: falco.yaml
-          - key: falco_rules.yaml
-            path: falco_rules.yaml
-          - key: falco_rules.local.yaml
-            path: falco_rules.local.yaml
-          - key: application_rules.yaml
-            path: rules.available/application_rules.yaml
-          - key: k8s_audit_rules.yaml
-            path: k8s_audit_rules.yaml
-          - key: aws_cloudtrail_rules.yaml
-            path: aws_cloudtrail_rules.yaml
+        - key: falco.yaml
+          path: falco.yaml
+    - name: falco-rules
+      configMap:
+        name: {{ include "falco.fullname" . }}
+        items:
+        - key: falco_rules.yaml
+          path: falco_rules.yaml
+    - name: falco-rules-local-yaml
+      configMap:
+        name: {{ include "falco.fullname" . }}
+        items:
+        - key: falco_rules.local.yaml
+          path: falco_rules.local.yaml
+    - name: application-rules-yaml
+      configMap:
+        name: {{ include "falco.fullname" . }}
+        items:
+        - key: application_rules.yaml
+          path: rules.available/application_rules.yaml
+    - name: k8s-audit-rules-yaml
+      configMap:
+        name: {{ include "falco.fullname" . }}
+        items:
+        - key: k8s_audit_rules.yaml
+          path: k8s_audit_rules.yaml
+    - name: aws-cloudtrail-rules-yaml
+      configMap:
+        name: {{ include "falco.fullname" . }}
+        items:
+        - key: aws_cloudtrail_rules.yaml
+          path: aws_cloudtrail_rules.yaml
     {{- if .Values.customRules }}
     - name: rules-volume
       configMap:
