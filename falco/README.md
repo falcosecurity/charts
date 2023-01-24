@@ -47,12 +47,16 @@ Starting from Falco 0.31.0 the [new plugin system](https://falco.org/docs/plugin
 
 Note that **multiple event sources can not be handled in the same Falco instance**. It means, you can not have Falco deployed leveraging **drivers** for syscalls events and at the same time loading **plugins**. Here you can find the [tracking issue](https://github.com/falcosecurity/falco/issues/2074) about multiple **event sources** in the same Falco instance.
 If you need to handle **syscalls** and **plugins** events than consider deploying different Falco instances, one for each use case.
-#### About the Driver
 
-Falco needs a **driver** (the [kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module) or the [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe)) that taps into the stream of system calls and passes that system calls to Falco. The driver must be installed on the node where Falco is running.
+#### About Drivers
 
-By default the drivers are managed using an *init container* which includes a script (`falco-driver-loader`) that either tries to build the driver on-the-fly or downloads a prebuilt driver as a fallback. Usually, no action is required.
+Falco can use different drivers to analyze the system workload and pass security events to userspace. The supported drivers are:
 
+* [Kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module) 
+* [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe)
+* [Modern eBPF probe]() (starting from Falco `0.34.0`)
+
+Drivers should be installed on the node where Falco is running. The kernel module and the eBPF probe are installed on the node through an *init container* that tries to build drivers on-the-fly or to download a prebuilt as a fallback. The Modern eBPF probe doesn't require an init container because it is shipped directly into the Falco package. The helm chart can understand the requirements according to the chosen driver so no additional user action should be required.
 
 ##### Pre-built drivers
 

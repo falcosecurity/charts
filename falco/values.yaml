@@ -58,7 +58,7 @@ podSecurityContext: {}
 # 1) driver.enabled = false:
 #    securityContext: {}
 #
-# 2) driver.enabled = true and driver.kind = module:
+# 2) driver.enabled = true and (driver.kind = module || driver.kind = modern-bpf):
 #    securityContext:
 #     privileged: true
 #
@@ -176,7 +176,7 @@ driver:
   # -- Set it to false if you want to deploy Falco without the drivers.
   # Always set it to false when using Falco with plugins.
   enabled: true
-  # -- Tell Falco which driver to use. Available options: module (kernel driver) and ebpf (eBPF probe).
+  # -- Tell Falco which driver to use. Available options: module (kernel driver), ebpf (eBPF probe), modern-bpf (modern eBPF probe).
   kind: module
   # -- Configuration section for ebpf driver.
   ebpf:
@@ -212,7 +212,7 @@ driver:
       args: []
       # -- Resources requests and limits for the Falco driver loader init container.
       resources: {}
-      # -- Security context for the Falco driver loader init container. Overrides the default security context. If driver.mode == "module" you must at least set `privileged: true`.
+      # -- Security context for the Falco driver loader init container. Overrides the default security context. If driver.kind == "module" you must at least set `privileged: true`.
       securityContext: {}
 
 # -- Gvisor configuration. Based on your system you need to set the appropriate values.
