@@ -564,6 +564,8 @@ falco:
     rate: .03333
     # -- Max burst of messages emitted.
     max_burst: 1
+    # -- Flag to enable drops for debug purposes.
+    simulate_drops: false
 
   # Falco uses a shared buffer between the kernel and userspace to receive
   # the events (eg., system call information) in userspace.
@@ -717,6 +719,8 @@ falco:
   webserver:
     # -- Enable Falco embedded webserver.
     enabled: true
+    # -- Number of threads depending on the number of online cores.
+    threadiness: 0
     # -- Port where Falco embedded webserver listen to connections.
     listen_port: 8765
     # -- Endpoint where Falco exposes the health status.
