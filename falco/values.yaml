@@ -195,8 +195,6 @@ driver:
     # -- Enable/disable the init container.
     enabled: true
     initContainer:
-      # -- Enable/disable the init container.
-      enabled: true
       image:
         # -- The image pull policy.
         pullPolicy: IfNotPresent
