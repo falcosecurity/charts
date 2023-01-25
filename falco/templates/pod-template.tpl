@@ -98,10 +98,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-      {{- if or (not .Values.driver.enabled) (and .Values.driver.loader.enabled .Values.driver.loader.initContainer.enabled) }}
-        - name: SKIP_DRIVER_LOADER
-          value:
-      {{- end }}
       {{- if and .Values.driver.enabled (eq .Values.driver.kind "ebpf") }}
         - name: FALCO_BPF_PROBE
           value: {{ .Values.driver.ebpf.path }}
@@ -149,7 +145,7 @@ spec:
         - mountPath: /host/proc
           name: proc-fs
         {{- end }}
-        {{- if and .Values.driver.enabled (not .Values.driver.loader.initContainer.enabled) }}
+        {{- if and .Values.driver.enabled (not .Values.driver.loader.enabled) }}
           readOnly: true
         - mountPath: /host/boot
           name: boot-fs
@@ -243,7 +239,7 @@ spec:
   {{- include "falco.gvisor.initContainer" . | nindent 4 }}
   {{- end }}
   {{- if .Values.driver.enabled }}
-  {{- if and .Values.driver.loader.enabled .Values.driver.loader.initContainer.enabled }}
+  {{- if.Values.driver.loader.enabled }}
     {{- include "falco.driverLoader.initContainer" . | nindent 4 }}
   {{- end }}
   {{- end }}
