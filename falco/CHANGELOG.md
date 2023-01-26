@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v2.6.0
+
+* Add support for modern BPF probe as a new driver
+
 ## v2.5.2
 
 * Add `controller.annotations` configuration
