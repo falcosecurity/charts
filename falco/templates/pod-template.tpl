@@ -189,21 +189,6 @@ spec:
         - mountPath: /etc/falco/falco.yaml
           name: falco-yaml
           subPath: falco.yaml
-        - mountPath: /etc/falco/falco_rules.yaml
-          name: falco-rules
-          subPath: falco_rules.yaml
-        - mountPath: /etc/falco/falco_rules.local.yaml
-          name: falco-rules-local-yaml
-          subPath: falco_rules.local.yaml
-        - mountPath: /etc/falco/rules.available/application_rules.yaml
-          name: application-rules-yaml
-          subPath: rules.available/application_rules.yaml
-        - mountPath: /etc/falco/k8s_audit_rules.yaml
-          name:  k8s-audit-rules-yaml
-          subPath:  k8s_audit_rules.yaml
-        - mountPath: /etc/falco/aws_cloudtrail_rules.yaml
-          name: aws-cloudtrail-rules-yaml
-          subPath: aws_cloudtrail_rules.yaml
         {{- if .Values.customRules }}
         - mountPath: /etc/falco/rules.d
           name: rules-volume
@@ -333,36 +318,6 @@ spec:
         items:
         - key: falco.yaml
           path: falco.yaml
-    - name: falco-rules
-      configMap:
-        name: {{ include "falco.fullname" . }}
-        items:
-        - key: falco_rules.yaml
-          path: falco_rules.yaml
-    - name: falco-rules-local-yaml
-      configMap:
-        name: {{ include "falco.fullname" . }}
-        items:
-        - key: falco_rules.local.yaml
-          path: falco_rules.local.yaml
-    - name: application-rules-yaml
-      configMap:
-        name: {{ include "falco.fullname" . }}
-        items:
-        - key: application_rules.yaml
-          path: rules.available/application_rules.yaml
-    - name: k8s-audit-rules-yaml
-      configMap:
-        name: {{ include "falco.fullname" . }}
-        items:
-        - key: k8s_audit_rules.yaml
-          path: k8s_audit_rules.yaml
-    - name: aws-cloudtrail-rules-yaml
-      configMap:
-        name: {{ include "falco.fullname" . }}
-        items:
-        - key: aws_cloudtrail_rules.yaml
-          path: aws_cloudtrail_rules.yaml
     {{- if .Values.customRules }}
     - name: rules-volume
       configMap:
