@@ -9,7 +9,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## v2.5.2
 
-* Add `controller.annotations` configuration
+* Fixed notes template to only include daemon set info if set to daemon set
 
 ## v2.5.1
 
