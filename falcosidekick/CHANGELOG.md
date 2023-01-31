@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.5.15
+
+* Set extra labels and annotations for `AlertManager` only if they're not empty
+
 ## 0.5.14
 
 * Fix Prometheus extralabels configuration in Falcosidekick
