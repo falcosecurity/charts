@@ -43,10 +43,9 @@ The cluster in our example has three nodes, one *control-plane* node and two *wo
 > **Tip**: List Falco release using `helm list -n falco`, a release is a name used to track a specific deployment
 
 ### Falco, Event Sources and Kubernetes
-Starting from Falco 0.31.0 the [new plugin system](https://falco.org/docs/plugins/) is stable and production ready. The **plugin system** can be seen as the next step in the evolution of Falco. Historically, Falco monitored system events from the **kernel** trying to detect malicious behaviors on Linux systems. It also had the capability to process k8s Audit Logs to detect suspicious activities in kubernetes clusters. Since Falco 0.32.0 all the related code to the k8s Audit Logs in Falco was removed and ported in a [plugin](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit). At the time being Falco supports different event sources coming from **plugins** or the **drivers** (system events). 
+Starting from Falco 0.31.0 the [new plugin system](https://falco.org/docs/plugins/) is stable and production ready. The **plugin system** can be seen as the next step in the evolution of Falco. Historically, Falco monitored system events from the **kernel** trying to detect malicious behaviors on Linux systems. It also had the capability to process k8s Audit Logs to detect suspicious activities in Kubernetes clusters. Since Falco 0.32.0 all the related code to the k8s Audit Logs in Falco was removed and ported in a [plugin](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit). At the time being Falco supports different event sources coming from **plugins** or **drivers** (system events). 
 
-Note that **multiple event sources can not be handled in the same Falco instance**. It means, you can not have Falco deployed leveraging **drivers** for syscalls events and at the same time loading **plugins**. Here you can find the [tracking issue](https://github.com/falcosecurity/falco/issues/2074) about multiple **event sources** in the same Falco instance.
-If you need to handle **syscalls** and **plugins** events than consider deploying different Falco instances, one for each use case.
+Note that **a Falco instance can handle multiple event sources in parallel**. you can deploy Falco leveraging **drivers** for syscalls events and at the same time loading **plugins**. A step by step guide on how to deploy Falco with multiple sources can be found [here](https://falco.org/docs/getting-started/third-party/learning/#falco-with-multiple-sources).
 
 #### About Drivers
 
@@ -76,9 +75,11 @@ Falco needs **kernel headers** installed on the host as a prerequisite to build 
 * Event sourcing capability;
 * Field extraction capability;
 
-Plugin capabilities are *composable*, we can have a single plugin with both the capabilities. Or on the other hand we can load two different plugins each with its capability, one plugin as a source of events and another as an extractor. A good example of this are the [Kubernetes Audit Events](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) and the [Falcosecurity Json](https://github.com/falcosecurity/plugins/tree/master/plugins/json) *plugins*. By deploying them both we have support for the **K8s Audit Logs** in Falco
+Plugin capabilities are *composable*, we can have a single plugin with both capabilities. Or on the other hand, we can load two different plugins each with its capability, one plugin as a source of events and another as an extractor. A good example of this is the [Kubernetes Audit Events](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) and the [Falcosecurity Json](https://github.com/falcosecurity/plugins/tree/master/plugins/json) *plugins*. By deploying them both we have support for the **K8s Audit Logs** in Falco
 
-Note that **the driver is not required when using plugins**. When *plugins* are enabled Falco is deployed without the *init container*.
+
+
+Note that **the driver is not required when using plugins**. 
 
 #### About gVisor
 gVisor is an application kernel, written in Go, that implements a substantial portion of the Linux system call interface. It provides an additional layer of isolation between running applications and the host operating system. For more information please consult the [official docs](https://gvisor.dev/docs/). In version `0.32.1`, Falco first introduced support for gVisor by leveraging the stream of system call information coming from gVisor.
@@ -118,8 +119,17 @@ The two instances of Falco will operate independently and can be installed, unin
 ##### Falco+gVisor additional resources
 An exhaustive blog post about Falco and gVisor can be found on the [Falco blog](https://falco.org/blog/intro-gvisor-falco/).
 If you need help on how to set gVisor in your environment please have a look at the [gVisor official docs](https://gvisor.dev/docs/user_guide/quick_start/kubernetes/)
+
+### About Falco Artifacts
+Historically **rules files** and **plugins** used to be shipped inside the Falco docker image and/or inside the chart. Starting from version `v0.3.0` of the chart, the [**falcoctl tool**](https://github.com/falcosecurity/falcoctl) can be used to install/update **rules files** and **plugins**. When referring to such objects we will use the term **artifact**.  For more info please check out the following [proposal](https://github.com/falcosecurity/falcoctl/blob/main/proposals/20220916-rules-and-plugin-distribution.md).
+
+The default configuration of the chart for new installations is to use the **falcoctl** tool to handle **artifacts**. The chart will deploy two new containers along the Falco one:
+* `falcoctl-artifact-install` an init container that makes sure to install the configured **artifacts** before the Falco container starts;
+* `falcoctl-artifact-follow` a sidecar container that periodically checks for new artifacts (currently only *falco-rules*) and downloads them;
+
+For more info on how to enable/disable and configure the **falcoctl** tool checkout the config values [here](./generated/helm-values.md) and the [upgrading notes](./BREAKING-CHANGES.md#300)
 ### Deploying Falco in Kubernetes
-After the clarification of the different **event sources** and how they are consumed by Falco using the **drivers** and the **plugins**, now lets discuss about how Falco is deployed in Kubernetes.
+After the clarification of the different [**event sources**](#falco-event-sources-and-kubernetes) and how they are consumed by Falco using the **drivers** and the **plugins**, now let us discuss how Falco is deployed in Kubernetes.
 
 The chart deploys Falco using a `daemonset` or a `deployment` depending on the **event sources**.
 
@@ -265,14 +275,37 @@ The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://gi
 
 The following snippet shows how to deploy Falco with the [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin:
 ```yaml
+# -- Disable the drivers since we want to deplouy only the k8saudit plugin.
 driver:
   enabled: false
 
+# -- Disable the collectors, no syscall events to enrich with metadata.
 collectors:
   enabled: false
 
+# -- Deploy Falco as a deployment. One instance of Falco is enough. Anyway the number of replicas is configurabale.
 controller:
   kind: deployment
+  deployment:
+    # -- Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing.
+    # For more info check the section on Plugins in the README.md file.
+    replicas: 1
+
+
+falcoctl:
+  artifact:
+    install:
+      # -- Enable the falcoctl tool as init container. It installs artifacts in the config.artifact.install.refs list.
+      enabled: true
+    follow:
+      # -- Disable the sidecar container. We do not support it yet for plugins. It is used only for rules feed such as Falco rules.
+      enabled: false
+  config:
+    artifact:
+      install:
+        # -- List of artifacts to be installed by the falcoctl init container.
+        # Same plugins we are loading in Falco. See "load_plugins" section.
+        refs: [k8saudit:0, json:0]
 
 services:
   - name: k8saudit-webhook
@@ -283,7 +316,7 @@ services:
         protocol: TCP
 
 falco:
-  rulesFile:
+  rules_file:
     - /etc/falco/k8s_audit_rules.yaml
     - /etc/falco/rules.d
   plugins:
@@ -297,15 +330,20 @@ falco:
     - name: json
       library_path: libjson.so
       init_config: ""
+  # Plugins that Falco will load. Note: the same plugins are installed by the falcoctl-artifact-install init container.
   load_plugins: [k8saudit, json]
+
 ```
-What the above configuration does is:
+Here is the explanation of the above configuration:
 * disable the drivers by setting `driver.enabled=false`;
 * disable the collectors by setting `collectors.enabled=false`;
 * deploy the Falco using a k8s *deploment* by setting `controller.kind=deployment`;
 * makes our Falco instance reachable by the `k8s api-server` by configuring a service for it in `services`;
+* enable the `falcoctl-artifact-install` init container;
+* configure `falcoctl-artifact-install` to install the required plugins;
+* disable the `falcoctl-artifact-follow` sidecar container;
 * load the correct ruleset for our plugin in `falco.rulesFile`;
-* configure the plugins to be loaded, in this case the `k8saudit` and `json`;
+* configure the plugins to be loaded, in this case, the `k8saudit` and `json`;
 * and finally we add our plugins in the `load_plugins` to be loaded by Falco.
 
 The configuration can be found in the `values-k8saudit.yaml` file ready to be used:
