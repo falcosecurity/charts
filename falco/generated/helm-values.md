@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v2.4.4`
+`Chart version: v3.0.0`
 ## Values
 
 | Key | Type | Default | Description |
@@ -22,6 +22,7 @@
 | collectors.kubernetes.enableNodeFilter | bool | `true` | If true, only the current node (on which Falco is running) will be considered when requesting metadata of pods to the API server. Disabling this option may have a performance penalty on large clusters. |
 | collectors.kubernetes.enabled | bool | `true` | Enable Kubernetes meta data collection via a connection to the Kubernetes API server. When this option is disabled, Falco falls back to the container annotations to grap the meta data. In such a case, only the ID, name, namespace, labels of the pod will be available. |
 | containerSecurityContext | object | `{}` | Set securityContext for the Falco container.For more info see the "falco.securityContext" helper in "pod-template.tpl" |
+| controller.annotations | object | `{}` |  |
 | controller.daemonset.updateStrategy.type | string | `"RollingUpdate"` | Perform rolling updates by default in the DaemonSet agent ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/ |
 | controller.deployment.replicas | int | `1` | Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing. For more info check the section on Plugins in the README.md file. |
 | controller.kind | string | `"daemonset"` |  |
@@ -31,17 +32,16 @@
 | driver.ebpf.leastPrivileged | bool | `false` | Constrain Falco with capabilities instead of running a privileged container. This option is only supported with the eBPF driver and a kernel >= 5.8. Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`). |
 | driver.ebpf.path | string | `nil` | Path where the eBPF probe is located. It comes handy when the probe have been installed in the nodes using tools other than the init container deployed with the chart. |
 | driver.enabled | bool | `true` | Set it to false if you want to deploy Falco without the drivers. Always set it to false when using Falco with plugins. |
-| driver.kind | string | `"module"` | Tell Falco which driver to use. Available options: module (kernel driver) and ebpf (eBPF probe). |
-| driver.loader | object | `{"enabled":true,"initContainer":{"args":[],"enabled":true,"env":[],"image":{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falco-driver-loader","tag":""},"resources":{},"securityContext":{}}}` | Configuration for the Falco init container. |
+| driver.kind | string | `"module"` | Tell Falco which driver to use. Available options: module (kernel driver), ebpf (eBPF probe), modern-bpf (modern eBPF probe). |
+| driver.loader | object | `{"enabled":true,"initContainer":{"args":[],"env":[],"image":{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falco-driver-loader","tag":""},"resources":{},"securityContext":{}}}` | Configuration for the Falco init container. |
 | driver.loader.enabled | bool | `true` | Enable/disable the init container. |
 | driver.loader.initContainer.args | list | `[]` | Arguments to pass to the Falco driver loader init container. |
-| driver.loader.initContainer.enabled | bool | `true` | Enable/disable the init container. |
 | driver.loader.initContainer.env | list | `[]` | Extra environment variables that will be pass onto Falco driver loader init container. |
 | driver.loader.initContainer.image.pullPolicy | string | `"IfNotPresent"` | The image pull policy. |
 | driver.loader.initContainer.image.registry | string | `"docker.io"` | The image registry to pull from. |
 | driver.loader.initContainer.image.repository | string | `"falcosecurity/falco-driver-loader"` | The image repository to pull from. |
 | driver.loader.initContainer.resources | object | `{}` | Resources requests and limits for the Falco driver loader init container. |
-| driver.loader.initContainer.securityContext | object | `{}` | Security context for the Falco driver loader init container. Overrides the default security context. If driver.mode == "module" you must at least set `privileged: true`. |
+| driver.loader.initContainer.securityContext | object | `{}` | Security context for the Falco driver loader init container. Overrides the default security context. If driver.kind == "module" you must at least set `privileged: true`. |
 | extra.args | list | `[]` | Extra command-line arguments. |
 | extra.env | list | `[]` | Extra environment variables that will be pass onto Falco containers. |
 | extra.initContainers | list | `[]` | Additional initContainers for Falco pods. |
@@ -62,13 +62,15 @@
 | falco.json_output | bool | `false` | If "true", print falco alert messages and rules file loading/validation results as json, which allows for easier consumption by downstream programs. Default is "false". |
 | falco.libs_logger.enabled | bool | `false` | Enable the libs logger. |
 | falco.libs_logger.severity | string | `"debug"` | Minimum log severity to include in the libs logs. Note: this value is separate from the log level of the Falco logger and does not affect it. Can be one of "fatal", "critical", "error", "warning", "notice", "info", "debug", "trace". |
-| falco.load_plugins | list | `[]` | Add here the names of the plugins that you want to be loaded by Falco. Please make sure that plugins have been configured under the "plugins" section before adding them here. |
+| falco.load_plugins | list | `[]` | Add here the names of the plugins that you want to be loaded by Falco. Please make sure that plugins have been configured under the "plugins" section before adding them here. Please make sure to configure the falcoctl tool to download and install the very same plugins you are loading here. You should add the references in the falcoctl.config.artifact.install.refs array for each plugin you are loading. |
 | falco.log_level | string | `"info"` | Minimum log level to include in logs. Note: these levels are separate from the priority field of rules. This refers only to the log level of falco's internal logging. Can be one of "emergency", "alert", "critical", "error", "warning", "notice", "info", "debug". |
 | falco.log_stderr | bool | `true` | Send information logs to stderr. Note these are *not* security notification logs! These are just Falco lifecycle (and possibly error) logs. |
 | falco.log_syslog | bool | `true` | Send information logs to syslog. Note these are *not* security notification logs! These are just Falco lifecycle (and possibly error) logs. |
 | falco.metadata_download.chunk_wait_us | int | `1000` | Sleep time (in μs) for each download chunck when fetching metadata from Kubernetes. |
 | falco.metadata_download.max_mb | int | `100` | Max allowed response size (in Mb) when fetching metadata from Kubernetes. |
 | falco.metadata_download.watch_freq_sec | int | `1` | Watch frequency (in seconds) when fetching metadata from Kubernetes. |
+| falco.modern_bpf | object | `{"cpus_for_each_syscall_buffer":1}` | - [Suggestions]  We chose index `1` (so one syscall buffer for each CPU) as default to keep parity between our drivers (bpf and kernel module). By the way, you are free to find the preferred configuration for your system. Considering a fixed `syscall_buf_size_preset` and so a fixed buffer dimension: - a lower number of buffers can speed up your system (lower memory footprint) - a too lower number of buffers could increase contention in the kernel causing an   overall slowdown of the system. If you don't have huge events throughputs and you are not experimenting with tons of drops you can try to reduce the number of buffers to have a lower memory footprint |
+| falco.modern_bpf.cpus_for_each_syscall_buffer | int | `1` | [MODERN PROBE ONLY] This is an index that controls how many CPUs you want to assign to a single syscall buffer. |
 | falco.output_timeout | int | `2000` | Duration in milliseconds to wait before considering the output timeout deadline exceed. |
 | falco.outputs.max_burst | int | `1000` | Maximum number of tokens outstanding. |
 | falco.outputs.rate | int | `1` | Number of tokens gained per second. |
@@ -83,6 +85,7 @@
 | falco.syscall_event_drops.actions | list | `["log","alert"]` | Actions to be taken when system calls were dropped from the circular buffer. |
 | falco.syscall_event_drops.max_burst | int | `1` | Max burst of messages emitted. |
 | falco.syscall_event_drops.rate | float | `0.03333` | Rate at which log/alert messages are emitted. |
+| falco.syscall_event_drops.simulate_drops | bool | `false` | Flag to enable drops for debug purposes. |
 | falco.syscall_event_drops.threshold | float | `0.1` | The messages are emitted when the percentage of dropped system calls with respect the number of events in the last second is greater than the given threshold (a double in the range [0, 1]). |
 | falco.syscall_event_timeouts.max_consecutives | int | `1000` | Maximum number of consecutive timeouts without an event after which you want Falco to alert. |
 | falco.syslog_output.enabled | bool | `true` | Enable syslog output for security notifications. |
@@ -93,6 +96,34 @@
 | falco.webserver.listen_port | int | `8765` | Port where Falco embedded webserver listen to connections. |
 | falco.webserver.ssl_certificate | string | `"/etc/falco/falco.pem"` | Certificate bundle path for the Falco embedded webserver. |
 | falco.webserver.ssl_enabled | bool | `false` | Enable SSL on Falco embedded webserver. |
+| falco.webserver.threadiness | int | `0` | Number of threads depending on the number of online cores. |
+| falcoctl.artifact.follow | object | `{"args":["--verbose"],"enabled":true,"env":{},"resources":{},"securityContext":{}}` | Runs "falcoctl artifact follow" command as a sidecar container. It is used to automatically check for updates given a list of artifacts. If an update is found it downloads and installs it in a shared folder (emptyDir) that is accessible by Falco. Rulesfiles are automatically detected and loaded by Falco once they are installed in the correct folder by falcoctl. To prevent new versions of artifacts from breaking Falco, the tool checks if it is compatible with the running version of Falco before installing it. |
+| falcoctl.artifact.follow.args | list | `["--verbose"]` | Arguments to pass to the falcoctl-artifact-follow sidecar container. |
+| falcoctl.artifact.follow.env | object | `{}` | Extra environment variables that will be pass onto falcoctl-artifact-follow sidecar container. |
+| falcoctl.artifact.follow.resources | object | `{}` | Resources requests and limits for the falcoctl-artifact-follow sidecar container. |
+| falcoctl.artifact.follow.securityContext | object | `{}` | Security context for the falcoctl-artifact-follow sidecar container. |
+| falcoctl.artifact.install | object | `{"args":["--verbose"],"enabled":true,"env":{},"resources":{},"securityContext":{}}` | Runs "falcoctl artifact install" command as an init container. It is used to install artfacts before Falco starts. It provides them to Falco by using an emptyDir volume. |
+| falcoctl.artifact.install.args | list | `["--verbose"]` | Arguments to pass to the falcoctl-artifact-install init container. |
+| falcoctl.artifact.install.env | object | `{}` | Extra environment variables that will be pass onto falcoctl-artifact-install init container. |
+| falcoctl.artifact.install.resources | object | `{}` | Resources requests and limits for the falcoctl-artifact-install init container. |
+| falcoctl.artifact.install.securityContext | object | `{}` | Security context for the falcoctl init container. |
+| falcoctl.config | object | `{"artifact":{"allowedTypes":["rulesfile"],"follow":{"every":"6h","falcoversions":"http://localhost:8765/versions","pluginsDir":"/plugins","refs":["falco-rules:0"],"rulesfilesDir":"/rulesfiles"},"install":{"pluginsDir":"/plugins","refs":["falco-rules:0"],"resolveDeps":false,"rulesfilesDir":"/rulesfiles"}},"indexes":[{"name":"falcosecurity","url":"https://falcosecurity.github.io/falcoctl/index.yaml"}]}` | Configuration file of the falcoctl tool. It is saved in a configmap and mounted on the falcotl containers. |
+| falcoctl.config.artifact | object | `{"allowedTypes":["rulesfile"],"follow":{"every":"6h","falcoversions":"http://localhost:8765/versions","pluginsDir":"/plugins","refs":["falco-rules:0"],"rulesfilesDir":"/rulesfiles"},"install":{"pluginsDir":"/plugins","refs":["falco-rules:0"],"resolveDeps":false,"rulesfilesDir":"/rulesfiles"}}` | Configuration used by the artifact commands. |
+| falcoctl.config.artifact.allowedTypes | list | `["rulesfile"]` | List of artifact types that falcoctl will handle. If the configured refs resolves to an artifact whose type is not contained in the list it will refuse to downloade and install that artifact. |
+| falcoctl.config.artifact.follow.every | string | `"6h"` | How often the tool checks for new versions of the followed artifacts. |
+| falcoctl.config.artifact.follow.falcoversions | string | `"http://localhost:8765/versions"` | HTTP endpoint that serves the api versions of the Falco instance. It is used to check if the new versions are compatible with the running Falco instance. |
+| falcoctl.config.artifact.follow.pluginsDir | string | `"/plugins"` | See the fields of the artifact.install section. |
+| falcoctl.config.artifact.follow.refs | list | `["falco-rules:0"]` | List of artifacts to be followed by the falcoctl sidecar container. |
+| falcoctl.config.artifact.follow.rulesfilesDir | string | `"/rulesfiles"` | See the fields of the artifact.install section. |
+| falcoctl.config.artifact.install.pluginsDir | string | `"/plugins"` | Same as the one above but for the artifacts. |
+| falcoctl.config.artifact.install.refs | list | `["falco-rules:0"]` | List of artifacts to be installed by the falcoctl init container. |
+| falcoctl.config.artifact.install.resolveDeps | bool | `false` | Do not resolve the depenencies for artifacts. By default is true, but for our use case we disable it. |
+| falcoctl.config.artifact.install.rulesfilesDir | string | `"/rulesfiles"` | Directory where the rulesfiles are saved. The path is relative to the container, which in this case is an emptyDir mounted also by the Falco pod. |
+| falcoctl.config.indexes | list | `[{"name":"falcosecurity","url":"https://falcosecurity.github.io/falcoctl/index.yaml"}]` | List of indexes that falcoctl downloads and uses to locate and download artiafcts. For more info see: https://github.com/falcosecurity/falcoctl/blob/main/proposals/20220916-rules-and-plugin-distribution.md#index-file-overview |
+| falcoctl.image.pullPolicy | string | `"IfNotPresent"` | The image pull policy. |
+| falcoctl.image.registry | string | `"docker.io"` | The image registry to pull from. |
+| falcoctl.image.repository | string | `"falcosecurity/falcoctl"` | The image repository to pull from. |
+| falcoctl.image.tag | string | `"0.4.0"` |  |
 | falcosidekick | object | `{"enabled":false,"fullfqdn":false,"listenPort":""}` | For configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml |
 | falcosidekick.enabled | bool | `false` | Enable falcosidekick deployment. |
 | falcosidekick.fullfqdn | bool | `false` | Enable usage of full FQDN of falcosidekick service (useful when a Proxy is used). |
