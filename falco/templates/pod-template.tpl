@@ -60,6 +60,9 @@ spec:
         {{- include "falco.securityContext" . | nindent 8 }}
       args:
         - /usr/bin/falco
+        {{- if and .Values.driver.enabled (eq .Values.driver.kind "modern-bpf") }}
+        - --modern-bpf
+        {{- end }}
         {{- if .Values.gvisor.enabled }}
         - --gvisor-config
         - /gvisor-config/pod-init.json
@@ -223,7 +226,7 @@ spec:
   {{- if and .Values.gvisor.enabled }}
   {{- include "falco.gvisor.initContainer" . | nindent 4 }}
   {{- end }}
-  {{- if .Values.driver.enabled }}
+  {{- if and .Values.driver.enabled (ne .Values.driver.kind "modern-bpf") }}
   {{- if.Values.driver.loader.enabled }}
     {{- include "falco.driverLoader.initContainer" . | nindent 4 }}
   {{- end }}
@@ -386,7 +389,7 @@ spec:
 {{- define "falco.securityContext" -}}
 {{- $securityContext := dict -}}
 {{- if .Values.driver.enabled -}}
-  {{- if eq .Values.driver.kind "module" -}}
+  {{- if or (eq .Values.driver.kind "module") (eq .Values.driver.kind "modern-bpf") -}}
     {{- $securityContext := set $securityContext "privileged" true -}}
   {{- end -}}
   {{- if eq .Values.driver.kind "ebpf" -}}
