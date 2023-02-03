@@ -463,6 +463,9 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | service.annotations | object | `{}` | Service annotations |
 | service.port | int | `2801` | Service port |
 | service.type | string | `"ClusterIP"` | Service type |
+| testConnection.affinity | object | `{}` | Affinity for the test connection pod |
+| testConnection.nodeSelector | object | `{}` | test connection nodeSelector field |
+| testConnection.tolerations | list | `[]` | Tolerations for pod assignment |
 | tolerations | list | `[]` | Tolerations for pod assignment |
 | webui.affinity | object | `{}` | Affinity for the Web UI pods |
 | webui.enabled | bool | `false` | enable Falcosidekick-UI |

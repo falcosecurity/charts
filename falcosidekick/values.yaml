@@ -799,6 +799,16 @@ extraVolumeMounts: []
 # - mountPath: /etc/certs/mtlscert.optional.tls
 #   name: optional-mtls-volume
 
+testConnection:
+  # -- test connection nodeSelector field
+  nodeSelector: {}
+
+  # -- Tolerations for pod assignment
+  tolerations: []
+
+  # -- Affinity for the test connection pod
+  affinity: {}
+
 webui:
   # -- enable Falcosidekick-UI
   enabled: false
