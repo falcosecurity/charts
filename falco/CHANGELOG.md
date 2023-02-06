@@ -3,6 +3,15 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.0.0
+* Drop support for falcosecuriy/falco image, only the init container approach is supported out of the box;
+* Simplify the driver-loader init container logic;
+* Support **falcoctl** tool in the chart:
+  * Install the *rulesfile* artifacts;
+  * Follow the *rulesfile* artifacts in order to have the latest rules once they are released from falcosecurity org;
+* Support the **modern-bpf** probe a new driver (experimental)
+* Add a new file *BREAKING_CHANGES.md* to document the breaking changes and how to update the new chart.
+
 ## v2.5.5
 
 * Bump `falcosidekick` dependency to 0.5.16
