@@ -223,6 +223,7 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       if [[ -f /host${config} ]]; then
           echo "* Generating the Falco configuration..."
           /usr/bin/falco --gvisor-generate-config=${root}/falco.sock > /host${root}/pod-init.json
+          sed -E -i.orig '/"ignore_missing" : true,/d' /host${root}/pod-init.json
           if [[ -z $(grep pod-init-config /host${config}) ]]; then
             echo "* Updating the runsc config file /host${config}..."
             echo "  pod-init-config = \"${root}/pod-init.json\"" >> /host${config}
