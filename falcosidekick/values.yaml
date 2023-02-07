@@ -908,9 +908,9 @@ webui:
       # -- The web UI Redis image registry to pull from
       registry: docker.io
       # -- The web UI Redis image repository to pull from
-      repository: redislabs/redisearch
+      repository: redis/redis-stack
       # -- The web UI Redis image tag to pull from
-      tag: "2.2.4"
+      tag: "6.2.6-v3"
       # -- The web UI image pull policy
       pullPolicy: IfNotPresent
 
