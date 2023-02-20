@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v3.0.0`
+`Chart version: v3.1.0`
 ## Values
 
 | Key | Type | Default | Description |
@@ -69,8 +69,8 @@
 | falco.metadata_download.chunk_wait_us | int | `1000` | Sleep time (in μs) for each download chunck when fetching metadata from Kubernetes. |
 | falco.metadata_download.max_mb | int | `100` | Max allowed response size (in Mb) when fetching metadata from Kubernetes. |
 | falco.metadata_download.watch_freq_sec | int | `1` | Watch frequency (in seconds) when fetching metadata from Kubernetes. |
-| falco.modern_bpf | object | `{"cpus_for_each_syscall_buffer":1}` | - [Suggestions]  We chose index `1` (so one syscall buffer for each CPU) as default to keep parity between our drivers (bpf and kernel module). By the way, you are free to find the preferred configuration for your system. Considering a fixed `syscall_buf_size_preset` and so a fixed buffer dimension: - a lower number of buffers can speed up your system (lower memory footprint) - a too lower number of buffers could increase contention in the kernel causing an   overall slowdown of the system. If you don't have huge events throughputs and you are not experimenting with tons of drops you can try to reduce the number of buffers to have a lower memory footprint |
-| falco.modern_bpf.cpus_for_each_syscall_buffer | int | `1` | [MODERN PROBE ONLY] This is an index that controls how many CPUs you want to assign to a single syscall buffer. |
+| falco.modern_bpf | object | `{"cpus_for_each_syscall_buffer":2}` | - [Suggestions]  We chose index `2` (so one syscall buffer for each CPU pair) as default because the modern bpf probe follows a different memory allocation strategy with respect to the other 2 drivers (bpf and kernel module). By the way, you are free to find the preferred configuration for your system. Considering a fixed `syscall_buf_size_preset` and so a fixed buffer dimension: - a lower number of buffers can speed up your system (lower memory footprint) - a too lower number of buffers could increase contention in the kernel causing an   overall slowdown of the system. If you don't have huge events throughputs and you are not experimenting with tons of drops you can try to reduce the number of buffers to have a lower memory footprint |
+| falco.modern_bpf.cpus_for_each_syscall_buffer | int | `2` | [MODERN PROBE ONLY] This is an index that controls how many CPUs you want to assign to a single syscall buffer. |
 | falco.output_timeout | int | `2000` | Duration in milliseconds to wait before considering the output timeout deadline exceed. |
 | falco.outputs.max_burst | int | `1000` | Maximum number of tokens outstanding. |
 | falco.outputs.rate | int | `1` | Number of tokens gained per second. |

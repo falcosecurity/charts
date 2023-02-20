@@ -3,6 +3,9 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.1.0
+* Upgrade Falco to 0.34.1
+
 ## v3.0.0
 * Drop support for falcosecuriy/falco image, only the init container approach is supported out of the box;
 * Simplify the driver-loader init container logic;
