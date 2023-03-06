@@ -3,6 +3,9 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.1.1
+* Update `k8saudit` section in README.md file.
+
 ## v3.1.0
 * Upgrade Falco to 0.34.1
 

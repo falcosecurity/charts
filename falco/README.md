@@ -295,17 +295,23 @@ controller:
 falcoctl:
   artifact:
     install:
-      # -- Enable the falcoctl tool as init container. It installs artifacts in the config.artifact.install.refs list.
+      # -- Enable the init container. We do not recommend installing (or following) plugins for security reasons since they are executable objects.
       enabled: true
     follow:
-      # -- Disable the sidecar container. We do not support it yet for plugins. It is used only for rules feed such as Falco rules.
-      enabled: false
+      # -- Enable the sidecar container. We do not support it yet for plugins. It is used only for rules feed such as k8saudit-rules rules.
+      enabled: true
   config:
     artifact:
       install:
+        # -- Do not resolve the depenencies for artifacts. By default is true, but for our use case we disable it.
+        resolveDeps: false
         # -- List of artifacts to be installed by the falcoctl init container.
-        # Same plugins we are loading in Falco. See "load_plugins" section.
-        refs: [k8saudit:0, json:0]
+        # Only rulesfiles, we do no recommend plugins for security reasonts since they are executable objects.
+        refs: [k8saudit-rules:0.5]
+      follow:
+        # -- List of artifacts to be followed by the falcoctl sidecar container.
+        # Only rulesfiles, we do no recommend plugins for security reasonts since they are executable objects.
+        refs: [k8saudit-rules:0.5]
 
 services:
   - name: k8saudit-webhook
