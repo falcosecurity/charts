@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.1.2
+
+* Bump `falcosidekick` dependency to 0.6.1
+
 ## v3.1.1
 * Update `k8saudit` section in README.md file.
 
