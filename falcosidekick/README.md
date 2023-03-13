@@ -518,6 +518,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.tolerations | list | `[]` | Tolerations for pod assignment |
 | webui.ttl | int | `0` | TTL for keys (0 for no ttl) |
 | webui.user | string | `"admin:admin"` | User in format <login>:<password> |
+| webui.allowcors | bool | `false` | Allow CORS |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 > **Tip**: You can use the default [values.yaml](values.yaml)

@@ -820,6 +820,8 @@ webui:
   ttl: 0
   # -- User in format <login>:<password>
   user: "admin:admin"
+  # -- Allow CORS
+  allowcors: false
   image:
     # -- The web UI image registry to pull from
     registry: docker.io

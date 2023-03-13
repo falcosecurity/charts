@@ -71,6 +71,9 @@ spec:
             - "-u"
             - {{ .Values.webui.user }}
             {{- end}}
+            {{- if .Values.webui.allowcors }}
+            - "-x"
+            {{- end}}
           ports:
             - name: http
               containerPort: 2802
