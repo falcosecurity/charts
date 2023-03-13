@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.6.1
+
+* Add `webui.allowcors` value for `Falcosidekick-UI`
+
 ## 0.6.0
 
 * Change the docker image for the redis pod for falcosidekick-ui
