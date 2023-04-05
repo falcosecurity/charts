@@ -1,4 +1,4 @@
-# -- Disable the drivers since we want to deplouy only the k8saudit plugin.
+# -- Disable the drivers since we want to deploy only the k8saudit plugin.
 driver:
   enabled: false
 
