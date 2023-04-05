@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.1.4
+
+* Fix typo in values-k8audit file
+
 ## v3.1.3
 
 * Updates the grpc-service to use the correct label selector
