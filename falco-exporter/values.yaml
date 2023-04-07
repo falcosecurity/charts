@@ -22,7 +22,7 @@ probesPort: 19376
 image:
   registry: docker.io
   repository: falcosecurity/falco-exporter
-  tag: 0.8.0
+  tag: 0.8.2
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
