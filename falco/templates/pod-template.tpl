@@ -394,7 +394,7 @@ spec:
   {{- end -}}
   {{- if eq .Values.driver.kind "ebpf" -}}
     {{- if .Values.driver.ebpf.leastPrivileged -}}
-      {{- $securityContext := set $securityContext "capabilities" (dict "add" (list "BPF" "SYS_RESOURCE" "PERFMON" "SYS_PTRACE")) -}}
+      {{- $securityContext := set $securityContext "capabilities" (dict "add" (list "SYS_ADMIN" "SYS_RESOURCE")) -}}
     {{- else -}}
       {{- $securityContext := set $securityContext "privileged" true -}}
     {{- end -}}
