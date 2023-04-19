@@ -167,7 +167,7 @@ spec:
           name: dev-fs
           readOnly: true
         - name: sys-fs
-          mountPath: /sys/module/falco
+          mountPath: /sys/module
         {{- end }}
         {{- if and .Values.driver.enabled (and (eq .Values.driver.kind "ebpf") (contains "falco-no-driver" .Values.image.repository)) }}
         - name: debugfs
@@ -263,7 +263,7 @@ spec:
         path: /dev
     - name: sys-fs
       hostPath:
-        path: /sys/module/falco
+        path: /sys/module
     {{- end }}
     {{- if and .Values.driver.enabled (and (eq .Values.driver.kind "ebpf") (contains "falco-no-driver" .Values.image.repository)) }}
     - name: debugfs

@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.1.4
+
+* Mount on `/sys/module` instead of `/sys/module/falco` for kernel module version.
+
 ## v3.1.3
 
 * Updates the grpc-service to use the correct label selector
