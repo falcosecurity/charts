@@ -3,6 +3,13 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.9.5
+
+### Minor Changes
+
+* Removed unnecessary capabilities from security context
+* Setted filesystem on read-only
+
 ## v0.9.4
 
 ### Minor Changes
