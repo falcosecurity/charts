@@ -66,7 +66,15 @@ The following table lists the main configurable parameters of the chart and thei
 | `scc.create`                                     | Create OpenShift's Security Context Constraint                                                   | `true`                             |
 | `service.mTLS.enabled`                           | Enable falco-exporter server Mutual TLS feature                                                  | `false`                            |
 | `prometheusRules.enabled`                        | Enable the creation of falco-exporter PrometheusRules                                            | `false`                            |
-| `daemonset.podLabels`                            | Customized Daemonset pod labels                                                                  | `{}`
+| `daemonset.podLabels`                            | Customized Daemonset pod labels                                                                  | `{}`                               |
+| `healthChecks.livenessProbe.probesPort`          | Liveness probes port                                                                             | `19376`                            |
+| `healthChecks.readinessProbe.probesPort`         | Readiness probes port                                                                            | `19376`                            |
+| `healthChecks.livenessProbe.initialDelaySeconds` | Number of seconds before performing the first liveness probe                                     | `60`                               |
+| `healthChecks.readinessProbe.initialDelaySeconds`| Number of seconds before performing the first readiness probe                                    | `30`                               |
+| `healthChecks.livenessProbe.timeoutSeconds`      | Number of seconds after which the liveness probe times out                                       | `5`                                |
+| `healthChecks.readinessProbe.timeoutSeconds`     | Number of seconds after which the readiness probe times out                                      | `5`                                |
+| `healthChecks.livenessProbe.periodSeconds`       | Time interval in seconds to perform the liveness probe                                           | `15`                               |
+| `healthChecks.readinessProbe.periodSeconds`      | Time interval in seconds to perform the readiness probe                                          | `15`                               |
 
 Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
