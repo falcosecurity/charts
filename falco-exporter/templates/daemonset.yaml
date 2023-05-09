@@ -61,11 +61,17 @@ spec:
           livenessProbe:
             httpGet:
               path: /liveness
-              port: {{ .Values.probesPort }}
+              initialDelaySeconds: {{ .Values.healthChecks.livenessProbe.initialDelaySeconds }}
+              timeoutSeconds: {{ .Values.healthChecks.livenessProbe.timeoutSeconds }}
+              periodSeconds: {{ .Values.healthChecks.livenessProbe.periodSeconds }}
+              port: {{ .Values.healthChecks.livenessProbe.probesPort }}
           readinessProbe:
             httpGet:
               path: /readiness
-              port: {{ .Values.probesPort }}
+              initialDelaySeconds: {{ .Values.healthChecks.readinessProbe.initialDelaySeconds }}
+              timeoutSeconds: {{ .Values.healthChecks.readinessProbe.timeoutSeconds }}
+              periodSeconds: {{ .Values.healthChecks.readinessProbe.periodSeconds }}
+              port: {{ .Values.healthChecks.readinessProbe.probesPort }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
