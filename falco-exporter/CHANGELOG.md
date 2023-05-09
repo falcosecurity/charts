@@ -3,6 +3,12 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.9.4
+
+### Minor Changes
+
+* Add options to configure readiness/liveness probe values
+
 ## v0.9.3
 
 ### Minor Changes
