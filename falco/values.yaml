@@ -346,7 +346,7 @@ falcoctl:
     install:
       enabled: true
       # -- Extra environment variables that will be pass onto falcoctl-artifact-install init container.
-      env: {}
+      env: []
       # -- Arguments to pass to the falcoctl-artifact-install init container.
       args: ["--verbose"]
       # -- Resources requests and limits for the falcoctl-artifact-install init container.
@@ -361,7 +361,7 @@ falcoctl:
     follow:
       enabled: true
       # -- Extra environment variables that will be pass onto falcoctl-artifact-follow sidecar container.
-      env: {}
+      env: []
       # -- Arguments to pass to the falcoctl-artifact-follow sidecar container.
       args: ["--verbose"]
       # -- Resources requests and limits for the falcoctl-artifact-follow sidecar container.

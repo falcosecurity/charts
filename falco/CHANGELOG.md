@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.1.5
+
+* Use list as default for env parameter of init and follow containers
+
 ## v3.1.4
 
 * Fix typo in values-k8audit file
