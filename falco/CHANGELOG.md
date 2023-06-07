@@ -3,6 +3,13 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.2.0
+* Upgrade Falco to 0.35.0. For more info see the release notes: https://github.com/falcosecurity/falco/releases/tag/0.35.0
+* Sync values.yaml with upstream falco.yaml config file.
+* Upgrade falcoctl to 0.5.0. For more info see the release notes: https://github.com/falcosecurity/falcoctl/releases/tag/v0.5.0
+* The tag used to install and follow the falco rules is `1`
+* The tag used to install and follow the k8saudit rules is `0.6`
+
 ## v3.1.5
 
 * Use list as default for env parameter of init and follow containers
