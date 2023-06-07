@@ -57,11 +57,11 @@ falcoctl:
         resolveDeps: false
         # -- List of artifacts to be installed by the falcoctl init container.
         # We do not recommend installing (or following) plugins for security reasons since they are executable objects.
-        refs: [falco-rules:0]
+        refs: [falco-rules:1]
       follow:
         # -- List of artifacts to be followed by the falcoctl sidecar container.
         # We do not recommend installing (or following) plugins for security reasons since they are executable objects.
-        refs: [falco-rules:0]
+        refs: [falco-rules:1]
 
 # Set this to true to force Falco so output the logs as soon as they are emmitted.
 tty: false
