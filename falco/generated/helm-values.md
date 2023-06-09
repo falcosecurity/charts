@@ -51,7 +51,7 @@
 | falco.grpc | object | `{"bind_address":"unix:///run/falco/falco.sock","enabled":false,"threadiness":0}` | gRPC server using a local unix socket |
 | falco.grpc.threadiness | int | `0` | When the `threadiness` value is set to 0, Falco will automatically determine the appropriate number of threads based on the number of online cores in the system. |
 | falco.grpc_output | object | `{"enabled":false}` | Use gRPC as an output service.  gRPC is a modern and high-performance framework for remote procedure calls (RPC). It utilizes protocol buffers for efficient data serialization. The gRPC output in Falco provides a modern and efficient way to integrate with other systems. By default the setting is turned off. Enabling this option stores output events in memory until they are consumed by a gRPC client. Ensure that you have a consumer for the output events or leave it disabled. |
-| falco.http_output | object | `{"ca_bundle":"","ca_cert":"","ca_path":"/etc/ssl/certs","enabled":false,"insecure":false,"url":"http://some.url","user_agent":"falcosecurity/falco"}` | Send logs to an HTTP endpoint or webhook. |
+| falco.http_output | object | `{"ca_bundle":"","ca_cert":"","ca_path":"/etc/ssl/certs","enabled":false,"insecure":false,"url":"","user_agent":"falcosecurity/falco"}` | Send logs to an HTTP endpoint or webhook. |
 | falco.http_output.ca_bundle | string | `""` | Path to a specific file that will be used as the CA certificate store. |
 | falco.http_output.ca_cert | string | `""` | Path to the CA certificate that can verify the remote server. |
 | falco.http_output.ca_path | string | `"/etc/ssl/certs"` | Path to a folder that will be used as the CA certificate store. CA certificate need to be stored as indivitual PEM files in this directory. |
