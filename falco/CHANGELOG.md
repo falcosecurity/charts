@@ -3,6 +3,9 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.2.1
+* Set falco.http_output.url to empty string in values.yaml file
+
 ## v3.2.0
 * Upgrade Falco to 0.35.0. For more info see the release notes: https://github.com/falcosecurity/falco/releases/tag/0.35.0
 * Sync values.yaml with upstream falco.yaml config file.
