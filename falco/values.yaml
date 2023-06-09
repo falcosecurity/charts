@@ -614,7 +614,7 @@ falco:
   # -- Send logs to an HTTP endpoint or webhook.
   http_output:
     enabled: false
-    url: 
+    url: ""
     user_agent: "falcosecurity/falco"
     # -- Tell Falco to not verify the remote server.
     insecure: false
