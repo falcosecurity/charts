@@ -53,9 +53,9 @@ Falco needs a **driver** to analyze the system workload and pass security events
 
 * [Kernel module](https://falco.org/docs/event-sources/drivers/#kernel-module) 
 * [eBPF probe](https://falco.org/docs/event-sources/drivers/#ebpf-probe)
-* [Modern eBPF probe](https://falco.org/docs/event-sources/drivers/#modern-ebpf-probe-experimental) (starting from Falco `0.34.0`)
+* [Modern eBPF probe](https://falco.org/docs/event-sources/drivers/#modern-ebpf-probe)
 
-The driver should be installed on the node where Falco is running. The _kernel module_ (default option) and the _eBPF probe_ are installed on the node through an *init container* (i.e. `falco-driver-loader`) that tries to build drivers to download a prebuilt driver or build it on-the-fly or as a fallback. The _Modern eBPF probe_ doesn't require an init container because it is shipped directly into the Falco binary. However, the _Modern eBPF probe_ requires a kernel version equal to or greater than `5.8`.
+The driver should be installed on the node where Falco is running. The _kernel module_ (default option) and the _eBPF probe_ are installed on the node through an *init container* (i.e. `falco-driver-loader`) that tries to build drivers to download a prebuilt driver or build it on-the-fly or as a fallback. The _Modern eBPF probe_ doesn't require an init container because it is shipped directly into the Falco binary. However, the _Modern eBPF probe_ requires [recent BPF features](https://falco.org/docs/event-sources/kernel/#modern-ebpf-probe)
 
 ##### Pre-built drivers
 
