@@ -389,11 +389,18 @@ spec:
 {{- define "falco.securityContext" -}}
 {{- $securityContext := dict -}}
 {{- if .Values.driver.enabled -}}
-  {{- if or (eq .Values.driver.kind "module") (eq .Values.driver.kind "modern-bpf") -}}
+  {{- if eq .Values.driver.kind "module" -}}
     {{- $securityContext := set $securityContext "privileged" true -}}
   {{- end -}}
   {{- if eq .Values.driver.kind "ebpf" -}}
     {{- if .Values.driver.ebpf.leastPrivileged -}}
+      {{- $securityContext := set $securityContext "capabilities" (dict "add" (list "SYS_ADMIN" "SYS_RESOURCE" "SYS_PTRACE")) -}}
+    {{- else -}}
+      {{- $securityContext := set $securityContext "privileged" true -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if eq .Values.driver.kind "modern-bpf" -}}
+    {{- if .Values.driver.modern_bpf.leastPrivileged -}}
       {{- $securityContext := set $securityContext "capabilities" (dict "add" (list "BPF" "SYS_RESOURCE" "PERFMON" "SYS_PTRACE")) -}}
     {{- else -}}
       {{- $securityContext := set $securityContext "privileged" true -}}
