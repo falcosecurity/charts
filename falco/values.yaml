@@ -114,16 +114,16 @@ healthChecks:
     # -- Tells the kubelet that it should wait X seconds before performing the first probe.
     initialDelaySeconds: 60
     # -- Number of seconds after which the probe times out.
-    timeoutSeconds: 5
+    timeoutSeconds: 180
     # -- Specifies that the kubelet should perform the check every x seconds.
-    periodSeconds: 15
+    periodSeconds: 180
   readinessProbe:
     # -- Tells the kubelet that it should wait X seconds before performing the first probe.
     initialDelaySeconds: 30
     # -- Number of seconds after which the probe times out.
-    timeoutSeconds: 5
+    timeoutSeconds: 180
     # -- Specifies that the kubelet should perform the check every x seconds.
-    periodSeconds: 15
+    periodSeconds: 180
 
 # -- Attach the Falco process to a tty inside the container. Needed to flush Falco logs as soon as they are emitted.
 # Set it to "true" when you need the Falco logs to be immediately displayed.
