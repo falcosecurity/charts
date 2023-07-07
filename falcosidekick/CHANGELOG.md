@@ -5,6 +5,28 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.6.3
+
+* Update Falcosidekick to 2.28.0
+* Add Mutual TLS Client config
+* Add TLS Server config
+* Add `customseveritymap` to `alertmanager` output
+* Add Drop Event config to `alertmanager` output
+* Add `customheaders` to `elasticsearch` output
+* Add `customheaders` to `loki` output
+* Add `customheaders` to `grafana` output
+* Add `externalid` to `aws` output
+* Add `tls` to `smtp` output
+* Add `method` to `webhook` output
+* Add `customattributes` to `gcp.pubsub` output
+* Add `region` to `pargerduty` output
+* Add `topiccreation` to `kafka` output
+* Add `Grafana On Call` output
+* Add `Redis` output
+* Add `Telegram` output
+* Add `N8N` output
+* Add `Open Observer` output
+
 ## 0.6.2
 
 * Fix interpolation of `SYSLOG_PORT`
