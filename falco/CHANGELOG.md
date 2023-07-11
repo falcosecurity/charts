@@ -3,21 +3,29 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.4.0
+
+* Introduce an ability to use an additional volumeMounts for `falcoctl-artifact-install` and `falcoctl-artifact-follow` containers.
+
 ## v3.3.1
+
 * No changes made to the falco chart, only some fixes in the makefile
 
 ## v3.3.0
-* Upgrade Falco to 0.35.1. For more info see the release notes: https://github.com/falcosecurity/falco/releases/tag/0.35.1
-* Upgrade falcoctl to 0.5.1. For more info see the release notes: https://github.com/falcosecurity/falcoctl/releases/tag/v0.5.1
-* Introduce least privileged mode in modern ebpf. For more info see: https://falco.org/docs/event-sources/kernel/#least-privileged-mode-2
- 
+
+* Upgrade Falco to 0.35.1. For more info see the release notes: <https://github.com/falcosecurity/falco/releases/tag/0.35.1>
+* Upgrade falcoctl to 0.5.1. For more info see the release notes: <https://github.com/falcosecurity/falcoctl/releases/tag/v0.5.1>
+* Introduce least privileged mode in modern ebpf. For more info see: <https://falco.org/docs/event-sources/kernel/#least-privileged-mode-2>
+
 ## v3.2.1
+
 * Set falco.http_output.url to empty string in values.yaml file
 
 ## v3.2.0
-* Upgrade Falco to 0.35.0. For more info see the release notes: https://github.com/falcosecurity/falco/releases/tag/0.35.0
+
+* Upgrade Falco to 0.35.0. For more info see the release notes: <https://github.com/falcosecurity/falco/releases/tag/0.35.0>
 * Sync values.yaml with upstream falco.yaml config file.
-* Upgrade falcoctl to 0.5.0. For more info see the release notes: https://github.com/falcosecurity/falcoctl/releases/tag/v0.5.0
+* Upgrade falcoctl to 0.5.0. For more info see the release notes: <https://github.com/falcosecurity/falcoctl/releases/tag/v0.5.0>
 * The tag used to install and follow the falco rules is `1`
 * The tag used to install and follow the k8saudit rules is `0.6`
 
@@ -38,12 +46,15 @@ numbering uses [semantic versioning](http://semver.org).
 * Bump `falcosidekick` dependency to 0.6.1
 
 ## v3.1.1
+
 * Update `k8saudit` section in README.md file.
 
 ## v3.1.0
+
 * Upgrade Falco to 0.34.1
 
 ## v3.0.0
+
 * Drop support for falcosecuriy/falco image, only the init container approach is supported out of the box;
 * Simplify the driver-loader init container logic;
 * Support **falcoctl** tool in the chart:
@@ -58,7 +69,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## v2.5.4
 
-* Fix incorrect entry in v2.5.2 changelog 
+* Fix incorrect entry in v2.5.2 changelog
 
 ## v2.5.3
 
@@ -76,7 +87,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 * Support custom dictionaries when setting environment variables
 
-Note: this is a breaking change. If you were passing _objects_ to `extra.env` or `driver.loader.initContainer.env` , you will need to update your values file to pass _lists_.
+Note: this is a breaking change. If you were passing *objects* to `extra.env` or `driver.loader.initContainer.env` , you will need to update your values file to pass *lists*.
 
 ## v2.4.7
 
@@ -109,7 +120,7 @@ Note: this is a breaking change. If you were passing _objects_ to `extra.env` or
 ## v2.4.0
 
 * Add support for Falco+gVisor
-* Add new preset `values.yaml `file for gVisor-enabled GKE clusters
+* Add new preset `values.yaml`file for gVisor-enabled GKE clusters
 
 ## v2.3.1
 
@@ -438,6 +449,7 @@ Remove whitespace around `falco.httpOutput.url` to fix the error `libcurl error:
 ## v1.7.6
 
 * Correct icon URL
+
 ## v1.7.5
 
 * Update downstream sidekick chart
@@ -499,7 +511,7 @@ Remove whitespace around `falco.httpOutput.url` to fix the error `libcurl error:
 
 ### Minor Changes
 
-* Upgrade to Falco 0.26.2, `DRIVERS_REPO` now defaults to https://download.falco.org/driver (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.26.2/CHANGELOG.md))
+* Upgrade to Falco 0.26.2, `DRIVERS_REPO` now defaults to <https://download.falco.org/driver> (see the [Falco changelog](https://github.com/falcosecurity/falco/blob/0.26.2/CHANGELOG.md))
 
 ## v1.5.3
 

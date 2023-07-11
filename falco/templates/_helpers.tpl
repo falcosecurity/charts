@@ -249,6 +249,9 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       name: runsc-config
     - mountPath: /gvisor-config
       name: falco-gvisor-config
+      {{- with .Values.mounts.volumeMounts }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
 {{- end -}}
 
 
@@ -277,6 +280,9 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       name: rulesfiles-install-dir
     - mountPath: /etc/falcoctl
       name: falcoctl-config-volume
+      {{- with .Values.mounts.volumeMounts }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
   env:
   {{- if .Values.falcoctl.artifact.install.env }}
   {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.install.env "context" $) | nindent 4 }}
@@ -308,6 +314,9 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       name: rulesfiles-install-dir
     - mountPath: /etc/falcoctl
       name: falcoctl-config-volume
+      {{- with .Values.mounts.volumeMounts }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
   env:
   {{- if .Values.falcoctl.artifact.follow.env }}
   {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.follow.env "context" $) | nindent 4 }}
