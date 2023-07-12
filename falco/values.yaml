@@ -363,6 +363,9 @@ falcoctl:
       resources: {}
       # -- Security context for the falcoctl init container.
       securityContext: {}
+      # -- A list of volume mounts you want to add to the falcoctl-artifact-install init container.
+      mounts:
+        volumeMounts: []
     # -- Runs "falcoctl artifact follow" command as a sidecar container. It is used to automatically check for
     # updates given a list of artifacts. If an update is found it downloads and installs it in a shared folder (emptyDir)
     # that is accessible by Falco. Rulesfiles are automatically detected and loaded by Falco once they are installed in the
@@ -378,6 +381,9 @@ falcoctl:
       resources: {}
       # -- Security context for the falcoctl-artifact-follow sidecar container.
       securityContext: {}
+      # -- A list of volume mounts you want to add to the falcoctl-artifact-follow sidecar container.
+      mounts:
+        volumeMounts: []
   # -- Configuration file of the falcoctl tool. It is saved in a configmap and mounted on the falcotl containers.
   config:
     # -- List of indexes that falcoctl downloads and uses to locate and download artiafcts. For more info see:
@@ -402,7 +408,7 @@ falcoctl:
         # -- Same as the one above but for the artifacts.
         pluginsDir: /plugins
       follow:
-      # -- List of artifacts to be followed by the falcoctl sidecar container.
+        # -- List of artifacts to be followed by the falcoctl sidecar container.
         refs: [falco-rules:1]
         # -- How often the tool checks for new versions of the followed artifacts.
         every: 6h

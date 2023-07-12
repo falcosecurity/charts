@@ -249,9 +249,6 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       name: runsc-config
     - mountPath: /gvisor-config
       name: falco-gvisor-config
-      {{- with .Values.mounts.volumeMounts }}
-        {{- toYaml . | nindent 4 }}
-      {{- end }}
 {{- end -}}
 
 
@@ -280,7 +277,7 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       name: rulesfiles-install-dir
     - mountPath: /etc/falcoctl
       name: falcoctl-config-volume
-      {{- with .Values.mounts.volumeMounts }}
+      {{- with .Values.falcoctl.artifact.install.mounts.volumeMounts }}
         {{- toYaml . | nindent 4 }}
       {{- end }}
   env:
@@ -314,7 +311,7 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       name: rulesfiles-install-dir
     - mountPath: /etc/falcoctl
       name: falcoctl-config-volume
-      {{- with .Values.mounts.volumeMounts }}
+      {{- with .Values.falcoctl.artifact.follow.mounts.volumeMounts }}
         {{- toYaml . | nindent 4 }}
       {{- end }}
   env:
