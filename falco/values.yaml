@@ -187,8 +187,18 @@ driver:
     # Can be skipped if eBPF JIT is enabled from outside the container
     hostNetwork: false
     # -- Constrain Falco with capabilities instead of running a privileged container.
-    # This option is only supported with the eBPF driver and a kernel >= 5.8.
     # Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`).
+    # Capabilities used: {CAP_SYS_RESOURCE, CAP_SYS_ADMIN, CAP_SYS_PTRACE}.
+    # On kernel versions >= 5.8 'CAP_PERFMON' and 'CAP_BPF' could replace 'CAP_SYS_ADMIN' but please pay attention to the 'kernel.perf_event_paranoid' value on your system.
+    # Usually 'kernel.perf_event_paranoid>2' means that you cannot use 'CAP_PERFMON' and you should fallback to 'CAP_SYS_ADMIN', but the behavior changes across different distros.
+    # Read more on that here: https://falco.org/docs/event-sources/kernel/#least-privileged-mode-1
+    leastPrivileged: false
+  # -- Configuration section for modern bpf driver.
+  modern_bpf:
+    # -- Constrain Falco with capabilities instead of running a privileged container.
+    # Ensure the modern bpf driver is enabled (i.e., setting the `driver.kind` option to `modern-bpf`).
+    # Capabilities used: {CAP_SYS_RESOURCE, CAP_BPF, CAP_PERFMON, CAP_SYS_PTRACE}.
+    # Read more on that here: https://falco.org/docs/event-sources/kernel/#least-privileged-mode-2
     leastPrivileged: false
   # -- Configuration for the Falco init container.
   loader:
@@ -338,8 +348,8 @@ falcoctl:
     registry: docker.io
     # -- The image repository to pull from.
     repository: falcosecurity/falcoctl
-    #  -- Overrides the image tag whose default is the chart appVersion.
-    tag: "0.5.0"
+    # -- The image tag to pull.
+    tag: "0.5.1"
   artifact:
     # -- Runs "falcoctl artifact install" command as an init container. It is used to install artfacts before
     # Falco starts. It provides them to Falco by using an emptyDir volume.

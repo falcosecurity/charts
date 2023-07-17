@@ -1,5 +1,5 @@
 # Configuration values for falco chart
-`Chart version: v3.2.1`
+`Chart version: v3.3.0`
 ## Values
 
 | Key | Type | Default | Description |
@@ -29,7 +29,7 @@
 | customRules | object | `{}` | Third party rules enabled for Falco. More info on the dedicated section in README.md file. |
 | driver.ebpf | object | `{"hostNetwork":false,"leastPrivileged":false,"path":null}` | Configuration section for ebpf driver. |
 | driver.ebpf.hostNetwork | bool | `false` | Needed to enable eBPF JIT at runtime for performance reasons. Can be skipped if eBPF JIT is enabled from outside the container |
-| driver.ebpf.leastPrivileged | bool | `false` | Constrain Falco with capabilities instead of running a privileged container. This option is only supported with the eBPF driver and a kernel >= 5.8. Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`). |
+| driver.ebpf.leastPrivileged | bool | `false` | Constrain Falco with capabilities instead of running a privileged container. Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`). Capabilities used: {CAP_SYS_RESOURCE, CAP_SYS_ADMIN, CAP_SYS_PTRACE}. On kernel versions >= 5.8 'CAP_PERFMON' and 'CAP_BPF' could replace 'CAP_SYS_ADMIN' but please pay attention to the 'kernel.perf_event_paranoid' value on your system. Usually 'kernel.perf_event_paranoid>2' means that you cannot use 'CAP_PERFMON' and you should fallback to 'CAP_SYS_ADMIN', but the behavior changes across different distros. Read more on that here: https://falco.org/docs/event-sources/kernel/#least-privileged-mode-1 |
 | driver.ebpf.path | string | `nil` | Path where the eBPF probe is located. It comes handy when the probe have been installed in the nodes using tools other than the init container deployed with the chart. |
 | driver.enabled | bool | `true` | Set it to false if you want to deploy Falco without the drivers. Always set it to false when using Falco with plugins. |
 | driver.kind | string | `"module"` | Tell Falco which driver to use. Available options: module (kernel driver), ebpf (eBPF probe), modern-bpf (modern eBPF probe). |
@@ -42,6 +42,8 @@
 | driver.loader.initContainer.image.repository | string | `"falcosecurity/falco-driver-loader"` | The image repository to pull from. |
 | driver.loader.initContainer.resources | object | `{}` | Resources requests and limits for the Falco driver loader init container. |
 | driver.loader.initContainer.securityContext | object | `{}` | Security context for the Falco driver loader init container. Overrides the default security context. If driver.kind == "module" you must at least set `privileged: true`. |
+| driver.modern_bpf | object | `{"leastPrivileged":false}` | Configuration section for modern bpf driver. |
+| driver.modern_bpf.leastPrivileged | bool | `false` | Constrain Falco with capabilities instead of running a privileged container. Ensure the modern bpf driver is enabled (i.e., setting the `driver.kind` option to `modern-bpf`). Capabilities used: {CAP_SYS_RESOURCE, CAP_BPF, CAP_PERFMON, CAP_SYS_PTRACE}. Read more on that here: https://falco.org/docs/event-sources/kernel/#least-privileged-mode-2 |
 | extra.args | list | `[]` | Extra command-line arguments. |
 | extra.env | list | `[]` | Extra environment variables that will be pass onto Falco containers. |
 | extra.initContainers | list | `[]` | Additional initContainers for Falco pods. |
@@ -112,7 +114,7 @@
 | falcoctl.image.pullPolicy | string | `"IfNotPresent"` | The image pull policy. |
 | falcoctl.image.registry | string | `"docker.io"` | The image registry to pull from. |
 | falcoctl.image.repository | string | `"falcosecurity/falcoctl"` | The image repository to pull from. |
-| falcoctl.image.tag | string | `"0.5.0"` |  |
+| falcoctl.image.tag | string | `"0.5.1"` | The image tag to pull. |
 | falcosidekick | object | `{"enabled":false,"fullfqdn":false,"listenPort":""}` | For configuration values, see https://github.com/falcosecurity/charts/blob/master/falcosidekick/values.yaml |
 | falcosidekick.enabled | bool | `false` | Enable falcosidekick deployment. |
 | falcosidekick.fullfqdn | bool | `false` | Enable usage of full FQDN of falcosidekick service (useful when a Proxy is used). |
