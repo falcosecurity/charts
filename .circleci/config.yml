@@ -13,7 +13,7 @@ jobs:
 
   lint-charts:
     docker:
-      - image: quay.io/helmpack/chart-testing:latest
+      - image: quay.io/helmpack/chart-testing:v3.8.0
     steps:
       - checkout
       - run:
