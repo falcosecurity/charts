@@ -2,7 +2,7 @@
 
 [![Falco Core Repository](https://github.com/falcosecurity/evolution/blob/main/repos/badges/falco-core-blue.svg)](https://github.com/falcosecurity/evolution/blob/main/REPOSITORIES.md#core-scope) [![Stable](https://img.shields.io/badge/status-stable-brightgreen?style=for-the-badge)](https://github.com/falcosecurity/evolution/blob/main/REPOSITORIES.md#stable) [![License](https://img.shields.io/github/license/falcosecurity/charts?style=for-the-badge)](./LICENSE)
 
-This GitHub project is the source for our [Helm chart repository](https://v3.helm.sh/docs/topics/chart_repository/).
+This GitHub project is the source for the [Falco](https://github.com/falcosecurity/falco) Helm chart repository that you can use to [deploy](https://falco.org/docs/getting-started/deployment/) Falco in your Kubernetes infrastructure.
 
 The purpose of this repository is to provide a place for maintaining and contributing Charts related to the Falco project, with CI processes in place for managing the releasing of Charts into [our Helm Chart Repository]((https://falcosecurity.github.io/charts)).
 
