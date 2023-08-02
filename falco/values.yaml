@@ -150,6 +150,8 @@ controller:
     # -- Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing.
     # For more info check the section on Plugins in the README.md file.
     replicas: 1
+    # -- Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
+    # revisionHistoryLimit: 1
 
 # -- Network services configuration (scenario requirement)
 # Add here your services to be deployed together with Falco.

@@ -7,6 +7,9 @@ metadata:
     {{- include "event-generator.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicasCount }}
+  {{- if .Values.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "event-generator.selectorLabels" . | nindent 6 }}
