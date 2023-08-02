@@ -5,6 +5,9 @@
 # -- Number of replicas of the event-generator (meaningful when installed as a deployment).
 replicasCount: 1
 
+# -- Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
+# revisionHistoryLimit: 1
+
 image:
   # -- Repository from where the image is pulled.
   repository: falcosecurity/event-generator

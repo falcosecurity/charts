@@ -5,6 +5,9 @@
 # -- number of running pods
 replicaCount: 2
 
+# -- number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
+# revisionHistoryLimit: 1
+
 image:
   # -- The image registry to pull from
   registry: docker.io
@@ -937,6 +940,8 @@ webui:
   enabled: false
   # -- number of running pods
   replicaCount: 2
+  # -- number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
+  # revisionHistoryLimit: 1
   # -- Log level ("debug", "info", "warning", "error")
   loglevel: "info"
   # -- TTL for keys (0 for no ttl)

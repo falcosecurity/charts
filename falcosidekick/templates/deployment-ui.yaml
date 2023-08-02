@@ -17,6 +17,9 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.webui.replicaCount }}
+  {{- if .Values.webui.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.webui.revisionHistoryLimit }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
