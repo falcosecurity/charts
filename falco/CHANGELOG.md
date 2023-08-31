@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.6.0
+
+* Add `outputs`field to falco configuration
+
 ## v3.5.0
 
 ## Major Changes
