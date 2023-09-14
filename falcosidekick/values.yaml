@@ -944,10 +944,14 @@ webui:
   # revisionHistoryLimit: 1
   # -- Log level ("debug", "info", "warning", "error")
   loglevel: "info"
-  # -- TTL for keys (0 for no ttl)
+  # -- TTL for keys, the syntax in X<unit>, with <unit>: s, m, d, w (0 for no ttl)
   ttl: 0
   # -- User in format <login>:<password>
   user: "admin:admin"
+  # -- Disable the basic auth
+  disableauth: false
+  # -- Existing secret with configuration
+  existingSecret: ""
   # -- Allow CORS
   allowcors: false
   image:
@@ -956,7 +960,7 @@ webui:
     # -- The web UI image repository to pull from
     repository: falcosecurity/falcosidekick-ui
     # -- The web UI image tag to pull
-    tag: "v2.1.0"
+    tag: "2.2.0"
     # -- The web UI image pull policy
     pullPolicy: IfNotPresent
 
@@ -1043,6 +1047,12 @@ webui:
       tag: "6.2.6-v3"
       # -- The web UI image pull policy
       pullPolicy: IfNotPresent
+
+    # -- Existing secret with configuration
+    existingSecret: ""
+
+    # -- Set a password for Redis
+    password: ""
 
     # -- Name of the priority class to be used by the Web UI Redis pods, priority class needs to be created beforehand
     priorityClassName: ""

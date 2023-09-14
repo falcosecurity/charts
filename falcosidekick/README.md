@@ -26,6 +26,7 @@ It works as a single endpoint for as many as you want `Falco` instances :
 - [**Discord**](https://www.discord.com/)
 - [**Google Chat**](https://workspace.google.com/products/chat/)
 - [**Zoho Cliq**](https://www.zoho.com/cliq/)
+- [**Telegram**](https://telegram.org)
 
 ### Metrics / Observability
 
@@ -35,12 +36,16 @@ It works as a single endpoint for as many as you want `Falco` instances :
 - [**DogStatsD**](https://docs.datadoghq.com/developers/dogstatsd/?tab=go) (for monitoring of `falcosidekick`)
 - [**Prometheus**](https://prometheus.io/) (for both events and monitoring of `falcosidekick`)
 - [**Wavefront**](https://www.wavefront.com)
+- [**Spyderbat**](https://www.spyderbat.com)
+- [**TimescaleDB**](https://www.timescale.com/)
+- [**Dynatrace**](https://www.dynatrace.com/)
 
 ### Alerting
 
 - [**AlertManager**](https://prometheus.io/docs/alerting/alertmanager/)
 - [**Opsgenie**](https://www.opsgenie.com/)
 - [**PagerDuty**](https://pagerduty.com/)
+- [**Grafana OnCall**](https://grafana.com/products/oncall/)
 
 ### Logs
 
@@ -49,6 +54,8 @@ It works as a single endpoint for as many as you want `Falco` instances :
 - [**AWS CloudWatchLogs**](https://aws.amazon.com/cloudwatch/features/)
 - [**Grafana**](https://grafana.com/) (annotations)
 - **Syslog**
+- [**Zincsearch**](https://docs.zincsearch.com/)
+- [**OpenObserve**](https://openobserve.ai)
 
 ### Object Storage
 
@@ -59,11 +66,13 @@ It works as a single endpoint for as many as you want `Falco` instances :
 ### FaaS / Serverless
 
 - [**AWS Lambda**](https://aws.amazon.com/lambda/features/)
-- [**Kubeless**](https://kubeless.io/)
-- [**OpenFaaS**](https://www.openfaas.com)
 - [**GCP Cloud Run**](https://cloud.google.com/run)
 - [**GCP Cloud Functions**](https://cloud.google.com/functions)
 - [**Fission**](https://fission.io)
+- [**KNative (CloudEvents)**](https://knative.dev)
+- [**Kubeless**](https://kubeless.io/)
+- [**OpenFaaS**](https://www.openfaas.com)
+- [**Tekton**](https://tekton.dev)
 
 ### Message queue / Streaming
 
@@ -77,6 +86,9 @@ It works as a single endpoint for as many as you want `Falco` instances :
 - [**Kafka Rest Proxy**](https://docs.confluent.io/platform/current/kafka-rest/index.html)
 - [**RabbitMQ**](https://www.rabbitmq.com/)
 - [**Azure Event Hubs**](https://azure.microsoft.com/en-in/services/event-hubs/)
+- [**Yandex Data Streams**](https://cloud.yandex.com/en/docs/data-streams/)
+- [**MQTT**](https://mqtt.org/)
+- [**Gotify**](https://gotify.net/)
 
 ### Email
 
@@ -85,7 +97,16 @@ It works as a single endpoint for as many as you want `Falco` instances :
 ### Web
 
 - **Webhook**
+- [**Node-RED**](https://nodered.org/)
 - [**WebUI**](https://github.com/falcosecurity/falcosidekick-ui) (a Web UI for displaying latest events in real time)
+
+### SIEM
+
+- [**AWS Security Lake**](https://aws.amazon.com/security-lake/)
+
+### Workflow
+
+- [**n8n**](https://n8n.io/)
 
 ### Other
 - [**Policy Report**](https://github.com/kubernetes-sigs/wg-policy-prototypes/tree/master/policy-report/falco-adapter)
@@ -524,14 +545,16 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | tolerations | list | `[]` | Tolerations for pod assignment |
 | webui.affinity | object | `{}` | Affinity for the Web UI pods |
 | webui.allowcors | bool | `false` | Allow CORS |
+| webui.disableauth | bool | `false` | Disable the basic auth |
 | webui.enabled | bool | `false` | enable Falcosidekick-UI |
+| webui.existingSecret | string | `""` | Existing secret with configuration |
 | webui.externalRedis.enabled | bool | `false` | Enable or disable the usage of an external Redis. Is mutually exclusive with webui.redis.enabled. |
 | webui.externalRedis.port | int | `6379` | The port of the external Redis database with RediSearch > v2 |
 | webui.externalRedis.url | string | `""` | The URL of the external Redis database with RediSearch > v2 |
 | webui.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
 | webui.image.registry | string | `"docker.io"` | The web UI image registry to pull from |
 | webui.image.repository | string | `"falcosecurity/falcosidekick-ui"` | The web UI image repository to pull from |
-| webui.image.tag | string | `"v2.1.0"` | The web UI image tag to pull |
+| webui.image.tag | string | `"2.2.0"` | The web UI image tag to pull |
 | webui.ingress.annotations | object | `{}` | Web UI ingress annotations |
 | webui.ingress.enabled | bool | `false` | Whether to create the Web UI ingress |
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
@@ -544,11 +567,13 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.priorityClassName | string | `""` | Name of the priority class to be used by the Web UI pods, priority class needs to be created beforehand |
 | webui.redis.affinity | object | `{}` | Affinity for the Web UI Redis pods |
 | webui.redis.enabled | bool | `true` | Is mutually exclusive with webui.externalRedis.enabled |
+| webui.redis.existingSecret | string | `""` | Existing secret with configuration |
 | webui.redis.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
 | webui.redis.image.registry | string | `"docker.io"` | The web UI Redis image registry to pull from |
 | webui.redis.image.repository | string | `"redis/redis-stack"` | The web UI Redis image repository to pull from |
 | webui.redis.image.tag | string | `"6.2.6-v3"` | The web UI Redis image tag to pull from |
 | webui.redis.nodeSelector | object | `{}` | Web UI Redis nodeSelector field |
+| webui.redis.password | string | `""` | Set a password for Redis |
 | webui.redis.podAnnotations | object | `{}` | additions annotations on the pods |
 | webui.redis.podLabels | object | `{}` | additions labels on the pods |
 | webui.redis.podSecurityContext | object | `{}` | Web UI Redis pod securityContext |
@@ -572,7 +597,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.service.targetPort | int | `2802` | The web UI service targetPort |
 | webui.service.type | string | `"ClusterIP"` | The web UI service type |
 | webui.tolerations | list | `[]` | Tolerations for pod assignment |
-| webui.ttl | int | `0` | TTL for keys (0 for no ttl) |
+| webui.ttl | int | `0` | TTL for keys, the syntax in X<unit>, with <unit>: s, m, d, w (0 for no ttl) |
 | webui.user | string | `"admin:admin"` | User in format <login>:<password> |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
