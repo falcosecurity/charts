@@ -55,6 +55,13 @@ spec:
         - name: {{ .Chart.Name }}-ui
           image: "{{ .Values.webui.image.registry }}/{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
           imagePullPolicy: {{ .Values.webui.image.pullPolicy }}
+          envFrom:
+            - secretRef:
+                {{- if .Values.webui.existingSecret }}
+                name: {{ .Values.webui.existingSecret }}
+                {{- else }}
+                name: {{ include "falcosidekick.fullname" . }}-ui
+                {{- end }}
           args:
             - "-r"
             {{- if .Values.webui.redis.enabled }}
@@ -70,12 +77,11 @@ spec:
             - "-l"
             - {{ .Values.webui.loglevel }}
             {{- end}}
-            {{- if .Values.webui.user }}
-            - "-u"
-            - {{ .Values.webui.user }}
-            {{- end}}
             {{- if .Values.webui.allowcors }}
             - "-x"
+            {{- end}}
+            {{- if .Values.webui.disableauth }}
+            - "-d"
             {{- end}}
           ports:
             - name: http
@@ -161,6 +167,15 @@ spec:
         - name: redis
           image: "{{ .Values.webui.redis.image.registry }}/{{ .Values.webui.redis.image.repository }}:{{ .Values.webui.redis.image.tag }}"
           imagePullPolicy: {{ .Values.webui.redis.image.pullPolicy }}
+          {{- if .Values.webui.redis.password }}
+          envFrom:
+            - secretRef:
+                {{- if .Values.webui.redis.existingSecret }}
+                name: {{ .Values.webui.redis.existingSecret }}
+                {{- else }}
+                name: {{ include "falcosidekick.fullname" . }}-ui-redis
+                {{- end }}
+          {{- end}}
           args: []
           ports:
             - name: redis
