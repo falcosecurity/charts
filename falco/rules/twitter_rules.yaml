@@ -1,0 +1,7 @@
+- rule: New tweet about SectorCA
+  desc: New tweet about SectorCA
+  condition: twitter.text icontains sectorca
+  output: "New tweet about SectorCA from @%twitter.authorname: %twitter.rawtext"
+  priority: INFORMATIONAL
+  source: twitter
+  tags: [twitter]
