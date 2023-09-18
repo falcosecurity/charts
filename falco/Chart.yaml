@@ -7,6 +7,7 @@ name: falco
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> a1a08e2 (Sign)
 =======
@@ -36,6 +37,9 @@ version: 3.6.2
 =======
 version: 3.6.1
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
+=======
+version: 3.6.2
+>>>>>>> e2ad1ff (update falco chart to 3.6.2)
 appVersion: "0.35.1"
 description: Falco
 keywords:
