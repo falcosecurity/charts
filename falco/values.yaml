@@ -463,6 +463,54 @@ falco:
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/rules.d
 
+  # [Experimental] `rule_matching`
+  #
+  # - Falco has to be performant when evaluating rules against events. To quickly
+  # understand which rules could trigger on a specific event, Falco maintains
+  # buckets of rules sharing the same event type in a map. Then, the lookup
+  # in each bucket is performed through linear search. The `rule_matching`
+  # configuration key's values are:
+  #  - "first": when evaluating conditions of rules in a bucket, Falco will stop
+  #    to evaluate rules if it finds a matching rules. Since rules are stored
+  #    in buckets in the order they are defined in the rules files, this option
+  #    could prevent other rules to trigger even if their condition is met, causing
+  #    a shadowing problem.
+  #  - "all": with this value Falco will continue evaluating all the rules
+  #    stored in the bucket, so that multiple rules could be triggered upon one
+  #    event.
+
+  rule_matching: first
+
+
+  # [Experimental] `outputs_queue`
+  #
+  # -- Falco utilizes tbb::concurrent_bounded_queue for handling outputs, and this parameter
+  # allows you to customize the queue capacity. Please refer to the official documentation:
+  # https://oneapi-src.github.io/oneTBB/main/tbb_userguide/Concurrent_Queue_Classes.html.
+  # On a healthy system with optimized Falco rules, the queue should not fill up.
+  # If it does, it is most likely happening due to the entire event flow being too slow,
+  # indicating that the server is under heavy load.
+  #
+  # Lowering the number of items can prevent memory from steadily increasing until the OOM
+  # killer stops the Falco process. We provide recovery actions to self-limit or self-kill
+  # in order to handle this situation earlier, similar to how we expose the kernel buffer size
+  # as a parameter. However, it will not address the root cause of the event pipe not keeping up.
+  #
+  # `capacity`: the maximum number of items allowed in the queue is determined by this value.
+  # Setting the value to 0 (which is the default) is equivalent to keeping the queue unbounded.
+  # In other words, when this configuration is set to 0, the number of allowed items is effectively
+  # set to the largest possible long value, disabling this setting.
+  #
+  # `recovery`: strategy to follow when the queue becomes filled up. It applies only when the
+  # queue is bounded and there is still available system memory. In the case of an unbounded
+  # queue, if the available memory on the system is consumed, the Falco process would be
+  # OOM killed. The value `exit` is the default, `continue` does nothing special and `empty`
+  # empties the queue and then continues.
+  outputs_queue:
+    capacity: 0
+    recovery: exit
+
+
   #################
   # Falco plugins #
   #################
@@ -668,6 +716,14 @@ falco:
     # -- Path to a folder that will be used as the CA certificate store. CA certificate need to be
     # stored as indivitual PEM files in this directory.
     ca_path: "/etc/ssl/certs"
+    # -- Tell Falco to use mTLS
+    mtls: false
+    # -- Path to the client cert.
+    client_cert: "/etc/ssl/certs/client.crt"
+    # -- Path to the client key.
+    client_key: "/etc/ssl/certs/client.key"
+    # -- Whether to echo server answers to stdout
+    echo: false
 
   # [Stable] `program_output`
   #
