@@ -66,7 +66,7 @@ The following table lists the main configurable parameters of the chart and thei
 | `scc.create`                                     | Create OpenShift's Security Context Constraint                                                   | `true`                             |
 | `service.mTLS.enabled`                           | Enable falco-exporter server Mutual TLS feature                                                  | `false`                            |
 | `prometheusRules.enabled`                        | Enable the creation of falco-exporter PrometheusRules                                            | `false`                            |
-| `daemonset.podLabels`                            | Customized Daemonset pod labels                                                                  | `{}`                               |
+| `controller.kind`                            | Select the way to deploy falco-exporter                                                                  | `daemonset`                               |
 | `healthChecks.livenessProbe.probesPort`          | Liveness probes port                                                                             | `19376`                            |
 | `healthChecks.readinessProbe.probesPort`         | Readiness probes port                                                                            | `19376`                            |
 | `healthChecks.livenessProbe.initialDelaySeconds` | Number of seconds before performing the first liveness probe                                     | `60`                               |

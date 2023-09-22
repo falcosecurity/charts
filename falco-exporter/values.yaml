@@ -75,17 +75,27 @@ podSecurityContext:
   {}
   # fsGroup: 2000
 
-daemonset:
-  # Perform rolling updates by default in the DaemonSet agent
-  # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
-  updateStrategy:
-    # You can also customize maxUnavailable or minReadySeconds if you
-    # need it
-    type: RollingUpdate
+# -- Add additional pod labels
+podLabels: {}
 
-  # Annotations to add to the DaemonSet pods
+controller:
+  # Available options: deployment, daemonset.
+  kind: daemonset
+  # Annotations to add to the daemonset or deployment
   annotations: {}
-  podLabels: {}
+  daemonset:
+    updateStrategy:
+      # You can also customize maxUnavailable or minReadySeconds if you
+      # need it
+      # -- Perform rolling updates by default in the DaemonSet agent
+      # ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+      type: RollingUpdate
+  deployment:
+    # -- Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing.
+    # For more info check the section on Plugins in the README.md file.
+    replicas: 1
+    # -- Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
+    # revisionHistoryLimit: 1
 
 securityContext:
   capabilities:
