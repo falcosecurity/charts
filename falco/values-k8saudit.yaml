@@ -30,11 +30,11 @@ falcoctl:
         resolveDeps: false
         # -- List of artifacts to be installed by the falcoctl init container.
         # Only rulesfiles, we do no recommend plugins for security reasonts since they are executable objects.
-        refs: [k8saudit-rules:0.5]
+        refs: [k8saudit-rules:0.6]
       follow:
         # -- List of artifacts to be followed by the falcoctl sidecar container.
         # Only rulesfiles, we do no recommend plugins for security reasonts since they are executable objects.
-        refs: [k8saudit-rules:0.5]
+        refs: [k8saudit-rules:0.6]
 
 services:
   - name: k8saudit-webhook
