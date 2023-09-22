@@ -1,17 +1,19 @@
-{{- if eq .Values.controller.kind "daemonset" }}
+{{- if eq .Values.controller.kind "deployment" }}
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: {{ include "falco-exporter.fullname" . }}
   labels:
     {{- include "falco-exporter.labels" . | nindent 4 }}
   namespace: {{ .Release.Namespace }}
 spec:
+  replicas: {{ .Values.controller.deployment.replicas }}
+  {{- if .Values.controller.deployment.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.controller.deployment.revisionHistoryLimit }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "falco-exporter.selectorLabels" . | nindent 6 }}
-  updateStrategy:
-{{- with .Values.controller.daemonset.updateStrategy }}
   template:
     metadata:
       labels:
@@ -19,9 +21,9 @@ spec:
         {{- if .Values.podLabels }}
         {{ toYaml .Values.podLabels | nindent 8 }}
         {{- end }}
-      {{- if .Values.controller.annotations }}
+      {{- if .Values.controller.deployment.annotations }}
       annotations:
-      {{ toYaml .Values.controller.annotations | nindent 4 }}
+      {{ toYaml .Values.controller.deployment.annotations | nindent 8 }}
       {{- end }}
     spec:
     {{- with .Values.imagePullSecrets }}
