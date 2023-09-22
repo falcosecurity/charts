@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.7.0
+
+* Upgrade Falco to 0.36. https://github.com/falcosecurity/falco/releases/tag/0.36.0
+* Sync values.yaml with upstream falco.yaml config file.
+* Upgrade falcoctl to 0.6.2. For more info see the release notes: https://github.com/falcosecurity/falcoctl/releases/tag/v0.6.2
+
 ## v3.6.2
 
 * Cleanup wrong files
