@@ -338,6 +338,11 @@ falcosidekick:
   fullfqdn: false
   # -- Listen port. Default value: 2801
   listenPort: ""
+  # -- Annotations to add to the service.
+  service: 
+    annotations: {}
+  # -- Annotations to add to the pods.
+  podAnnotations: {}
 
 ####################
 # falcoctl config  #
