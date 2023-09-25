@@ -6,6 +6,10 @@ numbering uses [semantic versioning](http://semver.org).
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
 
+## 0.7.2
+
+* Fix the wrong key of the secret for the user
+
 ## 0.7.1
 
 * Allow to set a password `webui.redis.password` for Redis for `Falcosidekick-UI`
