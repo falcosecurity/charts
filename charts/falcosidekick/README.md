@@ -17,99 +17,106 @@ It works as a single endpoint for as many as you want `Falco` instances :
 
 `Falcosidekick` manages a large variety of outputs with different purposes.
 
+> **Note**
+Follow the links to get the configuration of each output.
+
 ### Chat
 
-- [**Slack**](https://slack.com)
-- [**Rocketchat**](https://rocket.chat/)
-- [**Mattermost**](https://mattermost.com/)
-- [**Teams**](https://products.office.com/en-us/microsoft-teams/group-chat-software)
-- [**Discord**](https://www.discord.com/)
-- [**Google Chat**](https://workspace.google.com/products/chat/)
-- [**Zoho Cliq**](https://www.zoho.com/cliq/)
-- [**Telegram**](https://telegram.org)
+- [**Slack**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/slack.md)
+- [**Rocketchat**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/rocketchat.md)
+- [**Mattermost**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/mattermost.md)
+- [**Teams**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/teams.md)
+- [**Discord**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/discord.md)
+- [**Google Chat**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/googlechat.md)
+- [**Zoho Cliq**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/cliq.md)
+- [**Telegram**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/telegram.md)
 
 ### Metrics / Observability
 
-- [**Datadog**](https://www.datadoghq.com/)
-- [**Influxdb**](https://www.influxdata.com/products/influxdb-overview/)
-- [**StatsD**](https://github.com/statsd/statsd) (for monitoring of `falcosidekick`)
-- [**DogStatsD**](https://docs.datadoghq.com/developers/dogstatsd/?tab=go) (for monitoring of `falcosidekick`)
-- [**Prometheus**](https://prometheus.io/) (for both events and monitoring of `falcosidekick`)
-- [**Wavefront**](https://www.wavefront.com)
-- [**Spyderbat**](https://www.spyderbat.com)
-- [**TimescaleDB**](https://www.timescale.com/)
-- [**Dynatrace**](https://www.dynatrace.com/)
+- [**Datadog**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/datadog.md)
+- [**Influxdb**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/influxdb.md)
+- [**StatsD**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/statsd.md) (for monitoring of `falcosidekick`)
+- [**DogStatsD**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/dogstatsd.md) (for monitoring of `falcosidekick`)
+- [**Prometheus**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/prometheus.md) (for both events and monitoring of `falcosidekick`)
+- [**Wavefront**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/wavefront.md)
+- [**Spyderbat**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/spyderbat.md)
+- [**TimescaleDB**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/timescaledb.md)
+- [**Dynatrace**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/dynatrace.md)
 
 ### Alerting
 
-- [**AlertManager**](https://prometheus.io/docs/alerting/alertmanager/)
-- [**Opsgenie**](https://www.opsgenie.com/)
-- [**PagerDuty**](https://pagerduty.com/)
-- [**Grafana OnCall**](https://grafana.com/products/oncall/)
+- [**AlertManager**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/alertmanager.md)
+- [**Opsgenie**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/opsgenie.md)
+- [**PagerDuty**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/pagerduty.md)
+- [**Grafana OnCall**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/grafana_oncall.md)
 
 ### Logs
 
-- [**Elasticsearch**](https://www.elastic.co/)
-- [**Loki**](https://grafana.com/oss/loki)
-- [**AWS CloudWatchLogs**](https://aws.amazon.com/cloudwatch/features/)
-- [**Grafana**](https://grafana.com/) (annotations)
-- **Syslog**
-- [**Zincsearch**](https://docs.zincsearch.com/)
-- [**OpenObserve**](https://openobserve.ai)
+- [**Elasticsearch**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/elasticsearch.md)
+- [**Loki**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/loki.md)
+- [**AWS CloudWatchLogs**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_cloudwatch_logs.md)
+- [**Grafana**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/grafana.md)
+- [**Syslog**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/syslog.md)
+- [**Zincsearch**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs//zincsearch.md)
+- [**OpenObserve**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/openobserve.md)
 
 ### Object Storage
 
-- [**AWS S3**](https://aws.amazon.com/s3/features/)
-- [**GCP Storage**](https://cloud.google.com/storage)
-- [**Yandex S3 Storage**](https://cloud.yandex.com/en-ru/services/storage)
+- [**AWS S3**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_s3.md)
+- [**GCP Storage**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_storage.md)
+- [**Yandex S3 Storage**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/yandex_s3.md)
 
 ### FaaS / Serverless
 
-- [**AWS Lambda**](https://aws.amazon.com/lambda/features/)
-- [**GCP Cloud Run**](https://cloud.google.com/run)
-- [**GCP Cloud Functions**](https://cloud.google.com/functions)
-- [**Fission**](https://fission.io)
-- [**KNative (CloudEvents)**](https://knative.dev)
-- [**Kubeless**](https://kubeless.io/)
-- [**OpenFaaS**](https://www.openfaas.com)
-- [**Tekton**](https://tekton.dev)
+- [**AWS Lambda**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_lambda.md)
+- [**GCP Cloud Run**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_cloud_run.md)
+- [**GCP Cloud Functions**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_cloud_functions.md)
+- [**Fission**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/fission.md)
+- [**KNative (CloudEvents)**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/cloudevents.md)
+- [**Kubeless**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/kubeless.md)
+- [**OpenFaaS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/openfaas.md)
+- [**Tekton**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/tekton.md)
 
 ### Message queue / Streaming
 
-- [**NATS**](https://nats.io/)
-- [**STAN (NATS Streaming)**](https://docs.nats.io/nats-streaming-concepts/intro)
-- [**AWS SQS**](https://aws.amazon.com/sqs/features/)
-- [**AWS SNS**](https://aws.amazon.com/sns/features/)
-- [**AWS Kinesis**](https://aws.amazon.com/kinesis/)
-- [**GCP PubSub**](https://cloud.google.com/pubsub)
-- [**Apache Kafka**](https://kafka.apache.org/)
-- [**Kafka Rest Proxy**](https://docs.confluent.io/platform/current/kafka-rest/index.html)
-- [**RabbitMQ**](https://www.rabbitmq.com/)
-- [**Azure Event Hubs**](https://azure.microsoft.com/en-in/services/event-hubs/)
-- [**Yandex Data Streams**](https://cloud.yandex.com/en/docs/data-streams/)
-- [**MQTT**](https://mqtt.org/)
-- [**Gotify**](https://gotify.net/)
+- [**NATS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/nats.md)
+- [**STAN (NATS Streaming)**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/stan.md)
+- [**AWS SQS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_sqs.md)
+- [**AWS SNS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_sns.md)
+- [**AWS Kinesis**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_kinesis.md)
+- [**GCP PubSub**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_pub_sub.md)
+- [**Apache Kafka**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/kafka.md)
+- [**Kafka Rest Proxy**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/kafkarest.md)
+- [**RabbitMQ**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/rabbitmq.md)
+- [**Azure Event Hubs**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/azure_event_hub.md)
+- [**Yandex Data Streams**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/yandex_datastreams.md)
+- [**MQTT**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/mqtt.md)
+- [**Gotify**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gotify.md)
 
 ### Email
 
-- **SMTP**
+- [**SMTP**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/smtp.md)
+
+### Database
+
+- [**Redis**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/redis.md)
 
 ### Web
 
-- **Webhook**
-- [**Node-RED**](https://nodered.org/)
-- [**WebUI**](https://github.com/falcosecurity/falcosidekick-ui) (a Web UI for displaying latest events in real time)
+- [**Webhook**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/webhook.md)
+- [**Node-RED**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/nodered.md)
+- [**WebUI (Falcosidekick UI)**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/falcosidekick-ui.md)
 
 ### SIEM
 
-- [**AWS Security Lake**](https://aws.amazon.com/security-lake/)
+- [**AWS Security Lake**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_security_lake.md)
 
 ### Workflow
 
-- [**n8n**](https://n8n.io/)
+- [**n8n**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/n8n.md)
 
 ### Other
-- [**Policy Report**](https://github.com/kubernetes-sigs/wg-policy-prototypes/tree/master/policy-report/falco-adapter)
+- [**Policy Report**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/policy-reporter.md)
 
 ## Adding `falcosecurity` repository
 
@@ -143,7 +150,7 @@ After a few seconds, Falcosidekick should be running.
 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
 
-## Minumiun Kubernetes version
+## Minimum Kubernetes version
 
 The minimum Kubernetes version required is 1.17.x
 
@@ -205,6 +212,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.aws.sns.topicarn | string | `""` | AWS SNS TopicARN, if not empty, AWS SNS output is *enabled* |
 | config.aws.sqs.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.aws.sqs.url | string | `""` | AWS SQS Queue URL, if not empty, AWS SQS output is *enabled* |
+| config.aws.useirsa | bool | `true` | Use IRSA, if true, the rolearn value will be used to set the ServiceAccount annotations and not the env var |
 | config.azure.eventHub.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.azure.eventHub.name | string | `""` | Name of the Hub, if not empty, EventHub is *enabled* |
 | config.azure.eventHub.namespace | string | `""` | Name of the space the Hub is in |
@@ -520,6 +528,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falcosidekick","tag":"2.28.0"}` | number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
 | image.registry | string | `"docker.io"` | The image registry to pull from |
 | image.repository | string | `"falcosecurity/falcosidekick"` | The image repository to pull from |
@@ -537,12 +546,36 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | podSecurityPolicy | object | `{"create":false}` | podSecurityPolicy |
 | podSecurityPolicy.create | bool | `false` | Whether to create a podSecurityPolicy |
 | priorityClassName | string | `""` | Name of the priority class to be used by the Sidekickpods, priority class needs to be created beforehand |
+| prometheusRules.alerts.additionalAlerts | object | `{}` |  |
+| prometheusRules.alerts.alert.enabled | bool | `true` | enable the high rate rule for the alert events |
+| prometheusRules.alerts.alert.rate_interval | string | `"5m"` | rate interval for the high rate rule for the alert events |
+| prometheusRules.alerts.alert.threshold | int | `0` | threshold for the high rate rule for the alert events |
+| prometheusRules.alerts.critical.enabled | bool | `true` | enable the high rate rule for the critical events |
+| prometheusRules.alerts.critical.rate_interval | string | `"5m"` | rate interval for the high rate rule for the critical events |
+| prometheusRules.alerts.critical.threshold | int | `0` | threshold for the high rate rule for the critical events |
+| prometheusRules.alerts.emergency.enabled | bool | `true` | enable the high rate rule for the emergency events |
+| prometheusRules.alerts.emergency.rate_interval | string | `"5m"` | rate interval for the high rate rule for the emergency events |
+| prometheusRules.alerts.emergency.threshold | int | `0` | threshold for the high rate rule for the emergency events |
+| prometheusRules.alerts.error.enabled | bool | `true` | enable the high rate rule for the error events |
+| prometheusRules.alerts.error.rate_interval | string | `"5m"` | rate interval for the high rate rule for the error events |
+| prometheusRules.alerts.error.threshold | int | `0` | threshold for the high rate rule for the error events |
+| prometheusRules.alerts.output.enabled | bool | `true` | enable the high rate rule for the errors with the outputs |
+| prometheusRules.alerts.output.rate_interval | string | `"5m"` | rate interval for the high rate rule for the errors with the outputs |
+| prometheusRules.alerts.output.threshold | int | `0` | threshold for the high rate rule for the errors with the outputs |
+| prometheusRules.alerts.warning.enabled | bool | `true` | enable the high rate rule for the warning events |
+| prometheusRules.alerts.warning.rate_interval | string | `"5m"` | rate interval for the high rate rule for the warning events |
+| prometheusRules.alerts.warning.threshold | int | `0` | threshold for the high rate rule for the warning events |
+| prometheusRules.enabled | bool | `false` | enable the creation of PrometheusRules for alerting |
 | replicaCount | int | `2` | number of running pods |
 | resources | object | `{}` | The resources for falcosdekick pods |
 | securityContext | object | `{}` | Sidekick container securityContext |
 | service.annotations | object | `{}` | Service annotations |
 | service.port | int | `2801` | Service port |
 | service.type | string | `"ClusterIP"` | Service type |
+| serviceMonitor.additionalLabels | object | `{}` | specify Additional labels to be added on the Service Monitor. |
+| serviceMonitor.enabled | bool | `false` | enable the deployment of a Service Monitor for the Prometheus Operator. |
+| serviceMonitor.interval | string | `""` | specify a user defined interval. When not specified Prometheus default interval is used. |
+| serviceMonitor.scrapeTimeout | string | `""` | specify a user defined scrape timeout. When not specified Prometheus default scrape timeout is used. |
 | testConnection.affinity | object | `{}` | Affinity for the test connection pod |
 | testConnection.nodeSelector | object | `{}` | test connection nodeSelector field |
 | testConnection.tolerations | list | `[]` | Tolerations for pod assignment |
@@ -611,3 +644,11 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 
 A `prometheus` endpoint can be scrapped at `/metrics`.
 
+## Access Falcosidekick UI through an Ingress  and a subpath
+
+You may want to access the `WebUI (Falcosidekick UI)`](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/falcosidekick-ui.md) dashboard not from `/` but from `/subpath` and use an Ingress, here's an example of annotations to add to the Ingress for `nginx-ingress controller`:
+
+```yaml
+nginx.ingress.kubernetes.io/rewrite-target: /$2
+nginx.ingress.kubernetes.io/use-regex: "true"
+```
