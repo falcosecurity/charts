@@ -290,6 +290,8 @@ config:
     checkcert: true
 
   aws:
+    # -- Use IRSA, if true, the rolearn value will be used to set the ServiceAccount annotations and not the env var
+    useirsa: true
     # -- AWS IAM role ARN for falcosidekick service account to associate with (optionnal if you use EC2 Instance Profile)
     rolearn: ""
     # -- External id for the role to assume (optional if you use EC2 Instance Profile)

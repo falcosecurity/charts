@@ -9,6 +9,11 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 * Allow to set (m)TLS Server cryptographic material via `config.tlsserver.servercrt`, `config.tlsserver.serverkey` and `config.tlsserver.cacrt` variables or through `config.tlsserver.existingSecret` variables.
 
+## 0.7.3
+
+* Fix the behavior with the `AWS IRSA` with a new value `aws.config.useirsa`
+* Add a section in the README to describe how to use a subpath for `Falcosidekick-ui` ingress
+
 ## 0.7.2
 
 * Fix the wrong key of the secret for the user
