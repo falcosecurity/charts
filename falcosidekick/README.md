@@ -546,12 +546,36 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | podSecurityPolicy | object | `{"create":false}` | podSecurityPolicy |
 | podSecurityPolicy.create | bool | `false` | Whether to create a podSecurityPolicy |
 | priorityClassName | string | `""` | Name of the priority class to be used by the Sidekickpods, priority class needs to be created beforehand |
+| prometheusRules.alerts.additionalAlerts | object | `{}` |  |
+| prometheusRules.alerts.alert.enabled | bool | `true` | enable the high rate rule for the alert events |
+| prometheusRules.alerts.alert.rate_interval | string | `"5m"` | rate interval for the high rate rule for the alert events |
+| prometheusRules.alerts.alert.threshold | int | `0` | threshold for the high rate rule for the alert events |
+| prometheusRules.alerts.critical.enabled | bool | `true` | enable the high rate rule for the critical events |
+| prometheusRules.alerts.critical.rate_interval | string | `"5m"` | rate interval for the high rate rule for the critical events |
+| prometheusRules.alerts.critical.threshold | int | `0` | threshold for the high rate rule for the critical events |
+| prometheusRules.alerts.emergency.enabled | bool | `true` | enable the high rate rule for the emergency events |
+| prometheusRules.alerts.emergency.rate_interval | string | `"5m"` | rate interval for the high rate rule for the emergency events |
+| prometheusRules.alerts.emergency.threshold | int | `0` | threshold for the high rate rule for the emergency events |
+| prometheusRules.alerts.error.enabled | bool | `true` | enable the high rate rule for the error events |
+| prometheusRules.alerts.error.rate_interval | string | `"5m"` | rate interval for the high rate rule for the error events |
+| prometheusRules.alerts.error.threshold | int | `0` | threshold for the high rate rule for the error events |
+| prometheusRules.alerts.output.enabled | bool | `true` | enable the high rate rule for the errors with the outputs |
+| prometheusRules.alerts.output.rate_interval | string | `"5m"` | rate interval for the high rate rule for the errors with the outputs |
+| prometheusRules.alerts.output.threshold | int | `0` | threshold for the high rate rule for the errors with the outputs |
+| prometheusRules.alerts.warning.enabled | bool | `true` | enable the high rate rule for the warning events |
+| prometheusRules.alerts.warning.rate_interval | string | `"5m"` | rate interval for the high rate rule for the warning events |
+| prometheusRules.alerts.warning.threshold | int | `0` | threshold for the high rate rule for the warning events |
+| prometheusRules.enabled | bool | `false` | enable the creation of PrometheusRules for alerting |
 | replicaCount | int | `2` | number of running pods |
 | resources | object | `{}` | The resources for falcosdekick pods |
 | securityContext | object | `{}` | Sidekick container securityContext |
 | service.annotations | object | `{}` | Service annotations |
 | service.port | int | `2801` | Service port |
 | service.type | string | `"ClusterIP"` | Service type |
+| serviceMonitor.additionalLabels | object | `{}` | specify Additional labels to be added on the Service Monitor. |
+| serviceMonitor.enabled | bool | `false` | enable the deployment of a Service Monitor for the Prometheus Operator. |
+| serviceMonitor.interval | string | `""` | specify a user defined interval. When not specified Prometheus default interval is used. |
+| serviceMonitor.scrapeTimeout | string | `""` | specify a user defined scrape timeout. When not specified Prometheus default scrape timeout is used. |
 | testConnection.affinity | object | `{}` | Affinity for the test connection pod |
 | testConnection.nodeSelector | object | `{}` | test connection nodeSelector field |
 | testConnection.tolerations | list | `[]` | Tolerations for pod assignment |

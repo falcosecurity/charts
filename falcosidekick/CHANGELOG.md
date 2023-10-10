@@ -13,6 +13,8 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 * Fix the behavior with the `AWS IRSA` with a new value `aws.config.useirsa`
 * Add a section in the README to describe how to use a subpath for `Falcosidekick-ui` ingress
+* Add a `ServiceMonitor` for prometheus-operator
+* Add a `PrometheusRule` for prometheus-operator
 
 ## 0.7.2
 

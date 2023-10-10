@@ -49,6 +49,64 @@ podLabels: {}
 # -- additions annotations on the pods
 podAnnotations: {}
 
+serviceMonitor:
+  # -- enable the deployment of a Service Monitor for the Prometheus Operator.
+  enabled: false
+  # -- specify Additional labels to be added on the Service Monitor.
+  additionalLabels: {}
+  # -- specify a user defined interval. When not specified Prometheus default interval is used.
+  interval: ""
+  # -- specify a user defined scrape timeout. When not specified Prometheus default scrape timeout is used.
+  scrapeTimeout: ""
+
+prometheusRules:
+  # -- enable the creation of PrometheusRules for alerting
+  enabled: false
+  alerts:
+    warning:
+      # -- enable the high rate rule for the warning events
+      enabled: true
+      # -- rate interval for the high rate rule for the warning events
+      rate_interval: "5m"
+      # -- threshold for the high rate rule for the warning events
+      threshold: 0
+    error:
+      # -- enable the high rate rule for the error events
+      enabled: true
+      # -- rate interval for the high rate rule for the error events
+      rate_interval: "5m"
+      # -- threshold for the high rate rule for the error events
+      threshold: 0
+    critical:
+      # -- enable the high rate rule for the critical events
+      enabled: true
+      # -- rate interval for the high rate rule for the critical events
+      rate_interval: "5m"
+      # -- threshold for the high rate rule for the critical events
+      threshold: 0
+    alert:
+      # -- enable the high rate rule for the alert events
+      enabled: true
+      # -- rate interval for the high rate rule for the alert events
+      rate_interval: "5m"
+      # -- threshold for the high rate rule for the alert events
+      threshold: 0
+    emergency:
+      # -- enable the high rate rule for the emergency events
+      enabled: true
+      # -- rate interval for the high rate rule for the emergency events
+      rate_interval: "5m"
+      # -- threshold for the high rate rule for the emergency events
+      threshold: 0
+    output:
+      # -- enable the high rate rule for the errors with the outputs
+      enabled: true
+      # -- rate interval for the high rate rule for the errors with the outputs
+      rate_interval: "5m"
+      # -- threshold for the high rate rule for the errors with the outputs
+      threshold: 0
+    additionalAlerts: {}
+
 config:
   # -- Existing secret with configuration
   existingSecret: ""
