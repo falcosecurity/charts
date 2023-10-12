@@ -514,6 +514,10 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.zincsearch.password | string | `""` | use this password to authenticate to ZincSearch |
 | config.zincsearch.username | string | `""` | use this username to authenticate to ZincSearch |
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
+| certs.existingSecret | string | `""` | Existing secret containing the following key, crt and ca as well as the bundle pem. |
+| certs.server.key | string | `""` | Key used by mTLS webserver. |
+| certs.server.crt | string | `""` | Certificate used by mTLS webserver. |
+| certs.ca.crt | string | `""` | CA certificate used by server Client Certificate validation |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
