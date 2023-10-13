@@ -63,7 +63,7 @@ config:
   # -- if not empty, the brackets in keys of Output Fields are replaced
   bracketreplacer: ""
   # -- folder which will used to store client.crt, client.key and ca.crt files for mutual tls for outputs, will be deprecated in the future (default: "/etc/certs")
-  mutualtlsfilespath: "/etc/certs"
+  mutualtlsfilespath: "/etc/falcosidekick/certs"
 
   mutualtlsclient:
     # -- client certification file for mutual TLS client certification, takes priority over mutualtlsfilespath if not empty
@@ -77,13 +77,13 @@ config:
     # -- if true TLS server will be deployed instead of HTTP
     deploy: false
     # -- server certification file for TLS Server
-    certfile: "/etc/certs/server/server.crt"
+    certfile: "/etc/falcosidekick/certs/server.crt"
     # -- server key file for TLS Server
-    keyfile: "/etc/certs/server/server.key"
+    keyfile: "/etc/falcosidekick/certs/server.key"
     # -- if true mutual TLS server will be deployed instead of TLS, deploy also has to be true
     mutualtls: false
     # --  CA certification file for client certification if mutualtls is true
-    cacertfile: "/etc/certs/server/ca.crt"
+    cacertfile: "/etc/falcosidekick/certs/ca.crt"
     # -- port to serve http server serving selected endpoints
     notlsport: 2810
     # -- a comma separated list of endpoints, if not empty, a separate http server will be deployed for the specified endpoints
@@ -924,6 +924,19 @@ extraVolumes: []
 extraVolumeMounts: []
 # - mountPath: /etc/certs/mtlscert.optional.tls
 #   name: optional-mtls-volume
+
+# -- Certificates for mutual TLS server
+certs:
+  # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
+  existingSecret: ""
+  server:
+    # -- Key used by gRPC and webserver.
+    key: ""
+    # -- Certificate used by gRPC and webserver.
+    crt: ""
+  ca:
+    # -- CA certificate used by gRPC, webserver and AuditSink validation.
+    crt: ""
 
 testConnection:
   # -- test connection nodeSelector field
