@@ -11,6 +11,7 @@ numbering uses [semantic versioning](http://semver.org).
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
 =======
@@ -21,6 +22,12 @@ numbering uses [semantic versioning](http://semver.org).
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
 >>>>>>> 5066272 (Sign)
+=======
+=======
+>>>>>>> e2ad1ff (update falco chart to 3.6.2)
+=======
+>>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
+>>>>>>> dae7de871b73f7ac74f9a1e7b658751e1c53e27a
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
 ## v3.6.2
@@ -32,6 +39,7 @@ numbering uses [semantic versioning](http://semver.org).
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 5066272 (Sign)
 =======
@@ -40,15 +48,21 @@ numbering uses [semantic versioning](http://semver.org).
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
 <<<<<<< HEAD
 =======
+>>>>>>> dae7de871b73f7ac74f9a1e7b658751e1c53e27a
+=======
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
 =======
+<<<<<<< HEAD
 =======
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
 >>>>>>> a1a08e2 (Sign)
 =======
 >>>>>>> 5066272 (Sign)
+=======
+>>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
+>>>>>>> dae7de871b73f7ac74f9a1e7b658751e1c53e27a
 =======
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
 =======
