@@ -1,0 +1,52 @@
+image:
+  pullPolicy: Always
+  registry: docker.io
+  repository: issif/falco
+  tag: "twitter"
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 1024Mi
+  limits:
+    cpu: 1500m
+    memory: 2048Mi
+
+driver:
+  enabled: false
+
+collectors:
+  enabled: false
+
+tty: true
+
+controller:
+  kind: deployment
+
+extra:
+  env:
+    TWITTER_API_KEY: 9B2jro0P14phxUGomd7npuaQP
+    TWITTER_API_SECRET: ILjuQzsR55xIMWA46tVHzPwfJ4e5PDsBbSEQZfZ28B12KNdFmO
+
+falco:
+  rules_file:
+    - /etc/falco/twitter_rules.yaml
+  plugins:
+    - name: twitter
+      library_path: libtwitter.so
+      init_config:
+        rules:
+          - "sectorca"
+        flushinterval: 30000
+  load_plugins: ["twitter"]
+  json_output: true
+  json_include_output_property: true
+  json_include_tags_property: true
+  http_output:
+    enabled: true
+    url: "http://falco-falcosidekick.falco.svc.cluster.local:2801"
+    user_agent: "falcosecurity/falco"
+  syslog_output:
+    enabled: false
+  kubernetes:
+    enabled: false

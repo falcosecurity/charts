@@ -12,6 +12,7 @@ numbering uses [semantic versioning](http://semver.org).
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
 =======
@@ -30,6 +31,8 @@ numbering uses [semantic versioning](http://semver.org).
 >>>>>>> dae7de871b73f7ac74f9a1e7b658751e1c53e27a
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
+=======
+>>>>>>> 4d757f9 (Sign)
 ## v3.6.2
 
 * Cleanup wrong files
@@ -40,6 +43,7 @@ numbering uses [semantic versioning](http://semver.org).
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 5066272 (Sign)
 =======
@@ -67,6 +71,10 @@ numbering uses [semantic versioning](http://semver.org).
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
+=======
+=======
+>>>>>>> 2e95790 (update falco chart to 3.6.1░)
+>>>>>>> 4d757f9 (Sign)
 ## v3.6.1
 
 * Upgrade falcosidekick chart to `v0.7.1`.

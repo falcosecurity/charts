@@ -9,6 +9,7 @@ name: falco
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> a1a08e2 (Sign)
 =======
@@ -17,10 +18,13 @@ name: falco
 =======
 >>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
 >>>>>>> dae7de871b73f7ac74f9a1e7b658751e1c53e27a
+=======
+>>>>>>> 4d757f9 (Sign)
 version: 3.6.2
 =======
 version: 3.6.1
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -57,6 +61,8 @@ version: 3.6.2
 =======
 >>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
 >>>>>>> dae7de871b73f7ac74f9a1e7b658751e1c53e27a
+=======
+>>>>>>> 4d757f9 (Sign)
 appVersion: "0.35.1"
 description: Falco
 keywords:
