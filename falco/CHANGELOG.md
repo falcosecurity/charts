@@ -4,12 +4,18 @@ This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e2ad1ff (update falco chart to 3.6.2)
 ## v3.6.2
 
 * Cleanup wrong files
 
+<<<<<<< HEAD
 =======
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
+=======
+>>>>>>> e2ad1ff (update falco chart to 3.6.2)
 ## v3.6.1
 
 * Upgrade falcosidekick chart to `v0.7.1`.
