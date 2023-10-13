@@ -930,12 +930,12 @@ certs:
   # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
   existingSecret: ""
   server:
-    # -- Key used by mTLS webserver.
+    # -- Key used by gRPC and webserver.
     key: ""
-    # -- Certificate used by mTLS webserver.
+    # -- Certificate used by gRPC and webserver.
     crt: ""
   ca:
-    # -- CA certificate used by server Client Certificate validation.
+    # -- CA certificate used by gRPC, webserver and AuditSink validation.
     crt: ""
 
 testConnection:
