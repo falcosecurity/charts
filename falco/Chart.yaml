@@ -4,6 +4,9 @@ name: falco
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
 version: 3.6.2
 =======
 version: 3.6.1
@@ -11,12 +14,15 @@ version: 3.6.1
 =======
 version: 3.6.2
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
+<<<<<<< HEAD
 =======
 version: 3.6.1
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
 =======
 version: 3.6.2
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
+=======
+>>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
 appVersion: "0.35.1"
 description: Falco
 keywords:

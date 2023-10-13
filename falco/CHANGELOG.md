@@ -7,8 +7,11 @@ numbering uses [semantic versioning](http://semver.org).
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
+=======
+>>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
 ## v3.6.2
@@ -17,10 +20,13 @@ numbering uses [semantic versioning](http://semver.org).
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
 =======
 >>>>>>> e2ad1ff (update falco chart to 3.6.2)
+=======
+>>>>>>> 55249a0bda36a8509e5799522afb91eaf0d3573f
 =======
 >>>>>>> 2e95790 (update falco chart to 3.6.1░)
 =======
