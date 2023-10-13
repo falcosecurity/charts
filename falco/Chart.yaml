@@ -1,6 +1,10 @@
 apiVersion: v2
 name: falco
+<<<<<<< HEAD
 version: 3.6.2
+=======
+version: 3.6.1
+>>>>>>> 2e95790 (update falco chart to 3.6.1░)
 appVersion: "0.35.1"
 description: Falco
 keywords:
