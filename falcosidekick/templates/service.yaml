@@ -26,6 +26,12 @@ spec:
       protocol: TCP
       name: http-notls
     {{- end }}
+    {{- if not (eq .Values.config.tlsserver.notlspaths "") }}
+    - port: {{ .Values.config.tlsserver.notlsport }}
+      targetPort: http-notls
+      protocol: TCP
+      name: http-notls
+    {{- end }}
   selector:
     app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
