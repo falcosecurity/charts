@@ -306,18 +306,18 @@ certs:
   # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
   existingSecret: ""
   server:
-    # -- Key used by gRPC and webserver.
+    # -- Key used by gRPC and webserver. Mounted under /etc/falco/certs/
     key: ""
-    # -- Certificate used by gRPC and webserver.
+    # -- Certificate used by gRPC and webserver. Mounted under /etc/falco/certs/
     crt: ""
   ca:
     # -- CA certificate used by gRPC, webserver and AuditSink validation.
     crt: ""
   existingClientSecret: ""
   client:
-    # -- Key used by http mTLS client.
+    # -- Key used by http mTLS client. Mounted under /etc/falco/certs/client/
     key: ""
-    # -- Certificate used by http mTLS client.
+    # -- Certificate used by http mTLS client. Mounted under /etc/falco/certs/client/
     crt: ""
 
 # -- Third party rules enabled for Falco. More info on the dedicated section in README.md file.
