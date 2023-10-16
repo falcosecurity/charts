@@ -132,7 +132,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if or .Values.extraVolumeMounts .Values.certs }}
           volumeMounts:
-        {{- if or .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
+        {{- if or .Values.config.tlsserver.existingSecret (and .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
             - mountPath: /etc/certs/server
               name: certs-volume
               readOnly: true
@@ -153,13 +153,13 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- if or .Values.extraVolumes .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
+    {{- if or .Values.extraVolumes .Values.config.tlsserver.existingSecret (and .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
       volumes:
-    {{- if or .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
+    {{- if or .Values.config.tlsserver.existingSecret (and .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
         - name: certs-volume
           secret:
-            {{- if .Values.certs.existingSecret }}
-            secretName: {{ .Values.certs.existingSecret }}
+            {{- if .Values.config.tlsserver.existingSecret }}
+            secretName: {{.Values.config.tlsserver.existingSecret }}
             {{- else }}
             secretName: {{ include "falcosidekick.fullname" . }}-certs
             {{- end }}

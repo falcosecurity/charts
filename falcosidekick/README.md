@@ -476,12 +476,16 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.timescaledb.password | string | `"postgres"` | Password to authenticate with TimescaleDB |
 | config.timescaledb.port | int | `5432` | TimescaleDB port (default: 5432) |
 | config.timescaledb.user | string | `"postgres"` | Username to authenticate with TimescaleDB |
-| config.tlsserver.cacertfile | string | `"/etc/certs/server/ca.crt"` | CA certification file for client certification if mutualtls is true |
-| config.tlsserver.certfile | string | `"/etc/certs/server/server.crt"` | server certification file for TLS Server |
+| config.tlsserver.existingSecret | string | `""` | existing secret with server.crt, server.key and ca.crt files for TLS Server |
+| config.tlsserver.cacrt | string | `""` | ca.crt file for client certification if mutualtls is true |
+| config.tlsserver.cacertfile | string | `"/etc/certs/server/ca.crt"` | CA certification file path for client certification if mutualtls is true |
+| config.tlsserver.servercrt | string | `""` | server.crt file for TLS Server |
+| config.tlsserver.certfile | string | `"/etc/certs/server/server.crt"` | server certification file path for TLS Server |
 | config.tlsserver.deploy | bool | `false` | if true TLS server will be deployed instead of HTTP |
-| config.tlsserver.keyfile | string | `"/etc/certs/server/server.key"` | server key file for TLS Server |
+| config.tlsserver.serverkey | string | `""` | server.key file path for TLS Server |
+| config.tlsserver.keyfile | string | `"/etc/certs/server/server.key"` | server key file path for TLS Server |
 | config.tlsserver.mutualtls | bool | `false` | if true mutual TLS server will be deployed instead of TLS, deploy also has to be true |
-| config.tlsserver.notlspaths | string | `"/ping"` | a comma separated list of endpoints, if not empty, a separate http server will be deployed for the specified endpoints. Default value is /ping for livenessProbe and readinessProbe not to fail. |
+| config.tlsserver.notlspaths | string | `"/ping"` | a comma separated list of endpoints. A separate http server will be deployed for the specified endpoints. Ping endpoint needs to be notls for Kubernetes to be able to check the health of the pod |
 | config.tlsserver.notlsport | int | `2810` | port to serve http server serving selected endpoints |
 | config.wavefront.batchsize | int | `10000` | Wavefront batch size. If empty uses the default 10000. Only used when endpointtype is 'direct' |
 | config.wavefront.endpointhost | string | `""` | Wavefront endpoint address (only the host). If not empty, with endpointhost, Wavefront output is *enabled* |
@@ -514,10 +518,6 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.zincsearch.password | string | `""` | use this password to authenticate to ZincSearch |
 | config.zincsearch.username | string | `""` | use this username to authenticate to ZincSearch |
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
-| certs.existingSecret | string | `""` | Existing secret containing the following key, crt and ca as well as the bundle pem |
-| certs.server.key | string | `""` | Server Key to authenticate with the clients |
-| certs.server.crt | string | `""` | Server Certificate to authenticate with the clients |
-| certs.ca.crt | string | `""` | CA certificate to validate the clients |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
