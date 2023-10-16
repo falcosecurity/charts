@@ -86,8 +86,8 @@ config:
     cacertfile: "/etc/certs/server/ca.crt"
     # -- port to serve http server serving selected endpoints
     notlsport: 2810
-    # -- a comma separated list of endpoints, if not empty, a separate http server will be deployed for the specified endpoints
-    notlspaths: ""
+    # -- a comma separated list of endpoints, if not empty, a separate http server will be deployed for the specified endpoints. Ping endpoint needs to be notls to be able to check the health of the pod.
+    notlspaths: "/ping"
 
   slack:
     # -- Slack Webhook URL (ex: <https://hooks.slack.com/services/XXXX/YYYY/ZZZZ>), if not `empty`, Slack output is *enabled*
@@ -924,6 +924,19 @@ extraVolumes: []
 extraVolumeMounts: []
 # - mountPath: /etc/certs/mtlscert.optional.tls
 #   name: optional-mtls-volume
+
+# -- Certificates for mutual TLS server
+certs:
+  # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
+  existingSecret: ""
+  server:
+    # -- Server Key to authenticate with the clients
+    key: ""
+    # -- Server Certificate to authenticate with the clients
+    crt: ""
+  ca:
+    # -- CA certificate to validate the clients
+    crt: ""
 
 testConnection:
   # -- test connection nodeSelector field
