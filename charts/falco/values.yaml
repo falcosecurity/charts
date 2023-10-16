@@ -299,20 +299,28 @@ extra:
   # -- Additional initContainers for Falco pods.
   initContainers: []
 
-# -- certificates used by webserver and grpc server.
+# -- certificates used by webserver and grpc server and client.
 # paste certificate content or use helm with --set-file
 # or use existing secret containing key, crt, ca as well as pem bundle
 certs:
-  # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
+  # -- Existing server secret containing the following key, crt and ca as well as the bundle pem.
   existingSecret: ""
+  # -- Existing client secret containing the following key, crt and ca as well as the bundle pem.
+  existingClientSecret: ""
   server:
     # -- Key used by gRPC and webserver.
     key: ""
     # -- Certificate used by gRPC and webserver.
     crt: ""
-  ca:
-    # -- CA certificate used by gRPC, webserver and AuditSink validation.
+  client:
+    # -- Key used by http mTLS client.
+    key: ""
+    # -- Certificate used by http mTLS client.
     crt: ""
+  ca:
+    # -- CA certificate used by gRPC, webserver and AuditSink validation. Also used for mTLS Server validation.
+    crt: ""
+
 # -- Third party rules enabled for Falco. More info on the dedicated section in README.md file.
 customRules:
   {}
@@ -696,6 +704,11 @@ falco:
   # [Stable] `http_output`
   #
   # -- Send logs to an HTTP endpoint or webhook.
+  # -- When mounting mTLS certificates via Helm, the client cryptographic material is at:
+  #     private_key: "/etc/falco/certs/client/client.key"
+  #     cert_chain: "/etc/falco/certs/client/server.crt"
+  #     root_certs: "/etc/falco/certs/ca.crt"
+
   http_output:
     enabled: false
     url: ""
