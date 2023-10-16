@@ -150,7 +150,7 @@ After a few seconds, Falcosidekick should be running.
 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
 
-## Minumiun Kubernetes version
+## Minimum Kubernetes version
 
 The minimum Kubernetes version required is 1.17.x
 
