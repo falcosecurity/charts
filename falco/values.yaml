@@ -721,14 +721,14 @@ falco:
     # -- Path to a specific file that will be used as the CA certificate store.
     ca_bundle: ""
     # -- Path to a folder that will be used as the CA certificate store. CA certificate need to be
-    # stored as indivitual PEM files in this directory.
-    ca_path: "/etc/falco/certs/"
+    # stored as indivitual PEM files in this directory. Defaults to /etc/ssl/certs.
+    ca_path: ""
     # -- Tell Falco to use mTLS
     mtls: false
-    # -- Path to the client cert.
-    client_cert: "/etc/falco/certs/client/client.crt"
-    # -- Path to the client key.
-    client_key: "/etc/falco/certs/client/client.key"
+    # -- Path to the client cert. Defaults to /etc/ssl/certs/client.crt.
+    client_cert: ""
+    # -- Path to the client key. Defaults to /etc/ssl/certs/client.key.
+    client_key: ""
     # -- Whether to echo server answers to stdout
     echo: false
 
