@@ -76,17 +76,25 @@ config:
   tlsserver:
     # -- if true TLS server will be deployed instead of HTTP
     deploy: false
-    # -- server certification file for TLS Server
+    # -- existing secret with server.crt, server.key and ca.crt files for TLS Server
+    existingSecret: ""
+    # -- server.crt file for TLS Server
+    servercrt: ""
+    # -- server certification file path for TLS Server
     certfile: "/etc/certs/server/server.crt"
-    # -- server key file for TLS Server
+    # -- server.key file for TLS Server
+    serverkey: ""
+    # -- server key file path for TLS Server
     keyfile: "/etc/certs/server/server.key"
     # -- if true mutual TLS server will be deployed instead of TLS, deploy also has to be true
     mutualtls: false
-    # --  CA certification file for client certification if mutualtls is true
+    # ca.crt file for client certification if mutualtls is true
+    cacrt: ""
+    # --  CA certification file path for client certification if mutualtls is true
     cacertfile: "/etc/certs/server/ca.crt"
     # -- port to serve http server serving selected endpoints
     notlsport: 2810
-    # -- a comma separated list of endpoints, if not empty, a separate http server will be deployed for the specified endpoints. Ping endpoint needs to be notls to be able to check the health of the pod.
+    # -- a comma separated list of endpoints. A separate http server will be deployed for the specified endpoints. Ping endpoint needs to be notls for Kubernetes to be able to check the health of the pod
     notlspaths: "/ping"
 
   slack:
@@ -924,19 +932,6 @@ extraVolumes: []
 extraVolumeMounts: []
 # - mountPath: /etc/certs/mtlscert.optional.tls
 #   name: optional-mtls-volume
-
-# -- Certificates for mutual TLS server
-certs:
-  # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
-  existingSecret: ""
-  server:
-    # -- Server Key to authenticate with the clients
-    key: ""
-    # -- Server Certificate to authenticate with the clients
-    crt: ""
-  ca:
-    # -- CA certificate to validate the clients
-    crt: ""
 
 testConnection:
   # -- test connection nodeSelector field
