@@ -57,16 +57,29 @@ spec:
             - name: http
               containerPort: 2801
               protocol: TCP
+          {{- if .Values.config.tlsserver.deploy }}
+            - name: http-notls
+              containerPort: 2810
+              protocol: TCP
+          {{- end }}
           livenessProbe:
             httpGet:
               path: /ping
+              {{- if .Values.config.tlsserver.deploy }}
+              port: http-notls
+              {{- else }}
               port: http
+              {{- end }}
             initialDelaySeconds: 10
             periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /ping
+              {{- if .Values.config.tlsserver.deploy }}
+              port: http-notls
+              {{- else }}
               port: http
+              {{- end }}
             initialDelaySeconds: 10
             periodSeconds: 5
           {{- if .Values.securityContext }}
@@ -117,10 +130,17 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.extraVolumeMounts }}
+        {{- if or .Values.extraVolumeMounts .Values.certs }}
           volumeMounts:
+        {{- if or .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
+            - mountPath: /etc/certs/server
+              name: certs-volume
+              readOnly: true
+        {{- end }}  
+        {{- if or .Values.extraVolumeMounts }}   
 {{ toYaml .Values.extraVolumeMounts | indent 12 }}
-          {{- end }}
+        {{- end }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -133,8 +153,19 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- if .Values.extraVolumes }}
+    {{- if or .Values.extraVolumes .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
       volumes:
+    {{- if or .Values.certs.existingSecret (and .Values.certs.server.key .Values.certs.server.crt .Values.certs.ca.crt) }}
+        - name: certs-volume
+          secret:
+            {{- if .Values.certs.existingSecret }}
+            secretName: {{ .Values.certs.existingSecret }}
+            {{- else }}
+            secretName: {{ include "falcosidekick.fullname" . }}-certs
+            {{- end }}
+    {{- end }}
+    {{- if or .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 8 }}
+    {{- end }}
     {{- end }}
 
