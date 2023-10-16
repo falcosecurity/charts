@@ -94,7 +94,7 @@ config:
     cacertfile: "/etc/certs/server/ca.crt"
     # -- port to serve http server serving selected endpoints
     notlsport: 2810
-    # -- a comma separated list of endpoints. A separate http server will be deployed for the specified endpoints. Ping endpoint needs to be notls for Kubernetes to be able to check the health of the pod
+    # -- a comma separated list of endpoints, if not empty, and tlsserver.deploy is true, a separate http server will be deployed for the specified endpoints (/ping endpoint needs to be notls for Kubernetes to be able to perform the healthchecks)
     notlspaths: "/ping"
 
   slack:

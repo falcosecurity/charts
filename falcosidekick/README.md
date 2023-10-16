@@ -485,7 +485,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.tlsserver.serverkey | string | `""` | server.key file path for TLS Server |
 | config.tlsserver.keyfile | string | `"/etc/certs/server/server.key"` | server key file path for TLS Server |
 | config.tlsserver.mutualtls | bool | `false` | if true mutual TLS server will be deployed instead of TLS, deploy also has to be true |
-| config.tlsserver.notlspaths | string | `"/ping"` | a comma separated list of endpoints. A separate http server will be deployed for the specified endpoints. Ping endpoint needs to be notls for Kubernetes to be able to check the health of the pod |
+| config.tlsserver.notlspaths | string | `"/ping"` | a comma separated list of endpoints, if not empty, and tlsserver.deploy is true, a separate http server will be deployed for the specified endpoints (/ping endpoint needs to be notls for Kubernetes to be able to perform the healthchecks) |
 | config.tlsserver.notlsport | int | `2810` | port to serve http server serving selected endpoints |
 | config.wavefront.batchsize | int | `10000` | Wavefront batch size. If empty uses the default 10000. Only used when endpointtype is 'direct' |
 | config.wavefront.endpointhost | string | `""` | Wavefront endpoint address (only the host). If not empty, with endpointhost, Wavefront output is *enabled* |
