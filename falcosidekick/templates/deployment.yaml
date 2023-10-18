@@ -130,9 +130,9 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        {{- if or .Values.extraVolumeMounts .Values.certs }}
+        {{- if or .Values.extraVolumeMounts .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt }}
           volumeMounts:
-        {{- if or .Values.config.tlsserver.existingSecret (and .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
+        {{- if or .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt }}
             - mountPath: /etc/certs/server
               name: certs-volume
               readOnly: true
@@ -153,9 +153,9 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- if or .Values.extraVolumes .Values.config.tlsserver.existingSecret (and .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
+    {{- if or .Values.extraVolumes (and .Values.config.tlsserver.deploy (or .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt)) }}
       volumes:
-    {{- if or .Values.config.tlsserver.existingSecret (and .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
+    {{- if and .Values.config.tlsserver.deploy (or .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
         - name: certs-volume
           secret:
             {{- if .Values.config.tlsserver.existingSecret }}
