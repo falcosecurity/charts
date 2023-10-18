@@ -130,9 +130,9 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        {{- if or .Values.extraVolumeMounts .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt }}
+        {{- if or .Values.extraVolumes (and .Values.config.tlsserver.deploy (or .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt)) }}
           volumeMounts:
-        {{- if or .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt }}
+        {{- if or and .Values.config.tlsserver.deploy (or .Values.config.tlsserver.existingSecret .Values.config.tlsserver.serverkey .Values.config.tlsserver.servercrt .Values.config.tlsserver.cacrt) }}
             - mountPath: /etc/certs/server
               name: certs-volume
               readOnly: true
