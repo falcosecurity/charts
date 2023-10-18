@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.7.4
+
+* Fix volume mount when `config.tlsserver.servercrt`, `config.tlsserver.serverkey` and `config.tlsserver.cacrt` variables are defined.
+
 ## 0.7.3
 
 * Allow to set (m)TLS Server cryptographic material via `config.tlsserver.servercrt`, `config.tlsserver.serverkey` and `config.tlsserver.cacrt` variables or through `config.tlsserver.existingSecret` variables.
