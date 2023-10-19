@@ -1,0 +1,59 @@
+name: Test Charts
+
+on:
+  pull_request:
+    paths:
+      - "charts/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
+
+      - uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        with:
+          python-version: '3.x'
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@e8788873172cb653a90ca2e819d79d65a66d4e76 # v2.4.0
+
+      - name: Run chart-testing (lint)
+        run: ct lint --config ct.yaml
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --config ct.yaml)
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create KIND Cluster
+        if: steps.list-changed.outputs.changed == 'true'
+        uses: helm/kind-action@dda0770415bac9fc20092cacbc54aa298604d140 # v1.8.0
+        with:
+          config: ./tests/kind-config.yaml
+
+      - name: install falco if needed (ie for falco-exporter)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          changed=$(ct list-changed --config ct.yaml)
+          if [[ "$changed[@]" =~ "charts/falco-exporter" ]]; then
+            helm repo add falcosecurity https://falcosecurity.github.io/charts
+            helm repo update
+            helm install falco falcosecurity/falco -f ./tests/falco-test-ci.yaml
+            kubectl get po -A
+            sleep 120
+            kubectl get po -A
+          fi
+
+      - name: Run chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --config ct.yaml
