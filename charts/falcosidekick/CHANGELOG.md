@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.7.5
+
+* noop change just to test the ci
+
 ## 0.7.4
 
 * Fix volume mount when `config.tlsserver.servercrt`, `config.tlsserver.serverkey` and `config.tlsserver.cacrt` variables are defined.
