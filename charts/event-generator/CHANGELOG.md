@@ -4,6 +4,10 @@
 This file documents all notable changes to `event-generator` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.3.1
+
+* noop change just to test the ci
+
 ## v0.3.0
 
 ## Major Changes
