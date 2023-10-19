@@ -2,8 +2,6 @@ name: Test Charts
 
 on:
   pull_request:
-    paths:
-      - "charts/**"
 
 jobs:
   test:
