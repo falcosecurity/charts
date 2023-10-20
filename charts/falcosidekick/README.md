@@ -253,6 +253,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.elasticsearch.username | string | `""` | use this username to authenticate to Elasticsearch if the username is not empty |
 | config.existingSecret | string | `""` | Existing secret with configuration |
 | config.extraEnv | list | `[]` | Extra environment variables |
+| config.extraArgs | list | `[]` | Extra arguments for falcosidekick execution |
 | config.fission.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.fission.function | string | `""` | Name of Fission function, if not empty, Fission is enabled |
 | config.fission.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |

@@ -86,6 +86,10 @@ spec:
           securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
           {{- end }}
+          {{- if .Values.config.extraArgs }}
+          args:
+          {{ toYaml .Values.config.extraArgs | nindent 12 }}
+          {{- end }}
           envFrom:
             - secretRef:
                 {{- if .Values.config.existingSecret }}
