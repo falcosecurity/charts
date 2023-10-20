@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.8.2
+
+* Enable mounting Falco client cryptographic material through `certs.client.key` and `certs.client.crt` values or `certs.existingClientSecret`.
+
 ## v3.8.1
 
 * noop change just to test the ci
