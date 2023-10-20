@@ -45,6 +45,26 @@ Return the appropriate apiVersion for ingress.
 {{- end -}}
 
 {{/*
+Common labels
+*/}}
+{{- define "falcosidekick.labels" -}}
+helm.sh/chart: {{ include "falcosidekick.chart" . }}
+{{ include "falcosidekick.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "falcosidekick.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
 Return if ingress is stable.
 */}}
 {{- define "falcosidekick.ingress.isStable" -}}
