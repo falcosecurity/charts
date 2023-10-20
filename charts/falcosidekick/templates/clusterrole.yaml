@@ -5,10 +5,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ template "falcosidekick.fullname" .}}
   labels:
-    app: {{ template "falcosidekick.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    {{- include "falcosidekick.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - policy
