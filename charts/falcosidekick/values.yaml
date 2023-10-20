@@ -112,6 +112,8 @@ config:
   existingSecret: ""
   # -- Extra environment variables
   extraEnv: []
+  # -- Extra command-line arguments
+  extraArgs: []
   # -- DEBUG environment variable
   debug: false
   # -- a list of escaped comma separated custom fields to add to falco events, syntax is "key:value\,key:value"
