@@ -6,6 +6,7 @@ numbering uses [semantic versioning](http://semver.org).
 ## v3.8.2
 
 * Enable mounting Falco client cryptographic material through `certs.client.key` and `certs.client.crt` values or `certs.existingClientSecret`.
+* Upgrade falcosidekick chart to `v0.7.6`.
 
 ## v3.8.1
 
