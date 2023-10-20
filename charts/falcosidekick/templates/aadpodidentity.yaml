@@ -3,6 +3,8 @@
 apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentity
 metadata:
+  labels:
+    {{- include "falcosidekick.labels" . | nindent 4 }}
   name: {{ include "falcosidekick.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
@@ -13,6 +15,8 @@ spec:
 apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentityBinding
 metadata:
+  labels:
+    {{- include "falcosidekick.labels" . | nindent 4 }}
   name: {{ include "falcosidekick.fullname" . }}
 spec:
   azureIdentity: {{ include "falcosidekick.fullname" . }}
