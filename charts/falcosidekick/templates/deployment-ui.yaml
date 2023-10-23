@@ -11,10 +11,8 @@ metadata:
   name: {{ include "falcosidekick.fullname" . }}-ui
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
-    helm.sh/chart: {{ include "falcosidekick.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-ui
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui
 spec:
   replicas: {{ .Values.webui.replicaCount }}
   {{- if .Values.webui.revisionHistoryLimit }}
@@ -22,13 +20,13 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
-      app.kubernetes.io/instance: {{ .Release.Name }}-ui
+      {{- include "falcosidekick.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ui
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
-        app.kubernetes.io/instance: {{ .Release.Name }}-ui
+        {{- include "falcosidekick.labels" . | nindent 8 }}
+        app.kubernetes.io/component: ui
       {{- if .Values.webui.podLabels }}
 {{ toYaml .Values.webui.podLabels | indent 8 }}
       {{- end }}
@@ -125,22 +123,20 @@ metadata:
   name: {{ include "falcosidekick.fullname" . }}-ui-redis
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui-redis
-    helm.sh/chart: {{ include "falcosidekick.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-ui
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui-redis
 spec:
   replicas: 1
   serviceName: {{ include "falcosidekick.fullname" . }}-ui-redis
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui-redis
-      app.kubernetes.io/instance: {{ .Release.Name }}-ui-redis
+      {{- include "falcosidekick.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ui-redis
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui-redis
-        app.kubernetes.io/instance: {{ .Release.Name }}-ui-redis
+        {{- include "falcosidekick.labels" . | nindent 8 }}
+        app.kubernetes.io/component: ui-redis
       {{- if .Values.webui.redis.podLabels }}
 {{ toYaml .Values.webui.redis.podLabels | indent 8 }}
       {{- end }}
