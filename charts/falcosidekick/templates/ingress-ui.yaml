@@ -9,10 +9,8 @@ metadata:
   name: {{ $fullName }}-ui
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "falcosidekick.name" . }}-ui
-    helm.sh/chart: {{ include "falcosidekick.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}-ui
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui
   {{- with .Values.webui.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

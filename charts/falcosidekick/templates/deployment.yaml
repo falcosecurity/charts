@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: core
 spec:
   replicas: {{ .Values.replicaCount }}
   {{- if .Values.revisionHistoryLimit }}
@@ -14,10 +15,12 @@ spec:
   selector:
     matchLabels:
       {{- include "falcosidekick.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: core
   template:
     metadata:
       labels:
         {{- include "falcosidekick.labels" . | nindent 8 }}
+        app.kubernetes.io/component: core
         {{- if and .Values.config.azure.podIdentityClientID .Values.config.azure.podIdentityName }}
         aadpodidbinding: {{ include "falcosidekick.fullname" . }}
         {{- end }}
