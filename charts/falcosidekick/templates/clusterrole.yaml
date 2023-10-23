@@ -6,6 +6,7 @@ metadata:
   name: {{ template "falcosidekick.fullname" .}}
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: core
 rules:
   - apiGroups:
       - policy
