@@ -25,6 +25,6 @@ spec:
       protocol: TCP
       name: http-notls
     {{- end }}
-
   selector:
     {{- include "falcosidekick.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: core

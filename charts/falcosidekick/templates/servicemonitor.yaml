@@ -21,6 +21,5 @@ spec:
     {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "falcosidekick.selectorLabels" . | nindent 6 }}
 {{- end }}

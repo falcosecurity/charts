@@ -1,3 +1,4 @@
+{{- if .Values.webui.enabled -}}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -33,3 +34,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "falcosidekick.fullname" . }}-ui
+{{- end }}
