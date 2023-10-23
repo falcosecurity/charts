@@ -8,6 +8,7 @@ metadata:
   {{- end }}
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: core
     {{- if .Values.prometheusRules.additionalLabels }}
     {{- toYaml .Values.prometheusRules.additionalLabels | nindent 4 }}
     {{- end }}
