@@ -5,6 +5,7 @@ kind: AzureIdentity
 metadata:
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: core
   name: {{ include "falcosidekick.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
