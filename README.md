@@ -40,7 +40,7 @@ helm repo update
 
 ### Installing a chart
 
-Please refer to the instruction provided by the Chart you want to install. For installing Falco via Helm, the documentation is [here](https://github.com/falcosecurity/charts/tree/master/falco#adding-falcosecurity-repository).
+Please refer to the instruction provided by the Chart you want to install. For installing Falco via Helm, the documentation is [here](https://github.com/falcosecurity/charts/tree/master/charts/falco#adding-falcosecurity-repository).
 
 ## Contributing
 
