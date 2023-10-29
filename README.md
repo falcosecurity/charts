@@ -12,6 +12,7 @@ For more information about installing and using Helm, see the
 ## Repository Structure
 
 This GitHub repository contains the source for the packaged and versioned charts released to [https://falcosecurity.github.io/charts](https://falcosecurity.github.io/charts) (our Helm Chart Repository).
+We also, are publishing the charts in a OCI Image and it is hosted in [GitHub Packages](https://github.com/orgs/falcosecurity/packages?repo_name=charts)
 
 The Charts in this repository are organized into folders: each directory that contains a `Chart.yaml` is a chart.
 
@@ -21,10 +22,10 @@ The Charts in the `master` branch (with a corresponding [GitHub release](https:/
 
 Charts currently available are listed below.
 
-- [falco](falco)
-- [falco-exporter](falco-exporter)
-- [falcosidekick](falcosidekick)
-- [event-generator](event-generator)
+- [falco](./charts/falco)
+- [falco-exporter](./charts/falco-exporter)
+- [falcosidekick](./charts/falcosidekick)
+- [event-generator](./charts/event-generator)
 
 ## Usage
 
@@ -52,7 +53,6 @@ So, we ask you to follow these simple steps when making your PR:
 - Add a new section in the chart's `CHANGELOG.md` file with the new version number of the chart.
 - If your changes affect any chart variables, please update the chart's `README.md` file accordingly and run `make docs` in the chart folder.
 
-Finally, when opening your PR, please fill in the provided PR template, including the final checklist of items to indicate that all the steps above have been performed. 
-
+Finally, when opening your PR, please fill in the provided PR template, including the final checklist of items to indicate that all the steps above have been performed.
 
 If you have any questions, please feel free to contact us via [GitHub issues](https://github.com/falcosecurity/charts/issues).

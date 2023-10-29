@@ -1,6 +1,6 @@
 # Release Process
 
-Our release process is automated using [CircleCI](https://app.circleci.com/pipelines/github/falcosecurity/charts), [helm](https://github.com/helm/helm), and [chart-releaser](https://github.com/helm/chart-releaser). You can find the full script [here](.circleci/release.sh) and more details under the [Automation explained](#Automation-explained) section. Finally, the GitHub pages feature is used to host our Helm repo.
+Our release process is automated using [GitHub Actions](.github/workflows/release.yml), [helm](https://github.com/helm/helm), and [chart-releaser](https://github.com/helm/chart-releaser). More details under the [Automation explained](#Automation-explained) section. Finally, the GitHub pages feature is used to host our Helm repo.
 
 The following process describes how to release just one chart. Since this repository can host multiple charts, the same instructions apply for any of them.
 
@@ -20,30 +20,16 @@ Once the CI has done its job, a new tag is live on [GitHub](https://github.com/f
 
 ## Automation explained
 
-By convention, we assume that each top-level directory of the [falcosecury/charts](https://github.com/falcosecurity/charts) repository that contains a `Chart.yaml` is a Helm chart source directory. We may extend it also to support those charts that have source files in a different repository.
+By convention, we assume that each top-level directory of the [falcosecury/charts/charts](https://github.com/falcosecurity/charts/tree/master/charts) repository that contains a `Chart.yaml` is a Helm chart source directory. We may extend it also to support those charts that have source files in a different repository.
 
 The automated release process starts when any modification added to `master` triggers CircleCI. It ends with a GitHub Pages job that publishes the updated index of our Helm repo.
 
-### CircleCI workflow
+### GitHub Actions workflow
 
-The CI is configured to [install the required tools](.circleci/install_tools.sh) then to runs [.circleci/release.sh](.circleci/release.sh) script.
+We have two main workflows:
 
-The script performs the following actions:
-
-- for each `*/Chart.yaml` file found:
-  - extract the `version` and the `name` attributes
-  - check if a git tag in the form `<name>-<version>` (e.g. `falco-1.1.10`) is already present
-    - if yes, skip the chart
-    - otherwise, add the chart to the list of charts to be released
-- if the list is empty, the process stops
-- for each chart in the resulting list:
-    - create the chart package (using `helm package`)
-- run ([chart-releaser](https://github.com/helm/chart-releaser)) to create a GitHub release and to upload the package for each packaged created by the previous step
-- run ([chart-releaser](https://github.com/helm/chart-releaser)) to update the `index.yaml`, then commit and push it to the `gh-pages` branch
-
-**N.B.**
-- The name and the version of the chart are extracted from `Chart.yaml`, thus the directory name is not relevant in this process.
-- The above process can release multiple charts simultaneously.
+- [test](.github/workflows/test.yml): This will check the chart lint and will also run tests to validate if the chart can be installed, if the chart have tests those will run as well.
+- [release](.github/workflows/release.yml): This will run everything a Pull Requests of a chart is merged, it will update the index and generate the package, and publish it.
 
 ### GitHub Pages job
 
