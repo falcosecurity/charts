@@ -32,7 +32,7 @@ In order to install the event-generator in a custom namespace run:
 kubectl create ns "ns-event-generator"
 helm install event-generator falcosecurity/event-generator --namespace "ns-event-generator"
 ```
-When the event-generator is installed using the default values in `values.yaml` file it is deployed using a k8s job, running the `run` command and, generates activity only for the k8s audit. 
+When the event-generator is installed using the default values in `values.yaml` file it is deployed using a k8s job, running the `run` command and, generates activity only for the k8s audit.
 For more info check the next section.
 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
@@ -61,7 +61,7 @@ Based on commands, actions and options configured the event-generator could be d
 A configuration like the one below, set in the `values.yaml` file, will deploy the even-generator using a `deployment` with the `run` command passed to it and will will generate activity only for the syscalls:
 ```yaml
 config:
-  # -- The event-generator accepts two commands (run, test): 
+  # -- The event-generator accepts two commands (run, test):
   # run: runs actions.
   # test: runs and tests actions.
   # For more info see: https://github.com/falcosecurity/event-generator
@@ -71,10 +71,10 @@ config:
   # -- Runs in a loop the actions.
   # If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job.
   loop: true
-  # -- The length of time to wait before running an action. Non-zero values should contain 
+  # -- The length of time to wait before running an action. Non-zero values should contain
   # a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms)
   sleep: ""
-  
+
   grpc:
     # -- Set it to true if you are deploying in "test" mode.
     enabled: false
@@ -85,7 +85,7 @@ config:
 The following configuration will use a k8s `job` since we want to perform the k8s activity once and check that Falco reacts properly to those actions:
 ```yaml
 config:
-  # -- The event-generator accepts two commands (run, test): 
+  # -- The event-generator accepts two commands (run, test):
   # run: runs actions.
   # test: runs and tests actions.
   # For more info see: https://github.com/falcosecurity/event-generator
@@ -95,10 +95,10 @@ config:
   # -- Runs in a loop the actions.
   # If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job.
   loop: false
-  # -- The length of time to wait before running an action. Non-zero values should contain 
+  # -- The length of time to wait before running an action. Non-zero values should contain
   # a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms)
   sleep: ""
-  
+
   grpc:
     # -- Set it to true if you are deploying in "test" mode.
     enabled: true
@@ -107,7 +107,6 @@ config:
   ```
 
 Note that **grpc.enabled is set to true when running with the test command. Be sure that Falco exposes the grpc socket and emits output to it**.
-
 
 ## Uninstalling the Chart
 To uninstall the `event-generator` release:
@@ -118,4 +117,29 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-All the configurable parameters of the event-generator chart and their default values can be found [here](./generated/helm-values.md).
+The following table lists the main configurable parameters of the event-generator chart v0.3.1 and their default values. See `values.yaml` for full list.
+
+## Values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| affinity | object | `{}` | Affinity, like the nodeSelector but with more expressive syntax. |
+| config.actions | string | `"^syscall"` | Regular expression used to select the actions to be run. |
+| config.command | string | `"run"` | The event-generator accepts two commands (run, test): run: runs actions. test: runs and tests actions. For more info see: https://github.com/falcosecurity/event-generator. |
+| config.grpc.bindAddress | string | `"unix:///run/falco/falco.sock"` | Path to the Falco grpc socket. |
+| config.grpc.enabled | bool | `false` | Set it to true if you are deploying in "test" mode. |
+| config.loop | bool | `true` | Runs in a loop the actions. If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job. |
+| config.sleep | string | `""` | The length of time to wait before running an action. Non-zero values should contain a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms) |
+| fullnameOverride | string | `""` | Used to override the chart full name. |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"falcosecurity/event-generator","tag":"latest"}` | Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
+| image.pullPolicy | string | `"IfNotPresent"` | Pull policy for the event-generator image |
+| image.repository | string | `"falcosecurity/event-generator"` | Repository from where the image is pulled. |
+| image.tag | string | `"latest"` | Images' tag to select a development/custom version of event-generator instead of a release. Overrides the image tag whose default is the chart appVersion. |
+| imagePullSecrets | list | `[]` | Secrets used to pull the image from a private repository. |
+| nameOverride | string | `""` | Used to override the chart name. |
+| nodeSelector | object | `{}` | Selectors to choose a given node where to run the pods. |
+| podAnnotations | object | `{}` | Annotations to be added to the pod. |
+| podSecurityContext | object | `{}` | Security context for the pod. |
+| replicasCount | int | `1` | Number of replicas of the event-generator (meaningful when installed as a deployment). |
+| securityContext | object | `{}` | Security context for the containers. |
+| tolerations | list | `[]` | Tolerations to allow the pods to be scheduled on nodes whose taints the pod tolerates. |
