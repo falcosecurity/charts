@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.7.9
+
+* noop change to the chart itself. Updated makefile.
+
 ## 0.7.8
 
 * Fix the condition for missing cert files
