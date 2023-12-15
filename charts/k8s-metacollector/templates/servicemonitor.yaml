@@ -1,0 +1,47 @@
+{{- if .Values.serviceMonitor.create }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "k8s-metacollector.fullname" . }}
+  {{- if .Values.serviceMonitor.namespace }}
+  namespace: {{ tpl .Values.serviceMonitor.namespace . }}
+  {{- else }}
+  namespace: {{ include "k8s-metacollector.namespace" . }}
+  {{- end }}
+  labels:
+    {{- include "k8s-metacollector.labels" . | nindent 4 }}
+    {{- with .Values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  endpoints:
+    - port: {{ .Values.service.ports.metrics.targetPort }}
+      {{- with .Values.serviceMonitor.interval }}
+      interval: {{ . }}
+      {{- end }}
+      {{- with .Values.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ . }}
+      {{- end }}
+      honorLabels: true
+      path: {{ .Values.serviceMonitor.path }}
+      scheme: {{ .Values.serviceMonitor.scheme }}
+      {{- with .Values.serviceMonitor.tlsConfig }}
+      tlsConfig:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+  jobLabel: "{{ .Release.Name }}"
+  selector:
+    matchLabels:
+      {{- include "k8s-metacollector.selectorLabels" . | nindent 4 }}
+  namespaceSelector:
+    matchNames:
+      - {{ include "k8s-metacollector.namespace" . }}
+  {{- with .Values.serviceMonitor.targetLabels }}
+  targetLabels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
