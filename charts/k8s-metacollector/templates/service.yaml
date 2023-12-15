@@ -1,0 +1,15 @@
+{{- if .Values.service.create}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "k8s-metacollector.fullname" . }}
+  namespace: {{ include "k8s-metacollector.namespace" . }}
+  labels:
+    {{- include "k8s-metacollector.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- include "k8s-metacollector.servicePorts" . | indent 4 }}
+  selector:
+    {{- include "k8s-metacollector.selectorLabels" . | nindent 4 }}
+{{- end }}

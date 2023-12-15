@@ -1,0 +1,185 @@
+# Default values for k8s-metacollector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount is the number of identical copies of the k8s-metacollector.
+replicaCount: 1
+
+# image is the configuration for the k8s-metacollector image.
+image:
+  # pullPolicy is the policy used to determine when a node should attempt to pull the container image.
+  pullPolicy: IfNotPresent
+  # pullSecects a list of secrets containing credentials used when pulling from private/secure registries.
+  pullSecrets: []
+  # registry is the image registry to pull from.
+  registry: docker.io
+  # repository is the image repository to pull from
+  repository: falcosecurity/k8s-metacollector
+  # tag is image tag to pull. Overrides the image tag whose default is the chart appVersion.
+  tag: "main"
+
+# nameOverride is the new name used to override the release name used for k8s-metacollector components.
+nameOverride: ""
+# fullNameOverride same as nameOverride but for the full name.
+fullnameOverride: ""
+# namespaceOverride overrides the deployment namespace. It's useful for multi-namespace deployments in combined charts.
+namespaceOverride: ""
+
+
+# serviceAccount is the configuration for the service account.
+serviceAccount:
+  # create specifies whether a service account should be created.
+  create: true
+  # annotations to add to the service account.
+  annotations: {}
+  # name is name of the service account to use.
+  # If not set and create is true, a name is generated using the full name template.
+  name: ""
+
+# podAnnotations are custom annotations to be added to the pod.
+podAnnotations: {}
+
+# podSecurityContext holds the security settings for the pod.
+# These settings are override by the ones specified for the container when there is overlap.
+podSecurityContext:
+  # runAsNonRoot when set to true enforces that the specified container runs as a non-root user.
+  runAsNonRoot: true
+  # runAsUser specifies the user ID (UID) that the containers inside the pod should run as.
+  runAsUser: 1000
+  # runAsGroup specifies the group ID (GID) that the containers inside the pod should run as.
+  runAsGroup: 1000
+  # fsGroup specifies the group ID (GID) that should be used for the volume mounted within a Pod.
+  fsGroup: 1000
+
+# containerSecurityContext holds the security settings for the container.
+containerSecurityContext:
+  # capabilities fine-grained privileges that can be assigned to processes.
+  capabilities:
+    # drop drops the given set of privileges.
+    drop:
+      - ALL
+
+# service exposes the k8s-metacollector services to be accessed from within the cluster.
+# ref: https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  # enabled specifies whether a service should be created.
+  create: true
+  # type denotes the service type. Setting it to "ClusterIP" we ensure that are accessible
+  # from within the cluster.
+  type: ClusterIP
+  # ports denotes all the ports on which the Service will listen.
+  ports:
+    # metrics denotes a listening service named "metrics".
+    metrics:
+      # port is the port on which the Service will listen.
+      port: 8080
+      # targetPort is the port on which the Pod is listening.
+      targetPort: "metrics"
+      # protocol specifies the network protocol that the Service should use for the associated port.
+      protocol: "TCP"
+    # health-probe denotes a listening service named "health-probe"
+    health-probe:
+      # port is the port on which the Service will listen.
+      port: 8081
+      # targetPort is the port on which the Pod is listening.
+      targetPort: "health-probe"
+      # protocol specifies the network protocol that the Service should use for the associated port.
+      protocol: "TCP"
+    # broker-grpc denotes a listening service named "grpc-broker"
+    broker-grpc:
+      # port is the port on which the Service will listen.
+      port: 45000
+      # targetPort is the port on which the Pod is listening.
+      targetPort: "broker-grpc"
+      # protocol specifies the network protocol that the Service should use for the associated port.
+      protocol: "TCP"
+
+# serviceMonitor holds the configuration for the ServiceMonitor CRD.
+# A ServiceMonitor is a custom resource definition (CRD) used to configure how Prometheus should
+# discover and scrape metrics from the k8s-metacollector service.
+serviceMonitor:
+  # create specifies whether a ServiceMonitor CRD should be created for a prometheus operator.
+  # https://github.com/coreos/prometheus-operator
+  # Enable it only if the ServiceMonitor CRD is installed in your cluster.
+  create: false
+  # path at which the metrics are expose by the k8s-metacollector.
+  path: /metrics
+  # labels set of labels to be applied to the ServiceMonitor resource.
+  # If your Prometheus deployment is configured to use serviceMonitorSelector, then add the right
+  # label here in order for the ServiceMonitor to be selected for target discovery.
+  labels: {}
+  # interval specifies the time interval at which Prometheus should scrape metrics from the service.
+  interval: 1m
+  # scheme specifies network protocol used by the metrics endpoint. In this case HTTP.
+  scheme: http
+  # tlsConfig specifies TLS (Transport Layer Security) configuration for secure communication when
+  # scraping metrics from a service. It allows you to define the details of the TLS connection, such as
+  # CA certificate, client certificate, and client key. Currently, the k8s-metacollector does not support
+  # TLS configuration for the metrics endpoint.
+  tlsConfig: {}
+    # insecureSkipVerify: false
+    # caFile: /path/to/ca.crt
+    # certFile: /path/to/client.crt
+    # keyFile: /path/to/client.key
+  # scrapeTimeout determines the maximum time Prometheus should wait for a target to respond to a scrape request.
+  # If the target does not respond within the specified timeout, Prometheus considers the scrape as failed for
+  # that target.
+  scrapeTimeout: 30s
+  # relabelings configures the relabeling rules to apply the target’s metadata labels.
+  relabelings: []
+  # targetLabels defines the labels which are transferred from the associated Kubernetes service object onto the ingested metrics.
+  targetLabels: []
+
+# resources defines the computing resources (CPU and memory) that are allocated to the containers running within the Pod.
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# nodeSelector specifies a set of key-value pairs that must match labels assigned to nodes
+# for the Pod to be eligible for scheduling on that node.
+nodeSelector: {}
+
+# tolerations are applied to pods and allow them to be scheduled on nodes with matching taints.
+tolerations: []
+
+# affinity allows pod placement based on node characteristics, or any other custom labels assigned to nodes.
+affinity: {}
+
+# healthChecks contains the configuration for liveness and readiness probes.
+healthChecks:
+  # livenessProbe is a diagnostic mechanism used to determine wether a container within a Pod is still running and healthy.
+  livenessProbe:
+    # httpGet specifies that the liveness probe will make an HTTP GET request to check the health of the container.
+    httpGet:
+      # path is the specific endpoint on which the HTTP GET request will be made.
+      path: /healthz
+      # port is the port on which the container exposes the "/healthz" endpoint.
+      port: 8081
+    # initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe.
+    initialDelaySeconds: 60
+    # timeoutSeconds is the number of seconds after which the probe times out.
+    timeoutSeconds: 5
+    # periodSeconds specifies the interval at which the liveness probe will be repeated.
+    periodSeconds: 15
+  # readinessProbe is a mechanism used to determine whether a container within a Pod is ready to serve traffic.
+  readinessProbe:
+    # httpGet specifies that the readiness probe will make an HTTP GET request to check whether the container is ready.
+    httpGet:
+      # path is the specific endpoint on which the HTTP GET request will be made.
+      path: /readyz
+      # port is the port on which the container exposes the "/readyz" endpoint.
+      port: 8081
+    # initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe.
+    initialDelaySeconds: 45
+    # timeoutSeconds is the number of seconds after which the probe times out.
+    timeoutSeconds: 5
+    # periodSeconds specifies the interval at which the readiness probe will be repeated.
+    periodSeconds: 15
