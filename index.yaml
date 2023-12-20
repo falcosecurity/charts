@@ -6287,4 +6287,15 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/falcosidekick-0.1.20/falcosidekick-0.1.20.tgz
     version: 0.1.20
-generated: "2023-12-18T16:37:25.32978682Z"
+  k8s-metacollector:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2023-12-20T16:15:34.474719671Z"
+    description: A Helm chart for Kubernetes
+    digest: 0723dc370aad54e4f701b598bf3b62e071c3619ce5b3bb7a1ec33d03e48443ce
+    name: k8s-metacollector
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.0/k8s-metacollector-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-12-20T16:15:34.475162436Z"
