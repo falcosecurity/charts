@@ -1,0 +1,57 @@
+# k8s-metacollector
+
+[k8s-metacollector](https://github.com/falcosecurity/k8s-metacollector) is a self-contained module that can be deployed within a Kubernetes cluster to perform the task of gathering metadata from various Kubernetes resources and subsequently transmitting this collected metadata to designated subscribers.
+
+## Introduction
+
+This chart installs the [k8s-metacollector](https://github.com/falcosecurity/k8s-metacollector) in a kubernetes cluster. The main application will be deployed as Kubernetes deployment with replica count equal to 1. In order for the application to work correctly the following resources will be created:
+* ServiceAccount;
+* ClusterRole;
+* ClusterRoleBinding;
+* Service;
+* ServiceMonitor (optional);
+
+*Note*: Incrementing the number of replicas is not recommended. The [k8s-metacollector](https://github.com/falcosecurity/k8s-metacollector) does not implement memory sharding techniques. Furthermore, events are distributed over `gRPC` using `streams` which does not work well with load balancing mechanisms implemented by Kubernetes.
+
+## Adding `falcosecurity` repository
+
+Before installing the chart, add the `falcosecurity` charts repository:
+
+```bash
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
+```
+
+## Installing the Chart
+
+To install the chart with default values and release name `k8s-metacollector` run:
+
+```bash
+helm install k8s-metacollector falcosecurity/k8s-metacollector --namespace metacollector --create-namespace
+```
+
+After a few seconds, k8s-metacollector should be running in the `metacollector` namespace.
+
+### Enabling ServiceMonitor
+Assuming that Promtheus scrapes only the ServiceMonitors that present a `release label` the following command will install and label the ServiceMonitor:
+
+```bash
+helm install k8s-metacollector falcosecurity/k8s-metacollector \
+    --create-namespace \
+    --namespace metacollector \
+	--set serviceMonitor.create=true \
+	--set serviceMonitor.labels.release="kube-prometheus-stack"
+```
+
+## Uninstalling the Chart
+To uninstall the `k8s-metacollector` release in namespace `metacollector`:
+```bash
+helm uninstall k8s-metacollector --namespace metacollector
+```
+The command removes all the Kubernetes resources associated with the chart and deletes the release.
+
+## Configuration
+
+The following table lists the main configurable parameters of the {{ template "chart.name" . }} chart v{{ template "chart.version" . }} and their default values. See `values.yaml` for full list.
+
+{{ template "chart.valuesSection" . }}
