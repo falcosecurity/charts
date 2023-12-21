@@ -1,6 +1,6 @@
 apiVersion: v2
 name: k8s-metacollector
-description: A Helm chart for Kubernetes
+description: Install k8s-metacollector to fetch and distribute Kubernetes metadata to Falco instances.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -22,3 +22,10 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "0.0.1"
+
+home: https://github.com/falcosecurity/k8s-metacollector
+sources:
+  - https://github.com/falcosecurity/k8s-metacollector
+maintainers:
+  - name: The Falco Authors
+    email: cncf-falco-dev@lists.cncf.io
