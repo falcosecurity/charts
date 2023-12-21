@@ -41,6 +41,8 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area event-generator-chart
 
+> /area k8s-metacollector
+
 <!--
 Please remove the leading whitespace before the `/area <>` you uncommented.
 -->
