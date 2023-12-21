@@ -8,13 +8,16 @@ CHARTS := $(wildcard ./charts/*)
 CHARTS_NAMES := $(notdir $(CHARTS))
 
 .PHONY: lint
-lint: helm-repo-update $(addprefix lint-, $(CHARTS_NAMES))
+lint: helm-deps-update $(addprefix lint-, $(CHARTS_NAMES))
 
 lint-%:
 	@docker run \
 	-it \
+	-e HOME=/home/ct \
+	--mount type=tmpfs,destination=/home/ct \
 	--workdir=/data \
 	--volume $$(pwd):/data \
+	-u $$(id -u) \
 	quay.io/helmpack/chart-testing:$(LINT_IMAGE_VERSION) \
 	ct lint --config ./ct.yaml --charts ./charts/$*
 	
@@ -30,5 +33,8 @@ docs-%:
 	jnorwood/helm-docs:$(DOCS_IMAGE_VERSION) \
 	helm-docs -c ./charts/$* -t ./README.gotmpl -o ./README.md
 
-helm-repo-update:
-	helm repo update
+.PHONY: helm-deps-update
+helm-deps-update: $(addprefix helm-deps-update-, $(CHARTS_NAMES))
+
+helm-deps-update-%:
+	helm dependency update ./charts/$*
