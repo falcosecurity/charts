@@ -1,5 +1,7 @@
 # k8s-metacollector
 
+⚠️ The chart is still a work in progress ⚠️
+
 [k8s-metacollector](https://github.com/falcosecurity/k8s-metacollector) is a self-contained module that can be deployed within a Kubernetes cluster to perform the task of gathering metadata from various Kubernetes resources and subsequently transmitting this collected metadata to designated subscribers.
 
 ## Introduction
@@ -39,8 +41,8 @@ Assuming that Promtheus scrapes only the ServiceMonitors that present a `release
 helm install k8s-metacollector falcosecurity/k8s-metacollector \
     --create-namespace \
     --namespace metacollector \
-	--set serviceMonitor.create=true \
-	--set serviceMonitor.labels.release="kube-prometheus-stack"
+    --set serviceMonitor.create=true \
+    --set serviceMonitor.labels.release="kube-prometheus-stack"
 ```
 
 ## Uninstalling the Chart

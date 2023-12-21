@@ -39,8 +39,8 @@ Assuming that Promtheus scrapes only the ServiceMonitors that present a `release
 helm install k8s-metacollector falcosecurity/k8s-metacollector \
     --create-namespace \
     --namespace metacollector \
-	--set serviceMonitor.create=true \
-	--set serviceMonitor.labels.release="kube-prometheus-stack"
+    --set serviceMonitor.create=true \
+    --set serviceMonitor.labels.release="kube-prometheus-stack"
 ```
 
 ## Uninstalling the Chart
