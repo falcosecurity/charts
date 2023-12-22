@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-func chartInfo(t *testing.T, chartPath string) (map[string]string, error) {
+func chartInfo(t *testing.T, chartPath string) (map[string]interface{}, error) {
 	// Get chart info.
 	output, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{}, "show", "chart", chartPath)
 	if err != nil {
 		return nil, err
 	}
-	chartInfo := map[string]string{}
+	chartInfo := map[string]interface{}{}
 	err = yaml.Unmarshal([]byte(output), &chartInfo)
 	return chartInfo, err
 }
