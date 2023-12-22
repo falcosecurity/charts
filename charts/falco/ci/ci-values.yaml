@@ -6,11 +6,10 @@
 driver:
   enabled: false
 
-# make Falco run in userspace only mode
-extra:
-  args:
-    - --userspace
-
+falco:
+  # Run Falco in no driver mode, to avoid injection of kernel modules or eBPF probes
+  engine:
+    kind: none
 # enforce /proc mounting since Falco still tries to scan it
 mounts:
   enforceProcMount: true

@@ -184,13 +184,9 @@ exits. Here we check that no producers for syscalls event has been configured, a
 we just disable the sycall source.
 */}}
 {{- define "falco.configSyscallSource" -}}
-{{- $userspaceDisabled := true -}}
 {{- $gvisorDisabled := (not .Values.gvisor.enabled) -}}
 {{- $driverDisabled :=  (not .Values.driver.enabled) -}}
-{{- if or (has "-u" .Values.extra.args) (has "--userspace" .Values.extra.args) -}}
-{{- $userspaceDisabled = false -}}
-{{- end -}}
-{{- if and $driverDisabled $userspaceDisabled $gvisorDisabled }}
+{{- if and $driverDisabled $gvisorDisabled }}
 - --disable-source
 - syscall
 {{- end -}}
