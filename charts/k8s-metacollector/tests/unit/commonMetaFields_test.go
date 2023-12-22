@@ -170,17 +170,19 @@ func (s *commonMetaFieldsTest) TestLabels() {
 	// Get app version.
 	appVersion, found := cInfo["appVersion"]
 	s.True(found, "should find app version in chart info")
+	appVersion = appVersion.(string)
 	// Get chart version.
 	chartVersion, found := cInfo["version"]
 	s.True(found, "should find chart version in chart info")
 	// Get chart name.
 	chartName, found := cInfo["name"]
 	s.True(found, "should find chart name in chart info")
+	chartName = chartName.(string)
 	expectedLabels := map[string]string{
 		"helm.sh/chart":                fmt.Sprintf("%s-%s", chartName, chartVersion),
-		"app.kubernetes.io/name":       chartName,
+		"app.kubernetes.io/name":       chartName.(string),
 		"app.kubernetes.io/instance":   s.releaseName,
-		"app.kubernetes.io/version":    appVersion,
+		"app.kubernetes.io/version":    appVersion.(string),
 		"app.kubernetes.io/managed-by": "Helm",
 		"app.kubernetes.io/component":  "metadata-collector",
 	}

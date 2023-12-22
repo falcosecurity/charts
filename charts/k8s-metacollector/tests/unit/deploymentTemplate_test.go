@@ -67,14 +67,14 @@ func (s *deploymentTemplateTest) TestImage() {
 			map[string]string{
 				"image.repository": "falcosecurity/testingRepository",
 			},
-			"docker.io/falcosecurity/testingRepository:0.0.0",
+			fmt.Sprintf("docker.io/falcosecurity/testingRepository:%s", appVersion),
 		},
 		{
 			"changingImageRegistry",
 			map[string]string{
 				"image.registry": "ghcr.io",
 			},
-			"ghcr.io/falcosecurity/k8s-metacollector:0.0.0",
+			fmt.Sprintf("ghcr.io/falcosecurity/k8s-metacollector:%s", appVersion),
 		},
 		{
 			"changingAllImageFields",
