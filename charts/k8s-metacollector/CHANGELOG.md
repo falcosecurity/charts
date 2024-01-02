@@ -4,6 +4,12 @@
 This file documents all notable changes to `k8s-metacollector` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.1.2
+
+### Major Changes
+
+* Update unit tests;
+
 ## v0.1.1
 
 ### Major Changes
