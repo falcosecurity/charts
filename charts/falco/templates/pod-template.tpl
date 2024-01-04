@@ -74,7 +74,7 @@ spec:
         {{- if .enabled }}
         {{- if .containerd.enabled }}
         - --cri
-        - /run/containerd/containerd.sock
+        - /host/run/containerd/containerd.sock
         {{- end }}
         {{- if .crio.enabled }}
         - --cri
