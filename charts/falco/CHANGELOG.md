@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v3.8.8
+
+* Update containerd directory inside pod.
+
 ## v3.8.7
 
 *  Upgrade falcosidekick chart to `v0.7.11`.
