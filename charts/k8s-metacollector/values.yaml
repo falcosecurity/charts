@@ -16,7 +16,7 @@ image:
   # -- repository is the image repository to pull from
   repository: falcosecurity/k8s-metacollector
   # -- tag is image tag to pull. Overrides the image tag whose default is the chart appVersion.
-  tag: "main"
+  tag: ""
 
 # -- nameOverride is the new name used to override the release name used for k8s-metacollector components.
 nameOverride: ""
