@@ -26,6 +26,7 @@ Charts currently available are listed below.
 - [falco-exporter](./charts/falco-exporter)
 - [falcosidekick](./charts/falcosidekick)
 - [event-generator](./charts/event-generator)
+- [k8s-metacollector](./charts/k8s-metacollector)
 
 ## Usage
 
