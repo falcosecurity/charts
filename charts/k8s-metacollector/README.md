@@ -52,7 +52,7 @@ The command removes all the Kubernetes resources associated with the chart and d
 
 ## Configuration
 
-The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.4 and their default values. See `values.yaml` for full list.
+The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.5 and their default values. See `values.yaml` for full list.
 
 ## Values
 
