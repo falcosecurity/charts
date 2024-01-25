@@ -4,6 +4,10 @@
 This file documents all notable changes to `k8s-metacollector` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.1.4
+
+*  Lower `interval` and `scrape_timeout` values for service monitor;
+* 
 ## v0.1.3
 
 * Bump application version to 0.1.3

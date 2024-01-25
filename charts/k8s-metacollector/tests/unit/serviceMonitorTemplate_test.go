@@ -46,8 +46,8 @@ func (s *serviceMonitorTemplateTest) TestEndpoint() {
 	defaultEndpointsJSON := `[
     {
         "port": "metrics",
-        "interval": "1m",
-        "scrapeTimeout": "30s",
+        "interval": "15s",
+        "scrapeTimeout": "10s",
         "honorLabels": true,
         "path": "/metrics",
         "scheme": "http"

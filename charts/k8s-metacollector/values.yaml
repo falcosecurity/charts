@@ -109,7 +109,7 @@ serviceMonitor:
   # label here in order for the ServiceMonitor to be selected for target discovery.
   labels: {}
   # -- interval specifies the time interval at which Prometheus should scrape metrics from the service.
-  interval: 1m
+  interval: 15s
   # -- scheme specifies network protocol used by the metrics endpoint. In this case HTTP.
   scheme: http
   # -- tlsConfig specifies TLS (Transport Layer Security) configuration for secure communication when
@@ -124,7 +124,7 @@ serviceMonitor:
   # -- scrapeTimeout determines the maximum time Prometheus should wait for a target to respond to a scrape request.
   # If the target does not respond within the specified timeout, Prometheus considers the scrape as failed for
   # that target.
-  scrapeTimeout: 30s
+  scrapeTimeout: 10s
   # -- relabelings configures the relabeling rules to apply the target’s metadata labels.
   relabelings: []
   # -- targetLabels defines the labels which are transferred from the associated Kubernetes service object onto the ingested metrics.

@@ -1,7 +1,5 @@
 # k8s-metacollector
 
-⚠️ The chart is still a work in progress ⚠️
-
 [k8s-metacollector](https://github.com/falcosecurity/k8s-metacollector) is a self-contained module that can be deployed within a Kubernetes cluster to perform the task of gathering metadata from various Kubernetes resources and subsequently transmitting this collected metadata to designated subscribers.
 
 ## Introduction
@@ -35,7 +33,7 @@ helm install k8s-metacollector falcosecurity/k8s-metacollector --namespace metac
 After a few seconds, k8s-metacollector should be running in the `metacollector` namespace.
 
 ### Enabling ServiceMonitor
-Assuming that Promtheus scrapes only the ServiceMonitors that present a `release label` the following command will install and label the ServiceMonitor:
+Assuming that Prometheus scrapes only the ServiceMonitors that present a `release label` the following command will install and label the ServiceMonitor:
 
 ```bash
 helm install k8s-metacollector falcosecurity/k8s-metacollector \
@@ -54,7 +52,7 @@ The command removes all the Kubernetes resources associated with the chart and d
 
 ## Configuration
 
-The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.0 and their default values. See `values.yaml` for full list.
+The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.4 and their default values. See `values.yaml` for full list.
 
 ## Values
 
@@ -80,12 +78,12 @@ The following table lists the main configurable parameters of the k8s-metacollec
 | healthChecks.readinessProbe.initialDelaySeconds | int | `45` | initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe. |
 | healthChecks.readinessProbe.periodSeconds | int | `15` | periodSeconds specifies the interval at which the readiness probe will be repeated. |
 | healthChecks.readinessProbe.timeoutSeconds | int | `5` | timeoutSeconds is the number of seconds after which the probe times out. |
-| image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"registry":"docker.io","repository":"falcosecurity/k8s-metacollector","tag":"main"}` | image is the configuration for the k8s-metacollector image. |
+| image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"registry":"docker.io","repository":"falcosecurity/k8s-metacollector","tag":""}` | image is the configuration for the k8s-metacollector image. |
 | image.pullPolicy | string | `"IfNotPresent"` | pullPolicy is the policy used to determine when a node should attempt to pull the container image. |
 | image.pullSecrets | list | `[]` | pullSecects a list of secrets containing credentials used when pulling from private/secure registries. |
 | image.registry | string | `"docker.io"` | registry is the image registry to pull from. |
 | image.repository | string | `"falcosecurity/k8s-metacollector"` | repository is the image repository to pull from |
-| image.tag | string | `"main"` | tag is image tag to pull. Overrides the image tag whose default is the chart appVersion. |
+| image.tag | string | `""` | tag is image tag to pull. Overrides the image tag whose default is the chart appVersion. |
 | nameOverride | string | `""` | nameOverride is the new name used to override the release name used for k8s-metacollector components. |
 | namespaceOverride | string | `""` | namespaceOverride overrides the deployment namespace. It's useful for multi-namespace deployments in combined charts. |
 | nodeSelector | object | `{}` | nodeSelector specifies a set of key-value pairs that must match labels assigned to nodes for the Pod to be eligible for scheduling on that node. |
@@ -117,14 +115,14 @@ The following table lists the main configurable parameters of the k8s-metacollec
 | serviceAccount.annotations | object | `{}` | annotations to add to the service account. |
 | serviceAccount.create | bool | `true` | create specifies whether a service account should be created. |
 | serviceAccount.name | string | `""` | If not set and create is true, a name is generated using the full name template. |
-| serviceMonitor | object | `{"create":false,"interval":"1m","labels":{},"path":"/metrics","relabelings":[],"scheme":"http","scrapeTimeout":"30s","targetLabels":[],"tlsConfig":{}}` | serviceMonitor holds the configuration for the ServiceMonitor CRD. A ServiceMonitor is a custom resource definition (CRD) used to configure how Prometheus should discover and scrape metrics from the k8s-metacollector service. |
+| serviceMonitor | object | `{"create":false,"interval":"15s","labels":{},"path":"/metrics","relabelings":[],"scheme":"http","scrapeTimeout":"10s","targetLabels":[],"tlsConfig":{}}` | serviceMonitor holds the configuration for the ServiceMonitor CRD. A ServiceMonitor is a custom resource definition (CRD) used to configure how Prometheus should discover and scrape metrics from the k8s-metacollector service. |
 | serviceMonitor.create | bool | `false` | create specifies whether a ServiceMonitor CRD should be created for a prometheus operator. https://github.com/coreos/prometheus-operator Enable it only if the ServiceMonitor CRD is installed in your cluster. |
-| serviceMonitor.interval | string | `"1m"` | interval specifies the time interval at which Prometheus should scrape metrics from the service. |
+| serviceMonitor.interval | string | `"15s"` | interval specifies the time interval at which Prometheus should scrape metrics from the service. |
 | serviceMonitor.labels | object | `{}` | labels set of labels to be applied to the ServiceMonitor resource. If your Prometheus deployment is configured to use serviceMonitorSelector, then add the right label here in order for the ServiceMonitor to be selected for target discovery. |
 | serviceMonitor.path | string | `"/metrics"` | path at which the metrics are expose by the k8s-metacollector. |
 | serviceMonitor.relabelings | list | `[]` | relabelings configures the relabeling rules to apply the target’s metadata labels. |
 | serviceMonitor.scheme | string | `"http"` | scheme specifies network protocol used by the metrics endpoint. In this case HTTP. |
-| serviceMonitor.scrapeTimeout | string | `"30s"` | scrapeTimeout determines the maximum time Prometheus should wait for a target to respond to a scrape request. If the target does not respond within the specified timeout, Prometheus considers the scrape as failed for that target. |
+| serviceMonitor.scrapeTimeout | string | `"10s"` | scrapeTimeout determines the maximum time Prometheus should wait for a target to respond to a scrape request. If the target does not respond within the specified timeout, Prometheus considers the scrape as failed for that target. |
 | serviceMonitor.targetLabels | list | `[]` | targetLabels defines the labels which are transferred from the associated Kubernetes service object onto the ingested metrics. |
 | serviceMonitor.tlsConfig | object | `{}` | tlsConfig specifies TLS (Transport Layer Security) configuration for secure communication when scraping metrics from a service. It allows you to define the details of the TLS connection, such as CA certificate, client certificate, and client key. Currently, the k8s-metacollector does not support TLS configuration for the metrics endpoint. |
 | tolerations | list | `[]` | tolerations are applied to pods and allow them to be scheduled on nodes with matching taints. |
