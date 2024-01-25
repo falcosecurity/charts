@@ -33,7 +33,7 @@ helm install k8s-metacollector falcosecurity/k8s-metacollector --namespace metac
 After a few seconds, k8s-metacollector should be running in the `metacollector` namespace.
 
 ### Enabling ServiceMonitor
-Assuming that Promtheus scrapes only the ServiceMonitors that present a `release label` the following command will install and label the ServiceMonitor:
+Assuming that Prometheus scrapes only the ServiceMonitors that present a `release label` the following command will install and label the ServiceMonitor:
 
 ```bash
 helm install k8s-metacollector falcosecurity/k8s-metacollector \
