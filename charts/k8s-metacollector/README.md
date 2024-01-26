@@ -43,6 +43,20 @@ helm install k8s-metacollector falcosecurity/k8s-metacollector \
     --set serviceMonitor.labels.release="kube-prometheus-stack"
 ```
 
+### Deploying the Grafana Dashboard
+By setting `grafana.dashboards.enabled=true` the k8s-metacollector's grafana dashboard is deployed in the cluster using a configmap.
+Based in Grafana's configuration, the configmap could be scraped by Grafana dashboard sidecar.
+The following command will deploy the k8s-metacollector + serviceMonitor + grafana dashboard:
+
+```bash
+helm install k8s-metacollector falcosecurity/k8s-metacollector \
+    --create-namespace \
+    --namespace metacollector \
+    --set serviceMonitor.create=true \
+    --set serviceMonitor.labels.release="kube-prometheus-stack" \
+    --set grafana.dashboards.enabled=true
+```
+
 ## Uninstalling the Chart
 To uninstall the `k8s-metacollector` release in namespace `metacollector`:
 ```bash
@@ -52,7 +66,7 @@ The command removes all the Kubernetes resources associated with the chart and d
 
 ## Configuration
 
-The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.5 and their default values. See `values.yaml` for full list.
+The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.6 and their default values. See `values.yaml` for full list.
 
 ## Values
 
@@ -63,6 +77,14 @@ The following table lists the main configurable parameters of the k8s-metacollec
 | containerSecurityContext.capabilities | object | `{"drop":["ALL"]}` | capabilities fine-grained privileges that can be assigned to processes. |
 | containerSecurityContext.capabilities.drop | list | `["ALL"]` | drop drops the given set of privileges. |
 | fullnameOverride | string | `""` | fullNameOverride same as nameOverride but for the full name. |
+| grafana | object | `{"dashboards":{"configMaps":{"collector":{"folder":"","name":"k8s-metacollector-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
+| grafana.dashboards | object | `{"configMaps":{"collector":{"folder":"","name":"k8s-metacollector-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
+| grafana.dashboards.configMaps | object | `{"collector":{"folder":"","name":"k8s-metacollector-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
+| grafana.dashboards.configMaps.collector | object | `{"folder":"","name":"k8s-metacollector-grafana-dashboard","namespace":""}` | collector contains the configuration for collector's dashboard. |
+| grafana.dashboards.configMaps.collector.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| grafana.dashboards.configMaps.collector.name | string | `"k8s-metacollector-grafana-dashboard"` | name specifies the name for the configmap. |
+| grafana.dashboards.configMaps.collector.namespace | string | `""` | namespace specifies the namespace for the configmap. |
+| grafana.dashboards.enabled | bool | `false` | enabled specifies whether the dashboards should be deployed. |
 | healthChecks | object | `{"livenessProbe":{"httpGet":{"path":"/healthz","port":8081},"initialDelaySeconds":60,"periodSeconds":15,"timeoutSeconds":5},"readinessProbe":{"httpGet":{"path":"/readyz","port":8081},"initialDelaySeconds":45,"periodSeconds":15,"timeoutSeconds":5}}` | healthChecks contains the configuration for liveness and readiness probes. |
 | healthChecks.livenessProbe | object | `{"httpGet":{"path":"/healthz","port":8081},"initialDelaySeconds":60,"periodSeconds":15,"timeoutSeconds":5}` | livenessProbe is a diagnostic mechanism used to determine wether a container within a Pod is still running and healthy. |
 | healthChecks.livenessProbe.httpGet | object | `{"path":"/healthz","port":8081}` | httpGet specifies that the liveness probe will make an HTTP GET request to check the health of the container. |

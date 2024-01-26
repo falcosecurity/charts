@@ -43,6 +43,20 @@ helm install k8s-metacollector falcosecurity/k8s-metacollector \
     --set serviceMonitor.labels.release="kube-prometheus-stack"
 ```
 
+### Deploying the Grafana Dashboard
+By setting `grafana.dashboards.enabled=true` the k8s-metacollector's grafana dashboard is deployed in the cluster using a configmap.
+Based in Grafana's configuration, the configmap could be scraped by Grafana dashboard sidecar.
+The following command will deploy the k8s-metacollector + serviceMonitor + grafana dashboard:
+
+```bash
+helm install k8s-metacollector falcosecurity/k8s-metacollector \
+    --create-namespace \
+    --namespace metacollector \
+    --set serviceMonitor.create=true \
+    --set serviceMonitor.labels.release="kube-prometheus-stack" \
+    --set grafana.dashboards.enabled=true
+```
+
 ## Uninstalling the Chart
 To uninstall the `k8s-metacollector` release in namespace `metacollector`:
 ```bash

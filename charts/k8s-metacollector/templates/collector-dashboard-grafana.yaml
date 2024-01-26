@@ -1,0 +1,21 @@
+{{- if .Values.grafana.dashboards.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.grafana.dashboards.configMaps.collector.name }}
+  {{ if .Values.grafana.dashboards.configMaps.collector.namespace }}
+  namespace: {{ .Values.grafana.dashboards.configMaps.collector.namespace }}
+  {{- else -}}
+  namespace: {{ include "k8s-metacollector.namespace" . }}
+  {{- end }}
+  labels:
+    grafana_dashboard: "1"
+  {{- if .Values.grafana.dashboards.configMaps.collector.folder }}
+  annotations:
+    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.grafana.dashboards.configMaps.collector.folder}}
+    grafana_dashboard_folder: {{ .Values.grafana.dashboards.configMaps.collector.folder }}
+  {{- end }}
+data:
+  dashboard.json: |-
+    {{- .Files.Get "dashboards/k8s-metacollector-dashboard.json" | nindent 4 }}
+ {{- end -}}
