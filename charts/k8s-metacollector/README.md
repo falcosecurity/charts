@@ -66,7 +66,7 @@ The command removes all the Kubernetes resources associated with the chart and d
 
 ## Configuration
 
-The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.6 and their default values. See `values.yaml` for full list.
+The following table lists the main configurable parameters of the k8s-metacollector chart v0.1.7 and their default values. See `values.yaml` for full list.
 
 ## Values
 
@@ -85,19 +85,19 @@ The following table lists the main configurable parameters of the k8s-metacollec
 | grafana.dashboards.configMaps.collector.name | string | `"k8s-metacollector-grafana-dashboard"` | name specifies the name for the configmap. |
 | grafana.dashboards.configMaps.collector.namespace | string | `""` | namespace specifies the namespace for the configmap. |
 | grafana.dashboards.enabled | bool | `false` | enabled specifies whether the dashboards should be deployed. |
-| healthChecks | object | `{"livenessProbe":{"httpGet":{"path":"/healthz","port":8081},"initialDelaySeconds":60,"periodSeconds":15,"timeoutSeconds":5},"readinessProbe":{"httpGet":{"path":"/readyz","port":8081},"initialDelaySeconds":45,"periodSeconds":15,"timeoutSeconds":5}}` | healthChecks contains the configuration for liveness and readiness probes. |
-| healthChecks.livenessProbe | object | `{"httpGet":{"path":"/healthz","port":8081},"initialDelaySeconds":60,"periodSeconds":15,"timeoutSeconds":5}` | livenessProbe is a diagnostic mechanism used to determine wether a container within a Pod is still running and healthy. |
+| healthChecks | object | `{"livenessProbe":{"httpGet":{"path":"/healthz","port":8081},"initialDelaySeconds":45,"periodSeconds":15,"timeoutSeconds":5},"readinessProbe":{"httpGet":{"path":"/readyz","port":8081},"initialDelaySeconds":30,"periodSeconds":15,"timeoutSeconds":5}}` | healthChecks contains the configuration for liveness and readiness probes. |
+| healthChecks.livenessProbe | object | `{"httpGet":{"path":"/healthz","port":8081},"initialDelaySeconds":45,"periodSeconds":15,"timeoutSeconds":5}` | livenessProbe is a diagnostic mechanism used to determine wether a container within a Pod is still running and healthy. |
 | healthChecks.livenessProbe.httpGet | object | `{"path":"/healthz","port":8081}` | httpGet specifies that the liveness probe will make an HTTP GET request to check the health of the container. |
 | healthChecks.livenessProbe.httpGet.path | string | `"/healthz"` | path is the specific endpoint on which the HTTP GET request will be made. |
 | healthChecks.livenessProbe.httpGet.port | int | `8081` | port is the port on which the container exposes the "/healthz" endpoint. |
-| healthChecks.livenessProbe.initialDelaySeconds | int | `60` | initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe. |
+| healthChecks.livenessProbe.initialDelaySeconds | int | `45` | initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe. |
 | healthChecks.livenessProbe.periodSeconds | int | `15` | periodSeconds specifies the interval at which the liveness probe will be repeated. |
 | healthChecks.livenessProbe.timeoutSeconds | int | `5` | timeoutSeconds is the number of seconds after which the probe times out. |
-| healthChecks.readinessProbe | object | `{"httpGet":{"path":"/readyz","port":8081},"initialDelaySeconds":45,"periodSeconds":15,"timeoutSeconds":5}` | readinessProbe is a mechanism used to determine whether a container within a Pod is ready to serve traffic. |
+| healthChecks.readinessProbe | object | `{"httpGet":{"path":"/readyz","port":8081},"initialDelaySeconds":30,"periodSeconds":15,"timeoutSeconds":5}` | readinessProbe is a mechanism used to determine whether a container within a Pod is ready to serve traffic. |
 | healthChecks.readinessProbe.httpGet | object | `{"path":"/readyz","port":8081}` | httpGet specifies that the readiness probe will make an HTTP GET request to check whether the container is ready. |
 | healthChecks.readinessProbe.httpGet.path | string | `"/readyz"` | path is the specific endpoint on which the HTTP GET request will be made. |
 | healthChecks.readinessProbe.httpGet.port | int | `8081` | port is the port on which the container exposes the "/readyz" endpoint. |
-| healthChecks.readinessProbe.initialDelaySeconds | int | `45` | initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe. |
+| healthChecks.readinessProbe.initialDelaySeconds | int | `30` | initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe. |
 | healthChecks.readinessProbe.periodSeconds | int | `15` | periodSeconds specifies the interval at which the readiness probe will be repeated. |
 | healthChecks.readinessProbe.timeoutSeconds | int | `5` | timeoutSeconds is the number of seconds after which the probe times out. |
 | image | object | `{"pullPolicy":"IfNotPresent","pullSecrets":[],"registry":"docker.io","repository":"falcosecurity/k8s-metacollector","tag":""}` | image is the configuration for the k8s-metacollector image. |

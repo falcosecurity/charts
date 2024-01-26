@@ -622,7 +622,7 @@ func (s *deploymentTemplateTest) TestLiveness() {
         "path": "/healthz",
         "port": 8081
     },
-    "initialDelaySeconds": 60,
+    "initialDelaySeconds": 45,
     "timeoutSeconds": 5,
     "periodSeconds": 15
 }`
@@ -670,7 +670,7 @@ func (s *deploymentTemplateTest) TestReadiness() {
         "path": "/readyz",
         "port": 8081
     },
-    "initialDelaySeconds": 45,
+    "initialDelaySeconds": 30,
     "timeoutSeconds": 5,
     "periodSeconds": 15
 }`
