@@ -4,6 +4,10 @@
 This file documents all notable changes to `k8s-metacollector` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.1.7
+
+* Lower initial delay seconds for readiness and liveness probes;
+
 ## v0.1.6
 
 * Add grafana dashboard;

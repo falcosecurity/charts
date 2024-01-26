@@ -164,7 +164,7 @@ healthChecks:
       # -- port is the port on which the container exposes the "/healthz" endpoint.
       port: 8081
     # -- initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe.
-    initialDelaySeconds: 60
+    initialDelaySeconds: 45
     # -- timeoutSeconds is the number of seconds after which the probe times out.
     timeoutSeconds: 5
     # -- periodSeconds specifies the interval at which the liveness probe will be repeated.
@@ -178,7 +178,7 @@ healthChecks:
       # -- port is the port on which the container exposes the "/readyz" endpoint.
       port: 8081
     # -- initialDelaySeconds tells the kubelet that it should wait X seconds before performing the first probe.
-    initialDelaySeconds: 45
+    initialDelaySeconds: 30
     # -- timeoutSeconds is the number of seconds after which the probe times out.
     timeoutSeconds: 5
     # -- periodSeconds specifies the interval at which the readiness probe will be repeated.
