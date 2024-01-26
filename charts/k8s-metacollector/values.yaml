@@ -183,3 +183,20 @@ healthChecks:
     timeoutSeconds: 5
     # -- periodSeconds specifies the interval at which the readiness probe will be repeated.
     periodSeconds: 15
+
+# -- grafana contains the configuration related to grafana.
+grafana:
+  # -- dashboards contains configuration for grafana dashboards.
+  dashboards:
+    # -- enabled specifies whether the dashboards should be deployed.
+    enabled: false
+    # --configmaps to be deployed that contain a grafana dashboard.
+    configMaps:
+      # -- collector contains the configuration for collector's dashboard.
+      collector:
+        # -- name specifies the name for the configmap.
+        name: k8s-metacollector-grafana-dashboard
+        # -- namespace specifies the namespace for the configmap.
+        namespace: ""
+        # -- folder where the dashboard is stored by grafana.
+        folder: ""
