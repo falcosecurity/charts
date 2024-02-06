@@ -1,0 +1,35 @@
+name: Check Helm Docs
+
+on:
+  pull_request:
+
+jobs:
+  readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Run Helm Docs and check the outcome
+        run: |
+          for chart in event-generator falco k8s-metacollector; do
+            docker run \
+              --rm \
+              --workdir=/helm-docs \
+              --volume "$(pwd):/helm-docs" \
+              -u $(id -u) \
+              jnorwood/helm-docs:v1.11.0 \
+              helm-docs -c ./charts/$chart -t ./README.gotmpl -o ./README.md
+          done
+          exit_code=$(git diff --exit-code)
+          exit ${exit_code}
+
+      - name: Print a comment in case of failure
+        run: |
+          echo "The README.md filer are not up to date.
+
+          Please, run make docs before pushing."
+          exit 1
+        if: |
+          failure() && github.event.pull_request.head.repo.full_name == github.repository
