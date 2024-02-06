@@ -252,8 +252,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.elasticsearch.type | string | `"_doc"` | Elasticsearch document type |
 | config.elasticsearch.username | string | `""` | use this username to authenticate to Elasticsearch if the username is not empty |
 | config.existingSecret | string | `""` | Existing secret with configuration |
+| config.extraArgs | list | `[]` | Extra command-line arguments |
 | config.extraEnv | list | `[]` | Extra environment variables |
-| config.extraArgs | list | `[]` | Extra arguments for falcosidekick execution |
 | config.fission.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.fission.function | string | `""` | Name of Fission function, if not empty, Fission is enabled |
 | config.fission.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
@@ -485,17 +485,17 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.timescaledb.password | string | `"postgres"` | Password to authenticate with TimescaleDB |
 | config.timescaledb.port | int | `5432` | TimescaleDB port (default: 5432) |
 | config.timescaledb.user | string | `"postgres"` | Username to authenticate with TimescaleDB |
-| config.tlsserver.existingSecret | string | `""` | existing secret with server.crt, server.key and ca.crt files for TLS Server |
-| config.tlsserver.cacrt | string | `""` | ca.crt file for client certification if mutualtls is true |
 | config.tlsserver.cacertfile | string | `"/etc/certs/server/ca.crt"` | CA certification file path for client certification if mutualtls is true |
-| config.tlsserver.servercrt | string | `""` | server.crt file for TLS Server |
+| config.tlsserver.cacrt | string | `""` |  |
 | config.tlsserver.certfile | string | `"/etc/certs/server/server.crt"` | server certification file path for TLS Server |
 | config.tlsserver.deploy | bool | `false` | if true TLS server will be deployed instead of HTTP |
-| config.tlsserver.serverkey | string | `""` | server.key file path for TLS Server |
+| config.tlsserver.existingSecret | string | `""` | existing secret with server.crt, server.key and ca.crt files for TLS Server |
 | config.tlsserver.keyfile | string | `"/etc/certs/server/server.key"` | server key file path for TLS Server |
 | config.tlsserver.mutualtls | bool | `false` | if true mutual TLS server will be deployed instead of TLS, deploy also has to be true |
 | config.tlsserver.notlspaths | string | `"/ping"` | a comma separated list of endpoints, if not empty, and tlsserver.deploy is true, a separate http server will be deployed for the specified endpoints (/ping endpoint needs to be notls for Kubernetes to be able to perform the healthchecks) |
 | config.tlsserver.notlsport | int | `2810` | port to serve http server serving selected endpoints |
+| config.tlsserver.servercrt | string | `""` | server.crt file for TLS Server |
+| config.tlsserver.serverkey | string | `""` | server.key file for TLS Server |
 | config.wavefront.batchsize | int | `10000` | Wavefront batch size. If empty uses the default 10000. Only used when endpointtype is 'direct' |
 | config.wavefront.endpointhost | string | `""` | Wavefront endpoint address (only the host). If not empty, with endpointhost, Wavefront output is *enabled* |
 | config.wavefront.endpointmetricport | int | `2878` | Port to send metrics. Only used when endpointtype is 'proxy' |
