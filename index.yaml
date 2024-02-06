@@ -3,6 +3,16 @@ entries:
   event-generator:
   - apiVersion: v2
     appVersion: 0.10.0
+    created: "2024-02-06T15:28:13.460457657Z"
+    description: A Helm chart used to deploy the event-generator in Kubernetes cluster.
+    digest: 66aa3c742de75fe44dd4001575c3c9d0c9373c61223dc6fbb8a032800e8c8924
+    name: event-generator
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/event-generator-0.3.3/event-generator-0.3.3.tgz
+    version: 0.3.3
+  - apiVersion: v2
+    appVersion: 0.10.0
     created: "2023-12-18T08:44:21.431335681Z"
     description: A Helm chart used to deploy the event-generator in Kubernetes cluster.
     digest: 2b8bd8091749ebc4c20367a65dd90839e9b9d24ccee8ad3ab332215c014c6321
@@ -6577,4 +6587,4 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.0/k8s-metacollector-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-06T15:22:15.802808258Z"
+generated: "2024-02-06T15:28:13.460974303Z"
