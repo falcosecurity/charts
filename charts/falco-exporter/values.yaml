@@ -112,10 +112,12 @@ resources:
 
 nodeSelector: {}
 
-# Allow falco-exporter to run on Kubernetes 1.6 masters.
+# -- Tolerations to run on Kubernetes control planes.
 tolerations:
   - effect: NoSchedule
     key: node-role.kubernetes.io/master
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
 
 affinity: {}
 
