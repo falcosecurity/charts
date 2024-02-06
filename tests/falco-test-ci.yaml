@@ -53,4 +53,7 @@ falco:
       init_config: ""
   # Plugins that Falco will load. Note: the same plugins are installed by the falcoctl-artifact-install init container.
   load_plugins: [k8saudit, json]
-
+  grpc:
+    enabled: true
+  grpc_output:
+    enabled: true
