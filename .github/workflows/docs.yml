@@ -13,7 +13,7 @@ jobs:
 
       - name: Run Helm Docs and check the outcome
         run: |
-          for chart in event-generator falco k8s-metacollector; do
+          for chart in event-generator falco k8s-metacollector falco-exporter; do
             docker run \
               --rm \
               --workdir=/helm-docs \
