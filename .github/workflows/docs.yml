@@ -13,7 +13,7 @@ jobs:
 
       - name: Run Helm Docs and check the outcome
         run: |
-          for chart in event-generator falco k8s-metacollector falco-exporter; do
+          for chart in $(ls ./charts); do
             docker run \
               --rm \
               --workdir=/helm-docs \
@@ -27,9 +27,9 @@ jobs:
 
       - name: Print a comment in case of failure
         run: |
-          echo "The README.md filer are not up to date.
+          echo "The README.md files are not up to date.
 
-          Please, run make docs before pushing."
+          Please, run \"make docs\" before pushing."
           exit 1
         if: |
           failure() && github.event.pull_request.head.repo.full_name == github.repository
