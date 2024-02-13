@@ -22,7 +22,7 @@ lint-%:
 	ct lint --config ./ct.yaml --charts ./charts/$*
 	
 .PHONY: docs
-docs: $(addprefix docs-, $(filter-out falco-exporter,$(CHARTS_NAMES)))
+docs: $(addprefix docs-, $(CHARTS_NAMES))
 
 docs-%:
 	@docker run \
