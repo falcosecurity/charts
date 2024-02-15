@@ -4,7 +4,7 @@
 
 This GitHub project is the source for the [Falco](https://github.com/falcosecurity/falco) Helm chart repository that you can use to [deploy](https://falco.org/docs/getting-started/deployment/) Falco in your Kubernetes infrastructure.
 
-The purpose of this repository is to provide a place for maintaining and contributing Charts related to the Falco project, with CI processes in place for managing the releasing of Charts into [our Helm Chart Repository]((https://falcosecurity.github.io/charts)).
+The purpose of this repository is to provide a place for maintaining and contributing Charts related to the Falco project, with CI processes in place for managing the releasing of Charts into [our Helm Chart Repository](https://falcosecurity.github.io/charts).
 
 For more information about installing and using Helm, see the
 [Helm Docs](https://helm.sh/docs/).
@@ -16,7 +16,7 @@ We also, are publishing the charts in a OCI Image and it is hosted in [GitHub Pa
 
 The Charts in this repository are organized into folders: each directory that contains a `Chart.yaml` is a chart.
 
-The Charts in the `master` branch (with a corresponding [GitHub release](https://github.com/falcosecurity/charts/releases)) match the latest packaged Charts in [our Helm Chart Repository]((https://falcosecurity.github.io/charts)), though there may be previous versions of a Chart available in that Chart Repository.
+The Charts in the `master` branch (with a corresponding [GitHub release](https://github.com/falcosecurity/charts/releases)) match the latest packaged Charts in [our Helm Chart Repository](https://falcosecurity.github.io/charts), though there may be previous versions of a Chart available in that Chart Repository.
 
 ## Charts
 
