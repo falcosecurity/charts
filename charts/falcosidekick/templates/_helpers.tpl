@@ -63,6 +63,7 @@ Selector labels
 {{- define "falcosidekick.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "falcosidekick.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: core
 {{- end }}
 
 {{/*
