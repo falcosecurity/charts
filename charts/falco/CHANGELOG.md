@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v4.2.3
+
+* falco is now able to reconnect to containerd.socket
+
 ## v4.2.2
 
 * fix(falco/README): dead link

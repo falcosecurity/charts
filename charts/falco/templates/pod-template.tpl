@@ -65,7 +65,7 @@ spec:
         {{- if .enabled }}
         {{- if .containerd.enabled }}
         - --cri
-        - /run/containerd/containerd.sock
+        - /run/containerd/{{ base .containerd.socket }}
         {{- end }}
         {{- if .crio.enabled }}
         - --cri
@@ -159,7 +159,7 @@ spec:
           name: docker-socket
         {{- end }}
         {{- if .containerd.enabled }}
-        - mountPath: /host/run/containerd/containerd.sock
+        - mountPath: /host/run/containerd/
           name: containerd-socket
         {{- end }}
         {{- if .crio.enabled }}
@@ -262,7 +262,7 @@ spec:
     {{- if .containerd.enabled }}
     - name: containerd-socket
       hostPath:
-        path: {{ .containerd.socket }}
+        path: {{ dir .containerd.socket }}
     {{- end }}
     {{- if .crio.enabled }}
     - name: crio-socket
