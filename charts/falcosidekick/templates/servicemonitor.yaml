@@ -22,4 +22,5 @@ spec:
   selector:
     matchLabels:
       {{- include "falcosidekick.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: core
 {{- end }}
