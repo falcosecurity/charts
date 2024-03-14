@@ -20,7 +20,7 @@ lint-%:
 	-u $$(id -u) \
 	quay.io/helmpack/chart-testing:$(LINT_IMAGE_VERSION) \
 	ct lint --config ./ct.yaml --charts ./charts/$*
-	
+
 .PHONY: docs
 docs: $(addprefix docs-, $(CHARTS_NAMES))
 
