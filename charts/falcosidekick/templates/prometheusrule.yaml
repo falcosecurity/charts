@@ -77,7 +77,7 @@ spec:
         severity: critical
     {{- end }}
     {{- if .Values.prometheusRules.alerts.output.enabled }}
-    - alert: FalcoEmergencyEventsRateHigh
+    - alert: FalcoErrorOutputEventsRateHigh
       annotations:
         summary: Falcosidekick is experiencing high rate of errors for an output
         description: A high rate of errors are being detecting for an output
