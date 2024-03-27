@@ -78,6 +78,12 @@ spec:
       {{- toYaml . | nindent 8 }}
     {{- end }}
       env:
+        - name: HOST_ROOT
+          value: /host
+        - name: FALCO_HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         - name: FALCO_K8S_NODE_NAME
           valueFrom:
             fieldRef:
@@ -371,6 +377,8 @@ spec:
       name: etc-fs
       readOnly: true
   env:
+    - name: HOST_ROOT
+      value: /host
   {{- if .Values.driver.loader.initContainer.env }}
   {{- include "falco.renderTemplate" ( dict "value" .Values.driver.loader.initContainer.env "context" $) | nindent 4 }}
   {{- end }}
