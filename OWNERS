@@ -2,9 +2,9 @@ approvers:
   - leogr
   - Issif
   - cpanato
+  - alacuku
 reviewers:
   - bencer
-  - alacuku
 emeritus_approvers:
   - leodido
   - fntlnz
