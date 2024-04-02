@@ -22,7 +22,7 @@
 2. Get the URL for Falcosidekick-UI (WebUI) by running these commands:
 {{- if .Values.webui.ingress.enabled }}
 {{- range $host := .Values.webui.ingress.hosts }}
-  http{{ if $.Values.webui.ingress.tls }}s{{ end }}://{{ $host.host }}{{ index .paths 0 }}
+  http{{ if $.Values.webui.ingress.tls }}s{{ end }}://{{ $host.host }}{{ index $host.paths 0 }}
 {{- end }}
 {{- else if contains "NodePort" .Values.webui.service.type }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "falcosidekick.fullname" . }})-ui
