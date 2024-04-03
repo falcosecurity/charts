@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.7.17
+
+- Fix the labels for the serviceMonitor
+
 ## 0.7.16
 
 - Fix the error with the `NOTES` (`index of untyped nil Use`) when the ingress is enabled to falcosidekick-ui
