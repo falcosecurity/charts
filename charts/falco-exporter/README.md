@@ -70,7 +70,7 @@ helm install falco-exporter \
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco-exporter chart v0.9.11 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
+The following table lists the main configurable parameters of the falco-exporter chart v0.10.0 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
 ## Values
 
@@ -84,9 +84,10 @@ The following table lists the main configurable parameters of the falco-exporter
 | falco.grpcTimeout | string | `"2m"` | grpcTimeout timout value for grpc connection. |
 | falco.grpcUnixSocketPath | string | `"unix:///run/falco/falco.sock"` | grpcUnixSocketPath path to the falco's grpc unix socket. |
 | fullnameOverride | string | `""` | fullNameOverride same as nameOverride but for the full name. |
-| grafanaDashboard | object | `{"enabled":false,"folder":"","namespace":"default","prometheusDatasourceName":"Prometheus"}` | grafanaDashboard contains the configuration related to grafana dashboards. |
+| grafanaDashboard | object | `{"enabled":false,"folder":"","folder_annotation":"grafana_dashboard_folder","namespace":"default","prometheusDatasourceName":"Prometheus"}` | grafanaDashboard contains the configuration related to grafana dashboards. |
 | grafanaDashboard.enabled | bool | `false` | enabled specifies whether the dashboard should be deployed. |
-| grafanaDashboard.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| grafanaDashboard.folder | string | `""` | create and set folder_annotation to specify where the dashboard is stored in grafana. |
+| grafanaDashboard.folder_annotation | string | `"grafana_dashboard_folder"` | annotation used by grafana when using folderAnnotation. |
 | grafanaDashboard.namespace | string | `"default"` | namespace specifies the namespace for the configmap. |
 | grafanaDashboard.prometheusDatasourceName | string | `"Prometheus"` | prometheusDatasourceName name of the data source. |
 | healthChecks | object | `{"livenessProbe":{"initialDelaySeconds":60,"periodSeconds":15,"probesPort":19376,"timeoutSeconds":5},"readinessProbe":{"initialDelaySeconds":30,"periodSeconds":15,"probesPort":19376,"timeoutSeconds":5}}` | healthChecks contains the configuration for liveness and readiness probes. |
