@@ -175,8 +175,10 @@ serviceMonitor:
 grafanaDashboard:
   # -- enabled specifies whether the dashboard should be deployed.
   enabled: false
-  # -- folder where the dashboard is stored by grafana.
+  # -- create and set folder_annotation to specify where the dashboard is stored in grafana.
   folder: ""
+  # -- annotation used by grafana when using folderAnnotation.
+  folder_annotation: "grafana_dashboard_folder"
   # -- namespace specifies the namespace for the configmap.
   namespace: default
   # -- prometheusDatasourceName name of the data source.
