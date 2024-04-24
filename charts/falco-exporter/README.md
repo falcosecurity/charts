@@ -70,7 +70,7 @@ helm install falco-exporter \
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco-exporter chart v0.10.0 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
+The following table lists the main configurable parameters of the falco-exporter chart v0.10.1 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
 ## Values
 
@@ -146,8 +146,9 @@ The following table lists the main configurable parameters of the falco-exporter
 | service.type | string | `"ClusterIP"` | type denotes the service type. Setting it to "ClusterIP" we ensure that are accessible from within the cluster. |
 | serviceAccount | object | `{"annotations":{},"create":true,"name":""}` | serviceAccount is the configuration for the service account. |
 | serviceAccount.name | string | `""` | name is the name of the service account to use. If not set and create is true, a name is generated using the fullname template. If set and create is false, an already existing serviceAccount must be provided. |
-| serviceMonitor | object | `{"additionalLabels":{},"enabled":false,"interval":"","scrapeTimeout":""}` | serviceMonitor holds the configuration for the ServiceMonitor CRD. A ServiceMonitor is a custom resource definition (CRD) used to configure how Prometheus should discover and scrape metrics from the exporter service. |
+| serviceMonitor | object | `{"additionalLabels":{},"additionalProperties":{},"enabled":false,"interval":"","scrapeTimeout":""}` | serviceMonitor holds the configuration for the ServiceMonitor CRD. A ServiceMonitor is a custom resource definition (CRD) used to configure how Prometheus should discover and scrape metrics from the exporter service. |
 | serviceMonitor.additionalLabels | object | `{}` | additionalLabels specifies labels to be added on the Service Monitor. |
+| serviceMonitor.additionalProperties | object | `{}` | aditionalProperties allows setting additional properties on the endpoint such as relabelings, metricRelabelings etc. |
 | serviceMonitor.enabled | bool | `false` | enable the deployment of a Service Monitor for the Prometheus Operator. |
 | serviceMonitor.interval | string | `""` | interval specifies the time interval at which Prometheus should scrape metrics from the service. |
 | serviceMonitor.scrapeTimeout | string | `""` | scrapeTimeout determines the maximum time Prometheus should wait for a target to respond to a scrape request. If the target does not respond within the specified timeout, Prometheus considers the scrape as failed for that target. |

@@ -170,7 +170,8 @@ serviceMonitor:
   # If the target does not respond within the specified timeout, Prometheus considers the scrape as failed for
   # that target.
   scrapeTimeout: ""
-
+    # -- aditionalProperties allows setting additional properties on the endpoint such as relabelings, metricRelabelings etc.
+  additionalProperties: {}
 # -- grafanaDashboard contains the configuration related to grafana dashboards.
 grafanaDashboard:
   # -- enabled specifies whether the dashboard should be deployed.
