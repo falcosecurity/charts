@@ -3,6 +3,10 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.11.0
+
+* updated grafana dashboard
+
 ## v0.10.1
 
 * Enhanced the service Monitor to support additional Properties.
