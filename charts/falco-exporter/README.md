@@ -70,7 +70,7 @@ helm install falco-exporter \
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco-exporter chart v0.10.1 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
+The following table lists the main configurable parameters of the falco-exporter chart v0.11.0 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
 ## Values
 
