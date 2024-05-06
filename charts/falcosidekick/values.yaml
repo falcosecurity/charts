@@ -58,6 +58,8 @@ serviceMonitor:
   interval: ""
   # -- specify a user defined scrape timeout. When not specified Prometheus default scrape timeout is used.
   scrapeTimeout: ""
+    # -- aditionalProperties allows setting additional properties on the endpoint such as relabelings, metricRelabelings etc.
+  additionalProperties: {}
 
 prometheusRules:
   # -- enable the creation of PrometheusRules for alerting
