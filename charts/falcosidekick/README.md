@@ -574,6 +574,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | service.port | int | `2801` | Service port |
 | service.type | string | `"ClusterIP"` | Service type |
 | serviceMonitor.additionalLabels | object | `{}` | specify Additional labels to be added on the Service Monitor. |
+| serviceMonitor.additionalProperties | object | `{}` | aditionalProperties allows setting additional properties on the endpoint such as relabelings, metricRelabelings etc. |
 | serviceMonitor.enabled | bool | `false` | enable the deployment of a Service Monitor for the Prometheus Operator. |
 | serviceMonitor.interval | string | `""` | specify a user defined interval. When not specified Prometheus default interval is used. |
 | serviceMonitor.scrapeTimeout | string | `""` | specify a user defined scrape timeout. When not specified Prometheus default scrape timeout is used. |
