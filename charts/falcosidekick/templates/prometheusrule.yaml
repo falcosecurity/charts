@@ -81,7 +81,7 @@ spec:
       annotations:
         summary: Falcosidekick is experiencing high rate of errors for an output
         description: A high rate of errors are being detecting for an output
-      expr: rate(falcosidekick_output{status="error"}[{{ .Values.prometheusRules.alerts.output.rate_interval }}]) by (destination) > {{ .Values.prometheusRules.alerts.output.threshold }}
+      expr: sum by (destination) (rate(falcosidekick_outputs{status="error"}[{{ .Values.prometheusRules.alerts.output.rate_interval }}])) > {{ .Values.prometheusRules.alerts.output.threshold }}
       for: 1m
       labels:
         severity: warning
