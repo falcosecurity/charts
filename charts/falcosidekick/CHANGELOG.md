@@ -7,7 +7,8 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ## 0.7.19
 
-- Enhanced the service Monitor to support additional Properties. Fix one prometheusRules: FalcoErrorOutputEventsRateHigh.
+- Enhanced the service Monitor to support additional Properties.
+- Fix the promql query for prometheusRules: FalcoErrorOutputEventsRateHigh.
 
 ## 0.7.18
 
