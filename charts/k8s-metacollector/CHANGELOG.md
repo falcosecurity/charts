@@ -4,6 +4,10 @@
 This file documents all notable changes to `k8s-metacollector` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.1.8
+
+* Bump application version to 0.1.1. For more info see release notes: https://github.com/falcosecurity/k8s-metacollector/releases/tag/v0.1.1
+
 ## v0.1.7
 
 * Lower initial delay seconds for readiness and liveness probes;
