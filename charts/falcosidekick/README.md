@@ -610,7 +610,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.redis.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
 | webui.redis.image.registry | string | `"docker.io"` | The web UI Redis image registry to pull from |
 | webui.redis.image.repository | string | `"redis/redis-stack"` | The web UI Redis image repository to pull from |
-| webui.redis.image.tag | string | `"6.2.6-v3"` | The web UI Redis image tag to pull from |
+| webui.redis.image.tag | string | `"7.2.0-v11"` | The web UI Redis image tag to pull from |
 | webui.redis.nodeSelector | object | `{}` | Web UI Redis nodeSelector field |
 | webui.redis.password | string | `""` | Set a password for Redis |
 | webui.redis.podAnnotations | object | `{}` | additions annotations on the pods |

@@ -1116,7 +1116,7 @@ webui:
       # -- The web UI Redis image repository to pull from
       repository: redis/redis-stack
       # -- The web UI Redis image tag to pull from
-      tag: "6.2.6-v3"
+      tag: "7.2.0-v11"
       # -- The web UI image pull policy
       pullPolicy: IfNotPresent
 

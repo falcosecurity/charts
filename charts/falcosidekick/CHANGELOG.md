@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.7.22
+
+- upgrade redis-stack image to 7.2.0-v11
+
 ## 0.7.21
 
 - Fix the Falco Sidekick WEBUI_URL secret value.
