@@ -13,6 +13,13 @@ metadata:
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
     app.kubernetes.io/component: ui
+    {{- with .Values.webui.customLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with .Values.webui.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   replicas: {{ .Values.webui.replicaCount }}
   {{- if .Values.webui.revisionHistoryLimit }}
@@ -49,17 +56,21 @@ spec:
       securityContext:
       {{- toYaml .Values.webui.podSecurityContext | nindent 8}}
       {{- end }}
+      initContainers:
+        - name: wait-redis
+          image: busybox:1.31
+          command: ['sh', '-c', 'echo -e "Checking for the availability of the Redis Server"; while ! nc -z {{ include "falcosidekick.fullname" . }}-ui-redis 6379; do sleep 1; done; echo -e "Redis Server has started";']
       containers:
         - name: {{ .Chart.Name }}-ui
           image: "{{ .Values.webui.image.registry }}/{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
           imagePullPolicy: {{ .Values.webui.image.pullPolicy }}
           envFrom:
             - secretRef:
-                {{- if .Values.webui.existingSecret }}
-                name: {{ .Values.webui.existingSecret }}
-                {{- else }}
                 name: {{ include "falcosidekick.fullname" . }}-ui
-                {{- end }}
+            {{- if .Values.webui.existingSecret }}
+            - secretRef:
+                name: {{ .Values.webui.existingSecret }}
+            {{- end }}
           args:
             - "-r"
             {{- if .Values.webui.redis.enabled }}

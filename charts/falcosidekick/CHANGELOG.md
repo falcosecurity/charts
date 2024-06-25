@@ -5,6 +5,14 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.8.0
+
+- ugrade to Falcosidekick 2.29.0
+- allow to set custom labels and annotations to set to all resources
+- allow to use an existing secrets and values for the env vars at the same time
+- fix missing ingressClassName settings in the values.yaml
+- add of an initContainer to check if the redis for falcosidekick-ui is up
+
 ## 0.7.22
 
 - upgrade redis-stack image to 7.2.0-v11

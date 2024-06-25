@@ -12,6 +12,13 @@ metadata:
     {{- if .Values.prometheusRules.additionalLabels }}
     {{- toYaml .Values.prometheusRules.additionalLabels | nindent 4 }}
     {{- end }}
+    {{- with .Values.customLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with .Values.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   groups:
   - name: falcosidekick
