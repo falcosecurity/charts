@@ -16,3 +16,5 @@ http://some.url/some/path/
 https://localhost:32765/k8s-audit
 https://some.url/some/path/
 http://localhost:8765/versions
+https://environmentid.live.dynatrace.com/api
+https://yourdomain/e/ENVIRONMENTID/api

@@ -6,6 +6,13 @@ metadata:
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
     app.kubernetes.io/component: core
+    {{- with .Values.customLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with .Values.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   privileged: false
   allowPrivilegeEscalation: false

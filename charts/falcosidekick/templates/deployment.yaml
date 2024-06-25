@@ -7,6 +7,13 @@ metadata:
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
     app.kubernetes.io/component: core
+    {{- with .Values.customLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with .Values.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   {{- if .Values.revisionHistoryLimit }}
@@ -24,14 +31,14 @@ spec:
         {{- if and .Values.config.azure.podIdentityClientID .Values.config.azure.podIdentityName }}
         aadpodidbinding: {{ include "falcosidekick.fullname" . }}
         {{- end }}
-      {{- if .Values.podLabels }}
-{{ toYaml .Values.podLabels | indent 8 }}
-      {{- end }}
+        {{- if .Values.podLabels }}
+        {{ toYaml .Values.podLabels | nindent 8 }}
+        {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
-      {{- if .Values.podAnnotations }}
-{{ toYaml .Values.podAnnotations | indent 8 }}
-      {{- end }}
+        {{- if .Values.podAnnotations }}
+        {{ toYaml .Values.podAnnotations | nindent 8 }}
+        {{- end }}
     spec:
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -90,11 +97,11 @@ spec:
           {{- end }}
           envFrom:
             - secretRef:
-                {{- if .Values.config.existingSecret }}
-                name: {{ .Values.config.existingSecret }}
-                {{- else }}
                 name: {{ include "falcosidekick.fullname" . }}
-                {{- end }}
+            {{- if .Values.config.existingSecret }}
+            - secretRef:
+                name: {{ .Values.config.existingSecret }}
+            {{- end }}
           env:
             - name: DEBUG
               value: {{ .Values.config.debug | quote }}
@@ -102,6 +109,8 @@ spec:
               value: {{ .Values.config.customfields | quote }}
             - name: TEMPLATEDFIELDS
               value: {{ .Values.config.templatedfields | quote }}
+            - name: OUTPUTFIELDFORMAT
+              value: {{ .Values.config.outputFieldFormat | quote }}
             - name: BRACKETREPLACER
               value: {{ .Values.config.bracketreplacer | quote }}
             - name: MUTUALTLSFILESPATH
@@ -112,6 +121,8 @@ spec:
               value: {{ .Values.config.mutualtlsclient.keyfile | quote }}
             - name: MUTUALTLSCLIENT_CACERTFILE
               value: {{ .Values.config.mutualtlsclient.cacertfile | quote }}
+            - name: TLSCLIENT_CACERTFILE
+              value: {{ .Values.config.tlsclient.cacertfile | quote }}
             {{-  if .Values.config.tlsserver.deploy }}  
             - name: TLSSERVER_DEPLOY
               value: {{ .Values.config.tlsserver.deploy | quote }}
@@ -128,7 +139,9 @@ spec:
             - name: TLSSERVER_NOTLSPATHS
               value: {{ .Values.config.tlsserver.notlspaths | quote }}
             {{- end }}
-
+            {{- if .Values.config.otlp.traces.extraenvvars }}
+            {{ toYaml .Values.config.otlp.traces.extraenvvars | nindent 12 }}
+            {{- end }}
             {{- if .Values.config.extraEnv }}
             {{ toYaml .Values.config.extraEnv | nindent 12 }}
             {{- end }}
@@ -172,4 +185,3 @@ spec:
 {{ toYaml .Values.extraVolumes | indent 8 }}
     {{- end }}
     {{- end }}
-

@@ -7,8 +7,15 @@ metadata:
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
     app.kubernetes.io/component: core
-    {{- range $key, $value := .Values.serviceMonitor.additionalLabels }}
-    {{ $key }}: {{ $value | quote }}
+    {{- with .Values.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.customLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with .Values.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   endpoints:

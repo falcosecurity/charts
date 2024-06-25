@@ -7,11 +7,17 @@ metadata:
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
     app.kubernetes.io/component: core
-  {{- with .Values.service.annotations }}
-  annotations:
-    prometheus.io/scrape: "true"
+    {{- with .Values.customLabels }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
+  annotations:
+    {{- with .Values.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    prometheus.io/scrape: "true"
 spec:
   type: {{ .Values.service.type }}
   ports:

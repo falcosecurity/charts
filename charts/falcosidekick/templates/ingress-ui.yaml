@@ -11,10 +11,16 @@ metadata:
   labels:
     {{- include "falcosidekick.labels" . | nindent 4 }}
     app.kubernetes.io/component: ui
-  {{- with .Values.webui.ingress.annotations }}
-  annotations:
+    {{- with .Values.webui.customLabels }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
+  annotations:
+    {{- with .Values.webui.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.webui.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
 {{- if .Values.webui.ingress.ingressClassName }}
   ingressClassName: {{ .Values.webui.ingress.ingressClassName }}
