@@ -197,6 +197,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.aws.region | string | `""` | AWS Region (optionnal if you use EC2 Instance Profile) |
 | config.aws.rolearn | string | `""` | AWS IAM role ARN for falcosidekick service account to associate with (optionnal if you use EC2 Instance Profile) |
 | config.aws.s3.bucket | string | `""` | AWS S3, bucket name |
+| config.aws.s3.endpoint | string | `""` | AWS S3, endpoint URL |
 | config.aws.s3.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.aws.s3.prefix | string | `""` | AWS S3, name of prefix, keys will have format: s3://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json |
 | config.aws.secretaccesskey | string | `""` | AWS Secret Access Key (optionnal if you use EC2 Instance Profile) |
