@@ -948,6 +948,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   # -- Ingress hosts
+  ingressClassName: # nginx-local
   hosts:
     - host: falcosidekick.local
       paths:
