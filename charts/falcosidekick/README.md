@@ -641,9 +641,9 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
 | webui.ingress.ingressClassName | string | `""` | ingress class name |
 | webui.ingress.tls | list | `[]` | Web UI ingress TLS configuration |
-| webui.initContainers.image.registry | string | `"docker.io"` | The image registry to pull from |
-| webui.initContainers.image.repository | string | `"busybox"` | The image repository to pull from |
-| webui.initContainers.image.tag | float | `1.31` | The image tag to pull |
+| webui.initContainer.image.registry | string | `"docker.io"` | The image registry to pull from |
+| webui.initContainer.image.repository | string | `"busybox"` | The image repository to pull from |
+| webui.initContainer.image.tag | float | `1.31` | The image tag to pull |
 | webui.loglevel | string | `"info"` | Log level ("debug", "info", "warning", "error") |
 | webui.nodeSelector | object | `{}` | Web UI nodeSelector field |
 | webui.podAnnotations | object | `{}` | additions annotations on the pods web UI |
