@@ -1137,7 +1137,7 @@ webui:
     # -- The web UI image pull policy
     pullPolicy: IfNotPresent
 
-  initContainers:
+  initContainer:
     image:
       # -- The image registry to pull from
       registry: docker.io
