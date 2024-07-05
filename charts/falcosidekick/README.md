@@ -641,6 +641,12 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
 | webui.ingress.ingressClassName | string | `""` | ingress class name |
 | webui.ingress.tls | list | `[]` | Web UI ingress TLS configuration |
+| webui.initContainer | object | `{"image":{"registry":"docker.io","repository":"busybox","tag":1.31},"resources":{},"securityContext":{}}` | Web UI wait-redis initContainer |
+| webui.initContainer.image.registry | string | `"docker.io"` | wait-redis initContainer image registry to pull from |
+| webui.initContainer.image.repository | string | `"busybox"` | wait-redis initContainer image repository to pull from |
+| webui.initContainer.image.tag | float | `1.31` | wait-redis initContainer image tag to pull |
+| webui.initContainer.resources | object | `{}` | wait-redis initContainer resources |
+| webui.initContainer.securityContext | object | `{}` | wait-redis initContainer securityContext |
 | webui.loglevel | string | `"info"` | Log level ("debug", "info", "warning", "error") |
 | webui.nodeSelector | object | `{}` | Web UI nodeSelector field |
 | webui.podAnnotations | object | `{}` | additions annotations on the pods web UI |

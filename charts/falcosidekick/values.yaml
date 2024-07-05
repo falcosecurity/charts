@@ -1137,6 +1137,20 @@ webui:
     # -- The web UI image pull policy
     pullPolicy: IfNotPresent
 
+  # -- Web UI wait-redis initContainer
+  initContainer:
+    image:
+      # -- wait-redis initContainer image registry to pull from
+      registry: docker.io
+      # -- wait-redis initContainer image repository to pull from
+      repository: busybox
+      # -- wait-redis initContainer image tag to pull
+      tag: 1.31
+    # -- wait-redis initContainer securityContext
+    securityContext: {}
+    # -- wait-redis initContainer resources
+    resources: {}
+
   # -- Web UI pod securityContext
   podSecurityContext:
     runAsUser: 1234
