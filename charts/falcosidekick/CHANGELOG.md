@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.9.0
+
+- Specify Docker registry for Falcosidekick UI init container
+
 ## 0.8.0
 
 - ugrade to Falcosidekick 2.29.0
