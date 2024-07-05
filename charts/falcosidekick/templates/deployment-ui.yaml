@@ -58,7 +58,7 @@ spec:
       {{- end }}
       initContainers:
         - name: wait-redis
-          image: busybox:1.31
+          image: "{{ .Values.webui.initContainer.image.registry }}/{{ .Values.webui.initContainer.image.repository }}:{{ .Values.webui.initContainer.image.tag }}"
           command: ['sh', '-c', 'echo -e "Checking for the availability of the Redis Server"; while ! nc -z {{ include "falcosidekick.fullname" . }}-ui-redis 6379; do sleep 1; done; echo -e "Redis Server has started";']
       containers:
         - name: {{ .Chart.Name }}-ui

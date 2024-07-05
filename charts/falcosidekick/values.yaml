@@ -1137,6 +1137,15 @@ webui:
     # -- The web UI image pull policy
     pullPolicy: IfNotPresent
 
+  initContainers:
+    image:
+      # -- The image registry to pull from
+      registry: docker.io
+      # -- The image repository to pull from
+      repository: busybox
+      # -- The image tag to pull
+      tag: 1.31
+
   # -- Web UI pod securityContext
   podSecurityContext:
     runAsUser: 1234
