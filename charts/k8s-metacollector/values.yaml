@@ -25,7 +25,6 @@ fullnameOverride: ""
 # -- namespaceOverride overrides the deployment namespace. It's useful for multi-namespace deployments in combined charts.
 namespaceOverride: ""
 
-
 # -- serviceAccount is the configuration for the service account.
 serviceAccount:
   # -- create specifies whether a service account should be created.
@@ -38,6 +37,9 @@ serviceAccount:
 
 # -- podAnnotations are custom annotations to be added to the pod.
 podAnnotations: {}
+
+# -- podLabels are labels to be added to the pod.
+podLabels: {}
 
 # -- podSecurityContext holds the security settings for the pod.
 # -- These settings are override by the ones specified for the container when there is overlap.
