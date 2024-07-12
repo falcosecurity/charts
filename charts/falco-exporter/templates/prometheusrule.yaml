@@ -51,7 +51,7 @@ spec:
         summary: Falco is experiencing high rate of critical events
         description: A high rate of critical events are being detected by Falco
       expr: rate(falco_events{priority="2"}[{{ .Values.prometheusRules.alerts.critical.rate_interval }}]) > {{ .Values.prometheusRules.alerts.critical.threshold }}
-      {{ .Values.prometheusRules.alerts.critical.for }}
+      for: {{ .Values.prometheusRules.alerts.critical.for }}
       labels:
         severity: critical
     {{- end }}
