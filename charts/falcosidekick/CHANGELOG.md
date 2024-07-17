@@ -5,25 +5,29 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.8.3
+
+- Add a condition to create the secrets for the redis only if the webui is deployed
+
 ## 0.8.2
 
 - Fix redis-availability check of the UI init-container in case externalRedis is enabled
 
 ## 0.8.1
 
-- allow to set resources, securityContext and image overwrite for wait-redis initContainer
+- Allow to set resources, securityContext and image overwrite for wait-redis initContainer
 
 ## 0.8.0
 
-- ugrade to Falcosidekick 2.29.0
-- allow to set custom labels and annotations to set to all resources
-- allow to use an existing secrets and values for the env vars at the same time
-- fix missing ingressClassName settings in the values.yaml
-- add of an initContainer to check if the redis for falcosidekick-ui is up
+- Ugrade to Falcosidekick 2.29.0
+- Allow to set custom labels and annotations to set to all resources
+- Allow to use an existing secrets and values for the env vars at the same time
+- Fix missing ingressClassName settings in the values.yaml
+- Add of an initContainer to check if the redis for falcosidekick-ui is up
 
 ## 0.7.22
 
-- upgrade redis-stack image to 7.2.0-v11
+- Upgrade redis-stack image to 7.2.0-v11
 
 ## 0.7.21
 
