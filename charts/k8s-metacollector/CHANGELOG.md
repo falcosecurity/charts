@@ -7,6 +7,7 @@ numbering uses [semantic versioning](http://semver.org).
 ## v0.1.9
 
 * Fix Grafana dashboards datasources
+* Add podLabels
 
 ## v0.1.8
 
@@ -27,7 +28,7 @@ numbering uses [semantic versioning](http://semver.org).
 ## v0.1.4
 
 *  Lower `interval` and `scrape_timeout` values for service monitor;
-* 
+
 ## v0.1.3
 
 * Bump application version to 0.1.3

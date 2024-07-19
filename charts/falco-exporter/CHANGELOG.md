@@ -3,6 +3,10 @@
 This file documents all notable changes to `falco-exporter` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.12.0
+
+* make 'for' configurable for falco exporter prometheus rules
+
 ## v0.11.0
 
 * updated grafana dashboard

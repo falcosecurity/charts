@@ -70,7 +70,7 @@ helm install falco-exporter \
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco-exporter chart v0.11.0 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
+The following table lists the main configurable parameters of the falco-exporter chart v0.12.0 and their default values. Please, refer to [values.yaml](./values.yaml) for the full list of configurable parameters.
 
 ## Values
 
@@ -116,18 +116,23 @@ The following table lists the main configurable parameters of the falco-exporter
 | priorityClassName | string | `""` | priorityClassName specifies the name of the PriorityClass for the pods. |
 | prometheusRules.alerts.additionalAlerts | object | `{}` |  |
 | prometheusRules.alerts.alert.enabled | bool | `true` |  |
+| prometheusRules.alerts.alert.for | string | `"5m"` |  |
 | prometheusRules.alerts.alert.rate_interval | string | `"5m"` |  |
 | prometheusRules.alerts.alert.threshold | int | `0` |  |
 | prometheusRules.alerts.critical.enabled | bool | `true` |  |
+| prometheusRules.alerts.critical.for | string | `"15m"` |  |
 | prometheusRules.alerts.critical.rate_interval | string | `"5m"` |  |
 | prometheusRules.alerts.critical.threshold | int | `0` |  |
 | prometheusRules.alerts.emergency.enabled | bool | `true` |  |
+| prometheusRules.alerts.emergency.for | string | `"1m"` |  |
 | prometheusRules.alerts.emergency.rate_interval | string | `"1m"` |  |
 | prometheusRules.alerts.emergency.threshold | int | `0` |  |
 | prometheusRules.alerts.error.enabled | bool | `true` |  |
+| prometheusRules.alerts.error.for | string | `"15m"` |  |
 | prometheusRules.alerts.error.rate_interval | string | `"5m"` |  |
 | prometheusRules.alerts.error.threshold | int | `0` |  |
 | prometheusRules.alerts.warning.enabled | bool | `true` |  |
+| prometheusRules.alerts.warning.for | string | `"15m"` |  |
 | prometheusRules.alerts.warning.rate_interval | string | `"5m"` |  |
 | prometheusRules.alerts.warning.threshold | int | `0` |  |
 | prometheusRules.enabled | bool | `false` | enabled specifies whether the prometheus rules should be deployed. |

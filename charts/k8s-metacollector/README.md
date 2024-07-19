@@ -110,6 +110,7 @@ The following table lists the main configurable parameters of the k8s-metacollec
 | namespaceOverride | string | `""` | namespaceOverride overrides the deployment namespace. It's useful for multi-namespace deployments in combined charts. |
 | nodeSelector | object | `{}` | nodeSelector specifies a set of key-value pairs that must match labels assigned to nodes for the Pod to be eligible for scheduling on that node. |
 | podAnnotations | object | `{}` | podAnnotations are custom annotations to be added to the pod. |
+| podLabels | object | `{}` | podLabels are labels to be added to the pod. |
 | podSecurityContext | object | `{"fsGroup":1000,"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | These settings are override by the ones specified for the container when there is overlap. |
 | podSecurityContext.fsGroup | int | `1000` | fsGroup specifies the group ID (GID) that should be used for the volume mounted within a Pod. |
 | podSecurityContext.runAsGroup | int | `1000` | runAsGroup specifies the group ID (GID) that the containers inside the pod should run as. |

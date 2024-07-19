@@ -198,20 +198,25 @@ prometheusRules:
       enabled: true
       rate_interval: "5m"
       threshold: 0
+      for: "15m"
     error:
       enabled: true
       rate_interval: "5m"
       threshold: 0
+      for: "15m"
     critical:
       enabled: true
       rate_interval: "5m"
       threshold: 0
+      for: "15m"
     alert:
       enabled: true
       rate_interval: "5m"
       threshold: 0
+      for: "5m"
     emergency:
       enabled: true
       rate_interval: "1m"
       threshold: 0
+      for: "1m"
     additionalAlerts: {}
