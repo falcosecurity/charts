@@ -6,6 +6,7 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## v0.1.9
 
+* Fix Grafana dashboards datasources
 * Add podLabels
 
 ## v0.1.8
