@@ -23,6 +23,7 @@ spec:
       command: 
         - /bin/event-generator 
         - {{ .Values.config.command }}
+        - --all
         {{- if .Values.config.actions }}
         - {{ .Values.config.actions }}
         {{- end }}
