@@ -117,7 +117,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists the main configurable parameters of the event-generator chart v0.3.3 and their default values. See `values.yaml` for full list.
+The following table lists the main configurable parameters of the event-generator chart v0.3.4 and their default values. See `values.yaml` for full list.
 
 ## Values
 
