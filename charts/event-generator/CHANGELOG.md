@@ -4,6 +4,10 @@
 This file documents all notable changes to `event-generator` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.3.4
+
+* Pass `--all` flag to event-generator binary to allow disabled rules to run, e.g. the k8saudit ruleset.
+
 ## v0.3.3
 
 * Update README.md.
