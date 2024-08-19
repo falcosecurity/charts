@@ -5,6 +5,9 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.8.4
+- Fix falcosidekick chart ignoring custom service type for webui redis
+
 ## 0.8.3
 
 - Add a condition to create the secrets for the redis only if the webui is deployed
