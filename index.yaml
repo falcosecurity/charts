@@ -7726,6 +7726,23 @@ entries:
   k8s-metacollector:
   - apiVersion: v2
     appVersion: 0.1.1
+    created: "2024-08-20T15:57:02.267732681Z"
+    description: Install k8s-metacollector to fetch and distribute Kubernetes metadata
+      to Falco instances.
+    digest: 7606dcbf4bc5702a1d5cd0e9c697c5c410c9e1514e9d0c9c33583569f9772b78
+    home: https://github.com/falcosecurity/k8s-metacollector
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: k8s-metacollector
+    sources:
+    - https://github.com/falcosecurity/k8s-metacollector
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.10/k8s-metacollector-0.1.10.tgz
+    version: 0.1.10
+  - apiVersion: v2
+    appVersion: 0.1.1
     created: "2024-07-11T12:38:09.313328848Z"
     description: Install k8s-metacollector to fetch and distribute Kubernetes metadata
       to Falco instances.
@@ -7887,4 +7904,4 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.0/k8s-metacollector-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-19T13:55:09.460334232Z"
+generated: "2024-08-20T15:57:02.268249426Z"
