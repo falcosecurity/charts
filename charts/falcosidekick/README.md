@@ -523,7 +523,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.timescaledb.password | string | `"postgres"` | Password to authenticate with TimescaleDB |
 | config.timescaledb.port | int | `5432` | TimescaleDB port (default: 5432) |
 | config.timescaledb.user | string | `"postgres"` | Username to authenticate with TimescaleDB |
-| config.tlsclient.cacertfile | string | `"/etc/certs/client/ca.crt"` | CA certificate file for server certification on TLS connections, appended to the system CA pool if not empty |
+| config.tlsclient.cacertfile | string | `""` | CA certificate file for server certification on TLS connections, appended to the system CA pool if not empty |
 | config.tlsserver.cacertfile | string | `"/etc/certs/server/ca.crt"` | CA certification file path for client certification if mutualtls is true |
 | config.tlsserver.cacrt | string | `""` |  |
 | config.tlsserver.certfile | string | `"/etc/certs/server/server.crt"` | server certification file path for TLS Server |

@@ -145,7 +145,7 @@ config:
 
   tlsclient:
     # -- CA certificate file for server certification on TLS connections, appended to the system CA pool if not empty
-    cacertfile: "/etc/certs/client/ca.crt"
+    cacertfile: ""
 
   tlsserver:
     # -- if true TLS server will be deployed instead of HTTP
