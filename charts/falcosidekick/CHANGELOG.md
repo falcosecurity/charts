@@ -11,6 +11,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 - Add the possibility to override the default redis server settings
 - Allow to set up a password to use with an external redis
 - Fix wrong value used for `OTLP_TRACES_PROTOCOL` env var
+- Used names for the priorities in the prometheus rules
 
 ## 0.8.5
 
