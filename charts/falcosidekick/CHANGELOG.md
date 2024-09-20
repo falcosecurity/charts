@@ -10,6 +10,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 - Use of `redis-cli` by the initContainer of Falcosidekick-UI to wait til the redis is up and running
 - Add the possibility to override the default redis server settings
 - Allow to set up a password to use with an external redis
+- Fix wrong value used for `OTLP_TRACES_PROTOCOL` env var
 
 ## 0.8.5
 
