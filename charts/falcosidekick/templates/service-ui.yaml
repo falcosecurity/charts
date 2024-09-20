@@ -22,9 +22,9 @@ spec:
   type: {{ .Values.webui.service.type }}
   ports:
     - port: {{ .Values.webui.service.port }}
-      {{ if eq .Values.webui.service.type "NodePort" }}
+      {{- if eq .Values.webui.service.type "NodePort" }}
       nodePort: {{ .Values.webui.service.nodePort }}
-      {{ end }}   
+      {{- end }}   
       targetPort: {{ .Values.webui.service.targetPort }}
       protocol: TCP
       name: http

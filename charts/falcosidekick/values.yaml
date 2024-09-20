@@ -1143,9 +1143,9 @@ webui:
       # -- wait-redis initContainer image registry to pull from
       registry: docker.io
       # -- wait-redis initContainer image repository to pull from
-      repository: busybox
+      repository: redis/redis-stack
       # -- wait-redis initContainer image tag to pull
-      tag: 1.31
+      tag: "7.2.0-v11"
     # -- wait-redis initContainer securityContext
     securityContext: {}
     # -- wait-redis initContainer resources
@@ -1222,6 +1222,8 @@ webui:
     enabled: false
     # -- The URL of the external Redis database with RediSearch > v2
     url: ""
+    # -- Set the password of the external Redis
+    password: ""
     # --  The port of the external Redis database with RediSearch > v2
     port: 6379
   redis:
@@ -1236,6 +1238,11 @@ webui:
       tag: "7.2.0-v11"
       # -- The web UI image pull policy
       pullPolicy: IfNotPresent
+
+    # -- List of Custom config overrides for Redis
+    customConfig: {}
+      # - maxmemory-policy allkeys-lfu
+      # - maxmemory 4096mb
 
     # -- Existing secret with configuration
     existingSecret: ""

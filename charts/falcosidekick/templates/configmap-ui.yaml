@@ -1,0 +1,46 @@
+{{- if and (.Values.webui.enabled) (.Values.webui.redis.enabled) -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-ui-redis
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "falcosidekick.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ui-redis
+data:
+  {{- if .Values.webui.redis.customConfig -}}
+  redis-stack.config: |-
+    {{ range .Values.webui.redis.customConfig }}
+    {{- . }}
+    {{ end -}}
+  {{- end }}
+  ping-redis.sh: |-
+    #!/bin/bash
+    for i in {1..10};
+    do
+      response=$(
+        timeout -s 3 30 \
+        redis-cli \
+          {{- if .Values.webui.redis.enabled }}
+          -h {{ include "falcosidekick.fullname" . }}-ui-redis -p 6379 \
+          {{- if .Values.webui.redis.password }}
+          -a ${REDIS_PASSWORD} \
+          {{- end }}
+          {{- end }}
+          {{- if .Values.webui.externalRedis.enabled }}
+          -h {{ .Values.webui.externalRedis.url }} \
+          -p {{ .Values.webui.externalRedis.port }} \
+          {{- if .Values.webui.externalRedis.password }}
+          -a ${REDIS_PASSWORD} \
+          {{- end }}
+          {{- end }}
+          ping
+        )
+      if [ "$response" = "PONG" ]; then
+        exit 0
+      fi
+      sleep 3
+    done
+    exit 1
+{{- end }}
