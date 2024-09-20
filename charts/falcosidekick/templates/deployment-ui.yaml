@@ -59,19 +59,29 @@ spec:
       initContainers:
         - name: wait-redis
           image: "{{ .Values.webui.initContainer.image.registry }}/{{ .Values.webui.initContainer.image.repository }}:{{ .Values.webui.initContainer.image.tag }}"
-          {{- if .Values.webui.redis.enabled }}
-          command: ['sh', '-c', 'echo -e "Checking for the availability of the Redis Server"; while ! nc -z {{ include "falcosidekick.fullname" . }}-ui-redis 6379; do sleep 1; done; echo -e "Redis Server has started";']
-          {{- else if .Values.webui.externalRedis.enabled }}
-          command: ['sh', '-c', 'echo -e "Checking for the availability of the Redis Server"; while ! nc -z {{ required "External Redis is enabled. Please set the URL to the database." .Values.webui.externalRedis.url }} {{ .Values.webui.externalRedis.port | default "6379" }}; do sleep 1; done; echo -e "Redis Server has started";']
-          {{- end}}
+          command:
+            - sh
+            - -c
+            - /scripts/ping-redis.sh
           {{- if .Values.webui.initContainer.resources }}
           resources:
           {{- toYaml .Values.webui.initContainer.resources | nindent 12 }}
           {{- end }}
           {{- if .Values.webui.initContainer.securityContext }}
-          securityContext:
+          securityContext:{{ include "falcosidekick.fullname" . }}-ui-redis
           {{- toYaml .Values.webui.initContainer.securityContext | nindent 12}}
           {{- end }}
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts/ping-redis.sh
+              subPath: ping-redis.sh
+          envFrom:
+            - secretRef:
+                name: {{ include "falcosidekick.fullname" . }}-ui
+            {{- if .Values.webui.existingSecret }}
+            - secretRef:
+                name: {{ .Values.webui.existingSecret }}
+            {{- end }}
       containers:
         - name: {{ .Chart.Name }}-ui
           image: "{{ .Values.webui.image.registry }}/{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
@@ -138,6 +148,14 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: scripts
+          configMap:
+            name: {{ include "falcosidekick.fullname" . }}-ui-redis
+            defaultMode: 0555
+            items:
+              - key: ping-redis.sh
+                path: ping-redis.sh
 {{- if .Values.webui.redis.enabled }}
 ---
 apiVersion: apps/v1
@@ -220,10 +238,17 @@ spec:
           securityContext:
           {{- toYaml .Values.webui.redis.securityContext | nindent 12 }}
           {{- end }}
-          {{- if .Values.webui.redis.storageEnabled }}
+          {{- if or (.Values.webui.redis.storageEnabled) (.Values.webui.redis.customConfig) }}
           volumeMounts:
+          {{- if .Values.webui.redis.storageEnabled }}
           - name: {{ include "falcosidekick.fullname" . }}-ui-redis-data
             mountPath: /data
+          {{- end }}
+          {{- if .Values.webui.redis.customConfig }}
+          - name: config
+            mountPath: /redis-stack.config
+            subPath: redis-stack.config
+          {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.webui.redis.resources | nindent 12 }}
@@ -239,6 +264,16 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{ if .Values.webui.redis.customConfig }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "falcosidekick.fullname" . }}-ui-redis
+            defaultMode: 0444
+            items:
+              - key: redis-stack.config
+                path: redis-stack.config
+      {{ end }}
   {{- if .Values.webui.redis.storageEnabled }}
   volumeClaimTemplates:
     - metadata:

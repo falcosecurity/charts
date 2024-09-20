@@ -630,6 +630,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.enabled | bool | `false` | enable Falcosidekick-UI |
 | webui.existingSecret | string | `""` | Existing secret with configuration |
 | webui.externalRedis.enabled | bool | `false` | Enable or disable the usage of an external Redis. Is mutually exclusive with webui.redis.enabled. |
+| webui.externalRedis.password | string | `""` | Set the password of the external Redis |
 | webui.externalRedis.port | int | `6379` | The port of the external Redis database with RediSearch > v2 |
 | webui.externalRedis.url | string | `""` | The URL of the external Redis database with RediSearch > v2 |
 | webui.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
@@ -641,10 +642,10 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
 | webui.ingress.ingressClassName | string | `""` | ingress class name |
 | webui.ingress.tls | list | `[]` | Web UI ingress TLS configuration |
-| webui.initContainer | object | `{"image":{"registry":"docker.io","repository":"busybox","tag":1.31},"resources":{},"securityContext":{}}` | Web UI wait-redis initContainer |
+| webui.initContainer | object | `{"image":{"registry":"docker.io","repository":"redis/redis-stack","tag":"7.2.0-v11"},"resources":{},"securityContext":{}}` | Web UI wait-redis initContainer |
 | webui.initContainer.image.registry | string | `"docker.io"` | wait-redis initContainer image registry to pull from |
-| webui.initContainer.image.repository | string | `"busybox"` | wait-redis initContainer image repository to pull from |
-| webui.initContainer.image.tag | float | `1.31` | wait-redis initContainer image tag to pull |
+| webui.initContainer.image.repository | string | `"redis/redis-stack"` | wait-redis initContainer image repository to pull from |
+| webui.initContainer.image.tag | string | `"7.2.0-v11"` | wait-redis initContainer image tag to pull |
 | webui.initContainer.resources | object | `{}` | wait-redis initContainer resources |
 | webui.initContainer.securityContext | object | `{}` | wait-redis initContainer securityContext |
 | webui.loglevel | string | `"info"` | Log level ("debug", "info", "warning", "error") |
@@ -655,6 +656,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.priorityClassName | string | `""` | Name of the priority class to be used by the Web UI pods, priority class needs to be created beforehand |
 | webui.redis.affinity | object | `{}` | Affinity for the Web UI Redis pods |
 | webui.redis.customAnnotations | object | `{}` | custom annotations to add to all resources |
+| webui.redis.customConfig | object | `{}` | List of Custom config overrides for Redis |
 | webui.redis.customLabels | object | `{}` | custom labels to add to all resources |
 | webui.redis.enabled | bool | `true` | Is mutually exclusive with webui.externalRedis.enabled |
 | webui.redis.existingSecret | string | `""` | Existing secret with configuration |
