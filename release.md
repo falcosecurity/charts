@@ -28,8 +28,8 @@ The automated release process starts when any modification added to `master` tri
 
 We have two main workflows:
 
-- [test](.github/workflows/test.yml): This will check the chart lint and will also run tests to validate if the chart can be installed, if the chart have tests those will run as well.
-- [release](.github/workflows/release.yml): This will run everything a Pull Requests of a chart is merged, it will update the index and generate the package, and publish it.
+- [test](.github/workflows/test.yml): This will run whenever a PR is created; it checks the chart lint and runs tests to validate if the chart can be installed; if the chart has tests, those will run as well.
+- [release](.github/workflows/release.yml): This will run whenever one or more commits, referring to a chart, is/are merged into `master` (e.g.: a PR is merged); it updates the index, generates the package and publishes it.
 
 ### GitHub Pages job
 
