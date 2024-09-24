@@ -68,7 +68,7 @@ spec:
           {{- toYaml .Values.webui.initContainer.resources | nindent 12 }}
           {{- end }}
           {{- if .Values.webui.initContainer.securityContext }}
-          securityContext:{{ include "falcosidekick.fullname" . }}-ui-redis
+          securityContext:
           {{- toYaml .Values.webui.initContainer.securityContext | nindent 12}}
           {{- end }}
           volumeMounts:
