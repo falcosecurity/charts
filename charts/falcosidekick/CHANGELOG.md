@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.8.7
+
+- Fix securityContext for webui initContainer
+
 ## 0.8.6
 
 - Use of `redis-cli` by the initContainer of Falcosidekick-UI to wait til the redis is up and running
