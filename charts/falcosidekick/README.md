@@ -258,6 +258,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.elasticsearch.numberofreplicas | int | `3` | Number of replicas set by the index template (default: 3) |
 | config.elasticsearch.numberofshards | int | `3` | Number of shards set by the index template (default: 3) |
 | config.elasticsearch.password | string | `""` | use this password to authenticate to Elasticsearch if the password is not empty |
+| config.elasticsearch.pipeline | string | `""` | Elasticsearch ingest pipeline |
 | config.elasticsearch.suffix | string | `"daily"` |  |
 | config.elasticsearch.type | string | `"_doc"` | Elasticsearch document type |
 | config.elasticsearch.username | string | `""` | use this username to authenticate to Elasticsearch if the username is not empty |

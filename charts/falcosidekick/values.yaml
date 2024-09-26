@@ -298,6 +298,8 @@ config:
     checkcert: true
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
+    # -- Optional ingest pipeline name. Documentation: https://www.elastic.co/guide/en/elasticsearch/reference/current/ingest.html
+    pipeline: ""
 
   influxdb:
     # -- Influxdb <http://host:port>, if not `empty`, Influxdb is *enabled*
