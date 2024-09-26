@@ -250,9 +250,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.elasticsearch.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.elasticsearch.createindextemplate | bool | `false` | Create an index template (default: false) |
 | config.elasticsearch.customheaders | string | `""` | a list of comma separated custom headers to add, syntax is "key:value,key:value" |
+| config.elasticsearch.enablecompression | bool | `false` | Enable gzip compression of the request (default: false) |
 | config.elasticsearch.flattenfields | bool | `false` | Replace . by _ to avoid mapping conflicts, force to true if createindextemplate==true (default: false) |
 | config.elasticsearch.hostport | string | `""` | Elasticsearch <http://host:port>, if not `empty`, Elasticsearch is *enabled* |
 | config.elasticsearch.index | string | `"falco"` | Elasticsearch index |
+| config.elasticsearch.maxconcurrentrequests | int | `1` | Maximum number of concurrent requests to Elasticsearch (default: 1) |
 | config.elasticsearch.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.elasticsearch.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.elasticsearch.numberofreplicas | int | `3` | Number of replicas set by the index template (default: 3) |

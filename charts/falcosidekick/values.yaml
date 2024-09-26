@@ -301,6 +301,9 @@ config:
     # -- Optional ingest pipeline name. Documentation: https://www.elastic.co/guide/en/elasticsearch/reference/current/ingest.html
     pipeline: ""
 
+    # -- Max number of concurrent requests
+    maxconcurrentrequests: 1
+
   influxdb:
     # -- Influxdb <http://host:port>, if not `empty`, Influxdb is *enabled*
     hostport: ""
