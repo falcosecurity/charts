@@ -7,7 +7,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ## 0.8.8
 
-- Fix customConfig templat for webui redis
+- Fix customConfig template for webui redis
 
 ## 0.8.7
 
