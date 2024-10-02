@@ -9,7 +9,7 @@ metadata:
     {{- include "falcosidekick.labels" . | nindent 4 }}
     app.kubernetes.io/component: ui-redis
 data:
-  {{- if .Values.webui.redis.customConfig -}}
+  {{- if .Values.webui.redis.customConfig }}
   redis-stack.config: |-
     {{ range .Values.webui.redis.customConfig }}
     {{- . }}
