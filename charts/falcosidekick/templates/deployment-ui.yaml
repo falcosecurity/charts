@@ -246,8 +246,8 @@ spec:
           {{- end }}
           {{- if .Values.webui.redis.customConfig }}
           - name: config
-            mountPath: /redis-stack.config
-            subPath: redis-stack.config
+            mountPath: /redis-stack.conf
+            subPath: redis-stack.conf
           {{- end }}
           {{- end }}
           resources:
@@ -271,8 +271,8 @@ spec:
             name: {{ include "falcosidekick.fullname" . }}-ui-redis
             defaultMode: 0444
             items:
-              - key: redis-stack.config
-                path: redis-stack.config
+              - key: redis-stack.conf
+                path: redis-stack.conf
       {{ end }}
   {{- if .Values.webui.redis.storageEnabled }}
   volumeClaimTemplates:
