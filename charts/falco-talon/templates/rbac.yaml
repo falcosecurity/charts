@@ -1,0 +1,209 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "falco-talon.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "falco-talon.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "falco-talon.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "falco-talon.name" . }}
+    helm.sh/chart: {{ include "falco-talon.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+rules:
+  {{- if .Values.rbac.namespaces }}
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+{{ toYaml .Values.rbac.namespaces | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.pods }}
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+{{ toYaml .Values.rbac.pods | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.podsEphemeralcontainers }}
+  - apiGroups:
+      - ""
+    resources:
+      - pods/ephemeralcontainers
+    verbs:
+{{ toYaml .Values.rbac.podsEphemeralcontainers | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.nodes }}
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+{{ toYaml .Values.rbac.nodes | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.podsLog }}
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+{{ toYaml .Values.rbac.podsLog | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.podsExec }}
+  - apiGroups:
+      - ""
+    resources:
+      - pods/exec
+    verbs:
+{{ toYaml .Values.rbac.podsExec | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.podsEviction }}
+  - apiGroups:
+      - ""
+    resources:
+      - pods/eviction
+    verbs:
+{{ toYaml .Values.rbac.podsEviction | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.events }}
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+{{ toYaml .Values.rbac.events | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.daemonsets }}
+  - apiGroups:
+      - "apps"
+    resources:
+      - daemonsets
+    verbs:
+{{ toYaml .Values.rbac.daemonsets | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.deployments }}
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+{{ toYaml .Values.rbac.deployments | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.replicasets }}
+  - apiGroups:
+      - "apps"
+    resources:
+      - replicasets
+    verbs:
+{{ toYaml .Values.rbac.replicasets | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.statefulsets }}
+  - apiGroups:
+      - "apps"
+    resources:
+      - statefulsets
+    verbs:
+{{ toYaml .Values.rbac.statefulsets | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.networkpolicies }}
+  - apiGroups:
+      - "networking.k8s.io"
+    resources:
+      - networkpolicies
+    verbs:
+{{ toYaml .Values.rbac.networkpolicies | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.caliconetworkpolicies }}
+  - apiGroups:
+      - "projectcalico.org"
+    resources:
+      - caliconetworkpolicies
+    verbs:
+{{ toYaml .Values.rbac.caliconetworkpolicies | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.ciliumnetworkpolicies }}
+  - apiGroups:
+      - "cilium.io"
+    resources:
+      - ciliumnetworkpolicies
+    verbs:
+{{ toYaml .Values.rbac.ciliumnetworkpolicies | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.roles }}
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - roles
+    verbs:
+{{ toYaml .Values.rbac.roles | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.clusterroles }}
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - clusterroles
+    verbs:
+{{ toYaml .Values.rbac.clusterroles | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.configmaps }}
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+{{ toYaml .Values.rbac.configmaps | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.secrets }}
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+{{ toYaml .Values.rbac.secrets | indent 6 }}
+  {{- end }}
+  {{- if .Values.rbac.leases }}
+  - apiGroups:
+      - "coordination.k8s.io"
+    resources:
+      - leases
+    verbs:
+{{ toYaml .Values.rbac.leases | indent 6 }}
+  {{- end }}
+{{- if .Values.podSecurityPolicy.create }}
+- apiGroups:
+    - policy
+  resources:
+    - podsecuritypolicies
+  resourceNames:
+    - {{ template "falco-talon.name" . }}
+  verbs:
+    - use
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "falco-talon.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "falco-talon.name" . }}
+    helm.sh/chart: {{ include "falco-talon.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "falco-talon.name" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "falco-talon.name" . }}
+  namespace: {{ .Release.Namespace }}

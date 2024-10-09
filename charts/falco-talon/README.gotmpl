@@ -1,0 +1,80 @@
+# Falco Talon
+
+![release](https://flat.badgen.net/github/release/falcosecurity/falco-talon/latest?color=green) ![last commit](https://flat.badgen.net/github/last-commit/falco-talon/falco-talon) ![licence](https://flat.badgen.net/badge/license/APACHE2/blue) ![docker pulls](https://flat.badgen.net/docker/pulls/issif/falco-talon?icon=docker)
+
+## Description
+
+`Falco Talon` is a Response Engine for managing threats in your Kubernetes. It enhances the solutions proposed by the Falco community with a no-code tailor made solution. With easy rules, you can react to `events` from [`Falco`](https://falco.org) in milliseconds.
+
+## Architecture
+
+`Falco Talon` can receive the `events` from [`Falco`](https://falco.org) or [`Falcosidekick`](https://github.com/falcosecurity/falcosidekick):
+
+```mermaid
+flowchart LR
+    falco
+    falcosidekick
+    falco-talon
+    falco -- event --> falcosidekick
+    falco -- event --> falco-talon
+    falcosidekick -- event --> falco-talon
+    kubernetes -- context --> falco-talon
+    falco-talon -- action --> aws
+    falco-talon -- output --> minio
+    falco-talon -- action --> kubernetes
+    falco-talon -- notification --> slack
+```
+
+## Documentation
+
+The full documentation is available on its own website: [https://docs.falco-talon.org/docs](https://docs.falco-talon.org/docs).
+
+## Installation
+
+### Adding `falcosecurity` repository
+
+Prior to install the chart, add the `falcosecurity` charts repository:
+
+```bash
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
+```
+
+### Installing the Chart
+
+```bash
+helm install falco-talon falcosecurity/falco-talon
+```
+
+## Uninstall Falco Talon
+
+```
+helm delete falco-talon -n falco
+````
+
+### Configuration
+
+The available values in `values.yaml` are:
+
+{{ template "chart.valuesSection" . }}
+
+## Configure Falcosidekick
+
+Once you have installed `Falco Talon` with Helm, you need to connect `Falcosidekick` by adding the flag `--set falcosidekick.config.webhook.address=http://falco-talon:2803`
+
+```shell
+helm upgrade -i falco falco-talon/falco \
+  --namespace falco \
+  --create-namespace \
+  --set tty=true \
+  --set falcosidekick.enabled=true \
+  --set falcosidekick.config.talon.address=http://falco-talon:2803
+```
+
+## License
+
+Falco Talon is licensed to you under the **Apache 2.0** open source license.
+
+## Author
+
+Thomas Labarussias (https://github.com/Issif)

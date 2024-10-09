@@ -1,0 +1,94 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "falco-talon.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "falco-talon.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "falco-talon.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+      {{- include "falco-talon.labels" . | nindent 8 }}
+      {{- if .Values.podAnnotations }}
+        {{ toYaml .Values.podAnnotations | indent 8 }}
+      {{- end }}
+      annotations:
+        timestamp: {{ now }}
+    spec:
+      serviceAccountName: {{ include "falco-talon.name" . }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+      {{- end }}
+      securityContext:
+        runAsUser: {{ .Values.podSecurityContext.runAsUser }}
+        fsGroup: {{ .Values.podSecurityContext.fsGroup }}
+      restartPolicy: Always
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- if .Values.image.registry }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          {{- else }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["server", "-c", "/etc/falco-talon/config.yaml", "-r", "/etc/falco-talon/rules.yaml"]
+          ports:
+            - name: http
+              containerPort: 2803
+              protocol: TCP
+            - name: nats
+              containerPort: 4222
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          {{- if .Values.extraEnv }}
+          env:
+            {{- toYaml .Values.extraEnv | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: "config"
+              mountPath: "/etc/falco-talon/config.yaml"
+              subPath: config.yaml
+              readOnly: true
+            - name: "rules"
+              mountPath: "/etc/falco-talon/rules.yaml"
+              subPath: rules.yaml
+              readOnly: true
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+        - name: "rules"
+          configMap:
+            name: "{{ include "falco-talon.name" . }}-rules"
+        - name: "config"
+          secret:
+            secretName: "{{ include "falco-talon.name" . }}-config"
