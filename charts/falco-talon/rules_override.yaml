@@ -1,0 +1,6 @@
+- action: Terminate Pod
+  actionner: kubernetes:terminate
+  parameters:
+    ignore_daemonsets: true
+    ignore_statefulsets: true
+    grace_period_seconds: 2

@@ -1,0 +1,61 @@
+# Falco Talon
+
+![release](https://flat.badgen.net/github/release/falco-talon/falco-talon/latest?color=green) ![last commit](https://flat.badgen.net/github/last-commit/falco-talon/falco-talon) ![licence](https://flat.badgen.net/badge/license/MIT/blue) ![docker pulls](https://flat.badgen.net/docker/pulls/issif/falco-talon?icon=docker)
+
+## Description
+
+`Falco Talon` is a Response Engine for managing threats in your Kubernetes. It enhances the solutions proposed by the Falco community with a no-code tailor made solution. With easy rules, you can react to `events` from [`Falco`](https://falco.org) in milliseconds.
+
+## Architecture
+
+`Falco Talon` can receive the `events` from [`Falco`](https://falco.org) or [`Falcosidekick`](https://github.com/falco-talon/falcosidekick):
+
+## Documentation
+
+The full documentation is available on its own website: [https://docs.falco-talon.org/docs](https://docs.falco-talon.org/docs).
+
+## Helm
+
+The helm chart is available in the folder [`deployment/helm`](https://github.com/falco-talon/falco-talon/tree/main/deployment/helm).
+
+Two config files are provided:
+* `values.yaml` allows you to configure `Falcon Talon` and the deployment
+* `rules.yaml` contains rules to set
+
+### Install Falco Talon
+
+```shell
+git clone https://github.com/falco-talon/falco-talon.git
+cd deployment/helm/
+helm upgrade -i falco-talon . -n falco --create-namespace -f values.yaml
+```
+
+### Uninstall Falco Talon
+
+```
+helm delete falco-talon -n falco
+````
+
+### Configuration
+
+{{ template "chart.valuesSection" . }}
+
+## Configure Falcosidekick
+
+Once you have installed `Falco Talon` with Helm, you need to connect `Falcosidekick` by adding the flag `--set falcosidekick.config.webhook.address=http://falco-talon:2803`
+
+```shell
+helm upgrade -i falco falco-talon/falco --namespace falco \
+  --create-namespace \
+  --set tty=true \
+  --set falcosidekick.enabled=true \
+  --set falcosidekick.config.talon.address=http://falco-talon:2803
+```
+
+## License
+
+Falco Talon is licensed to you under the **Apache 2.0** open source license.
+
+## Author
+
+Thomas Labarussias (https://github.com/Issif)

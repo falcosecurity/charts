@@ -39,6 +39,8 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area falcosidekick-chart
 
+> /area falco-talon
+
 > /area event-generator-chart
 
 > /area k8s-metacollector
