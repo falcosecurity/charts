@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/component: ui-redis
 data:
   {{- if .Values.webui.redis.customConfig }}
-  redis-stack.config: |-
+  redis-stack.conf: |-
     {{ range .Values.webui.redis.customConfig }}
     {{- . }}
     {{ end -}}
