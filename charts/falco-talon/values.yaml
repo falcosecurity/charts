@@ -1,0 +1,283 @@
+# Default values for falco-talon.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- number of running pods
+replicaCount: 2
+
+# -- image parameters
+image:
+  # -- The image registry to pull from
+  registry: falco.docker.scarf.sh
+  # -- The image repository to pull from
+  repository: issif/falco-talon
+  # -- Override the image tag to pull
+  tag: ""
+  # -- The image pull policy
+  pullPolicy: Always
+
+# -- pod security policy
+podSecurityPolicy:
+  # -- enable the creation of the PSP
+  create: false
+
+# -- pod security context
+podSecurityContext:
+  # -- user id
+  runAsUser: 1234
+  # -- group
+  fsGroup: 1234
+
+# -- one or more secrets to be used when pulling images
+imagePullSecrets: []
+# - registrySecretName
+
+# -- override name
+nameOverride: ""
+
+# -- extra env
+extraEnv:
+  - name: LOG_LEVEL
+    value: warning
+#  - name: AWS_REGION # Specify if running on EKS, ECS or EC2
+#    value: us-east-1
+
+# -- priority class name
+priorityClassName: ""
+
+# -- pod annotations
+podAnnotations: {}
+
+# -- service parameters
+service:
+  # -- type of service
+  type: ClusterIP
+  # -- port of the service
+  port: 2803
+  # -- annotations of the service
+  annotations: {}
+    # networking.gke.io/load-balancer-type: Internal
+
+# -- ingress parameters
+ingress:
+  # -- enable the ingress
+  enabled: false
+  # -- annotations of the ingress
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  # -- hosts
+  hosts:
+    - host: falco-talon.local
+      paths:
+        - path: /
+          # -- pathType (e.g. ImplementationSpecific, Prefix, .. etc.)
+          # pathType: Prefix
+  # -- tls
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# -- resources
+resources: {}
+  # -- limits
+  # limits:
+  #   # -- cpu limit
+  #   cpu: 100m
+  #   # -- memory limit
+  #   memory: 128Mi
+  # -- requests
+  # requests:
+  #   # -- cpu request
+  #   cpu: 100m
+  #   # -- memory request
+  #   memory: 128Mi
+
+# -- node selector
+nodeSelector: {}
+
+# -- tolerations
+tolerations: []
+
+# -- affinity
+affinity: {}
+
+# -- rbac
+rbac:
+  namespaces: ["get", "delete"]
+  pods: ["get", "update", "patch", "delete", "list"]
+  podsEphemeralcontainers: ["patch", "create"]
+  nodes: ["get", "update", "patch", "watch", "create"]
+  podsLog: ["get"]
+  podsExec: ["get", "create"]
+  podsEviction: ["get", "create"]
+  events: ["get", "update", "patch", "create"]
+  daemonsets: ["get", "delete"]
+  deployments: ["get", "delete"]
+  replicasets: ["get", "delete"]
+  statefulsets: ["get", "delete"]
+  networkpolicies: ["get", "update", "patch", "create"]
+  caliconetworkpolicies: ["get", "update", "patch", "create"]
+  ciliumnetworkpolicies: ["get", "update", "patch", "create"]
+  roles: ["get", "delete"]
+  clusterroles: ["get", "delete"]
+  configmaps: ["get", "delete"]
+  secrets: ["get", "delete"]
+  leases: ["get", "update", "patch", "watch", "create"]
+
+# -- config of Falco Talon (See https://docs.falco-talon.org/docs/configuration/)
+config:
+  # -- listen address
+  listenAddress: 0.0.0.0
+  # -- listen port
+  listenPort: 2803
+
+  # -- default notifiers for all rules
+  defaultNotifiers:
+    #  - slack
+    - k8sevents
+
+  # -- auto reload the rules when the files change
+  watchRules: true
+
+  # -- list of locale rules to load, they will be concatenated into a single config map
+  rulesFiles:
+    - rules.yaml
+    - rules_override.yaml
+
+  # -- deduplication of the Falco events
+  deduplication:
+    # -- enable the leader election for cluster mode
+    leaderElection: true
+    # -- duration in seconds for the deduplication time window
+    timeWindowSeconds: 5
+
+  # -- print in stdout all received events, not only those which match a rule
+  printAllEvents: false
+
+  # -- open telemetry parameters
+  otel:
+    # -- enable otel traces
+    tracesEnabled: false
+    # -- enable otel metrics
+    metricsEnabled: false
+    # -- collector port
+    collectorPort: 4317
+    # -- collector endpoint
+    collectorEndpoint: ""
+    # -- use insecure grpc
+    collectorUseInsecureGrpc: false
+
+  # -- notifiers (See https://docs.falco-talon.org/docs/notifiers/list/ for the settings)
+  notifiers:
+    # -- slack
+    slack:
+      # -- webhook url
+      webhookUrl: ""
+      # -- icon
+      icon: "https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg"
+      # -- username
+      username: "Falco Talon"
+      # -- footer
+      footer: "https://github.com/falco-talon/falco-talon"
+      # -- format
+      format: "long"
+    # -- webhook
+    webhook:
+      # -- url
+      url: ""
+    # -- smtp
+    smtp:
+      # -- host:port
+      hostPort: ""
+      # -- from
+      from: ""
+      # -- to
+      to: ""
+      # -- user
+      user: ""
+      # -- password
+      password: ""
+      # -- format
+      format: "html"
+      # -- enable tls
+      tls: false
+    # -- loki
+    loki:
+      # -- host:port
+      hostPort: ""
+      # -- user
+      user: ""
+      # -- api key
+      apiKey: ""
+      # -- tenant
+      tenant: ""
+      # -- custom headers
+      customHeaders: []
+    # -- elasticsearch
+    elasticsearch:
+      # -- url
+      url: ""
+      # -- create the index template
+      createIndexTemplate: true
+      # -- number of shards
+      numberOfShards: 1
+      # -- number of replicas
+      numberOfReplicas: 1
+
+  # -- aws
+  aws:
+    # -- role arn
+    roleArn: ""
+    # -- external id
+    externalId: ""
+    # -- region (if not specified, default region from provider credential chain will be used)
+    region: ""
+    # -- access key (if not specified, default access_key from provider credential chain will be used)
+    accesKey: ""
+    # -- secret key (if not specified, default secret_key from provider credential chain will be used)
+    secretKey: ""
+
+  # -- minio
+  minio:
+    # -- endpoint
+    endpoint: ""
+    # -- access key
+    accessKey: ""
+    # -- secret key
+    secretKey: ""
+    # -- use ssl
+    useSsl: false
+
+# -- serviceMonitor holds the configuration for the ServiceMonitor CRD.
+serviceMonitor:
+  # -- enable the deployment of a Service Monitor for the Prometheus Operator.
+  enabled: false
+  # -- portname at which the metrics are exposed
+  port: http
+  # -- path at which the metrics are exposed
+  path: /metrics
+  # -- additionalLabels specifies labels to be added on the Service Monitor.
+  additionalLabels: {}
+  # -- interval specifies the time interval at which Prometheus should scrape metrics from the service.
+  interval: "30s"
+  # -- scheme specifies network protocol used by the metrics endpoint. In this case HTTP.
+  scheme: http
+  # -- scrapeTimeout determines the maximum time Prometheus should wait for a target to respond to a scrape request.
+  # If the target does not respond within the specified timeout, Prometheus considers the scrape as failed for
+  # that target.
+  scrapeTimeout: "10s"
+  # -- relabelings configures the relabeling rules to apply the target’s metadata labels.
+  relabelings: []
+  # -- targetLabels defines the labels which are transferred from the associated Kubernetes service object onto the ingested metrics.
+  targetLabels: []
+  # -- tlsConfig specifies TLS (Transport Layer Security) configuration for secure communication when
+  # scraping metrics from a service. It allows you to define the details of the TLS connection, such as
+  # CA certificate, client certificate, and client key. Currently, the k8s-metacollector does not support
+  # TLS configuration for the metrics endpoint.
+  tlsConfig: {}
+    # insecureSkipVerify: false
+    # caFile: /path/to/ca.crt
+    # certFile: /path/to/client.crt
+    # keyFile: /path/to/client.key
