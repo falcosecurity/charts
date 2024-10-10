@@ -180,7 +180,7 @@ config:
       # -- username
       username: "Falco Talon"
       # -- footer
-      footer: "https://github.com/falco-talon/falco-talon"
+      footer: "https://github.com/falcosecurity/falco-talon"
       # -- format
       format: "long"
     # -- webhook
