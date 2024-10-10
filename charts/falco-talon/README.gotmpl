@@ -1,6 +1,6 @@
 # Falco Talon
 
-![release](https://flat.badgen.net/github/release/falco-talon/falco-talon/latest?color=green) ![last commit](https://flat.badgen.net/github/last-commit/falco-talon/falco-talon) ![licence](https://flat.badgen.net/badge/license/MIT/blue) ![docker pulls](https://flat.badgen.net/docker/pulls/issif/falco-talon?icon=docker)
+![release](https://flat.badgen.net/github/release/falcosecurity/falco-talon/latest?color=green) ![last commit](https://flat.badgen.net/github/last-commit/falcosecurity/falco-talon) ![licence](https://flat.badgen.net/badge/license/Apache2.0/blue) ![docker pulls](https://flat.badgen.net/docker/pulls/issif/falco-talon?icon=docker)
 
 ## Description
 
@@ -8,26 +8,41 @@
 
 ## Architecture
 
-`Falco Talon` can receive the `events` from [`Falco`](https://falco.org) or [`Falcosidekick`](https://github.com/falco-talon/falcosidekick):
+`Falco Talon` can receive the `events` from [`Falco`](https://falco.org) or [`Falcosidekick`](https://github.com/falcosecurity/falcosidekick):
+
+```mermaid
+flowchart LR
+    falco
+    falcosidekick
+    falco-talon
+    falco -- event --> falcosidekick
+    falco -- event --> falco-talon
+    falcosidekick -- event --> falco-talon
+    kubernetes -- context --> falco-talon
+    falco-talon -- action --> aws
+    falco-talon -- output --> minio
+    falco-talon -- action --> kubernetes
+    falco-talon -- notification --> slack
+```
 
 ## Documentation
 
 The full documentation is available on its own website: [https://docs.falco-talon.org/docs](https://docs.falco-talon.org/docs).
 
-## Helm
-
-The helm chart is available in the folder [`deployment/helm`](https://github.com/falco-talon/falco-talon/tree/main/deployment/helm).
-
-Two config files are provided:
-* `values.yaml` allows you to configure `Falcon Talon` and the deployment
-* `rules.yaml` contains rules to set
-
-### Install Falco Talon
+## Installation
 
 ```shell
-git clone https://github.com/falco-talon/falco-talon.git
-cd deployment/helm/
-helm upgrade -i falco-talon . -n falco --create-namespace -f values.yaml
+helm repo add falcosecurity https://falcosecurity.github.io/charts  
+helm repo update
+helm install falco-talon falcosecurity/falco-talon -n falco --create-namespace -f values.yaml
+```
+
+### Update the rules
+
+Update `rules.yaml` then:
+
+```
+helm upgrade falco-talon falcosecurity/falco-talon -n falco -f values.yaml
 ```
 
 ### Uninstall Falco Talon
@@ -36,16 +51,16 @@ helm upgrade -i falco-talon . -n falco --create-namespace -f values.yaml
 helm delete falco-talon -n falco
 ````
 
-### Configuration
+## Configuration
 
 {{ template "chart.valuesSection" . }}
 
-## Configure Falcosidekick
+## Connect Falcosidekick
 
 Once you have installed `Falco Talon` with Helm, you need to connect `Falcosidekick` by adding the flag `--set falcosidekick.config.webhook.address=http://falco-talon:2803`
 
 ```shell
-helm upgrade -i falco falco-talon/falco --namespace falco \
+helm upgrade -i falco falcosecurity/falco --namespace falco \
   --create-namespace \
   --set tty=true \
   --set falcosidekick.enabled=true \
