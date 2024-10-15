@@ -58,7 +58,7 @@ helm delete falco-talon -n falco
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | affinity |
-| config | object | `{"aws":{"accesKey":"","externalId":"","region":"","roleArn":"","secretKey":""},"deduplication":{"leaderElection":true,"timeWindowSeconds":5},"defaultNotifiers":["k8sevents"],"listenAddress":"0.0.0.0","listenPort":2803,"minio":{"accessKey":"","endpoint":"","secretKey":"","useSsl":false},"notifiers":{"elasticsearch":{"createIndexTemplate":true,"numberOfReplicas":1,"numberOfShards":1,"url":""},"loki":{"apiKey":"","customHeaders":[],"hostPort":"","tenant":"","user":""},"slack":{"footer":"https://github.com/falcosecurity/falco-talon","format":"long","icon":"https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg","username":"Falco Talon","webhookUrl":""},"smtp":{"format":"html","from":"","hostPort":"","password":"","tls":false,"to":"","user":""},"webhook":{"url":""}},"otel":{"collectorEndpoint":"","collectorPort":4317,"collectorUseInsecureGrpc":false,"metricsEnabled":false,"tracesEnabled":false},"printAllEvents":false,"rulesFiles":["rules.yaml","rules_override.yaml"],"watchRules":true}` | config of Falco Talon (See https://docs.falco-talon.org/docs/configuration/) |
+| config | object | `{"aws":{"accesKey":"","externalId":"","region":"","roleArn":"","secretKey":""},"deduplication":{"leaderElection":true,"timeWindowSeconds":5},"defaultNotifiers":["k8sevents"],"listenAddress":"0.0.0.0","listenPort":2803,"minio":{"accessKey":"","endpoint":"","secretKey":"","useSsl":false},"notifiers":{"elasticsearch":{"createIndexTemplate":true,"numberOfReplicas":1,"numberOfShards":1,"url":""},"loki":{"apiKey":"","customHeaders":[],"hostPort":"","tenant":"","user":""},"slack":{"footer":"https://github.com/falcosecurity/falco-talon","format":"long","icon":"https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg","username":"Falco Talon","webhookUrl":""},"smtp":{"format":"html","from":"","hostPort":"","password":"","tls":false,"to":"","user":""},"webhook":{"url":""}},"otel":{"collectorEndpoint":"","collectorPort":4317,"collectorUseInsecureGrpc":false,"metricsEnabled":false,"tracesEnabled":false},"printAllEvents":false,"watchRules":true}` | config of Falco Talon (See https://docs.falco-talon.org/docs/configuration/) |
 | config.aws | object | `{"accesKey":"","externalId":"","region":"","roleArn":"","secretKey":""}` | aws |
 | config.aws.accesKey | string | `""` | access key (if not specified, default access_key from provider credential chain will be used) |
 | config.aws.externalId | string | `""` | external id |
@@ -111,8 +111,8 @@ helm delete falco-talon -n falco
 | config.otel.metricsEnabled | bool | `false` | enable otel metrics |
 | config.otel.tracesEnabled | bool | `false` | enable otel traces |
 | config.printAllEvents | bool | `false` | print in stdout all received events, not only those which match a rule |
-| config.rulesFiles | list | `["rules.yaml","rules_override.yaml"]` | list of locale rules to load, they will be concatenated into a single config map |
 | config.watchRules | bool | `true` | auto reload the rules when the files change |
+| customRules | object | `{}` | Third party rules enabled for Falco. More info on the dedicated section in README.md file. |
 | extraEnv | list | `[{"name":"LOG_LEVEL","value":"warning"}]` | extra env |
 | fullnameOverride | string | `""` | Same as nameOverride but for the fullname. |
 | image | object | `{"pullPolicy":"Always","registry":"falco.docker.scarf.sh","repository":"issif/falco-talon","tag":""}` | image parameters |

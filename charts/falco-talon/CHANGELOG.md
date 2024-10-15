@@ -6,6 +6,7 @@ numbering uses [semantic versioning](http://semver.org).
 ## 0.1.3 - 2024-10-15
 
 - Support resources name and namespace overrides
+- Fix issues to use custom rules
 
 ## 0.1.2 - 2024-10-14
 

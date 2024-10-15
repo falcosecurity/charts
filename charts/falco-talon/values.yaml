@@ -145,11 +145,6 @@ config:
   # -- auto reload the rules when the files change
   watchRules: true
 
-  # -- list of locale rules to load, they will be concatenated into a single config map
-  rulesFiles:
-    - rules.yaml
-    - rules_override.yaml
-
   # -- deduplication of the Falco events
   deduplication:
     # -- enable the leader election for cluster mode
@@ -285,3 +280,36 @@ serviceMonitor:
     # caFile: /path/to/ca.crt
     # certFile: /path/to/client.crt
     # keyFile: /path/to/client.key
+
+# -- Third party rules enabled for Falco-talon. More info on the dedicated section in README.md file.
+customRules:
+  {}
+  # Although Falco comes with a nice default rule set for detecting weird
+  # behavior in containers, our users are going to customize the run-time
+  # security rule sets or policies for the specific container images and
+  # applications they run. This feature can be handled in this section.
+  #
+  # Example:
+  #
+  # rules.yaml: |-
+  #   - action: Terminate Pod
+  #     actionner: kubernetes:terminate
+  #     parameters:
+  #       ignore_daemonsets: true
+  #       ignore_statefulsets: true
+  #       grace_period_seconds: 2
+
+  #   - action: Label Pod as Suspicious
+  #     actionner: kubernetes:label
+  #     parameters:
+  #       labels:
+  #         analysis/status: "suspicious"
+
+  #   - rule: Terminal shell in container
+  #     match:
+  #       rules:
+  #         - Terminal shell in container
+  #       output_fields:
+  #         - k8s.ns.name!=kube-system, k8s.ns.name!=falco
+  #     actions:
+  #       - action: Label Pod as Suspicious
