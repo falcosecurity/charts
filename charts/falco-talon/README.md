@@ -114,6 +114,7 @@ helm delete falco-talon -n falco
 | config.rulesFiles | list | `["rules.yaml","rules_override.yaml"]` | list of locale rules to load, they will be concatenated into a single config map |
 | config.watchRules | bool | `true` | auto reload the rules when the files change |
 | extraEnv | list | `[{"name":"LOG_LEVEL","value":"warning"}]` | extra env |
+| fullnameOverride | string | `""` | Same as nameOverride but for the fullname. |
 | image | object | `{"pullPolicy":"Always","registry":"falco.docker.scarf.sh","repository":"issif/falco-talon","tag":""}` | image parameters |
 | image.pullPolicy | string | `"Always"` | The image pull policy |
 | image.registry | string | `"falco.docker.scarf.sh"` | The image registry to pull from |
@@ -125,7 +126,8 @@ helm delete falco-talon -n falco
 | ingress.enabled | bool | `false` | enable the ingress |
 | ingress.hosts | list | `[{"host":"falco-talon.local","paths":[{"path":"/"}]}]` | hosts |
 | ingress.tls | list | `[]` | tls |
-| nameOverride | string | `""` | override name |
+| nameOverride | string | `""` | Put here the new name if you want to override the release name used for Falco-talon components. |
+| namespaceOverride | string | `""` | Override the deployment namespace |
 | nodeSelector | object | `{}` | node selector |
 | podAnnotations | object | `{}` | pod annotations |
 | podSecurityContext | object | `{"fsGroup":1234,"runAsUser":1234}` | pod security context |

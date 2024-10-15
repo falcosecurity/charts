@@ -32,8 +32,12 @@ podSecurityContext:
 imagePullSecrets: []
 # - registrySecretName
 
-# -- override name
+# -- Put here the new name if you want to override the release name used for Falco-talon components.
 nameOverride: ""
+# -- Same as nameOverride but for the fullname.
+fullnameOverride: ""
+# -- Override the deployment namespace
+namespaceOverride: ""
 
 # -- extra env
 extraEnv:

@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $name := include "falco-talon.name" . -}}
+{{- $name := include "falco-talon.fullname" . -}}
 {{- $ingressApiIsStable := eq (include "falco-talon.ingress.isStable" .) "true" -}}
 {{- $ingressSupportsPathType := eq (include "falco-talon.ingress.supportsPathType" .) "true" -}}
 ---
@@ -7,7 +7,7 @@ apiVersion: {{ include "falco-talon.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
   name: {{ $name }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "falco-talon.namespace" . }}
   labels:
     {{- include "falco-talon.labels" . | nindent 4 }}
     {{- with .Values.ingress.annotations }}

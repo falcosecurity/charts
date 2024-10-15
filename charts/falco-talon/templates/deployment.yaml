@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "falco-talon.name" . }}
+  name: {{ include "falco-talon.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "falco-talon.labels" . | nindent 4 }}
@@ -10,7 +10,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "falco-talon.name" . }}
+      app.kubernetes.io/name: {{ include "falco-talon.fullname" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
@@ -22,7 +22,7 @@ spec:
       annotations:
         timestamp: {{ now }}
     spec:
-      serviceAccountName: {{ include "falco-talon.name" . }}
+      serviceAccountName: {{ include "falco-talon.fullname" . }}
       {{- if .Values.priorityClassName }}
       priorityClassName: "{{ .Values.priorityClassName }}"
       {{- end }}
@@ -88,7 +88,7 @@ spec:
       volumes:
         - name: "rules"
           configMap:
-            name: "{{ include "falco-talon.name" . }}-rules"
+            name: "{{ include "falco-talon.fullname" . }}-rules"
         - name: "config"
           secret:
-            secretName: "{{ include "falco-talon.name" . }}-config"
+            secretName: "{{ include "falco-talon.fullname" . }}-config"
