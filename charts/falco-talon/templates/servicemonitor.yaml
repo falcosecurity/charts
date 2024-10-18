@@ -8,8 +8,8 @@ metadata:
     {{- with .Values.serviceMonitor.additionalLabels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  name: {{ include "falco-talon.name" . }}
-  namespace: {{ .Release.Namespace }}
+  name: {{ include "falco-talon.fullname" . }}
+  namespace: {{ include "falco-talon.namespace" . }}
 spec:
   endpoints:
     - port: {{ .Values.serviceMonitor.port }}

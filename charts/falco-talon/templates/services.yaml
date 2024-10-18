@@ -2,8 +2,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "falco-talon.name" . }}
-  namespace: {{ .Release.Namespace }}
+  name: {{ include "falco-talon.fullname" . }}
+  namespace: {{ include "falco-talon.namespace" . }}
   labels:
     {{- include "falco-talon.labels" . | nindent 4 }}
   {{- with .Values.service.annotations }}
