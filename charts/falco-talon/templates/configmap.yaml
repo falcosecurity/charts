@@ -6,7 +6,7 @@ metadata:
     {{- include "falco-talon.labels" . | nindent 4 }}
 data:
   rules.yaml: |-
-{{- range $file := .Values.config.rulesFiles -}}
-{{ $fileContent := $.Files.Get $file }}
-{{- $fileContent | nindent 4 -}}
-{{- end -}}
+    {{ $.Files.Get "rules.yaml" | nindent 4 }}
+    {{- if .Values.config.rulesOverride }}
+    {{ .Values.config.rulesOverride | nindent 4 }}
+    {{- end }}
