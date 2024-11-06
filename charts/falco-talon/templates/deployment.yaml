@@ -15,12 +15,13 @@ spec:
   template:
     metadata:
       labels:
-      {{- include "falco-talon.labels" . | nindent 8 }}
-      {{- if .Values.podAnnotations }}
-        {{ toYaml .Values.podAnnotations | indent 8 }}
-      {{- end }}
+        app.kubernetes.io/name: {{ include "falco-talon.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- if .Values.podAnnotations }}
+          {{ toYaml .Values.podAnnotations | indent 8 }}
+        {{- end }}
       annotations:
-        timestamp: {{ now }}
+        secret-checksum: {{ (lookup "v1" "Secret" .Release.Namespace (include "falco-talon.name" . | cat "-config")).data | toJson | sha256sum }}
     spec:
       serviceAccountName: {{ include "falco-talon.name" . }}
       {{- if .Values.priorityClassName }}

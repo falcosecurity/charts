@@ -62,3 +62,12 @@ Return if ingress supports pathType.
 {{- define "falco-talon.ingress.supportsPathType" -}}
   {{- or (eq (include "falco-talon.ingress.isStable" .) "true") (and (eq (include "falco-talon.ingress.apiVersion" .) "networking.k8s.io/v1beta1") (semverCompare ">= 1.18-0" .Capabilities.KubeVersion.Version)) -}}
 {{- end -}}
+
+{{/*
+Validate if either serviceAccount create is set to true or serviceAccount name is passed
+*/}}
+{{- define "falco-talon.validateServiceAccount" -}}
+  {{- if and (not .Values.rbac.serviceAccount.create) (not .Values.rbac.serviceAccount.name) -}}
+  {{- fail ".Values.rbac.serviceAccount.create is set to false and .Values.rbac.serviceAccount.name is not provided or is provided as empty string." -}}
+  {{- end -}}
+{{- end -}}

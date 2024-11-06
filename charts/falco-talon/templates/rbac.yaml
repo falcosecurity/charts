@@ -1,4 +1,6 @@
+{{- include "falco-talon.validateServiceAccount" . -}}
 ---
+{{- if .Values.rbac.serviceAccount.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -6,6 +8,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "falco-talon.labels" . | nindent 4 }}
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -205,5 +208,9 @@ roleRef:
   name: {{ include "falco-talon.name" . }}
 subjects:
 - kind: ServiceAccount
+  {{- if .Values.rbac.serviceAccount.create }}
   name: {{ include "falco-talon.name" . }}
+  {{- else }}
+  name: {{ .Values.rbac.serviceAccount.name }}
+  {{- end }}
   namespace: {{ .Release.Namespace }}
