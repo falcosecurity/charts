@@ -7,6 +7,6 @@ metadata:
 data:
   rules.yaml: |-
 {{- range $file := .Values.config.rulesFiles -}}
-{{ $fileContent := $.Files.Get . }}
+{{ $fileContent := $.Files.Get $file }}
 {{- $fileContent | nindent 4 -}}
 {{- end -}}

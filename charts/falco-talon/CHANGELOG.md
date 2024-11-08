@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.1.3 - 2024-11-08
+
+- change the key for the range over the rules files
+
 ## 0.1.2 - 2024-10-14
 
 - remove all refs to the previous org
