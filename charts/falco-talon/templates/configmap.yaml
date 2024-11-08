@@ -1,12 +1,14 @@
+{{- if .Values.customRules }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "falco-talon.name" . }}-rules
+  name: {{ include "falco-talon.fullname" . }}-rules
+  namespace: {{ include "falco-talon.namespace" . }}
   labels:
     {{- include "falco-talon.labels" . | nindent 4 }}
 data:
-  rules.yaml: |-
-{{- range $file := .Values.config.rulesFiles -}}
-{{ $fileContent := $.Files.Get . }}
-{{- $fileContent | nindent 4 -}}
-{{- end -}}
+{{- range $file, $content :=  .Values.customRules }}
+  {{ $file }}: |-
+{{ $content | indent 4}}
+{{- end }}
+{{- end }}
