@@ -649,7 +649,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | replicaCount | int | `2` | number of running pods |
 | resources | object | `{}` | The resources for falcosdekick pods |
 | securityContext | object | `{}` | Sidekick container securityContext |
-| service.annotations | object | `{}` | Service annotations |
+| service.annotations | object | `{"prometheus.io/scrape":"true"}` | Service annotations |
 | service.port | int | `2801` | Service port |
 | service.type | string | `"ClusterIP"` | Service type |
 | serviceMonitor.additionalLabels | object | `{}` | specify Additional labels to be added on the Service Monitor. |
