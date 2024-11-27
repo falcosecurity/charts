@@ -181,7 +181,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.alertmanager.expireafter | string | `""` | if set to a non-zero value, alert expires after that time in seconds (default: 0) |
 | config.alertmanager.extraannotations | string | `""` | comma separated list of annotations composed of a ':' separated name and value that is added to the Alerts. Example: my_annotation_1:my_value_1, my_annotation_1:my_value_2 |
 | config.alertmanager.extralabels | string | `""` | comma separated list of labels composed of a ':' separated name and value that is added to the Alerts. Example: my_label_1:my_value_1, my_label_1:my_value_2 |
-| config.alertmanager.hostport | string | `""` | AlertManager <http://host:port>, if not `empty`, AlertManager is *enabled* |
+| config.alertmanager.hostport | string | `""` | Comma separated list of http://{domain or ip}:{port} that will all receive the payload, if not empty, Alertmanager output is enabled |
 | config.alertmanager.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.alertmanager.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.aws.accesskeyid | string | `""` | AWS Access Key Id (optionnal if you use EC2 Instance Profile) |
@@ -236,6 +236,10 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.datadog.apikey | string | `""` | Datadog API Key, if not `empty`, Datadog output is *enabled* |
 | config.datadog.host | string | `""` | Datadog host. Override if you are on the Datadog EU site. Defaults to american site with "<https://api.datadoghq.com>" |
 | config.datadog.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.datadoglogs.apikey | string | `""` | Datadog API Key, if not empty, Datadog Logs output is enabled |
+| config.datadoglogs.host | string | `""` | Datadog host. Override if you are on the Datadog EU site. Defaults to american site with "https://http-intake.logs.datadoghq.com/" |
+| config.datadoglogs.minimumpriority | string | `""` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default) |
+| config.datadoglogs.service | string | `""` | The name of the application or service generating the log events. |
 | config.debug | bool | `false` | DEBUG environment variable |
 | config.discord.icon | string | `""` | Discord icon (avatar) |
 | config.discord.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
@@ -247,20 +251,28 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.dynatrace.apiurl | string | `""` | Dynatrace API url, use https://ENVIRONMENTID.live.dynatrace.com/api for Dynatrace SaaS and https://YOURDOMAIN/e/ENVIRONMENTID/api for Dynatrace Managed, more info : https://dt-url.net/ej43qge |
 | config.dynatrace.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.dynatrace.minimumpriority | string | `""` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" |
+| config.elasticsearch.apikey | string | `""` | Use this APIKey to authenticate to Elasticsearch if the APIKey is not empty (default: "") |
+| config.elasticsearch.batching | object | `{"batchsize":5242880,"enabled":true,"flushinterval":"1s"}` | batching configuration, improves throughput dramatically utilizing _bulk Elasticsearch API |
+| config.elasticsearch.batching.batchsize | int | `5242880` | batch size in bytes (default: 5 MB) |
+| config.elasticsearch.batching.enabled | bool | `true` | if true enables batching |
+| config.elasticsearch.batching.flushinterval | string | `"1s"` | batch fush interval (default: 1s) |
 | config.elasticsearch.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.elasticsearch.createindextemplate | bool | `false` | Create an index template (default: false) |
 | config.elasticsearch.customheaders | string | `""` | a list of comma separated custom headers to add, syntax is "key:value,key:value" |
+| config.elasticsearch.enablecompression | bool | `false` | if true enables gzip compression for http requests (default: false) |
 | config.elasticsearch.flattenfields | bool | `false` | Replace . by _ to avoid mapping conflicts, force to true if createindextemplate==true (default: false) |
 | config.elasticsearch.hostport | string | `""` | Elasticsearch <http://host:port>, if not `empty`, Elasticsearch is *enabled* |
 | config.elasticsearch.index | string | `"falco"` | Elasticsearch index |
+| config.elasticsearch.maxconcurrentrequests | int | `1` | max number of concurrent http requests (default: 1) |
 | config.elasticsearch.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.elasticsearch.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.elasticsearch.numberofreplicas | int | `3` | Number of replicas set by the index template (default: 3) |
 | config.elasticsearch.numberofshards | int | `3` | Number of shards set by the index template (default: 3) |
-| config.elasticsearch.password | string | `""` | use this password to authenticate to Elasticsearch if the password is not empty |
-| config.elasticsearch.suffix | string | `"daily"` |  |
+| config.elasticsearch.password | string | `""` | Use this password to authenticate to Elasticsearch if the password is not empty |
+| config.elasticsearch.pipeline | string | `""` | Optional ingest pipeline name |
+| config.elasticsearch.suffix | string | `"daily"` | Date suffix for index rotation : daily, monthly, annually, none |
 | config.elasticsearch.type | string | `"_doc"` | Elasticsearch document type |
-| config.elasticsearch.username | string | `""` | use this username to authenticate to Elasticsearch if the username is not empty |
+| config.elasticsearch.username | string | `""` | Use this username to authenticate to Elasticsearch if the username is not empty |
 | config.existingSecret | string | `""` | Existing secret with configuration |
 | config.extraArgs | list | `[]` | Extra command-line arguments |
 | config.extraEnv | list | `[]` | Extra environment variables |
@@ -411,6 +423,14 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.opsgenie.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.opsgenie.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
 | config.opsgenie.region | `us` or `eu` | `""` | region of your domain |
+| config.otlp.metrics.checkcert | bool | `true` | Set to false if you want to skip TLS certificate validation (only with https) (default: true) |
+| config.otlp.metrics.endpoint | string | `""` | OTLP endpoint, typically in the form http{s}://{domain or ip}:4318/v1/metrics |
+| config.otlp.metrics.extraattributes | string | `""` | Comma-separated list of fields to use as labels additionally to source, priority, rule, hostname, tags, k8s_ns_name, k8s_pod_name and custom_fields |
+| config.otlp.metrics.extraenvvars | list | `[]` | Extra env vars (override the other settings) (default: "") |
+| config.otlp.metrics.headers | string | `""` | List of headers to apply to all outgoing metrics in the form of "some-key=some-value,other-key=other-value" (default: "") |
+| config.otlp.metrics.minimumpriority | string | `""` | Minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default: "") |
+| config.otlp.metrics.protocol | string | `"grpc"` | OTLP transport protocol to be used for metrics data; it can be "grpc" or "http/protobuf" (default: "grpc") |
+| config.otlp.metrics.timeout | int | `1000` | OTLP timeout for outgoing metrics in milliseconds (default: "" which uses SDK default: 10000) |
 | config.otlp.traces.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.otlp.traces.duration | int | `1000` | Artificial span duration in milliseconds (default: 1000) |
 | config.otlp.traces.endpoint | string | `""` | OTLP endpoint in the form of http://{domain or ip}:4318/v1/traces, if not empty, OTLP Traces output is enabled |
@@ -419,7 +439,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.otlp.traces.minimumpriority | string | `""` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" |
 | config.otlp.traces.protocol | string | `""` | OTLP protocol http/json, http/protobuf, grpc (default: "" which uses SDK default: http/json) |
 | config.otlp.traces.synced | bool | `false` | Set to true if you want traces to be sent synchronously (default: false) |
-| config.otlp.traces.timeout | string | `""` | OTLP timeout: timeout value in milliseconds (default: "" which uses SDK default: 10000) |
+| config.otlp.traces.timeout | int | `1000` | OTLP timeout: timeout value in milliseconds (default: "" which uses SDK default: 10000) |
 | config.outputFieldFormat | string | `""` |  |
 | config.pagerduty.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.pagerduty.region | string | `"us"` | Pagerduty Region, can be 'us' or 'eu' |
@@ -513,6 +533,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.tekton.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.telegram.chatid | string | `""` | telegram Identifier of the shared chat |
 | config.telegram.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.telegram.messagethreadid | string | `""` | Telegram individual chats within the group |
 | config.telegram.minimumpriority | string | `""` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" |
 | config.telegram.token | string | `""` | telegram bot authentication token |
 | config.templatedfields | string | `""` | a list of escaped comma separated Go templated fields to add to falco events, syntax is "key:template\,key:template" |
@@ -543,6 +564,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.wavefront.flushintervalseconds | int | `1` | Wavefront flush interval in seconds. Defaults to 1 |
 | config.wavefront.metricname | string | `"falco.alert"` | Metric to be created in Wavefront. Defaults to falco.alert |
 | config.wavefront.minimumpriority | string | `"debug"` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.webex.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.webex.webhookurl | string | `""` | Webex WebhookURL, if not empty, Webex output is enabled |
 | config.webhook.address | string | `""` | Webhook address, if not empty, Webhook output is *enabled* |
 | config.webhook.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.webhook.customHeaders | string | `""` | a list of comma separated custom headers to add, syntax is "key:value\,key:value" |
@@ -570,11 +593,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |
-| image | object | `{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falcosidekick","tag":"2.29.0"}` | number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falcosidekick","tag":"2.30.0"}` | number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
 | image.registry | string | `"docker.io"` | The image registry to pull from |
 | image.repository | string | `"falcosecurity/falcosidekick"` | The image repository to pull from |
-| image.tag | string | `"2.29.0"` | The image tag to pull |
+| image.tag | string | `"2.30.0"` | The image tag to pull |
 | imagePullSecrets | list | `[]` | Secrets for the registry |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Whether to create the ingress |

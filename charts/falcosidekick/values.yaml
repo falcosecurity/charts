@@ -14,7 +14,7 @@ image:
   # -- The image repository to pull from
   repository: falcosecurity/falcosidekick
   # -- The image tag to pull
-  tag: 2.29.0
+  tag: 2.30.0
   # -- The image pull policy
   pullPolicy: IfNotPresent
 
@@ -240,13 +240,23 @@ config:
   datadog:
     # -- Datadog API Key, if not `empty`, Datadog output is *enabled*
     apikey: ""
-    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
-    minimumpriority: ""
     # -- Datadog host. Override if you are on the Datadog EU site. Defaults to american site with "<https://api.datadoghq.com>"
     host: ""
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
+
+  datadoglogs:
+    # -- Datadog API Key, if not empty, Datadog Logs output is enabled
+    apikey: ""
+    # -- Datadog host. Override if you are on the Datadog EU site. Defaults to american site with "https://http-intake.logs.datadoghq.com/"
+    host: ""
+    # -- The name of the application or service generating the log events.
+    service: ""
+    # -- minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default)
+    minimumpriority: ""
 
   alertmanager:
-    # -- AlertManager <http://host:port>, if not `empty`, AlertManager is *enabled*
+    # -- Comma separated list of http://{domain or ip}:{port} that will all receive the payload, if not empty, Alertmanager output is enabled
     hostport: ""
     # -- alertmanager endpoint on which falcosidekick posts alerts, choice is: `"/api/v1/alerts" or "/api/v2/alerts" , default is "/api/v1/alerts"`
     endpoint: "/api/v1/alerts"
@@ -276,11 +286,15 @@ config:
     index: "falco"
     # -- Elasticsearch document type
     type: "_doc"
-    # date suffix for index rotation : daily, monthly, annually, none
+    # -- Optional ingest pipeline name
+    pipeline: ""
+    # -- Date suffix for index rotation : daily, monthly, annually, none
     suffix: "daily"
-    # -- use this username to authenticate to Elasticsearch if the username is not empty
+    # -- Use this APIKey to authenticate to Elasticsearch if the APIKey is not empty (default: "")
+    apikey: ""
+    # -- Use this username to authenticate to Elasticsearch if the username is not empty
     username: ""
-    # -- use this password to authenticate to Elasticsearch if the password is not empty
+    # -- Use this password to authenticate to Elasticsearch if the password is not empty
     password: ""
     # -- Replace . by _ to avoid mapping conflicts, force to true if createindextemplate==true (default: false)
     flattenfields: false
@@ -296,6 +310,18 @@ config:
     mutualtls: false
     # -- check if ssl certificate of the output is valid
     checkcert: true
+    # -- if true enables gzip compression for http requests (default: false)
+    enablecompression: false
+    # -- max number of concurrent http requests (default: 1)
+    maxconcurrentrequests: 1
+    # -- batching configuration, improves throughput dramatically utilizing _bulk Elasticsearch API
+    batching:
+      # -- if true enables batching
+      enabled: true
+      # -- batch size in bytes (default: 5 MB)
+      batchsize: 5242880
+      # -- batch fush interval (default: 1s)
+      flushinterval: 1s
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
 
@@ -914,6 +940,8 @@ config:
     token: ""
     # -- telegram Identifier of the shared chat
     chatid: ""
+    # -- Telegram individual chats within the group
+    messagethreadid: ""
     # -- check if ssl certificate of the output is valid
     checkcert: true
     # -- minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or ""
@@ -972,7 +1000,7 @@ config:
       # -- OTLP protocol http/json, http/protobuf, grpc (default: "" which uses SDK default: http/json)
       protocol: ""
       # -- OTLP timeout: timeout value in milliseconds (default: "" which uses SDK default: 10000)
-      timeout: ""
+      timeout: 1000
       # -- OTLP headers: list of headers to apply to all outgoing traces in the form of "some-key=some-value,other-key=other-value" (default: "")
       headers: ""
       # -- Set to true if you want traces to be sent synchronously (default: false)
@@ -983,10 +1011,29 @@ config:
       extraenvvars: {}
         # OTEL_EXPORTER_OTLP_TRACES_TIMEOUT: 10000
         # OTEL_EXPORTER_OTLP_TIMEOUT: 10000
-      # -- minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or ""
-      minimumpriority: ""
       # -- check if ssl certificate of the output is valid
       checkcert: true
+      # -- minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or ""
+      minimumpriority: ""
+    metrics:
+      # -- OTLP endpoint, typically in the form http{s}://{domain or ip}:4318/v1/metrics
+      endpoint: ""
+      # -- OTLP transport protocol to be used for metrics data; it can be "grpc" or "http/protobuf" (default: "grpc")
+      protocol: "grpc"
+      # -- OTLP timeout for outgoing metrics in milliseconds (default: "" which uses SDK default: 10000)
+      timeout: 1000
+      # -- List of headers to apply to all outgoing metrics in the form of "some-key=some-value,other-key=other-value" (default: "")
+      headers: ""
+      # -- Extra env vars (override the other settings) (default: "")
+      extraenvvars: []
+        # - OTEL_EXPORTER_OTLP_METRICS_TIMEOUT: 10000
+        # - OTEL_EXPORTER_OTLP_TIMEOUT: 10000
+      # -- Comma-separated list of fields to use as labels additionally to source, priority, rule, hostname, tags, k8s_ns_name, k8s_pod_name and custom_fields
+      extraattributes: ""
+      # -- Set to false if you want to skip TLS certificate validation (only with https) (default: true)
+      checkcert: true
+      # -- Minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" (default: "")
+      minimumpriority: ""
 
   sumologic:
     # -- Sumologic HTTP Source URL, if not empty, Sumologic output is enabled
@@ -1021,6 +1068,12 @@ config:
     mutualtls: false
     # --  check if ssl certificate of the output is valid
     checkcert: true
+
+  webex:
+    # -- Webex WebhookURL, if not empty, Webex output is enabled
+    webhookurl: ""
+    # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
+    minimumpriority: ""
 
   talon:
     # -- Talon address, if not empty, Talon output is enabled
