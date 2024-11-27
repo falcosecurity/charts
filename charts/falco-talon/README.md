@@ -113,10 +113,10 @@ helm delete falco-talon -n falco
 | config.printAllEvents | bool | `false` | print in stdout all received events, not only those which match a rule |
 | config.watchRules | bool | `true` | auto reload the rules when the files change |
 | extraEnv | list | `[{"name":"LOG_LEVEL","value":"warning"}]` | extra env |
-| image | object | `{"pullPolicy":"Always","registry":"falco.docker.scarf.sh","repository":"issif/falco-talon","tag":""}` | image parameters |
+| image | object | `{"pullPolicy":"Always","registry":"falco.docker.scarf.sh","repository":"falcosecurity/falco-talon","tag":""}` | image parameters |
 | image.pullPolicy | string | `"Always"` | The image pull policy |
 | image.registry | string | `"falco.docker.scarf.sh"` | The image registry to pull from |
-| image.repository | string | `"issif/falco-talon"` | The image repository to pull from |
+| image.repository | string | `"falcosecurity/falco-talon"` | The image repository to pull from |
 | image.tag | string | `""` | Override the image tag to pull |
 | imagePullSecrets | list | `[]` | one or more secrets to be used when pulling images |
 | ingress | object | `{"annotations":{},"enabled":false,"hosts":[{"host":"falco-talon.local","paths":[{"path":"/"}]}],"tls":[]}` | ingress parameters |
