@@ -252,8 +252,8 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.dynatrace.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.dynatrace.minimumpriority | string | `""` | minimum priority of event for using this output, order is emergency|alert|critical|error|warning|notice|informational|debug or "" |
 | config.elasticsearch.apikey | string | `""` | Use this APIKey to authenticate to Elasticsearch if the APIKey is not empty (default: "") |
-| config.elasticsearch.batching | object | `{"batchsize":5242880,"enabled":true,"flushinterval":"1s"}` | batching configuration, improves throughput dramatically utilizing _bulk Elasticsearch API |
-| config.elasticsearch.batching.batchsize | int | `5242880` | batch size in bytes (default: 5 MB) |
+| config.elasticsearch.batching | object | `{"batchsize":"5242880","enabled":true,"flushinterval":"1s"}` | batching configuration, improves throughput dramatically utilizing _bulk Elasticsearch API |
+| config.elasticsearch.batching.batchsize | string | `"5242880"` | batch size in bytes (default: 5 MB) (use string to avoid the conversion into float64 by helm) |
 | config.elasticsearch.batching.enabled | bool | `true` | if true enables batching |
 | config.elasticsearch.batching.flushinterval | string | `"1s"` | batch fush interval (default: 1s) |
 | config.elasticsearch.checkcert | bool | `true` | check if ssl certificate of the output is valid |
