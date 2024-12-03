@@ -318,8 +318,8 @@ config:
     batching:
       # -- if true enables batching
       enabled: true
-      # -- batch size in bytes (default: 5 MB)
-      batchsize: 5242880
+      # -- batch size in bytes (default: 5 MB) (use string to avoid the conversion into float64 by helm)
+      batchsize: "5242880"
       # -- batch fush interval (default: 1s)
       flushinterval: 1s
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
