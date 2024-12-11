@@ -1,0 +1,22 @@
+{{- if .Values.config.grafana.dashboards.falcosidekickLoki.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.name }}
+  {{ if .Values.config.grafana.dashboards.falcosidekickLoki.configMap.namespace }}
+  namespace: {{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.namespace }}
+  {{- else -}}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    {{- include "falcosidekick.labels" .  | nindent 4 }}
+    grafana_dashboard: "1"
+  {{- if .Values.config.grafana.dashboards.falcosidekickLoki.configMap.folder }}
+  annotations:
+    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.folder}}
+    grafana_dashboard_folder: {{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.folder }}
+  {{- end }}
+data:
+  falcosidekick-loki-dashboard.json: |-
+    {{- .Files.Get "dashboards/falcosidekick-loki-dashboard.json" | nindent 4 }}
+ {{- end -}}

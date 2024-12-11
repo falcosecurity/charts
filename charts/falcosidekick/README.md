@@ -310,6 +310,12 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.grafana.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.grafana.customheaders | string | `""` | a list of comma separated custom headers to add, syntax is "key:value,key:value" |
 | config.grafana.dashboardid | string | `""` | annotations are scoped to a specific dashboard. Optionnal. |
+| config.grafana.dashboards | object | `{"falcosidekickLoki":{"configMap":{"folder":"","name":"falcosidekick-loki-dashboard-grafana","namespace":""},"enabled":false}}` | dashboards contains configuration for grafana dashboards. |
+| config.grafana.dashboards.falcosidekickLoki.configMap | object | `{"folder":"","name":"falcosidekick-loki-dashboard-grafana","namespace":""}` | configmaps to be deployed that contain a grafana dashboard. |
+| config.grafana.dashboards.falcosidekickLoki.configMap.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| config.grafana.dashboards.falcosidekickLoki.configMap.name | string | `"falcosidekick-loki-dashboard-grafana"` | name specifies the name for the configmap. |
+| config.grafana.dashboards.falcosidekickLoki.configMap.namespace | string | `""` | namespace specifies the namespace for the configmap. |
+| config.grafana.dashboards.falcosidekickLoki.enabled | bool | `false` | enabled specifies whether this dashboard should be deployed. |
 | config.grafana.hostport | string | `""` | <http://{domain> or ip}:{port}, if not empty, Grafana output is *enabled* |
 | config.grafana.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.grafana.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
