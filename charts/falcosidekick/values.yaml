@@ -368,6 +368,18 @@ config:
     mutualtls: false
     # -- check if ssl certificate of the output is valid
     checkcert: true
+    # -- dashboard for Grafana
+    grafanaDashboard:
+      # -- enabled specifies whether this dashboard should be deployed.
+      enabled: true
+      # --configmaps to be deployed that contain a grafana dashboard.
+      configMap:
+        # -- name specifies the name for the configmap.
+        name: falcosidekick-loki-dashboard-grafana
+        # -- namespace specifies the namespace for the configmap.
+        namespace: ""
+        # -- folder where the dashboard is stored by grafana.
+        folder: ""
 
   prometheus:
     # -- comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields
@@ -722,19 +734,6 @@ config:
     checkcert: true
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
-    # -- dashboards contains configuration for grafana dashboards.
-    dashboards:
-      falcosidekickLoki:
-        # -- enabled specifies whether this dashboard should be deployed.
-        enabled: false
-        # --configmaps to be deployed that contain a grafana dashboard.
-        configMap:
-          # -- name specifies the name for the configmap.
-          name: falcosidekick-loki-dashboard-grafana
-          # -- namespace specifies the namespace for the configmap.
-          namespace: ""
-          # -- folder where the dashboard is stored by grafana.
-          folder: ""
 
   grafanaoncall:
     # -- if not empty, Grafana OnCall output is enabled

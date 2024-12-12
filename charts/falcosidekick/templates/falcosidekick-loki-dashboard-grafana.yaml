@@ -1,20 +1,20 @@
-{{- if .Values.config.grafana.dashboards.falcosidekickLoki.enabled -}}
+{{- if .Values.config.loki.grafanaDashboard.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.name }}
-  {{ if .Values.config.grafana.dashboards.falcosidekickLoki.configMap.namespace }}
-  namespace: {{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.namespace }}
+  name: {{ .Values.config.loki.grafanaDashboard.configMap.name }}
+  {{ if .Values.config.loki.grafanaDashboard.configMap.namespace }}
+  namespace: {{ .Values.config.loki.grafanaDashboard.configMap.namespace }}
   {{- else -}}
   namespace: {{ .Release.Namespace }}
   {{- end }}
   labels:
     {{- include "falcosidekick.labels" .  | nindent 4 }}
     grafana_dashboard: "1"
-  {{- if .Values.config.grafana.dashboards.falcosidekickLoki.configMap.folder }}
+  {{- if .Values.config.loki.grafanaDashboard.configMap.folder }}
   annotations:
-    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.folder}}
-    grafana_dashboard_folder: {{ .Values.config.grafana.dashboards.falcosidekickLoki.configMap.folder }}
+    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.config.loki.grafanaDashboard.configMap.folder}}
+    grafana_dashboard_folder: {{ .Values.config.loki.grafanaDashboard.configMap.folder }}
   {{- end }}
 data:
   falcosidekick-loki-dashboard.json: |-
