@@ -726,7 +726,7 @@ config:
     dashboards:
       falcosidekickLoki:
         # -- enabled specifies whether this dashboard should be deployed.
-        enabled: true
+        enabled: false
         # --configmaps to be deployed that contain a grafana dashboard.
         configMap:
           # -- name specifies the name for the configmap.
