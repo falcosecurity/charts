@@ -729,12 +729,12 @@ config:
         enabled: true
         # --configmaps to be deployed that contain a grafana dashboard.
         configMap:
-            # -- name specifies the name for the configmap.
-            name: falcosidekick-loki-dashboard-grafana
-            # -- namespace specifies the namespace for the configmap.
-            namespace: ""
-            # -- folder where the dashboard is stored by grafana.
-            folder: ""
+          # -- name specifies the name for the configmap.
+          name: falcosidekick-loki-dashboard-grafana
+          # -- namespace specifies the namespace for the configmap.
+          namespace: ""
+          # -- folder where the dashboard is stored by grafana.
+          folder: ""
 
   grafanaoncall:
     # -- if not empty, Grafana OnCall output is enabled
