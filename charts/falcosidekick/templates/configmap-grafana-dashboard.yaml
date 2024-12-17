@@ -1,0 +1,28 @@
+{{- if .Values.grafana.dashboards.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.grafana.dashboards.configMaps.falcosidekick.name }}
+  {{ if .Values.grafana.dashboards.configMaps.falcosidekick.namespace }}
+  namespace: {{ .Values.grafana.dashboards.configMaps.falcosidekick.namespace }}
+  {{- else -}}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    {{- include "falcosidekick.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+    {{- with .Values.customLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.grafana.dashboards.configMaps.falcosidekick.folder }}
+    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.grafana.dashboards.configMaps.falcosidekick.folder}}
+    grafana_dashboard_folder: {{ .Values.grafana.dashboards.configMaps.falcosidekick.folder }}
+    {{- end }}
+    {{- with .Values.customAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+data:
+  falco-dashboard.json: |-
+    {{- .Files.Get "dashboards/falcosidekick-grafana-dashboard.json" | nindent 4 }}
+ {{- end -}}
