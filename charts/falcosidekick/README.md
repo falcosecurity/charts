@@ -599,6 +599,14 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |
+| grafana | object | `{"dashboards":{"configMaps":{"falcosidekick":{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
+| grafana.dashboards | object | `{"configMaps":{"falcosidekick":{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
+| grafana.dashboards.configMaps | object | `{"falcosidekick":{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
+| grafana.dashboards.configMaps.falcosidekick | object | `{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}` | falcosidekick contains the configuration for falcosidekick's dashboard. |
+| grafana.dashboards.configMaps.falcosidekick.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| grafana.dashboards.configMaps.falcosidekick.name | string | `"falcosidekick-grafana-dashboard"` | name specifies the name for the configmap. |
+| grafana.dashboards.configMaps.falcosidekick.namespace | string | `""` | namespace specifies the namespace for the configmap. |
+| grafana.dashboards.enabled | bool | `false` | enabled specifies whether the dashboards should be deployed. |
 | image | object | `{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falcosidekick","tag":"2.30.0"}` | number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
 | image.registry | string | `"docker.io"` | The image registry to pull from |
