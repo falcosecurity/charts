@@ -113,6 +113,14 @@ helm delete falco-talon -n falco
 | config.printAllEvents | bool | `false` | print in stdout all received events, not only those which match a rule |
 | config.watchRules | bool | `true` | auto reload the rules when the files change |
 | extraEnv | list | `[{"name":"LOG_LEVEL","value":"warning"}]` | extra env |
+| grafana | object | `{"dashboards":{"configMaps":{"talon":{"folder":"","name":"falco-talon-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
+| grafana.dashboards | object | `{"configMaps":{"talon":{"folder":"","name":"falco-talon-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
+| grafana.dashboards.configMaps | object | `{"talon":{"folder":"","name":"falco-talon-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
+| grafana.dashboards.configMaps.talon | object | `{"folder":"","name":"falco-talon-grafana-dashboard","namespace":""}` | falco-talon contains the configuration for falco talon's dashboard. |
+| grafana.dashboards.configMaps.talon.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| grafana.dashboards.configMaps.talon.name | string | `"falco-talon-grafana-dashboard"` | name specifies the name for the configmap. |
+| grafana.dashboards.configMaps.talon.namespace | string | `""` | namespace specifies the namespace for the configmap. |
+| grafana.dashboards.enabled | bool | `false` | enabled specifies whether the dashboards should be deployed. |
 | image | object | `{"pullPolicy":"Always","registry":"falco.docker.scarf.sh","repository":"falcosecurity/falco-talon","tag":""}` | image parameters |
 | image.pullPolicy | string | `"Always"` | The image pull policy |
 | image.registry | string | `"falco.docker.scarf.sh"` | The image registry to pull from |
