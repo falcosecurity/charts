@@ -39,11 +39,11 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area falcosidekick-chart
 
-> /area falco-talon
+> /area falco-talon-chart
 
 > /area event-generator-chart
 
-> /area k8s-metacollector
+> /area k8s-metacollector-chart
 
 <!--
 Please remove the leading whitespace before the `/area <>` you uncommented.
@@ -62,6 +62,8 @@ If PR is `kind/failing-tests` or `kind/flaky-test`, please post the related issu
 Fixes #
 
 **Special notes for your reviewer**:
+
+I've already fixed the corrisponding labels in GitHub
 
 **Checklist**
 <!--
