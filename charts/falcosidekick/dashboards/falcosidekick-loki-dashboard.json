@@ -18,6 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -75,8 +76,8 @@
             "type": "loki",
             "uid": "${datasource}"
           },
-          "editorMode": "code",
-          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` [$__auto]))",
+          "editorMode": "builder",
+          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [$__auto]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
@@ -146,8 +147,8 @@
             "type": "loki",
             "uid": "${datasource}"
           },
-          "editorMode": "code",
-          "expr": "count by(rule) (rate({priority=~\".+\", rule!=\"Falco internal: metrics snapshot\"} | logfmt | k8s_ns =~ `$namespace` [$__auto]))",
+          "editorMode": "builder",
+          "expr": "count by(rule) (rate({priority=~\".+\", rule!=\"Falco internal: metrics snapshot\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [$__auto]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
@@ -251,6 +252,18 @@
                 "value": 450
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "k8s_pod_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 184
+              }
+            ]
           }
         ]
       },
@@ -273,7 +286,12 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "k8s_pod_name"
+          }
+        ]
       },
       "pluginVersion": "11.2.0",
       "targets": [
@@ -283,7 +301,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "builder",
-          "expr": "count by(k8s_pod_name, rule, priority, k8s_ns) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` [$__auto]))",
+          "expr": "count by(k8s_pod_name, rule, priority, k8s_ns) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [$__auto]))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A"
@@ -337,7 +355,7 @@
           },
           "direction": "backward",
           "editorMode": "builder",
-          "expr": "{priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace`",
+          "expr": "{priority=~\".+\"} |= `$line_filter` | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority`",
           "queryType": "range",
           "refId": "A"
         }
@@ -399,8 +417,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -438,7 +455,7 @@
             "uid": "loki"
           },
           "editorMode": "builder",
-          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` [1m]))",
+          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [1m]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
@@ -501,8 +518,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -540,7 +556,7 @@
             "uid": "loki"
           },
           "editorMode": "builder",
-          "expr": "count by(rule) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` [1m]))",
+          "expr": "count by(rule) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [1m]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
@@ -566,6 +582,8 @@
             "kube-system",
             "media",
             "monitoring",
+            "rook",
+            "rook-cluster",
             "storage",
             "utilities",
             "webs"
@@ -577,6 +595,8 @@
             "kube-system",
             "media",
             "monitoring",
+            "rook",
+            "rook-cluster",
             "storage",
             "utilities",
             "webs"
@@ -608,7 +628,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Loki",
           "value": "loki"
         },
@@ -624,17 +644,71 @@
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "Critical"
+          ],
+          "value": [
+            "Critical"
+          ]
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "${datasource}"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "priority",
+        "multi": true,
+        "name": "priority",
+        "options": [],
+        "query": {
+          "label": "priority",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "description": "Text to filter lines",
+        "hide": 0,
+        "label": "line_filter",
+        "name": "line_filter",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-4d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Falco logs",
   "uid": "de6ixj4nl1kowc",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }
