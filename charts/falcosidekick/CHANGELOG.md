@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.9.5
+
+- Add new features to the Loki dashboard
+
 ## 0.9.4
 
 - Fix Prometheus metrics names in Prometheus Rule
