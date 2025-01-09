@@ -1118,7 +1118,8 @@ service:
   # -- Service port
   port: 2801
   # -- Service annotations
-  annotations: {}
+  annotations:
+    prometheus.io/scrape: "true"
     # networking.gke.io/load-balancer-type: Internal
 
 ingress:
