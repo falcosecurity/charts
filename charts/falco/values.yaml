@@ -15,7 +15,7 @@ image:
   tag: ""
 
 # -- Secrets containing credentials when pulling from private/secure registries.
-imagePullSecrets: []
+imagePullSecrets: {}
 # -- Put here the new name if you want to override the release name used for Falco components.
 nameOverride: ""
 # -- Same as nameOverride but for the fullname.
@@ -27,6 +27,8 @@ namespaceOverride: ""
 podAnnotations: {}
 
 serviceAccount:
+  # -- Secrets containing credentials when pulling from private/secure registries.
+  imagePullSecrets: {}
   # -- Specifies whether a service account should be created.
   create: true
   # -- Annotations to add to the service account.
