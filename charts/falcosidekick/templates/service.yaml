@@ -17,7 +17,6 @@ metadata:
     {{- with .Values.service.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    prometheus.io/scrape: "true"
 spec:
   type: {{ .Values.service.type }}
   ports:
