@@ -84,6 +84,38 @@ entries:
   falco:
   - apiVersion: v2
     appVersion: 0.39.2
+    created: "2025-01-20T13:19:09.12929259Z"
+    dependencies:
+    - condition: falcosidekick.enabled
+      name: falcosidekick
+      repository: https://falcosecurity.github.io/charts
+      version: 0.9.*
+    - condition: collectors.kubernetes.enabled
+      name: k8s-metacollector
+      repository: https://falcosecurity.github.io/charts
+      version: 0.1.*
+    description: Falco
+    digest: 7626d8364c82cfc1ece68224d141380ed1f237e2e1fa5a7ada8c4a861f5f6ea5
+    home: https://falco.org
+    icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/falco/horizontal/color/falco-horizontal-color.svg
+    keywords:
+    - monitoring
+    - security
+    - alerting
+    - metric
+    - troubleshooting
+    - run-time
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: falco
+    sources:
+    - https://github.com/falcosecurity/falco
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-4.17.2/falco-4.17.2.tgz
+    version: 4.17.2
+  - apiVersion: v2
+    appVersion: 0.39.2
     created: "2025-01-17T13:59:53.310977009Z"
     dependencies:
     - condition: falcosidekick.enabled
@@ -8953,4 +8985,4 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.0/k8s-metacollector-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-17T13:59:53.311666581Z"
+generated: "2025-01-20T13:19:09.130355697Z"
