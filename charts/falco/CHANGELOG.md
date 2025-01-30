@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v4.19.1
+
+* feat(falco): adding imagePullSecrets at the service account level
+
 ## v4.19.0
 
 * fix falco version to 0.40.0
