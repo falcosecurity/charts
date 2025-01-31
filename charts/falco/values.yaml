@@ -410,6 +410,9 @@ collectors:
     # The path used here must not have a final '/'.
     hostProc: /host
 
+    #k8s-metacollector by default doesn't use tls. If you aren't using tls you need to set this to spaces.
+    caPEMBundle: ""
+
 ###########################
 # Extras and customization #
 ############################
