@@ -410,6 +410,10 @@ collectors:
     # The path used here must not have a final '/'.
     hostProc: /host
 
+    #Set caPEMBundle
+    #if not using ssl set to spaces
+    caPEMBundle: ""
+
 ###########################
 # Extras and customization #
 ############################
