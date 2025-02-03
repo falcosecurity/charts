@@ -358,6 +358,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.loki.customheaders | string | `""` | a list of comma separated custom headers to add, syntax is "key:value,key:value" |
 | config.loki.endpoint | string | `"/loki/api/v1/push"` | Loki endpoint URL path, more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush> |
 | config.loki.extralabels | string | `""` | comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields |
+| config.loki.format | string | `"text"` | Format for the log entry value: json, text (default) |
 | config.loki.grafanaDashboard | object | `{"configMap":{"folder":"","name":"falcosidekick-loki-dashboard-grafana","namespace":""},"enabled":true}` | dashboard for Grafana |
 | config.loki.grafanaDashboard.configMap | object | `{"folder":"","name":"falcosidekick-loki-dashboard-grafana","namespace":""}` | configmaps to be deployed that contain a grafana dashboard. |
 | config.loki.grafanaDashboard.configMap.folder | string | `""` | folder where the dashboard is stored by grafana. |
@@ -401,6 +402,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.nats.hostport | string | `""` | NATS "nats://host:port", if not `empty`, NATS is *enabled* |
 | config.nats.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.nats.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
+| config.nats.subjecttemplate | string | `"falco.<priority>.<rule>"` | template for the subject, tokens <priority> and <rule> will be automatically replaced (default: falco.<priority>.<rule>) |
 | config.nodered.address | string | `""` | Node-RED address, if not empty, Node-RED output is enabled |
 | config.nodered.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.nodered.customheaders | string | `""` | Custom headers to add in POST, useful for Authentication, syntax is "key:value\,key:value" |
@@ -514,6 +516,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.stan.hostport | string | `""` | Stan nats://{domain or ip}:{port}, if not empty, STAN output is *enabled* |
 | config.stan.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.stan.mutualtls | bool | `false` | if true, checkcert flag will be ignored (server cert will always be checked) |
+| config.stan.subjecttemplate | string | `"falco.<priority>.<rule>"` | template for the subject, tokens <priority> and <rule> will be automatically replaced (default: falco.<priority>.<rule>) |
 | config.statsd.forwarder | string | `""` | The address for the StatsD forwarder, in the form <http://host:port>, if not empty StatsD is *enabled* |
 | config.statsd.namespace | string | `"falcosidekick."` | A prefix for all metrics |
 | config.sumologic.checkcert | bool | `true` | check if ssl certificate of the output is valid (default: true) |
