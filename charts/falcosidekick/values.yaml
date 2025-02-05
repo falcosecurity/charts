@@ -14,7 +14,7 @@ image:
   # -- The image repository to pull from
   repository: falcosecurity/falcosidekick
   # -- The image tag to pull
-  tag: 2.30.0
+  tag: 2.31.1
   # -- The image pull policy
   pullPolicy: IfNotPresent
 
@@ -375,6 +375,8 @@ config:
     endpoint: "/loki/api/v1/push"
     # -- Loki tenant, if not `empty`, Loki tenant is *enabled*
     tenant: ""
+    # -- Format for the log entry value: json, text (default)
+    format: "text"
     # -- comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields
     extralabels: ""
     # -- a list of comma separated custom headers to add, syntax is "key:value,key:value"
@@ -405,6 +407,8 @@ config:
   nats:
     # -- NATS "nats://host:port", if not `empty`, NATS is *enabled*
     hostport: ""
+    # -- template for the subject, tokens <priority> and <rule> will be automatically replaced (default: falco.<priority>.<rule>)
+    subjecttemplate: "falco.<priority>.<rule>"
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
     # -- if true, checkcert flag will be ignored (server cert will always be checked)
@@ -419,6 +423,8 @@ config:
     clusterid: ""
     # -- Client ID, if not empty, STAN output is *enabled*
     clientid: ""
+    # -- template for the subject, tokens <priority> and <rule> will be automatically replaced (default: falco.<priority>.<rule>)
+    subjecttemplate: "falco.<priority>.<rule>"
     # -- minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""`
     minimumpriority: ""
     # -- if true, checkcert flag will be ignored (server cert will always be checked)
