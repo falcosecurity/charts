@@ -3,7 +3,7 @@ appVersion: 2.31.1
 description: Connect Falco to your ecosystem
 icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
 name: falcosidekick
-version: 0.9.7
+version: 0.9.8
 keywords:
   - monitoring
   - security
