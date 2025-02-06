@@ -234,6 +234,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.cloudevents.extension | string | `""` | Extensions to add in the outbound Event, useful for routing |
 | config.cloudevents.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.customfields | string | `""` | a list of escaped comma separated custom fields to add to falco events, syntax is "key:value\,key:value" |
+| config.customtags | string | `""` | a list of escaped comma separated custom tags to add to falco events, syntax is "tag\,tag" |
 | config.datadog.apikey | string | `""` | Datadog API Key, if not `empty`, Datadog output is *enabled* |
 | config.datadog.host | string | `""` | Datadog host. Override if you are on the Datadog EU site. Defaults to american site with "<https://api.datadoghq.com>" |
 | config.datadog.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |

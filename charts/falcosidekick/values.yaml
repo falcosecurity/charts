@@ -145,6 +145,8 @@ config:
   customfields: ""
   # -- a list of escaped comma separated Go templated fields to add to falco events, syntax is "key:template\,key:template"
   templatedfields: ""
+  # -- a list of escaped comma separated custom tags to add to falco events, syntax is "tag\,tag"
+  customtags: ""
   # -- if not empty, the brackets in keys of Output Fields are replaced
   bracketreplacer: ""
   # if not empty, allow to change the format of the output field. (example: "<timestamp>: <priority> <output> <custom_fields> <templated_fields>") (default: "<timestamp>: <priority> <output>")

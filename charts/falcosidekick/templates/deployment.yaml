@@ -112,6 +112,8 @@ spec:
               value: {{ .Values.config.customfields | quote }}
             - name: TEMPLATEDFIELDS
               value: {{ .Values.config.templatedfields | quote }}
+            - name: CUSTOMTAGS
+              value: {{ .Values.config.customtags | quote }}
             - name: OUTPUTFIELDFORMAT
               value: {{ .Values.config.outputFieldFormat | quote }}
             - name: BRACKETREPLACER
