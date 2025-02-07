@@ -578,6 +578,8 @@ config:
     podIdentityClientID: ""
     # -- Azure Identity name
     podIdentityName: ""
+    # -- Azure Workload Identity Client ID
+    workloadIdentityClientID: ""
     eventHub:
       # -- Name of the space the Hub is in
       namespace: ""

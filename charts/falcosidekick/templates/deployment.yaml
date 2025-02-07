@@ -31,6 +31,9 @@ spec:
         {{- if and .Values.config.azure.podIdentityClientID .Values.config.azure.podIdentityName }}
         aadpodidbinding: {{ include "falcosidekick.fullname" . }}
         {{- end }}
+        {{- if .Values.config.azure.workloadIdentityClientID }}
+        azure.workload.identity/use: "true"
+        {{- end }}
         {{- if .Values.podLabels }}
         {{ toYaml .Values.podLabels | nindent 8 }}
         {{- end }}

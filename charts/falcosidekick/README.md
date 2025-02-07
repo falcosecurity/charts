@@ -220,6 +220,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.azure.eventHub.namespace | string | `""` | Name of the space the Hub is in |
 | config.azure.podIdentityClientID | string | `""` | Azure Identity Client ID |
 | config.azure.podIdentityName | string | `""` | Azure Identity name |
+| config.azure.workloadIdentityClientID | string | `""` | Azure Workload Identity Client ID |
 | config.azure.resourceGroupName | string | `""` | Azure Resource Group name |
 | config.azure.subscriptionID | string | `""` | Azure Subscription ID |
 | config.bracketreplacer | string | `""` | if not empty, the brackets in keys of Output Fields are replaced |
