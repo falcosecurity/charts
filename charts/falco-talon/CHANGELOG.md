@@ -3,6 +3,11 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.3.0 - 2024-02-07
+
+- bump up version to `v0.3.0`
+- fix missing usage of the `imagePullSecrets`
+
 ## 0.2.3 - 2024-12-18
 
 - add a Grafana dashboard for the Prometheus metrics 
