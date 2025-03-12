@@ -23,7 +23,6 @@ The Charts in the `master` branch (with a corresponding [GitHub release](https:/
 Charts currently available are listed below.
 
 - [falco](./charts/falco)
-- [falco-exporter](./charts/falco-exporter)
 - [falcosidekick](./charts/falcosidekick)
 - [event-generator](./charts/event-generator)
 - [k8s-metacollector](./charts/k8s-metacollector)

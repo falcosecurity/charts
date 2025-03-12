@@ -16,7 +16,7 @@ Thus, to trigger it, the following actions need to happen:
 
 > The approvers may differ depending on the chart. Please, refer to the `OWNERS` file under the specific chart directory.
 
-Once the CI has done its job, a new tag is live on [GitHub](https://github.com/falcosecurity/falco-exporter/releases), and the site [https://falcosecurity.github.io/charts](https://falcosecurity.github.io/charts) indexes the new chart version.
+Once the CI has done its job, a new tag is live on [GitHub](https://github.com/falcosecurity/charts/releases), and the site [https://falcosecurity.github.io/charts](https://falcosecurity.github.io/charts) indexes the new chart version.
 
 ## Automation explained
 
