@@ -35,8 +35,6 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area falco-chart
 
-> /area falco-exporter-chart
-
 > /area falcosidekick-chart
 
 > /area falco-talon-chart
