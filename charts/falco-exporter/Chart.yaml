@@ -1,6 +1,7 @@
 apiVersion: v2
 name: falco-exporter
-description: Prometheus Metrics Exporter for Falco output events
+deprecated: true
+description: DEPRECATED Prometheus Metrics Exporter for Falco output events
 
 # A chart can be either an 'application' or a 'library' chart.
 #
