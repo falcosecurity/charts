@@ -15,11 +15,11 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@b9e51907a09c216f16ebe8536097933489208112 # v4.3.0
         with:
-          version: '3.14.0'
+          version: "3.14.0"
 
       - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@0d28d3144d3a25ea2cc349d6e59901c4ff469b3b # v2.7.0
@@ -41,22 +41,9 @@ jobs:
         with:
           config: ./tests/kind-config.yaml
 
-      - name: install falco if needed (ie for falco-exporter)
-        if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          changed=$(ct list-changed --config ct.yaml)
-          if [[ "$changed[@]" =~ "charts/falco-exporter" ]]; then
-            helm repo add falcosecurity https://falcosecurity.github.io/charts
-            helm repo update
-            helm install falco falcosecurity/falco -f ./tests/falco-test-ci.yaml
-            kubectl get po -A
-            sleep 120
-            kubectl get po -A
-          fi
-
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --config ct.yaml
+        run: ct install --exclude-deprecated --config ct.yaml
 
   go-unit-tests:
     runs-on: ubuntu-latest
@@ -69,15 +56,15 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@b9e51907a09c216f16ebe8536097933489208112 # v4.3.0
         with:
-          version: '3.10.3'
+          version: "3.10.3"
 
       - name: Update repo deps
-        run:  helm dependency update ./charts/falco
+        run: helm dependency update ./charts/falco
 
       - name: Setup Go
         uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
         with:
-          go-version: '1.21'
+          go-version: "1.21"
           check-latest: true
 
       - name: K8s-metacollector unit tests
