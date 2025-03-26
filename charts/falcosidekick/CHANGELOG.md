@@ -7,7 +7,7 @@ Before release 0.1.20, the helm chart can be found in `falcosidekick` [repositor
 
 ## 0.10.1
 
-- Remove faulty condition for configmap-ui
+- Add an "or" condition for `configmap-ui`
 
 ## 0.10.0
 
