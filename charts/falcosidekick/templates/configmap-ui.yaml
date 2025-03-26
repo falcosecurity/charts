@@ -1,4 +1,4 @@
-{{- if .Values.webui.enabled -}}
+{{- if and (.Values.webui.enabled) (or (.Values.webui.redis.enabled) (.Values.webui.externalRedis.enabled)) -}}
 ---
 apiVersion: v1
 kind: ConfigMap
