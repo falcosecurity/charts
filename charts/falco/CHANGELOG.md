@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v4.21.4
+
+* Allow specifying folder annotation for grafana dashbaords
+
 ## v4.21.2
 
 * add falco-talon as falco subchart
