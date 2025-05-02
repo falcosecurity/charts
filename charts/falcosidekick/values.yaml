@@ -130,7 +130,11 @@ grafana:
         # -- namespace specifies the namespace for the configmap.
         namespace: ""
         # -- folder where the dashboard is stored by grafana.
-        folder: ""
+        folder:
+          # -- folder name
+          name: ""
+          # -- annotation used by grafana
+          annotation: grafana_dashboard_folder
 
 config:
   # -- Existing secret with configuration
@@ -400,7 +404,11 @@ config:
         # -- namespace specifies the namespace for the configmap.
         namespace: ""
         # -- folder where the dashboard is stored by grafana.
-        folder: ""
+        folder:
+          # -- folder name
+          name: ""
+          # -- annotation used by grafana
+          annotation: grafana_dashboard_folder
 
   prometheus:
     # -- comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields

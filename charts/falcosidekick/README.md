@@ -361,9 +361,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.loki.endpoint | string | `"/loki/api/v1/push"` | Loki endpoint URL path, more info: <https://grafana.com/docs/loki/latest/api/#post-apiprompush> |
 | config.loki.extralabels | string | `""` | comma separated list of fields to use as labels additionally to rule, source, priority, tags and custom_fields |
 | config.loki.format | string | `"text"` | Format for the log entry value: json, text (default) |
-| config.loki.grafanaDashboard | object | `{"configMap":{"folder":"","name":"falcosidekick-loki-dashboard-grafana","namespace":""},"enabled":true}` | dashboard for Grafana |
-| config.loki.grafanaDashboard.configMap | object | `{"folder":"","name":"falcosidekick-loki-dashboard-grafana","namespace":""}` | configmaps to be deployed that contain a grafana dashboard. |
-| config.loki.grafanaDashboard.configMap.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| config.loki.grafanaDashboard | object | `{"configMap":{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"falcosidekick-loki-dashboard-grafana","namespace":""},"enabled":true}` | dashboard for Grafana |
+| config.loki.grafanaDashboard.configMap | object | `{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"falcosidekick-loki-dashboard-grafana","namespace":""}` | configmaps to be deployed that contain a grafana dashboard. |
+| config.loki.grafanaDashboard.configMap.folder | object | `{"annotation":"grafana_dashboard_folder","name":""}` | folder where the dashboard is stored by grafana. |
+| config.loki.grafanaDashboard.configMap.folder.annotation | string | `"grafana_dashboard_folder"` | annotation used by grafana |
+| config.loki.grafanaDashboard.configMap.folder.name | string | `""` | folder name |
 | config.loki.grafanaDashboard.configMap.name | string | `"falcosidekick-loki-dashboard-grafana"` | name specifies the name for the configmap. |
 | config.loki.grafanaDashboard.configMap.namespace | string | `""` | namespace specifies the namespace for the configmap. |
 | config.loki.grafanaDashboard.enabled | bool | `true` | enabled specifies whether this dashboard should be deployed. |
@@ -609,11 +611,13 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | extraVolumeMounts | list | `[]` | Extra volume mounts for sidekick deployment |
 | extraVolumes | list | `[]` | Extra volumes for sidekick deployment |
 | fullnameOverride | string | `""` | Override the name |
-| grafana | object | `{"dashboards":{"configMaps":{"falcosidekick":{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
-| grafana.dashboards | object | `{"configMaps":{"falcosidekick":{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
-| grafana.dashboards.configMaps | object | `{"falcosidekick":{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
-| grafana.dashboards.configMaps.falcosidekick | object | `{"folder":"","name":"falcosidekick-grafana-dashboard","namespace":""}` | falcosidekick contains the configuration for falcosidekick's dashboard. |
-| grafana.dashboards.configMaps.falcosidekick.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| grafana | object | `{"dashboards":{"configMaps":{"falcosidekick":{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"falcosidekick-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
+| grafana.dashboards | object | `{"configMaps":{"falcosidekick":{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"falcosidekick-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
+| grafana.dashboards.configMaps | object | `{"falcosidekick":{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"falcosidekick-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
+| grafana.dashboards.configMaps.falcosidekick | object | `{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"falcosidekick-grafana-dashboard","namespace":""}` | falcosidekick contains the configuration for falcosidekick's dashboard. |
+| grafana.dashboards.configMaps.falcosidekick.folder | object | `{"annotation":"grafana_dashboard_folder","name":""}` | folder where the dashboard is stored by grafana. |
+| grafana.dashboards.configMaps.falcosidekick.folder.annotation | string | `"grafana_dashboard_folder"` | annotation used by grafana |
+| grafana.dashboards.configMaps.falcosidekick.folder.name | string | `""` | folder name |
 | grafana.dashboards.configMaps.falcosidekick.name | string | `"falcosidekick-grafana-dashboard"` | name specifies the name for the configmap. |
 | grafana.dashboards.configMaps.falcosidekick.namespace | string | `""` | namespace specifies the namespace for the configmap. |
 | grafana.dashboards.enabled | bool | `false` | enabled specifies whether the dashboards should be deployed. |
