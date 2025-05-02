@@ -13,8 +13,8 @@ metadata:
     grafana_dashboard: "1"
   {{- if .Values.config.loki.grafanaDashboard.configMap.folder }}
   annotations:
-    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.config.loki.grafanaDashboard.configMap.folder}}
-    grafana_dashboard_folder: {{ .Values.config.loki.grafanaDashboard.configMap.folder }}
+    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.config.loki.grafanaDashboard.configMap.folder.name }}
+    {{ .Values.config.loki.grafanaDashboard.configMap.folder.annotation }}: {{ .Values.config.loki.grafanaDashboard.configMap.folder.name }}
   {{- end }}
 data:
   falcosidekick-loki-dashboard.json: |-
