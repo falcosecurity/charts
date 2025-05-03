@@ -306,8 +306,6 @@ grafana:
         # -- namespace specifies the namespace for the configmap.
         namespace: ""
         # -- folder where the dashboard is stored by grafana.
-        folder:
-          # -- folder name
-          name: ""
+        folder: ""
           # -- annotation used by grafana
-          annotation: grafana_dashboard_folder
+        folderAnnotation: grafana_dashboard_folder

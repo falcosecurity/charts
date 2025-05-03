@@ -92,9 +92,9 @@ func (g *grafanaDashboardsTemplateTest) TestConfig() {
 		},
 		{"folder",
 			map[string]string{
-				"grafana.dashboards.enabled":                                 "true",
-				"grafana.dashboards.configMaps.collector.folder.name":        "custom-folder",
-				"grafana.dashboards.configMaps.collector.folder.annotation":  "grafana_folder"
+				"grafana.dashboards.enabled":                               "true",
+				"grafana.dashboards.configMaps.collector.folder":           "custom-folder",
+				"grafana.dashboards.configMaps.collector.folderAnnotation": "grafana_folder"
 			},
 			func(cm *corev1.ConfigMap) {
 				// Check that the name is the expected one.

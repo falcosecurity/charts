@@ -12,8 +12,8 @@ metadata:
     grafana_dashboard: "1"
   {{- if .Values.grafana.dashboards.configMaps.collector.folder }}
   annotations:
-    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.grafana.dashboards.configMaps.collector.folder.name }}
-    {{ .Values.grafana.dashboards.configMaps.collector.folder.annotation }}: {{ .Values.grafana.dashboards.configMaps.collector.folder.name }}
+    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.grafana.dashboards.configMaps.collector.folder }}
+    {{ .Values.grafana.dashboards.configMaps.collector.folderAnnotation }}: {{ .Values.grafana.dashboards.configMaps.collector.folder }}
   {{- end }}
 data:
   dashboard.json: |-
