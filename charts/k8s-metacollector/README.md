@@ -77,13 +77,12 @@ The following table lists the main configurable parameters of the k8s-metacollec
 | containerSecurityContext.capabilities | object | `{"drop":["ALL"]}` | capabilities fine-grained privileges that can be assigned to processes. |
 | containerSecurityContext.capabilities.drop | list | `["ALL"]` | drop drops the given set of privileges. |
 | fullnameOverride | string | `""` | fullNameOverride same as nameOverride but for the full name. |
-| grafana | object | `{"dashboards":{"configMaps":{"collector":{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"k8s-metacollector-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
-| grafana.dashboards | object | `{"configMaps":{"collector":{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"k8s-metacollector-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
-| grafana.dashboards.configMaps | object | `{"collector":{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"k8s-metacollector-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
-| grafana.dashboards.configMaps.collector | object | `{"folder":{"annotation":"grafana_dashboard_folder","name":""},"name":"k8s-metacollector-grafana-dashboard","namespace":""}` | collector contains the configuration for collector's dashboard. |
-| grafana.dashboards.configMaps.collector.folder | object | `{"annotation":"grafana_dashboard_folder","name":""}` | folder where the dashboard is stored by grafana. |
-| grafana.dashboards.configMaps.collector.folder.annotation | string | `"grafana_dashboard_folder"` | annotation used by grafana |
-| grafana.dashboards.configMaps.collector.folder.name | string | `""` | folder name |
+| grafana | object | `{"dashboards":{"configMaps":{"collector":{"folder":"","folderAnnotation":"grafana_dashboard_folder","name":"k8s-metacollector-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
+| grafana.dashboards | object | `{"configMaps":{"collector":{"folder":"","folderAnnotation":"grafana_dashboard_folder","name":"k8s-metacollector-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
+| grafana.dashboards.configMaps | object | `{"collector":{"folder":"","folderAnnotation":"grafana_dashboard_folder","name":"k8s-metacollector-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
+| grafana.dashboards.configMaps.collector | object | `{"folder":"","folderAnnotation":"grafana_dashboard_folder","name":"k8s-metacollector-grafana-dashboard","namespace":""}` | collector contains the configuration for collector's dashboard. |
+| grafana.dashboards.configMaps.collector.folder | string | `""` | folder where the dashboard is stored by grafana. |
+| grafana.dashboards.configMaps.collector.folderAnnotation | string | `"grafana_dashboard_folder"` | annotation used by grafana |
 | grafana.dashboards.configMaps.collector.name | string | `"k8s-metacollector-grafana-dashboard"` | name specifies the name for the configmap. |
 | grafana.dashboards.configMaps.collector.namespace | string | `""` | namespace specifies the namespace for the configmap. |
 | grafana.dashboards.enabled | bool | `false` | enabled specifies whether the dashboards should be deployed. |
