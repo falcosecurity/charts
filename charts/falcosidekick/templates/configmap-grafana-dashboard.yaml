@@ -16,8 +16,8 @@ metadata:
     {{- end }}
   annotations:
     {{- if .Values.grafana.dashboards.configMaps.falcosidekick.folder }}
-    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.grafana.dashboards.configMaps.falcosidekick.folder.name }}
-    {{ .Values.grafana.dashboards.configMaps.falcosidekick.folder.annotation }}: {{ .Values.grafana.dashboards.configMaps.falcosidekick.folder.name }}
+    k8s-sidecar-target-directory: /tmp/dashboards/{{ .Values.grafana.dashboards.configMaps.falcosidekick.folder }}
+    {{ .Values.grafana.dashboards.configMaps.falcosidekick.folderAnnotation }}: {{ .Values.grafana.dashboards.configMaps.falcosidekick.folder }}
     {{- end }}
     {{- with .Values.customAnnotations }}
     {{- toYaml . | nindent 4 }}
