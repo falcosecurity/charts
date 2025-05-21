@@ -618,6 +618,8 @@ grafana:
         namespace: ""
         # -- folder where the dashboard is stored by grafana.
         folder: ""
+        # -- annotation used by grafana
+        folderAnnotation: grafana_dashboard_folder
 
 ######################
 # falco.yaml config  #
