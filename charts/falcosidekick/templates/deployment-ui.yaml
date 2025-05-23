@@ -276,7 +276,9 @@ spec:
       {{ end }}
   {{- if .Values.webui.redis.storageEnabled }}
   volumeClaimTemplates:
-    - metadata:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
         name: {{ include "falcosidekick.fullname" . }}-ui-redis-data
       spec:
         accessModes: [ "ReadWriteOnce" ]
