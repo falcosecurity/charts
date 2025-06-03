@@ -61,7 +61,6 @@ Fixes #
 
 **Special notes for your reviewer**:
 
-I've already fixed the corrisponding labels in GitHub
 
 **Checklist**
 <!--
