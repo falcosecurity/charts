@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v6.0.3
+
+* Added support for dual-stack for the metrics service
+
 ## v6.0.2
 
 * Bump Falco to 0.41.3
