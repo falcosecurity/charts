@@ -624,6 +624,7 @@ The following table lists the main configurable parameters of the falco chart v6
 | controller.deployment.replicas | int | `1` | Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing. For more info check the section on Plugins in the README.md file. |
 | controller.kind | string | `"daemonset"` |  |
 | controller.labels | object | `{}` | Extra labels to add to the daemonset or deployment |
+| customHostname | string | `nil` | Set pod custom hostname to personalize it. |
 | customRules | object | `{}` | Third party rules enabled for Falco. More info on the dedicated section in README.md file. |
 | driver.ebpf | object | `{"bufSizePreset":4,"dropFailedExit":false,"hostNetwork":false,"leastPrivileged":false,"path":"${HOME}/.falco/falco-bpf.o"}` | Configuration section for ebpf driver. |
 | driver.ebpf.bufSizePreset | int | `4` | bufSizePreset determines the size of the shared space between Falco and its drivers. This shared space serves as a temporary storage for syscall events. |
