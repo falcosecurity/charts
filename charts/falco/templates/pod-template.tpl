@@ -27,6 +27,9 @@ metadata:
       {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
+  {{- if .Values.falco.customHostname }}
+  hostname: {{ .Values.falco.customHostname }}
+  {{- end }}
   serviceAccountName: {{ include "falco.serviceAccountName" . }}
   {{- with .Values.podSecurityContext }}
   securityContext:
