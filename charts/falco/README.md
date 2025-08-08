@@ -583,7 +583,7 @@ If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidek
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco chart v6.2.2 and their default values. See [values.yaml](./values.yaml) for full list.
+The following table lists the main configurable parameters of the falco chart v6.2.3 and their default values. See [values.yaml](./values.yaml) for full list.
 
 ## Values
 
@@ -722,12 +722,14 @@ The following table lists the main configurable parameters of the falco chart v6
 | falcoctl.artifact.follow | object | `{"args":["--log-format=json"],"enabled":true,"env":[],"mounts":{"volumeMounts":[]},"resources":{},"securityContext":{}}` | Runs "falcoctl artifact follow" command as a sidecar container. It is used to automatically check for updates given a list of artifacts. If an update is found it downloads and installs it in a shared folder (emptyDir) that is accessible by Falco. Rulesfiles are automatically detected and loaded by Falco once they are installed in the correct folder by falcoctl. To prevent new versions of artifacts from breaking Falco, the tool checks if it is compatible with the running version of Falco before installing it. |
 | falcoctl.artifact.follow.args | list | `["--log-format=json"]` | Arguments to pass to the falcoctl-artifact-follow sidecar container. |
 | falcoctl.artifact.follow.env | list | `[]` | Extra environment variables that will be pass onto falcoctl-artifact-follow sidecar container. |
+| falcoctl.artifact.follow.envFrom | list | `[]` | Extra environment variables that will be passed onto falcoctl-artifact-follow sidecar container that can come from a ConfigMap or Secret. |
 | falcoctl.artifact.follow.mounts | object | `{"volumeMounts":[]}` | A list of volume mounts you want to add to the falcoctl-artifact-follow sidecar container. |
 | falcoctl.artifact.follow.resources | object | `{}` | Resources requests and limits for the falcoctl-artifact-follow sidecar container. |
 | falcoctl.artifact.follow.securityContext | object | `{}` | Security context for the falcoctl-artifact-follow sidecar container. |
 | falcoctl.artifact.install | object | `{"args":["--log-format=json"],"enabled":true,"env":[],"mounts":{"volumeMounts":[]},"resources":{},"securityContext":{}}` | Runs "falcoctl artifact install" command as an init container. It is used to install artfacts before Falco starts. It provides them to Falco by using an emptyDir volume. |
 | falcoctl.artifact.install.args | list | `["--log-format=json"]` | Arguments to pass to the falcoctl-artifact-install init container. |
 | falcoctl.artifact.install.env | list | `[]` | Extra environment variables that will be pass onto falcoctl-artifact-install init container. |
+| falcoctl.artifact.install.envFrom | list | `[]` | Extra environment variables that will be passed onto falcoctl-artifact-install sidecar container that can come from a ConfigMap or Secret. |
 | falcoctl.artifact.install.mounts | object | `{"volumeMounts":[]}` | A list of volume mounts you want to add to the falcoctl-artifact-install init container. |
 | falcoctl.artifact.install.resources | object | `{}` | Resources requests and limits for the falcoctl-artifact-install init container. |
 | falcoctl.artifact.install.securityContext | object | `{}` | Security context for the falcoctl init container. |
