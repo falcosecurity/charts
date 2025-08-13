@@ -16,8 +16,8 @@ lint-%:
 	-e HOME=/home/ct \
 	--mount type=tmpfs,destination=/home/ct \
 	--workdir=/data \
-	--volume $$(pwd):/data \
-	-u $$(id -u) \
+	--volume $$(pwd):/data:Z \
+	--userns=host \
 	quay.io/helmpack/chart-testing:$(LINT_IMAGE_VERSION) \
 	ct lint --config ./ct.yaml --charts ./charts/$*
 
@@ -28,8 +28,8 @@ docs-%:
 	@docker run \
 	--rm \
 	--workdir=/helm-docs \
-	--volume "$$(pwd):/helm-docs" \
-	-u $$(id -u) \
+	--volume "$$(pwd):/helm-docs:Z" \
+	--userns=host \
 	jnorwood/helm-docs:$(DOCS_IMAGE_VERSION) \
 	helm-docs -c ./charts/$* -t ./README.gotmpl -o ./README.md
 
