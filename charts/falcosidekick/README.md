@@ -506,6 +506,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.smtp.token | string | `""` | OAuthBearer token for OAuthBearer Mechanism |
 | config.smtp.trace | string | `""` | trace string for Anonymous Mechanism |
 | config.smtp.user | string | `""` | user to access SMTP server |
+| config.splunk.checkcert | bool | `true` | check if ssl certificate of the output is valid |
+| config.splunk.customheaders | string | `""` | a list of comma separated custom headers to add, syntax is "key:value,key:value" |
+| config.splunk.host | string | `""` | Hostname of the target Splunk service (ex: http://host:port/services/collector/event) |
+| config.splunk.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
+| config.splunk.token | string | `""` | Specify the authentication token for the HTTP Event Collector interface. |
 | config.spyderbat.apikey | string | `""` | Spyderbat API key with access to the organization |
 | config.spyderbat.apiurl | string | `"https://api.spyderbat.com"` | Spyderbat API url |
 | config.spyderbat.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
