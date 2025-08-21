@@ -392,7 +392,7 @@ config:
     # -- dashboard for Grafana
     grafanaDashboard:
       # -- enabled specifies whether this dashboard should be deployed.
-      enabled: false
+      enabled: true
       # --configmaps to be deployed that contain a grafana dashboard.
       configMap:
         # -- name specifies the name for the configmap.
