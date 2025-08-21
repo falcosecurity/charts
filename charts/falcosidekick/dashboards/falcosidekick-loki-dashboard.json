@@ -77,7 +77,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "builder",
-          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [$__auto]))",
+          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns_name =~ `$namespace` | priority =~ `$priority` [$__auto]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
@@ -148,7 +148,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "builder",
-          "expr": "count by(rule) (rate({priority=~\".+\", rule!=\"Falco internal: metrics snapshot\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [$__auto]))",
+          "expr": "count by(rule) (rate({priority=~\".+\", rule!=\"Falco internal: metrics snapshot\"} | logfmt | k8s_ns_name =~ `$namespace` | priority =~ `$priority` [$__auto]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
@@ -220,7 +220,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "k8s_ns"
+              "options": "k8s_ns_name"
             },
             "properties": [
               {
@@ -301,7 +301,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "builder",
-          "expr": "count by(k8s_pod_name, rule, priority, k8s_ns) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [$__auto]))",
+          "expr": "count by(k8s_pod_name, rule, priority, k8s_ns_name) (rate({priority=~\".+\"} | logfmt | k8s_ns_name =~ `$namespace` | priority =~ `$priority` [$__auto]))",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A"
@@ -355,7 +355,7 @@
           },
           "direction": "backward",
           "editorMode": "builder",
-          "expr": "{priority=~\".+\"} |= `$line_filter` | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority`",
+          "expr": "{priority=~\".+\"} |= `$line_filter` | logfmt | k8s_ns_name =~ `$namespace` | priority =~ `$priority`",
           "queryType": "range",
           "refId": "A"
         }
@@ -455,7 +455,7 @@
             "uid": "loki"
           },
           "editorMode": "builder",
-          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [1m]))",
+          "expr": "count by(priority) (rate({priority=~\".+\"} | logfmt | k8s_ns_name =~ `$namespace` | priority =~ `$priority` [1m]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
@@ -556,7 +556,7 @@
             "uid": "loki"
           },
           "editorMode": "builder",
-          "expr": "count by(rule) (rate({priority=~\".+\"} | logfmt | k8s_ns =~ `$namespace` | priority =~ `$priority` [1m]))",
+          "expr": "count by(rule) (rate({priority=~\".+\"} | logfmt | k8s_ns_name =~ `$namespace` | priority =~ `$priority` [1m]))",
           "legendFormat": "{{priority}}",
           "queryType": "range",
           "refId": "A"
