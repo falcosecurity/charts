@@ -1,4 +1,4 @@
-{{- if .Values.config.loki.grafanaDashboard.enabled -}}
+{{- if and .Values.config.loki.grafanaDashboard.enabled (ne .Values.config.loki.hostport "") -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
