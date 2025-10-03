@@ -90,6 +90,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+      {{- if .Values.proxy.enabled }}
+      {{- include "falco.proxyEnv" . | nindent 8 }}
+      {{- end }}
       {{- if .Values.extra.env }}
       {{- include "falco.renderTemplate" ( dict "value" .Values.extra.env "context" $) | nindent 8 }}
       {{- end }}
@@ -362,6 +365,9 @@ spec:
   env:
     - name: HOST_ROOT
       value: /host
+  {{- if .Values.proxy.enabled }}
+  {{- include "falco.proxyEnv" . | nindent 4 }}
+  {{- end }}
   {{- if .Values.driver.loader.initContainer.env }}
   {{- include "falco.renderTemplate" ( dict "value" .Values.driver.loader.initContainer.env "context" $) | nindent 4 }}
   {{- end }}

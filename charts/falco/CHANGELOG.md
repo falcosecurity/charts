@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v6.4.0
+
+* Add support for proxy env injection across all containers|initContainers
+
 ## v6.3.0
 
 * Bump falcosidekick dep to 0.11.X
