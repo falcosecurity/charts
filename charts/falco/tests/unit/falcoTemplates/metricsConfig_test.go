@@ -16,9 +16,10 @@
 package falcoTemplates
 
 import (
-	"github.com/falcosecurity/charts/charts/falco/tests/unit"
 	"path/filepath"
 	"testing"
+
+	"github.com/falcosecurity/charts/charts/falco/tests/unit"
 
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/stretchr/testify/require"
@@ -35,6 +36,8 @@ type metricsConfig struct {
 	ResourceUtilizationEnabled       bool   `yaml:"resource_utilization_enabled"`
 	RulesCountersEnabled             bool   `yaml:"rules_counters_enabled"`
 	LibbpfStatsEnabled               bool   `yaml:"libbpf_stats_enabled"`
+	PluginsMetricsEnabled            bool   `yaml:"plugins_metrics_enabled"`
+	JemallocStatsEnabled             bool   `yaml:"jemalloc_stats_enabled"`
 	OutputRule                       bool   `yaml:"output_rule"`
 	StateCountersEnabled             bool   `yaml:"state_counters_enabled"`
 	Interval                         string `yaml:"interval"`
@@ -65,22 +68,8 @@ func TestMetricsConfigInFalcoConfig(t *testing.T) {
 			"defaultValues",
 			nil,
 			func(t *testing.T, metricsConfig, webServerConfig any) {
-				require.Len(t, metricsConfig, 11, "should have ten items")
-
-				metrics, err := getMetricsConfig(metricsConfig)
-				require.NoError(t, err)
-				require.NotNil(t, metrics)
-				require.True(t, metrics.ConvertMemoryToMB)
-				require.False(t, metrics.Enabled)
-				require.False(t, metrics.IncludeEmptyValues)
-				require.True(t, metrics.KernelEventCountersEnabled)
-				require.True(t, metrics.ResourceUtilizationEnabled)
-				require.True(t, metrics.RulesCountersEnabled)
-				require.Equal(t, "1h", metrics.Interval)
-				require.True(t, metrics.LibbpfStatsEnabled)
-				require.True(t, metrics.OutputRule)
-				require.True(t, metrics.StateCountersEnabled)
-				require.False(t, metrics.KernelEventCountersPerCPUEnabled)
+				// When metrics are disabled by default, the 'metrics' section is omitted from falco.yaml.
+				require.Nil(t, metricsConfig, "metrics section should be absent by default")
 
 				webServer, err := getWebServerConfig(webServerConfig)
 				require.NoError(t, err)
@@ -92,10 +81,11 @@ func TestMetricsConfigInFalcoConfig(t *testing.T) {
 		{
 			"metricsEnabled",
 			map[string]string{
-				"metrics.enabled": "true",
+				"metrics.enabled":       "true",
+				"falco.metrics.enabled": "false",
 			},
 			func(t *testing.T, metricsConfig, webServerConfig any) {
-				require.Len(t, metricsConfig, 11, "should have ten items")
+				require.Len(t, metricsConfig, 13, "should have thirteen items")
 
 				metrics, err := getMetricsConfig(metricsConfig)
 				require.NoError(t, err)
@@ -109,6 +99,9 @@ func TestMetricsConfigInFalcoConfig(t *testing.T) {
 				require.Equal(t, "1h", metrics.Interval)
 				require.True(t, metrics.LibbpfStatsEnabled)
 				require.False(t, metrics.OutputRule)
+				require.True(t, metrics.PluginsMetricsEnabled)
+				require.False(t, metrics.JemallocStatsEnabled)
+
 				require.True(t, metrics.StateCountersEnabled)
 				require.False(t, metrics.KernelEventCountersPerCPUEnabled)
 
@@ -123,6 +116,7 @@ func TestMetricsConfigInFalcoConfig(t *testing.T) {
 			"Flip/Change Values",
 			map[string]string{
 				"metrics.enabled":                          "true",
+				"falco.metrics.enabled":                    "false",
 				"metrics.convertMemoryToMB":                "false",
 				"metrics.includeEmptyValues":               "true",
 				"metrics.kernelEventCountersEnabled":       "false",
@@ -135,7 +129,7 @@ func TestMetricsConfigInFalcoConfig(t *testing.T) {
 				"metrics.kernelEventCountersPerCPUEnabled": "true",
 			},
 			func(t *testing.T, metricsConfig, webServerConfig any) {
-				require.Len(t, metricsConfig, 11, "should have ten items")
+				require.Len(t, metricsConfig, 13, "should have thirteen items")
 
 				metrics, err := getMetricsConfig(metricsConfig)
 				require.NoError(t, err)
@@ -146,6 +140,9 @@ func TestMetricsConfigInFalcoConfig(t *testing.T) {
 				require.False(t, metrics.KernelEventCountersEnabled)
 				require.False(t, metrics.ResourceUtilizationEnabled)
 				require.False(t, metrics.RulesCountersEnabled)
+				require.True(t, metrics.PluginsMetricsEnabled)
+				require.False(t, metrics.JemallocStatsEnabled)
+
 				require.Equal(t, "1s", metrics.Interval)
 				require.False(t, metrics.LibbpfStatsEnabled)
 				require.False(t, metrics.OutputRule)
