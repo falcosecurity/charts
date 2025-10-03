@@ -14,6 +14,16 @@ image:
   # -- The image tag to pull. Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+proxy:
+  # -- Enable proxy configuration for containers that require external network access.
+  enabled: false 
+  # -- HTTP proxy URL used for outbound HTTP requests.
+  http: "http://proxy.dominio.com:3128"
+  # -- HTTPS proxy URL used for outbound HTTPS requests.
+  https: "http://proxy.dominio.com:3128"
+  # -- Comma-separated list of domains or IPs that should bypass the proxy.
+  noProxy: ".svc.cluster.local,.intranet"
+
 # -- Secrets containing credentials when pulling from private/secure registries.
 imagePullSecrets: []
 # -- Put here the new name if you want to override the release name used for Falco components.
