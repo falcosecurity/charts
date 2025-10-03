@@ -304,7 +304,7 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
   {{- if or .Values.falcoctl.artifact.install.env .Values.proxy.enabled }}
   env:
   {{- include "falco.proxyEnv" . | nindent 2 }}
-  {{ - if .Values.falcoctl.artifact.install.env }}
+  {{- if .Values.falcoctl.artifact.install.env }}
   {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.install.env "context" $) | nindent 2 }}
   {{- end }}
   {{- end }}

@@ -16,7 +16,7 @@ image:
 
 proxy:
   # -- Enable proxy configuration for containers that require external network access.
-  enabled: false 
+  enabled: false
   # -- HTTP proxy URL used for outbound HTTP requests.
   http: "http://proxy.dominio.com:3128"
   # -- HTTPS proxy URL used for outbound HTTPS requests.
