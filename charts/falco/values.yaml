@@ -18,9 +18,9 @@ proxy:
   # -- Enable proxy configuration for containers that require external network access.
   enabled: false
   # -- HTTP proxy URL used for outbound HTTP requests.
-  http: "http://proxy.dominio.com:3128"
+  http: "http://proxy.example.net:3128"
   # -- HTTPS proxy URL used for outbound HTTPS requests.
-  https: "http://proxy.dominio.com:3128"
+  https: "http://proxy.example.net:3128"
   # -- Comma-separated list of domains or IPs that should bypass the proxy.
   noProxy: ".svc.cluster.local,.intranet"
 
