@@ -93,6 +93,27 @@ Return the proper Falco image name
 {{- end -}}
 
 {{/*
+Returns proxy-related environment variables (HTTP_PROXY, HTTPS_PROXY, NO_PROXY)
+for Falco containers, based on .Values.proxy configuration.
+*/}}
+{{- define "falco.proxyEnv" }}
+{{- if .Values.proxy.enabled }}
+{{- if .Values.proxy.http }}
+- name: HTTP_PROXY
+  value: {{ .Values.proxy.http | quote }}
+{{- end }}
+{{- if .Values.proxy.https }}
+- name: HTTPS_PROXY
+  value: {{ .Values.proxy.https | quote }}
+{{- end }}
+{{- if .Values.proxy.noProxy }}
+- name: NO_PROXY
+  value: {{ .Values.proxy.noProxy | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
 Return the proper Falco driver loader image name
 */}}
 {{- define "falco.driverLoader.image" -}}
@@ -280,9 +301,12 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       {{- with .Values.falcoctl.artifact.install.mounts.volumeMounts }}
         {{- toYaml . | nindent 4 }}
       {{- end }}
-  {{- if .Values.falcoctl.artifact.install.env }}
+  {{- if or .Values.falcoctl.artifact.install.env .Values.proxy.enabled }}
   env:
-  {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.install.env "context" $) | nindent 4 }}
+  {{- include "falco.proxyEnv" . | nindent 2 }}
+  {{- if .Values.falcoctl.artifact.install.env }}
+  {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.install.env "context" $) | nindent 2 }}
+  {{- end }}
   {{- end }}
   {{- if .Values.falcoctl.artifact.install.envFrom }}
   envFrom:
@@ -318,8 +342,9 @@ be temporary and will stay here until we move this logic to the falcoctl tool.
       {{- with .Values.falcoctl.artifact.follow.mounts.volumeMounts }}
         {{- toYaml . | nindent 4 }}
       {{- end }}
-  {{- if .Values.falcoctl.artifact.follow.env }}
+  {{- if or .Values.falcoctl.artifact.follow.env .Values.proxy.enabled }}
   env:
+  {{- include "falco.proxyEnv" . | nindent 2 }}
   {{- include "falco.renderTemplate" ( dict "value" .Values.falcoctl.artifact.follow.env "context" $) | nindent 4 }}
   {{- end }}
   {{- if .Values.falcoctl.artifact.follow.envFrom }}

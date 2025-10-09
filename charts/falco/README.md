@@ -583,7 +583,7 @@ If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidek
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco chart v6.3.0 and their default values. See [values.yaml](./values.yaml) for full list.
+The following table lists the main configurable parameters of the falco chart v6.4.0 and their default values. See [values.yaml](./values.yaml) for full list.
 
 ## Values
 
@@ -805,6 +805,10 @@ The following table lists the main configurable parameters of the falco chart v6
 | podLabels | object | `{}` | Add additional pod labels |
 | podPriorityClassName | string | `nil` | Set pod priorityClassName |
 | podSecurityContext | object | `{}` | Set securityContext for the pods These security settings are overriden by the ones specified for the specific containers when there is overlap. |
+| proxy.enabled | bool | `false` | Enable proxy configuration for containers that require external network access. |
+| proxy.http | string | `"http://proxy.dominio.com:3128"` | HTTP proxy URL used for outbound HTTP requests. |
+| proxy.https | string | `"http://proxy.dominio.com:3128"` | HTTPS proxy URL used for outbound HTTPS requests. |
+| proxy.noProxy | string | `".svc.cluster.local,.intranet"` | Comma-separated list of domains or IPs that should bypass the proxy. |
 | rbac.create | bool | `true` |  |
 | resources.limits | object | `{"cpu":"1000m","memory":"1024Mi"}` | Maximum amount of resources that Falco container could get. If you are enabling more than one source in falco, than consider to increase the cpu limits. |
 | resources.requests | object | `{"cpu":"100m","memory":"512Mi"}` | Although resources needed are subjective on the actual workload we provide a sane defaults ones. If you have more questions or concerns, please refer to #falco slack channel for more info about it. |

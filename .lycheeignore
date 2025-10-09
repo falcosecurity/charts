@@ -20,3 +20,4 @@ https://environmentid.live.dynatrace.com/api
 https://yourdomain/e/ENVIRONMENTID/api
 http://falco-talon:2803
 https://http-intake.logs.datadoghq.com/
+http://proxy.example.net:3128/
