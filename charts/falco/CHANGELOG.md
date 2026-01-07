@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v7.0.3
+
+* Add `artifact-state-dir` volume shared between falcoctl-artifact-install and falcoctl-artifact-follow to maintain artifact state consistency
+
 ## v7.0.2
 
 * Reduce artifact follow default interval value to 1 week
