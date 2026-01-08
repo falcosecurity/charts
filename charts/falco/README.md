@@ -585,7 +585,7 @@ If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidek
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco chart v7.0.2 and their default values. See [values.yaml](./values.yaml) for full list.
+The following table lists the main configurable parameters of the falco chart v7.1.0 and their default values. See [values.yaml](./values.yaml) for full list.
 
 ## Values
 
@@ -768,7 +768,7 @@ The following table lists the main configurable parameters of the falco chart v7
 | falcoctl.config.artifact.follow.pluginsDir | string | `"/plugins"` | See the fields of the artifact.install section. |
 | falcoctl.config.artifact.follow.refs | list | `["falco-rules:5"]` | List of artifacts to be followed by the falcoctl sidecar container. |
 | falcoctl.config.artifact.follow.rulesfilesDir | string | `"/rulesfiles"` | See the fields of the artifact.install section. |
-| falcoctl.config.artifact.follow.stateDir | string | `"/artifactstate"` | Directory where falcoctl will save its artifact state files. This directory is shared between the init container and the sidecar to maintain state consistency across artifact install and follow operations. |
+| falcoctl.config.artifact.follow.stateDir | string | `"/artifactstate"` | See the fields of the artifact.install section. |
 | falcoctl.config.artifact.install.pluginsDir | string | `"/plugins"` | Same as the one above but for the artifacts. |
 | falcoctl.config.artifact.install.refs | list | `["falco-rules:5"]` | List of artifacts to be installed by the falcoctl init container. |
 | falcoctl.config.artifact.install.resolveDeps | bool | `true` | Resolve the dependencies for artifacts. |
