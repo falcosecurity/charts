@@ -605,6 +605,9 @@ falcoctl:
         rulesfilesDir: /rulesfiles
         # -- Same as the one above but for the artifacts.
         pluginsDir: /plugins
+        # -- Directory where falcoctl will save its artifact state files. This directory is shared between the init container
+        # and the sidecar to maintain state consistency across artifact install and follow operations.
+        stateDir: /artifactstate
       follow:
         # -- List of artifacts to be followed by the falcoctl sidecar container.
         refs: [falco-rules:5]
@@ -617,6 +620,8 @@ falcoctl:
         rulesfilesDir: /rulesfiles
         # -- See the fields of the artifact.install section.
         pluginsDir: /plugins
+        # -- See the fields of the artifact.install section.
+        stateDir: /artifactstate
 
 # -- serviceMonitor holds the configuration for the ServiceMonitor CRD.
 # A ServiceMonitor is a custom resource definition (CRD) used to configure how Prometheus should
