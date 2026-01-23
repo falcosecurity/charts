@@ -705,7 +705,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.priorityClassName | string | `""` | Name of the priority class to be used by the Web UI pods, priority class needs to be created beforehand |
 | webui.redis.affinity | object | `{}` | Affinity for the Web UI Redis pods |
 | webui.redis.customAnnotations | object | `{}` | custom annotations to add to all resources |
-| webui.redis.customConfig | object | `{}` | List of Custom config overrides for Redis |
+| webui.redis.customConfig | list | `[]` | List of Custom config overrides for Redis |
 | webui.redis.customLabels | object | `{}` | custom labels to add to all resources |
 | webui.redis.enabled | bool | `true` | Is mutually exclusive with webui.externalRedis.enabled |
 | webui.redis.existingSecret | string | `""` | Existing secret with configuration |

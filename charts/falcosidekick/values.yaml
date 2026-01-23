@@ -1349,7 +1349,7 @@ webui:
       pullPolicy: IfNotPresent
 
     # -- List of Custom config overrides for Redis
-    customConfig: {}
+    customConfig: []
       # - maxmemory-policy allkeys-lfu
       # - maxmemory 4096mb
 
