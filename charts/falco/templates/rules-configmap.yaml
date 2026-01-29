@@ -7,8 +7,17 @@ metadata:
   labels:
     {{- include "falco.labels" . | nindent 4 }}
 data:
+{{- if kindIs "map" .Values.customRules }}
 {{- range $file, $content :=  .Values.customRules }}
   {{ $file }}: |-
 {{ $content | indent 4}}
+{{- end }}
+{{- else if kindIs "slice" .Values.customRules }}
+{{- range .Values.customRules }}
+{{- range $path, $contents :=  $.Files.Glob . }}
+  {{ $path | base }}: |-
+{{ $contents | toString | indent 4 }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end }}

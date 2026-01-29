@@ -522,6 +522,11 @@ customRules: {}
   #
   # rules-traefik.yaml: |-
   #   [ rule body ]
+  #
+  # Example using files:
+  #
+  # - "rules/default-rules.yaml"
+  # - "rules/dev-*.yaml"
 
 ########################
 # Falco integrations   #

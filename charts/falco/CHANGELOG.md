@@ -3,6 +3,9 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v8.0.1
+* Add support for sourcing `customRules` from external files using file globbing. 
+
 ## v8.0.0
 
 * Upgrade Falco to v0.43.0
