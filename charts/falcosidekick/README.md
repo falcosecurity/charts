@@ -298,6 +298,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.gcp.storage.bucket | string | `""` | The name of the bucket |
 | config.gcp.storage.minimumpriority | string | `"debug"` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.gcp.storage.prefix | string | `""` | Name of prefix, keys will have format: gs://<bucket>/<prefix>/YYYY-MM-DD/YYYY-MM-DDTHH:mm:ss.s+01:00.json |
+| config.gcp.workloadIdentityServiceAccount | string | `""` | GCP ServiceAccount used by Workload Identity |
 | config.googlechat.messageformat | string | `""` | a Go template to format Google Chat Text above Attachment, displayed in addition to the output from `config.googlechat.outputformat`. If empty, no Text is displayed before Attachment |
 | config.googlechat.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.googlechat.outputformat | string | `"all"` | `all` (default), `text` (only text is displayed in Google chat) |
