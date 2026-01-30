@@ -605,6 +605,8 @@ config:
   gcp:
     # -- Base64 encoded JSON key file for the GCP service account
     credentials: ""
+    # -- GCP ServiceAccount used by Workload Identity
+    workloadIdentityServiceAccount: ""
     pubsub:
       # -- The GCP Project ID containing the Pub/Sub Topic
       projectid: ""
