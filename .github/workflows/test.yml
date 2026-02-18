@@ -2,20 +2,29 @@ name: Test Charts
 
 on:
   pull_request:
+    branches:
+      - master
+
+permissions: {}
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
         with:
-          version: "3.18.6"
+          version: "4.1.1"
 
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
@@ -52,11 +61,12 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
         with:
-          version: "3.18.6"
+          version: "4.1.1"
 
       - name: Update repo deps
         run: helm dependency update ./charts/falco
@@ -64,8 +74,9 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
         with:
-          go-version: "1.25"
+          go-version: "1.26"
           check-latest: true
+          cache: false
 
       - name: K8s-metacollector unit tests
         run: go test ./charts/k8s-metacollector/tests/unit/...
