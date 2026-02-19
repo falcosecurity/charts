@@ -291,6 +291,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | config.gcp.cloudrun.jwt | string | `""` | JWT for the private access to Cloud Run function |
 | config.gcp.cloudrun.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.gcp.credentials | string | `""` | Base64 encoded JSON key file for the GCP service account |
+| config.gcp.workloadIdentityServiceAccount | string | `""` | GCP ServiceAccount used by Workload Identity |
 | config.gcp.pubsub.customattributes | string | `""` | a list of comma separated custom headers to add, syntax is "key:value,key:value" |
 | config.gcp.pubsub.minimumpriority | string | `""` | minimum priority of event to use this output, order is `emergency\|alert\|critical\|error\|warning\|notice\|informational\|debug or ""` |
 | config.gcp.pubsub.projectid | string | `""` | The GCP Project ID containing the Pub/Sub Topic |

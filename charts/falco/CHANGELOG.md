@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v8.1.0
+
+* Bump falcosidekick dep to 0.13.0
+
 ## v8.0.0
 
 * Upgrade Falco to v0.43.0

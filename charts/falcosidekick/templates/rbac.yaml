@@ -4,10 +4,13 @@ kind: ServiceAccount
 metadata:
   name: {{ include "falcosidekick.fullname" . }}
   namespace: {{ .Release.Namespace }}
-  {{- if or .Values.config.azure.workloadIdentityClientID (and .Values.config.aws.useirsa .Values.config.aws.rolearn) }}
+  {{- if or .Values.config.azure.workloadIdentityClientID (and .Values.config.aws.useirsa .Values.config.aws.rolearn) .Values.config.gcp.workloadIdentityServiceAccount }}
   annotations:
     {{- if .Values.config.azure.workloadIdentityClientID }}
     azure.workload.identity/client-id: {{ .Values.config.azure.workloadIdentityClientID | quote }}
+    {{- end }}
+    {{- if .Values.config.gcp.workloadIdentityServiceAccount }}
+    iam.gke.io/gcp-service-account: {{ .Values.config.gcp.workloadIdentityServiceAccount | quote }}
     {{- end }}
     {{- if and .Values.config.aws.useirsa .Values.config.aws.rolearn }}
     {{- with .Values.customAnnotations }}
