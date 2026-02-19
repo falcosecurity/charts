@@ -131,7 +131,7 @@ rbac:
   secrets: ["get", "delete"]
   leases: ["get", "update", "patch", "watch", "create"]
 
-# -- config of Falco Talon (See https://docs.falco-talon.org/docs/configuration/)
+# -- config of Falco Talon (See https://github.com/falcosecurity/falco-talon?tab=readme-ov-file#configuration)
 config:
   # -- listen address
   listenAddress: 0.0.0.0
@@ -178,7 +178,7 @@ config:
     # -- use insecure grpc
     collectorUseInsecureGrpc: false
 
-  # -- notifiers (See https://docs.falco-talon.org/docs/notifiers/list/ for the settings)
+  # -- notifiers (See https://github.com/falcosecurity/falco-talon?tab=readme-ov-file#notifiers for the settings)
   notifiers:
     # -- slack
     slack:
