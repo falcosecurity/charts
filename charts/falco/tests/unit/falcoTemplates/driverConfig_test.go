@@ -17,10 +17,11 @@ package falcoTemplates
 
 import (
 	"fmt"
-	"github.com/falcosecurity/charts/charts/falco/tests/unit"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/falcosecurity/charts/charts/falco/tests/unit"
 
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/stretchr/testify/require"
@@ -42,7 +43,7 @@ func TestDriverConfigInFalcoConfig(t *testing.T) {
 			"defaultValues",
 			nil,
 			func(t *testing.T, config any) {
-				require.Len(t, config, 4, "should have four items")
+				require.Len(t, config, 3, "should have three items")
 				kind, bufSizePreset, dropFailedExit, err := getKmodConfig(config)
 				require.NoError(t, err)
 				require.Equal(t, "modern_ebpf", kind)
@@ -95,39 +96,6 @@ func TestDriverConfigInFalcoConfig(t *testing.T) {
 			},
 		},
 		{
-			"ebpf=config",
-			map[string]string{
-				"driver.kind":                "ebpf",
-				"driver.ebpf.bufSizePreset":  "6",
-				"driver.ebpf.dropFailedExit": "true",
-				"driver.ebpf.path":           "testing/Path/ebpf",
-			},
-			func(t *testing.T, config any) {
-				require.Len(t, config, 2, "should have only two items")
-				kind, path, bufSizePreset, dropFailedExit, err := getEbpfConfig(config)
-				require.NoError(t, err)
-				require.Equal(t, "ebpf", kind)
-				require.Equal(t, "testing/Path/ebpf", path)
-				require.Equal(t, float64(6), bufSizePreset)
-				require.True(t, dropFailedExit)
-			},
-		},
-		{
-			"kind=ebpf",
-			map[string]string{
-				"driver.kind": "ebpf",
-			},
-			func(t *testing.T, config any) {
-				require.Len(t, config, 2, "should have only two items")
-				kind, path, bufSizePreset, dropFailedExit, err := getEbpfConfig(config)
-				require.NoError(t, err)
-				require.Equal(t, "ebpf", kind)
-				require.Equal(t, "${HOME}/.falco/falco-bpf.o", path)
-				require.Equal(t, float64(4), bufSizePreset)
-				require.False(t, dropFailedExit)
-			},
-		},
-		{
 			"kind=modern_ebpf",
 			map[string]string{
 				"driver.kind": "modern_ebpf",
@@ -176,52 +144,16 @@ func TestDriverConfigInFalcoConfig(t *testing.T) {
 			},
 		},
 		{
-			"kind=gvisor",
-			map[string]string{
-				"driver.kind": "gvisor",
-			},
-			func(t *testing.T, config any) {
-				require.Len(t, config, 2, "should have only two items")
-				kind, config, root, err := getGvisorConfig(config)
-				require.NoError(t, err)
-				require.Equal(t, "gvisor", kind)
-				require.Equal(t, "/gvisor-config/pod-init.json", config)
-				require.Equal(t, "/host/run/containerd/runsc/k8s.io", root)
-			},
-		},
-		{
-			"gvisor=config",
-			map[string]string{
-				"driver.kind":              "gvisor",
-				"driver.gvisor.runsc.root": "/my/root/test",
-			},
-			func(t *testing.T, config any) {
-				require.Len(t, config, 2, "should have only two items")
-				kind, config, root, err := getGvisorConfig(config)
-				require.NoError(t, err)
-				require.Equal(t, "gvisor", kind)
-				require.Equal(t, "/gvisor-config/pod-init.json", config)
-				require.Equal(t, "/host/my/root/test/k8s.io", root)
-			},
-		},
-		{
 			"kind=auto",
 			map[string]string{
 				"driver.kind": "auto",
 			},
 			func(t *testing.T, config any) {
-				require.Len(t, config, 4, "should have four items")
+				require.Len(t, config, 3, "should have three items")
 				// Check that configuration for kmod has been set.
 				kind, bufSizePreset, dropFailedExit, err := getKmodConfig(config)
 				require.NoError(t, err)
 				require.Equal(t, "modern_ebpf", kind)
-				require.Equal(t, float64(4), bufSizePreset)
-				require.False(t, dropFailedExit)
-				// Check that configuration for ebpf has been set.
-				kind, path, bufSizePreset, dropFailedExit, err := getEbpfConfig(config)
-				require.NoError(t, err)
-				require.Equal(t, "modern_ebpf", kind)
-				require.Equal(t, "${HOME}/.falco/falco-bpf.o", path)
 				require.Equal(t, float64(4), bufSizePreset)
 				require.False(t, dropFailedExit)
 				// Check that configuration for modern_ebpf has been set.
@@ -268,7 +200,7 @@ func TestDriverConfigWithUnsupportedDriver(t *testing.T) {
 	_, err = helm.RenderTemplateE(t, options, helmChartPath, unit.ReleaseName, []string{"templates/configmap.yaml"})
 	require.Error(t, err)
 	require.True(t, strings.Contains(err.Error(),
-		"unsupported driver kind: \"notExisting\". Supported drivers [kmod ebpf modern_ebpf gvisor auto], alias [module modern-bpf]"))
+		"unsupported driver kind: \"notExisting\". Supported drivers [kmod modern_ebpf auto], alias [module modern-bpf]"))
 }
 
 func getKmodConfig(config interface{}) (kind string, bufSizePreset float64, dropFailedExit bool, err error) {
@@ -286,22 +218,6 @@ func getKmodConfig(config interface{}) (kind string, bufSizePreset float64, drop
 	return
 }
 
-func getEbpfConfig(config interface{}) (kind, path string, bufSizePreset float64, dropFailedExit bool, err error) {
-	configMap, ok := config.(map[string]interface{})
-	if !ok {
-		err = fmt.Errorf("can't assert type of config")
-		return
-	}
-
-	kind = configMap["kind"].(string)
-	ebpf := configMap["ebpf"].(map[string]interface{})
-	bufSizePreset = ebpf["buf_size_preset"].(float64)
-	dropFailedExit = ebpf["drop_failed_exit"].(bool)
-	path = ebpf["probe"].(string)
-
-	return
-}
-
 func getModernEbpfConfig(config interface{}) (kind string, bufSizePreset, cpusForEachBuffer float64, dropFailedExit bool, err error) {
 	configMap, ok := config.(map[string]interface{})
 	if !ok {
@@ -314,21 +230,6 @@ func getModernEbpfConfig(config interface{}) (kind string, bufSizePreset, cpusFo
 	bufSizePreset = modernEbpf["buf_size_preset"].(float64)
 	dropFailedExit = modernEbpf["drop_failed_exit"].(bool)
 	cpusForEachBuffer = modernEbpf["cpus_for_each_buffer"].(float64)
-
-	return
-}
-
-func getGvisorConfig(cfg interface{}) (kind, config, root string, err error) {
-	configMap, ok := cfg.(map[string]interface{})
-	if !ok {
-		err = fmt.Errorf("can't assert type of config")
-		return
-	}
-
-	kind = configMap["kind"].(string)
-	gvisor := configMap["gvisor"].(map[string]interface{})
-	config = gvisor["config"].(string)
-	root = gvisor["root"].(string)
 
 	return
 }

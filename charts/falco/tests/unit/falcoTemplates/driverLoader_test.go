@@ -16,9 +16,10 @@
 package falcoTemplates
 
 import (
-	"github.com/falcosecurity/charts/charts/falco/tests/unit"
 	"path/filepath"
 	"testing"
+
+	"github.com/falcosecurity/charts/charts/falco/tests/unit"
 
 	v1 "k8s.io/api/core/v1"
 
@@ -96,15 +97,6 @@ func TestDriverLoaderEnabled(t *testing.T) {
 			},
 		},
 		{
-			"driver.kind=gvisor",
-			map[string]string{
-				"driver.kind": "gvisor",
-			},
-			func(t *testing.T, initContainer any) {
-				require.Equal(t, initContainer, nil)
-			},
-		},
-		{
 			"driver.disabled",
 			map[string]string{
 				"driver.enabled": "false",
@@ -155,25 +147,6 @@ func TestDriverLoaderEnabled(t *testing.T) {
 				require.NotContains(t, container.Env, namespaceEnvVar)
 				require.NotContains(t, container.Env, configmapEnvVar)
 				require.Contains(t, container.Env, updateConfigMapEnvVar)
-
-				// Check that the expected volumes are there.
-				volumeMounts(t, container.VolumeMounts)
-			},
-		},
-		{
-			"driver.kind=ebpf",
-			map[string]string{
-				"driver.kind": "ebpf",
-			},
-			func(t *testing.T, initContainer any) {
-				container, ok := initContainer.(v1.Container)
-				require.True(t, ok)
-
-				require.Contains(t, container.Args, "ebpf")
-				require.Nil(t, container.SecurityContext)
-				require.NotContains(t, container.Env, namespaceEnvVar)
-				require.Contains(t, container.Env, updateConfigMapEnvVar)
-				require.NotContains(t, container.Env, configmapEnvVar)
 
 				// Check that the expected volumes are there.
 				volumeMounts(t, container.VolumeMounts)
