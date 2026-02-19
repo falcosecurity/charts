@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.5.0 - 2026-05-13
+
+- Fix broken links
+
 ## 0.4.0 - 2025-05-02
 
 - Allow specifying folder annotation for grafana dashboards
