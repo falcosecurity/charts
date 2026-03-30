@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/gruntwork-io/terratest v0.56.0
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.90.0
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.90.1
 	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.35.3
