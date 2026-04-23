@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v8.0.3
+
+* Honor `falco.plugins_hostinfo` for `proc-fs` mount and volume generation in plugin-only deployments, while keeping existing behavior when `driver.enabled=true`
+
 ## v8.0.2
 
 * Upgrade Falco to v0.43.1

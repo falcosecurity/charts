@@ -1,4 +1,5 @@
 {{- define "falco.podTemplate" -}}
+{{- $procMountEnabled := or .Values.driver.enabled .Values.falco.plugins_hostinfo -}}
 metadata:
   name: {{ include "falco.fullname" . }}
   labels:
@@ -151,10 +152,14 @@ spec:
       {{- end }}
         - mountPath: /root/.falco
           name: root-falco-fs
+        {{- if $procMountEnabled }}
         - mountPath: /host/proc
           name: proc-fs
         {{- if and .Values.driver.enabled (not .Values.driver.loader.enabled) }}
           readOnly: true
+        {{- end }}
+        {{- end }}
+        {{- if and .Values.driver.enabled (not .Values.driver.loader.enabled) }}
         - mountPath: /host/boot
           name: boot-fs
           readOnly: true
@@ -272,9 +277,11 @@ spec:
       hostPath:
         path: {{ .Values.driver.sysfsMountPath }}
     {{- end }}
+    {{- if $procMountEnabled }}
     - name: proc-fs
       hostPath:
         path: /proc
+    {{- end }}
     {{- if eq .Values.driver.kind "gvisor" }}
     - name: runsc-path
       hostPath:
