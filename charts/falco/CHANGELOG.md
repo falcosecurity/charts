@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v8.0.3
+
+* Make `FALCO_HOSTNAME` env var conditional via new `falco.hostnameEnv` values key (default `true`, backward-compatible). Auto-suppresses the chart default when a user-provided `FALCO_HOSTNAME` is present in `extra.env`, eliminating Kubernetes strategic-merge-patch collisions on UPDATE. Refs falcosecurity/falco#3397.
+
 ## v8.0.2
 
 * Upgrade Falco to v0.43.1

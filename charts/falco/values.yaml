@@ -708,6 +708,19 @@ grafana:
 # - collectors configuration (this affects container and k8smeta plugins configurations)
 # - metrics configuration
 falco:
+  ##################################
+  # Pod-level environment settings #
+  ##################################
+
+  # -- Inject the chart-default `FALCO_HOSTNAME` env var (sourced from
+  # `spec.nodeName` via `valueFrom.fieldRef`) into the Falco container.
+  # Set to `false` to suppress entirely. Alternatively, override the value by
+  # adding a `FALCO_HOSTNAME` entry to `extra.env` -- the chart auto-detects
+  # this and suppresses the default, avoiding a Kubernetes strategic-merge-patch
+  # collision on `env[].name` during UPDATE that otherwise produces an invalid
+  # EnvVar with both `value` and `valueFrom` set.
+  hostnameEnv: true
+
   ###############################
   # Falco config files settings #
   ###############################
