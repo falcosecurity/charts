@@ -43,6 +43,8 @@ Please remove the leading whitespace before the `/kind <>` you uncommented.
 
 > /area k8s-metacollector-chart
 
+> /area falco-operator-chart
+
 > /area automation
 
 <!--
