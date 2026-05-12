@@ -1,0 +1,27 @@
+{{- if .Values.rbac.create }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "falco-operator.fullname" . }}-role
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: falco
+{{ .Files.Get "files/ClusterRole.yaml" }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "falco-operator.fullname" . }}-rolebinding
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: falco
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "falco-operator.fullname" . }}-role
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "falco-operator.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

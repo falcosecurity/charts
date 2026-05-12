@@ -1,0 +1,142 @@
+# Default values for falco-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Number of replicas for the operator
+replicaCount: 1
+
+# -- The number of old ReplicaSets to retain to allow rollback
+revisionHistoryLimit: 10
+
+image:
+  # -- Repository for the Falco Operator image
+  repository: falcosecurity/falco-operator
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion
+  tag: ""
+  # -- Optional image digest (e.g. sha256:abc...). When set, takes precedence over tag and renders repository@digest.
+  digest: ""
+
+# -- Image pull secrets
+imagePullSecrets: []
+
+# -- Name override for the chart
+nameOverride: ""
+# -- Full name override for the chart
+fullnameOverride: ""
+
+# -- Service account configuration
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Automatically mount the ServiceAccount API token into pods using this ServiceAccount
+  automountServiceAccountToken: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use
+  name: ""
+
+# -- RBAC configuration
+rbac:
+  # -- Specifies whether RBAC resources should be created
+  create: true
+
+# -- Pod annotations
+podAnnotations: {}
+# -- Pod labels
+podLabels: {}
+
+# -- Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+# -- Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+# -- In-place pod resize policy for the manager container
+resizePolicy: []
+  # - resourceName: cpu
+  #   restartPolicy: NotRequired
+  # - resourceName: memory
+  #   restartPolicy: RestartContainer
+
+# -- Liveness probe configuration
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: health
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+# -- Readiness probe configuration
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: health
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# -- Additional volumes
+volumes: []
+
+# -- Additional volume mounts
+volumeMounts: []
+
+# -- Additional CLI arguments passed to the operator binary
+extraArgs: []
+  # - --metrics-bind-address=:8443
+  # - --metrics-secure=false
+
+# -- Extra environment variables
+extraEnv: []
+  # - name: ARTIFACT_OPERATOR_IMAGE
+  #   value: "docker.io/falcosecurity/artifact-operator:latest"
+
+# -- Node selector
+nodeSelector: {}
+
+# -- Tolerations
+tolerations: []
+
+# -- Affinity rules
+affinity: {}
+
+# -- Topology spread constraints
+topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: ScheduleAnyway
+  #   labelSelector:
+  #     matchLabels:
+  #       app.kubernetes.io/name: falco-operator
+
+# -- Priority class name
+priorityClassName: ""
+
+# -- Array of extra Kubernetes manifests to deploy alongside the operator. Each
+# entry is rendered with `tpl`, so Helm templating (e.g. `{{ .Release.Name }}`)
+# is supported within values.
+extraObjects: []
+  # - apiVersion: v1
+  #   kind: ConfigMap
+  #   metadata:
+  #     name: '{{ include "falco-operator.fullname" . }}-extra'
+  #     namespace: '{{ .Release.Namespace }}'
+  #   data:
+  #     example: "value"
