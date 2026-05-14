@@ -1,0 +1,60 @@
+name: Guard Managed Charts
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions: {}
+
+jobs:
+  managed-charts:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Skip Poiana
+        if: github.event.pull_request.user.login == 'poiana'
+        run: echo "Managed chart guard skipped for Poiana."
+
+      - name: Checkout
+        if: github.event.pull_request.user.login != 'poiana'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Checkout base guard config
+        if: github.event.pull_request.user.login != 'poiana'
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+          sparse-checkout: .github/managed-charts.yaml
+          persist-credentials: false
+
+      - name: Select guard config
+        id: managed-chart-filters
+        if: github.event.pull_request.user.login != 'poiana'
+        run: |
+          if [[ -f base/.github/managed-charts.yaml ]]; then
+            echo "path=base/.github/managed-charts.yaml" >> "${GITHUB_OUTPUT}"
+          else
+            echo "path=.github/managed-charts.yaml" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Detect managed chart changes
+        id: managed-chart-changes
+        if: github.event.pull_request.user.login != 'poiana'
+        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3
+        with:
+          filters: ${{ steps.managed-chart-filters.outputs.path }}
+
+      - name: Block direct managed chart changes
+        if: github.event.pull_request.user.login != 'poiana' && steps.managed-chart-changes.outputs.changes != '[]'
+        run: |
+          echo "::error title=Managed chart change::Chart changes for managed charts must be authored in the source repository and synced by Poiana."
+          echo "Managed charts changed: ${{ steps.managed-chart-changes.outputs.changes }}"
+          exit 1
