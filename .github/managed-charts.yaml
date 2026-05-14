@@ -1,0 +1,20 @@
+# Chart directories synchronized from source repositories.
+# This file uses dorny/paths-filter syntax.
+#
+# Add an entry here whenever a chart becomes managed by source-repo automation.
+
+# Source: falcosecurity/falco/chart/falco
+falco:
+  - charts/falco/**
+
+# Source: falcosecurity/falco-operator/chart/falco-operator
+falco-operator:
+  - charts/falco-operator/**
+
+# Source: falcosecurity/event-generator/chart/event-generator
+event-generator:
+  - charts/event-generator/**
+
+# Source: falcosecurity/k8s-metacollector/chart/k8s-metacollector
+k8s-metacollector:
+  - charts/k8s-metacollector/**
