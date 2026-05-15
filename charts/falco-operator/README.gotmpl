@@ -1,0 +1,46 @@
+# falco-operator
+
+[Falco Operator](https://github.com/falcosecurity/falco-operator) manages Falco deployments and Falco artifacts on Kubernetes.
+
+## Introduction
+
+This chart installs the Falco Operator controllers and their CRDs. The chart deploys the instance operator and configures the RBAC needed to manage Falco, Component, Rulesfile, Plugin, and Config custom resources.
+
+## Adding `falcosecurity` repository
+
+Before installing the published chart, add the `falcosecurity` charts repository:
+
+```bash
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
+```
+
+## Installing the Chart
+
+To install the chart with default values and release name `falco-operator` run:
+
+```bash
+helm install falco-operator falcosecurity/falco-operator --namespace falco-operator --create-namespace
+```
+
+After a few seconds, the Falco Operator should be running in the `falco-operator` namespace.
+
+To install from a local checkout of the Falco Operator source repository before the chart is published:
+
+```bash
+helm install falco-operator ./chart/falco-operator --namespace falco-operator --create-namespace
+```
+
+## Uninstalling the Chart
+
+To uninstall the `falco-operator` release:
+
+```bash
+helm uninstall falco-operator --namespace falco-operator
+```
+
+## Configuration
+
+The following table lists the configurable parameters of the {{ template "chart.name" . }} chart v{{ template "chart.version" . }} and their default values. See [values.yaml](values.yaml) for the full list.
+
+{{ template "chart.valuesSection" . }}
