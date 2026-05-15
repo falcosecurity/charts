@@ -7983,6 +7983,29 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/falco-exporter-0.3.0/falco-exporter-0.3.0.tgz
     version: 0.3.0
+  falco-operator:
+  - apiVersion: v2
+    appVersion: 0.2.2
+    created: "2026-05-15T16:14:25.57906356Z"
+    description: A Helm chart for deploying the Falco Operator
+    digest: 83d1cff4e405ba4014086d767a5b2b9fbeef2b3fa33951b6d50adb1475a48fd6
+    home: https://github.com/falcosecurity/falco-operator
+    icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/falco/horizontal/color/falco-horizontal-color.svg
+    keywords:
+    - falco
+    - security
+    - monitoring
+    - operator
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: falco-operator
+    sources:
+    - https://github.com/falcosecurity/falco-operator
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-operator-0.1.0/falco-operator-0.1.0.tgz
+    version: 0.1.0
   falco-talon:
   - apiVersion: v1
     appVersion: 0.3.0
@@ -10890,4 +10913,4 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.0/k8s-metacollector-0.1.0.tgz
     version: 0.1.0
-generated: "2026-05-13T08:35:35.477873419Z"
+generated: "2026-05-15T16:14:25.579910434Z"
