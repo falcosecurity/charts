@@ -31,7 +31,9 @@ podAnnotations: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-# -- Security context for the containers.
+# -- Security context for the containers. When command is `suite-run` or `suite-test`, the chart defaults
+# `privileged: true` because those commands could perform complex actions that require a wide range of capabilities in
+# order to properly work. Setting `privileged` explicitly here overrides that default.
 securityContext: {}
   # capabilities:
   #   drop:
@@ -50,22 +52,83 @@ tolerations: []
 affinity: {}
 
 config:
-  # -- The event-generator accepts two commands (run, test):
-  # run: runs actions.
-  # test: runs and tests actions.
-  # For more info see: https://github.com/falcosecurity/event-generator.
+  # -- The event-generator accepts four commands:
+  # run: performs suspect actions.
+  # test: performs actions and verifies Falco alerts via HTTP.
+  # suite-run: runs YAML-described test suites without verification.
+  # suite-test: runs YAML-described test suites and verifies Falco alerts via HTTP.
+  # The `run` and `test` commands honor `actions`, `loop` and `sleep`; the suite commands honor the `suite` section
+  # below. Both `test` and `suite-test` additionally honor the `http` section. See
+  # https://github.com/falcosecurity/event-generator for the full reference.
   command: run
-  # -- Regular expression used to select the actions to be run.
+
+  # -- Regular expression used to select the actions to be run. Honored only when command is `run` or `test`.
   actions: "^syscall"
-  # -- Runs in a loop the actions.
-  # If set to "true" the event-generator is deployed using a k8s deployment otherwise a k8s job.
+  # -- Runs in a loop the actions. If set to "true", the event-generator is deployed as a k8s Deployment; otherwise
+  # as a Job. `suite-run` and `suite-test` ignore this value, resulting in the event-generator being always deployed as
+  # a Job.
   loop: true
-  # -- The length of time to wait before running an action. Non-zero values should contain
-  # a corresponding time unit (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms)
+  # -- The length of time to wait before running an action. Non-zero values should contain a corresponding time unit
+  # (e.g. 1s, 2m, 3h). A value of zero means no sleep. (default 100ms). Honored only when command is `run` or `test`.
   sleep: ""
 
-  grpc:
-    # -- Set it to true if you are deploying in "test" mode.
-    enabled: false
-    # -- Path to the Falco grpc socket.
-    bindAddress: "unix:///run/falco/falco.sock"
+  # HTTP alert retriever configuration, used to receive alerts from Falco. Honored only when command is `test` or
+  # `suite-test`.
+  http:
+    # -- Address the HTTP server binds to inside the pod. Use 0.0.0.0:<port> so the Service can reach it.
+    address: "0.0.0.0:8080"
+    # -- Security mode for the HTTP server: `insecure`, `tls` or `mtls`.
+    securityMode: insecure
+    tls:
+      # -- Existing Kubernetes Secret holding the cert material. Required when `securityMode` is `tls` or `mtls`.
+      # The keys listed under `secretKeys` are projected at `/etc/falco/certs/{server.crt,server.key,ca.crt}` inside
+      # the pod and passed to the event-generator via the `--http-server-*` flags.
+      existingSecret: ""
+      # Mapping from `existingSecret` keys to the file names projected inside the pod. Defaults assume the Secret
+      # keys match the projected file names; override individual entries if your Secret uses different key names.
+      secretKeys:
+        # -- Secret key holding the server certificate. Projected at `/etc/falco/certs/server.crt`.
+        cert: "server.crt"
+        # -- Secret key holding the server private key. Projected at `/etc/falco/certs/server.key`.
+        key: "server.key"
+        # -- Secret key holding the CA root certificate (only used when `securityMode` is `mtls`). Projected at
+        # `/etc/falco/certs/ca.crt`.
+        caRoot: "ca.crt"
+    service:
+      # -- Service type used to expose the HTTP server. Falco must be able to reach this Service.
+      type: ClusterIP
+      # -- Service port. The container listens on the port encoded in `address`.
+      port: 8080
+      # -- Static NodePort to expose when `type` is `NodePort` or `LoadBalancer`. Leave empty to let Kubernetes
+      # pick one from the cluster's node port range automatically.
+      nodePort: ""
+
+  # Test suite configuration. Honored only when command is `suite-run` or `suite-test`.
+  suite:
+    # -- Inline YAML descriptions rendered into a chart-managed ConfigMap. Each map key becomes a file name inside
+    # `descriptionDir`; the value is the YAML content. Ignored when `existingConfigMap` is set.
+    # Example:
+    # descriptions:
+    #   my_test.yaml: |
+    #     tests:
+    #       - name: example
+    #         rule: Read sensitive file untrusted
+    #         runner: HostRunner
+    #         steps:
+    #           - type: syscall
+    #             name: open_etc_shadow
+    #             syscall: open
+    #             args: { pathname: /etc/shadow, flags: O_RDONLY }
+    descriptions: {}
+    # -- Existing ConfigMap holding YAML descriptions. When set, `descriptions` is ignored and the existing
+    # ConfigMap is mounted at `descriptionDir`. Each ConfigMap data key becomes a file in that directory.
+    existingConfigMap: ""
+    # -- In-pod mount point for the descriptions; passed to the event-generator binary as `--description-dir`.
+    descriptionDir: "/etc/event-generator/descriptions"
+    # -- Maximum duration of the test suite execution.
+    timeout: "1m"
+    # -- Report format for `suite-test`: `text`, `json` or `yaml`.
+    reportFormat: "text"
+    # -- Skip outcome verification (only meaningful for `suite-test`). When true, `suite-test` behaves like `suite-run`
+    # and the `http.*` settings are ignored.
+    skipOutcomeVerification: false

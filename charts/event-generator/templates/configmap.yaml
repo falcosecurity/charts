@@ -1,0 +1,13 @@
+{{- if and (include "event-generator.isSuiteCommand" .) (empty .Values.config.suite.existingConfigMap) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "event-generator.fullname" . }}-descriptions
+  labels:
+    {{- include "event-generator.labels" . | nindent 4 }}
+data:
+  {{- range $name, $content := .Values.config.suite.descriptions }}
+  {{ $name }}: |-
+    {{- $content | nindent 4 }}
+  {{- end }}
+{{- end -}}
