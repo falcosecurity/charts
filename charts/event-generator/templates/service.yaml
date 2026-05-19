@@ -1,0 +1,21 @@
+{{- if include "event-generator.mustVerifyOutcome" . -}}
+{{- $containerPort := .Values.config.http.address | splitList ":" | last | int -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "event-generator.fullname" . }}
+  labels:
+    {{- include "event-generator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.config.http.service.type }}
+  ports:
+    - port: {{ .Values.config.http.service.port }}
+      targetPort: {{ $containerPort }}
+      protocol: TCP
+      name: http
+      {{- with .Values.config.http.service.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
+  selector:
+    {{- include "event-generator.selectorLabels" . | nindent 4 }}
+{{- end -}}

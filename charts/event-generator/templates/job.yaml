@@ -1,4 +1,4 @@
-{{- if not .Values.config.loop -}}
+{{- if not (include "event-generator.useDeployment" .) -}}
 apiVersion: batch/v1
 kind: Job
 metadata:

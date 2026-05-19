@@ -4,6 +4,14 @@
 This file documents all notable changes to `event-generator` Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v0.4.0
+
+### Major Changes
+
+* Bump `event-generator` to `0.13.0`.
+* Replace the legacy gRPC alert retriever with the HTTP one introduced in `event-generator` `0.13.0`. The `config.grpc` section has been removed and replaced by `config.http`, exposing `address`, `securityMode` (`insecure`/`tls`/`mtls`), `certFile`/`keyFile`/`caRootFile`, `existingSecret` (required for TLS/mTLS) and a `service` sub-section. The chart now renders a Service for Falco to post alerts to.
+* Add support for the new `suite-run` and `suite-test` commands. The chart provisions a ConfigMap holding YAML test descriptions (either inline via `config.suite.descriptions` or via `config.suite.existingConfigMap`) and mounts it at `config.suite.descriptionDir`, passing the path to the binary as `--description-dir`. Suite commands always render as a Kubernetes Job.
+
 ## v0.3.4
 
 * Pass `--all` flag to event-generator binary to allow disabled rules to run, e.g. the k8saudit ruleset.

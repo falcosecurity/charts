@@ -62,8 +62,88 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-{{- define "grpc.unixSocketDir" -}}
-{{- if and .Values.config.grpc.enabled .Values.config.grpc.bindAddress (hasPrefix "unix://" .Values.config.grpc.bindAddress) -}}
-{{- .Values.config.grpc.bindAddress | trimPrefix "unix://" | dir -}}
+{{/*
+Returns "true" when command is suite-run or suite-test, "" otherwise.
+*/}}
+{{- define "event-generator.isSuiteCommand" -}}
+{{- if or (eq .Values.config.command "suite-run") (eq .Values.config.command "suite-test") -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns "true" when command is test or suite-test (i.e. an HTTP retriever is needed), "" otherwise.
+For suite-test, returns "" when config.suite.skipOutcomeVerification is true, since outcome verification (and therefore
+the HTTP retriever) is disabled.
+*/}}
+{{- define "event-generator.mustVerifyOutcome" -}}
+{{- if or (eq .Values.config.command "test") (and (eq .Values.config.command "suite-test") (not .Values.config.suite.skipOutcomeVerification)) -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns "true" when the workload should be a Deployment, "" otherwise. Suite commands always run once.
+*/}}
+{{- define "event-generator.useDeployment" -}}
+{{- if and .Values.config.loop (not (include "event-generator.isSuiteCommand" .)) -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Renders the argv to pass to the binary. Splits suite commands into two list items, and leaves non-suite commands as is.
+*/}}
+{{- define "event-generator.commandArgv" -}}
+{{- if include "event-generator.isSuiteCommand" . -}}
+- suite
+- {{ .Values.config.command | trimPrefix "suite-" }}
+{{- else -}}
+- {{ .Values.config.command }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Directory where TLS material from config.http.tls.existingSecret is projected inside the pod.
+*/}}
+{{- define "event-generator.certMountDir" -}}/etc/falco/certs{{- end -}}
+
+{{/*
+File paths projected under certMountDir from config.http.tls.existingSecret. Passed to the event-generator via
+--http-server-cert, --http-server-key and (mtls only) --http-client-ca.
+*/}}
+{{- define "event-generator.certFile" -}}{{ include "event-generator.certMountDir" . }}/server.crt{{- end -}}
+{{- define "event-generator.keyFile" -}}{{ include "event-generator.certMountDir" . }}/server.key{{- end -}}
+{{- define "event-generator.caRootFile" -}}{{ include "event-generator.certMountDir" . }}/ca.crt{{- end -}}
+
+{{/*
+Container securityContext. Defaults privileged=true unless the user explicitly sets `privileged` in
+.Values.securityContext.
+*/}}
+{{- define "event-generator.containerSecurityContext" -}}
+{{- $sc := deepCopy (.Values.securityContext | default dict) -}}
+{{- if and (include "event-generator.isSuiteCommand" .) (not (hasKey $sc "privileged")) -}}
+{{- $_ := set $sc "privileged" true -}}
+{{- end -}}
+{{- toYaml $sc -}}
+{{- end -}}
+
+{{/*
+Fails template rendering if the configuration is inconsistent.
+*/}}
+{{- define "event-generator.validate" -}}
+{{- $validCommands := list "run" "test" "suite-run" "suite-test" -}}
+{{- if not (has .Values.config.command $validCommands) -}}
+{{- fail (printf "config.command must be one of %v (got %q)" $validCommands .Values.config.command) -}}
+{{- end -}}
+{{- $validSecurityModes := list "insecure" "tls" "mtls" -}}
+{{- if not (has .Values.config.http.securityMode $validSecurityModes) -}}
+{{- fail (printf "config.http.securityMode must be one of %v (got %q)" $validSecurityModes .Values.config.http.securityMode) -}}
+{{- end -}}
+{{- if and (ne .Values.config.http.securityMode "insecure") (not .Values.config.http.tls.existingSecret) -}}
+{{- fail (printf "config.http.tls.existingSecret must be set when config.http.securityMode is %q" .Values.config.http.securityMode) -}}
+{{- end -}}
+{{- if and (include "event-generator.isSuiteCommand" .) (empty .Values.config.suite.existingConfigMap) (empty .Values.config.suite.descriptions) -}}
+{{- fail "config.suite.descriptions or config.suite.existingConfigMap must be set when config.command is suite-run or suite-test" -}}
 {{- end -}}
 {{- end -}}
