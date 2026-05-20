@@ -8,3 +8,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    exclude-paths:
+      - "charts/event-generator/**"
+      - "charts/falco/**"
+      - "charts/falco-operator/**"
+      - "charts/k8s-metacollector/**"
