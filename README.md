@@ -23,6 +23,7 @@ The Charts in the `master` branch (with a corresponding [GitHub release](https:/
 Charts currently available are listed below.
 
 - [falco](./charts/falco)
+- [falco-operator](./charts/falco-operator)
 - [falcosidekick](./charts/falcosidekick)
 - [event-generator](./charts/event-generator)
 - [k8s-metacollector](./charts/k8s-metacollector)
@@ -45,6 +46,6 @@ Please refer to the instruction provided by the Chart you want to install. For i
 
 ## Contributing
 
-We are glad to receive your contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for chart contribution rules, including the policy for charts synchronized from source repositories.
+We are glad to receive your contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for chart contribution rules, including the issue and PR policy for charts synchronized from source repositories.
 
 If you have any questions, please feel free to contact us via [GitHub issues](https://github.com/falcosecurity/charts/issues).
