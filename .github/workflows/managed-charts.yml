@@ -48,7 +48,7 @@ jobs:
       - name: Detect managed chart changes
         id: managed-chart-changes
         if: github.event.pull_request.user.login != 'poiana'
-        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3
+        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         with:
           filters: ${{ steps.managed-chart-filters.outputs.path }}
 
