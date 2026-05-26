@@ -1,5 +1,8 @@
 # Helm chart Breaking Changes
 
+- [9.0.0](#900)
+  - [Drop gRPC output and server](#dropped-grpc-output-and-server)
+  - [Drop Legacy eBPF probe and gVisor engine](#dropped-legacy-ebpf-probe-and-gvisor-engine)
 - [8.0.0](#800)
   - [Deprecated gRPC output and server](#deprecated-grpc-output-and-server)
   - [Deprecated Legacy eBPF probe and gVisor engine](#deprecated-legacy-ebpf-probe-and-gvisor-engine)
@@ -16,6 +19,30 @@
   - [Rulesfiles](#rulesfiles)
   - [Falco Images](#drop-support-for-falcosecurityfalco-image)
   - [Driver Loader Init Container](#driver-loader-simplified-logic)
+
+## 9.0.0
+
+### Dropped gRPC output and server
+
+Starting with Falco 0.44.0, and as a result of the deprecation notice added in Falco 0.43.0, the gRPC output and the
+gRPC server are **not supported anymore**. The gRPC server drop is a consequence of the gRPC output drop.
+
+Consider migrating to alternative outputs such as:
+
+- HTTP output (`falco.http_output`)
+- File output (`falco.file_output`)
+- Stdout output (`falco.stdout_output`)
+- [Falcosidekick](https://github.com/falcosecurity/falcosidekick) for advanced integrations
+
+### Dropped Legacy eBPF probe and gVisor engine
+
+Starting with Falco 0.44.0, and as a result of the deprecation notice added in Falco 0.43.0, the following engines are
+**not supported anymore**:
+
+- **Legacy eBPF probe** (`driver.kind=ebpf`): Consider using the Modern eBPF probe (`driver.kind=modern_ebpf`) instead
+- **gVisor engine** (`driver.kind=gvisor`): Consider using alternative monitoring approaches
+
+The Modern eBPF probe is recommended as it provides better performance and wider kernel compatibility.
 
 ## 8.0.0
 
@@ -126,7 +153,7 @@ This way you will upgrade Falco to `v0.34.0`.
 
 ### Falcoctl support
 
-[Falcoctl](https://github.com/falcosecurity/falcoctl) is a new tool born to automatize operations when deploying Falco.
+[Falcoctl](https://github.com/falcosecurity/falcoctl) is a new tool born to automate operations when deploying Falco.
 
 Before the `v3.0.0` of the charts _rulesfiles_ and _plugins_ were shipped bundled in the Falco docker image. It precluded the possibility to update the _rulesfiles_ and _plugins_ until a new version of Falco was released. Operators had to manually update the _rulesfiles_ or add new _plugins_ to Falco. The process was cumbersome and error-prone. Operators had to create their own Falco docker images with the new plugins baked into it or wait for a new Falco release.
 
@@ -227,11 +254,11 @@ Based on your deployment scenario:
          artifact:
 
            # -- List of artifact types that falcoctl will handle. If the configured refs resolves to an artifact whose type is not contained
-           # in the list it will refuse to downloade and install that artifact.
+           # in the list it will refuse to download and install that artifact.
            allowedTypes:
              - rulesfile
            install:
-             # -- Do not resolve the depenencies for artifacts. By default is true, but for our use carse we disable it.
+             # -- Do not resolve the dependencies for artifacts. By default is true, but for our use case we disable it.
              resolveDeps: false
              # -- List of artifacts to be installed by the falcoctl init container.
              refs: [k8saudit-rules:0.5]

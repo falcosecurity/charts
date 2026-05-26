@@ -48,7 +48,7 @@ podLabels: {}
 podPriorityClassName:
 
 # -- Set securityContext for the pods
-# These security settings are overriden by the ones specified for the specific
+# These security settings are overridden by the ones specified for the specific
 # containers when there is overlap.
 podSecurityContext: {}
 
@@ -60,15 +60,15 @@ podSecurityContext: {}
 # 1) driver.enabled = false:
 #    securityContext: {}
 #
-# 2) driver.enabled = true and (driver.kind = kmod || driver.kind = modern_ebpf):
+# 2) driver.enabled = true and driver.kind in (kmod, auto):
 #    securityContext:
 #     privileged: true
 #
-# 3) driver.enabled = true and driver.kind = ebpf:
+# 3) driver.enabled = true and driver.kind = modern_ebpf and driver.modernEbpf.leastPrivileged = false:
 #    securityContext:
 #     privileged: true
 #
-# 4) driver.enabled = true and driver.kind = ebpf and driver.ebpf.leastPrivileged = true
+# 4) driver.enabled = true and driver.kind = modern_ebpf and driver.modernEbpf.leastPrivileged = true:
 #    securityContext:
 #     capabilities:
 #      add:
@@ -247,7 +247,7 @@ metrics:
   # attached by Falco and the time spent in each program measured in nanoseconds.
   # To enable this feature, the kernel must be >= 5.1, and the kernel
   # configuration `/proc/sys/kernel/bpf_stats_enabled` must be set. This option,
-  # or an equivalent statistics feature, is not available for non `*bpf*` drivers.
+  # or an equivalent statistics feature, is only available for the `*modern_bpf*` driver.
   # Additionally, please be aware that the current implementation of `libbpf` does
   # not support granularity of statistics at the bpf tail call level.
   libbpfStatsEnabled: true
@@ -304,10 +304,10 @@ driver:
   # -- Set it to false if you want to deploy Falco without the drivers.
   # Always set it to false when using Falco with plugins.
   enabled: true
-  # -- kind tells Falco which driver to use. Available options: kmod (kernel driver), ebpf (eBPF probe), modern_ebpf (modern eBPF probe).
+  # -- kind tells Falco which driver to use. Available options: kmod (kernel driver), modern_ebpf (modern eBPF probe).
   kind: auto
   # -- Path on the host to mount inside the container for kernel-level access. Automatically mounted when `kind` is set to `auto`,
-  # or when `kind` is set either to `ebpf` or `modern_ebpf` and the corresponding `sysfsMount` option is set to `true`.
+  # or when `kind` is set to `modern_ebpf` and the corresponding `sysfsMount` option is set to `true`.
   # Common values:
   #   /sys/kernel                - covers both tracefs and debugfs (failsafe option)
   #   /sys/kernel/tracing        - for systems using separate tracefs mount (newer distros)
@@ -320,28 +320,6 @@ driver:
     bufSizePreset: 4
     # -- dropFailedExit if set true drops failed system call exit events before pushing them to userspace.
     dropFailedExit: false
-  # -- Configuration section for ebpf driver.
-  ebpf:
-    # -- path where the eBPF probe is located. It comes handy when the probe have been installed in the nodes using tools other than the init
-    # container deployed with the chart.
-    path: "${HOME}/.falco/falco-bpf.o"
-    # -- Needed to enable eBPF JIT at runtime for performance reasons.
-    # Can be skipped if eBPF JIT is enabled from outside the container
-    hostNetwork: false
-    # -- Constrain Falco with capabilities instead of running a privileged container.
-    # Ensure the eBPF driver is enabled (i.e., setting the `driver.kind` option to `ebpf`).
-    # Capabilities used: {CAP_SYS_RESOURCE, CAP_SYS_ADMIN, CAP_SYS_PTRACE}.
-    # On kernel versions >= 5.8 'CAP_PERFMON' and 'CAP_BPF' could replace 'CAP_SYS_ADMIN' but please pay attention to the 'kernel.perf_event_paranoid' value on your system.
-    # Usually 'kernel.perf_event_paranoid>2' means that you cannot use 'CAP_PERFMON' and you should fallback to 'CAP_SYS_ADMIN', but the behavior changes across different distros.
-    # Read more on that here: https://falco.org/docs/setup/container/#docker-least-privileged-ebpf-probe
-    leastPrivileged: false
-    # -- bufSizePreset determines the size of the shared space between Falco and its drivers.
-    # This shared space serves as a temporary storage for syscall events.
-    bufSizePreset: 4
-    # -- dropFailedExit if set true drops failed system call exit events before pushing them to userspace.
-    dropFailedExit: false
-    # -- sysfsMount if set to true, the path specified by `driver.sysfsMountPath` (e.g. `/sys/kernel`) is automatically mounted into the Falco container.
-    sysfsMount: true
   modernEbpf:
     # -- Constrain Falco with capabilities instead of running a privileged container.
     # Ensure the modern bpf driver is enabled (i.e., setting the `driver.kind` option to `modern_ebpf`).
@@ -357,17 +335,6 @@ driver:
     cpusForEachBuffer: 2
     # -- sysfsMount if set to true, the path specified by `driver.sysfsMountPath` (e.g. `/sys/kernel`) is automatically mounted into the Falco container.
     sysfsMount: true
-  # -- Gvisor configuration. Based on your system you need to set the appropriate values.
-  # Please, remember to add pod tolerations and affinities in order to schedule the Falco pods in the gVisor enabled nodes.
-  gvisor:
-    # -- Runsc container runtime configuration. Falco needs to interact with it in order to intercept the activity of the sandboxed pods.
-    runsc:
-      # -- Absolute path of the `runsc` binary in the k8s nodes.
-      path: /home/containerd/usr/local/sbin
-      # -- Absolute path of the root directory of the `runsc` container runtime. It is of vital importance for Falco since `runsc` stores there the information of the workloads handled by it;
-      root: /run/containerd/runsc
-      # -- Absolute path of the `runsc` configuration file, used by Falco to set its configuration and make aware `gVisor` of its presence.
-      config: /run/containerd/runsc/config.toml
   # -- Configuration for the Falco init container.
   loader:
     # -- Enable/disable the init container.
@@ -403,8 +370,8 @@ collectors:
     # -- Enable Container Engine support.
     enabled: true
     # -- pluginRef is the OCI reference for the container plugin. It could be a full reference such as
-    # "ghcr.io/falcosecurity/plugins/plugin/container:0.6.3". Or just name + tag: container:0.6.3.
-    pluginRef: "ghcr.io/falcosecurity/plugins/plugin/container:0.6.3"
+    # "ghcr.io/falcosecurity/plugins/plugin/container:0.7.1". Or just name + tag: container:0.7.1.
+    pluginRef: "ghcr.io/falcosecurity/plugins/plugin/container:0.7.1"
     # -- labelMaxLen is the maximum length of the labels that can be used in the container plugin.
     # container labels larger than this value won't be collected.
     labelMaxLen: 100
@@ -494,19 +461,19 @@ podHostname:
 # If `extra.env` contains `FALCO_HOSTNAME`, the user-provided value wins.
 falcoHostnameEnv: true
 
-# -- certificates used by webserver and grpc server.
+# -- certificates used by webserver.
 # paste certificate content or use helm with --set-file
 # or use existing secret containing key, crt, ca as well as pem bundle
 certs:
   # -- Existing secret containing the following key, crt and ca as well as the bundle pem.
   existingSecret: ""
   server:
-    # -- Key used by gRPC and webserver.
+    # -- Key used by webserver.
     key: ""
-    # -- Certificate used by gRPC and webserver.
+    # -- Certificate used by webserver.
     crt: ""
   ca:
-    # -- CA certificate used by gRPC, webserver and AuditSink validation.
+    # -- CA certificate used by webserver and AuditSink validation.
     crt: ""
   existingClientSecret: ""
   client:
@@ -560,7 +527,7 @@ falcoctl:
     # -- The image repository to pull from.
     repository: falcosecurity/falcoctl
     # -- The image tag to pull.
-    tag: "0.12.2"
+    tag: "0.13.0"
   artifact:
     # -- Runs "falcoctl artifact install" command as an init container. It is used to install artifacts before
     # Falco starts. It provides them to Falco by using an emptyDir volume.
@@ -847,8 +814,6 @@ falco:
 
   # NOTICE: The `falco.engine` configuration is omitted here since it is fully managed by this Helm chart.
   # To customize the Falco engine settings within the chart, please refer to `driver` settings section above.
-  # DEPRECATION NOTICE: the Legacy eBPF probe and the gVisor engine are currently deprecated. Consider using other
-  # engines.
 
   ##################
   # Falco captures #
@@ -957,7 +922,7 @@ falco:
   #
   # -- List of plugins to load.
   # NOTICE: Falco default value for this setting differs from the one used in this Helm chart.
-  # For `container` and `k8saudit` plugins, this Helm chart provides a managed integreation.
+  # For `container` and `k8saudit` plugins, this Helm chart provides a managed integration.
   # To use these plugins with this chart, please refer to `collectors` settings.
   load_plugins: []
 
@@ -967,7 +932,7 @@ falco:
   # applied when the corresponding plugin is enabled using the `load_plugins`
   # option.
   # NOTICE: Falco default value for this setting differs from the one used in this Helm chart.
-  # For `container` and `k8saudit` plugins, this Helm chart provides a managed integreation.
+  # For `container` and `k8saudit` plugins, this Helm chart provides a managed integration.
   # To use these plugins with this chart, please refer to `collectors` settings.
   plugins: []
 
@@ -1111,7 +1076,7 @@ falco:
   # With this setting you can add more information to the Falco output message, customizable by
   # rule, tag or source.
   # You can also add additional data that will appear in the output_fields property
-  # of JSON formatted messages or gRPC output but will not be part of the regular output message.
+  # of JSON formatted messages but will not be part of the regular output message.
   # This allows you to add custom fields that can help you filter your Falco events without
   # polluting the message text.
   #
@@ -1172,7 +1137,7 @@ falco:
   # Falco outputs channels #
   ##########################
 
-  # Falco supports various output channels, such as syslog, stdout, file, gRPC (deprecated),
+  # Falco supports various output channels, such as syslog, stdout, file,
   # webhook, and more. You can enable or disable these channels as needed to
   # control where Falco alerts and log messages are directed. This flexibility
   # allows seamless integration with your preferred logging and alerting systems.
@@ -1271,70 +1236,9 @@ falco:
     # -- The program to execute.
     program: "jq '{text: .output}' | curl -d @- -X POST https://hooks.slack.com/services/XXX"
 
-  # [Deprecated] `grpc_output`
-  #
-  # -- Use gRPC as an output service. DEPRECATION NOTICE: The gRPC output is deprecated. Consider using other outputs.
-  #
-  # gRPC is a modern and high-performance framework for remote procedure calls
-  # (RPC). It utilizes protocol buffers for efficient data serialization. The gRPC
-  # output in Falco provides a modern and efficient way to integrate with other
-  # systems. By default, the setting is turned off. Enabling this option stores
-  # output events in memory until they are consumed by a gRPC client. Ensure that
-  # you have a consumer for the output events or leave it disabled.
-  grpc_output:
-    # -- Enable gRPC as an output service.
-    enabled: false
-
   ##########################
   # Falco exposed services #
   ##########################
-
-  # [Deprecated] `grpc`
-  #
-  # -- A gRPC server (needed by the gRPC output). DEPRECATION NOTICE: The gRPC server is deprecated as a consequence of
-  # the gRPC output deprecation.
-  #
-  # Falco provides support for running a gRPC server using two main binding types:
-  # 1. Over the network with mandatory mutual TLS authentication (mTLS), which
-  #    ensures secure communication
-  # 2. Local Unix socket binding with no authentication. By default, the
-  #    gRPC server in Falco is turned off with no enabled services (see
-  #    `grpc_output` setting).
-  #
-  # To configure the gRPC server in Falco, you can make the following changes to
-  # the options:
-  #
-  # - Uncomment the relevant configuration options related to the gRPC server.
-  # - Update the paths of the generated certificates for mutual TLS authentication
-  #   if you choose to use mTLS.
-  # - Specify the address to bind and expose the gRPC server.
-  # - Adjust the threadiness configuration to control the number of threads and
-  #   contexts used by the server.
-  #
-  # Keep in mind that if any issues arise while creating the gRPC server, the
-  # information will be logged, but it will not stop the main Falco daemon.
-  #
-  # gRPC server using mTLS
-  # grpc:
-  #   enabled: true
-  #   bind_address: "0.0.0.0:5060"
-  #   # When the `threadiness` value is set to 0, Falco will automatically determine
-  #   # the appropriate number of threads based on the number of online cores in the system.
-  #   threadiness: 0
-  #   private_key: "/etc/falco/certs/server.key"
-  #   cert_chain: "/etc/falco/certs/server.crt"
-  #   root_certs: "/etc/falco/certs/ca.crt"
-  #
-  # gRPC server using a local unix socket (see default below)
-  grpc:
-    # -- Enable the gRPC server.
-    enabled: false
-    # -- Address to bind and expose the gRPC server. Use either a local unix socket with
-    # no authentication, or a network address with mTLS.
-    bind_address: "unix:///run/falco/falco.sock"
-    # -- When the `threadiness` value is set to 0, Falco will automatically determine
-    # the appropriate number of threads based on the number of online cores in the system.
-    threadiness: 0
 
   # [Stable] `webserver`
   #
