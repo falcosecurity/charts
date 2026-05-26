@@ -17,10 +17,6 @@ metadata:
     {{- if .Values.driver.modernEbpf.leastPrivileged }}
     container.apparmor.security.beta.kubernetes.io/{{ .Chart.Name }}: unconfined
     {{- end }}
-    {{- else if eq .Values.driver.kind "ebpf" }}
-    {{- if .Values.driver.ebpf.leastPrivileged }}
-    container.apparmor.security.beta.kubernetes.io/{{ .Chart.Name }}: unconfined
-    {{- end }}
     {{- end }}
     {{- end }}
     {{- with .Values.podAnnotations }}
@@ -34,12 +30,6 @@ spec:
   {{- with .Values.podSecurityContext }}
   securityContext:
     {{- toYaml . | nindent 4}}
-  {{- end }}
-  {{- if .Values.driver.enabled }}
-  {{- if and (eq .Values.driver.kind "ebpf") .Values.driver.ebpf.hostNetwork }}
-  hostNetwork: true
-  dnsPolicy: ClusterFirstWithHostNet
-  {{- end }}
   {{- end }}
   {{- if .Values.podPriorityClassName }}
   priorityClassName: {{ .Values.podPriorityClassName }}
@@ -59,11 +49,6 @@ spec:
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets: 
     {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- if eq .Values.driver.kind "gvisor" }}
-  hostNetwork: true
-  hostPID: true
-  dnsPolicy: ClusterFirstWithHostNet
   {{- end }}
   containers:
     - name: {{ .Chart.Name }}
@@ -216,20 +201,8 @@ spec:
           name: client-certs-volume
           readOnly: true
         {{- end }}
-        {{- include "falco.unixSocketVolumeMount"  . | nindent 8 -}}
         {{- with .Values.mounts.volumeMounts }}
           {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if eq .Values.driver.kind "gvisor" }}
-        - mountPath: /usr/local/bin/runsc
-          name: runsc-path
-          readOnly: true
-        - mountPath: /host{{ .Values.driver.gvisor.runsc.root }}
-          name: runsc-root
-        - mountPath: /host{{ .Values.driver.gvisor.runsc.config }}
-          name: runsc-config
-        - mountPath: /gvisor-config
-          name: falco-gvisor-config
         {{- end }}
   {{- if .Values.falcoctl.artifact.follow.enabled }}
     {{- include "falcoctl.sidecar" . | nindent 4 }}
@@ -237,9 +210,6 @@ spec:
   initContainers:
   {{- with .Values.extra.initContainers }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- if eq .Values.driver.kind "gvisor" }}
-  {{- include "falco.gvisor.initContainer" . | nindent 4 }}
   {{- end }}
   {{- if eq (include "driverLoader.enabled" .) "true" }}
     {{- include "falco.driverLoader.initContainer" . | nindent 4 }}
@@ -295,21 +265,6 @@ spec:
       hostPath:
         path: /proc
     {{- end }}
-    {{- if eq .Values.driver.kind "gvisor" }}
-    - name: runsc-path
-      hostPath:
-        path: {{ .Values.driver.gvisor.runsc.path }}/runsc
-        type: File
-    - name: runsc-root
-      hostPath:
-        path: {{ .Values.driver.gvisor.runsc.root }}
-    - name: runsc-config
-      hostPath:
-        path: {{ .Values.driver.gvisor.runsc.config }}
-        type: File
-    - name: falco-gvisor-config
-      emptyDir: {}
-    {{- end }}
     - name: falcoctl-config-volume
       configMap: 
         name: {{ include "falco.fullname" . }}-falcoctl
@@ -345,7 +300,6 @@ spec:
         secretName: {{ include "falco.fullname" . }}-client-certs
         {{- end }}
     {{- end }}
-    {{- include "falco.unixSocketVolume" . | nindent 4 -}}
     {{- with .Values.mounts.volumes }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -420,13 +374,6 @@ spec:
   {{- if (or (eq .Values.driver.kind "kmod") (eq .Values.driver.kind "module") (eq .Values.driver.kind "auto")) -}}
     {{- $securityContext := set $securityContext "privileged" true -}}
   {{- end -}}
-  {{- if eq .Values.driver.kind "ebpf" -}}
-    {{- if .Values.driver.ebpf.leastPrivileged -}}
-      {{- $securityContext := set $securityContext "capabilities" (dict "add" (list "SYS_ADMIN" "SYS_RESOURCE" "SYS_PTRACE")) -}}
-    {{- else -}}
-      {{- $securityContext := set $securityContext "privileged" true -}}
-    {{- end -}}
-  {{- end -}}
   {{- if (or (eq .Values.driver.kind "modern_ebpf") (eq .Values.driver.kind "modern-bpf")) -}}
     {{- if .Values.driver.modernEbpf.leastPrivileged -}}
       {{- $securityContext := set $securityContext "capabilities" (dict "add" (list "BPF" "SYS_RESOURCE" "PERFMON" "SYS_PTRACE")) -}}
@@ -440,20 +387,4 @@ spec:
 {{- else -}}
   {{- toYaml $securityContext }}
 {{- end -}}
-{{- end -}}
-
-
-{{- define "falco.unixSocketVolumeMount" -}}
-{{- if and .Values.falco.grpc.enabled .Values.falco.grpc.bind_address (hasPrefix "unix://" .Values.falco.grpc.bind_address) }}
-- mountPath: {{ include "falco.unixSocketDir" . }}
-  name: grpc-socket-dir
-{{- end }}
-{{- end -}}
-
-{{- define "falco.unixSocketVolume" -}}
-{{- if and .Values.falco.grpc.enabled .Values.falco.grpc.bind_address (hasPrefix "unix://" .Values.falco.grpc.bind_address) }}
-- name: grpc-socket-dir
-  hostPath:
-    path: {{ include "falco.unixSocketDir" . }}
-{{- end }}
 {{- end -}}
