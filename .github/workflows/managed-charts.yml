@@ -1,7 +1,7 @@
 name: Guard Managed Charts
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - master
 
@@ -13,18 +13,12 @@ jobs:
 
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
 
     steps:
       - name: Skip Poiana
         if: github.event.pull_request.user.login == 'poiana'
         run: echo "Managed chart guard skipped for Poiana."
-
-      - name: Checkout
-        if: github.event.pull_request.user.login != 'poiana'
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-        with:
-          persist-credentials: false
 
       - name: Checkout base guard config
         if: github.event.pull_request.user.login != 'poiana'
@@ -35,22 +29,47 @@ jobs:
           sparse-checkout: .github/managed-charts.yaml
           persist-credentials: false
 
-      - name: Select guard config
-        id: managed-chart-filters
-        if: github.event.pull_request.user.login != 'poiana'
-        run: |
-          if [[ -f base/.github/managed-charts.yaml ]]; then
-            echo "path=base/.github/managed-charts.yaml" >> "${GITHUB_OUTPUT}"
-          else
-            echo "path=.github/managed-charts.yaml" >> "${GITHUB_OUTPUT}"
-          fi
-
       - name: Detect managed chart changes
         id: managed-chart-changes
         if: github.event.pull_request.user.login != 'poiana'
         uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         with:
-          filters: ${{ steps.managed-chart-filters.outputs.path }}
+          filters: base/.github/managed-charts.yaml
+
+      - name: Comment redirect on managed chart change
+        if: github.event.pull_request.user.login != 'poiana' && steps.managed-chart-changes.outputs.changes != '[]'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const marker = '<!-- managed-charts-guard -->';
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const author = context.payload.pull_request.user.login;
+            const body = [
+              marker,
+              `Hi @${author} 👋 thanks for the PR!`,
+              '',
+              '> [!IMPORTANT]',
+              '> The files you changed belong to a **managed chart**. Direct edits to managed charts in this repository are not accepted, and this PR will be blocked by the **Guard Managed Charts** check.',
+              '',
+              'Managed charts are owned by their source repositories and synced into this repo by Poiana. Please open this change against the appropriate source repository instead.',
+              '',
+              `- Chart-to-source mapping: [.github/managed-charts.yaml](https://github.com/${owner}/${repo}/blob/master/.github/managed-charts.yaml)`,
+              `- Contributing guidelines: [CONTRIBUTING.md](https://github.com/${owner}/${repo}/blob/master/CONTRIBUTING.md)`,
+              '',
+              '🙏',
+            ].join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number,
+            });
+            const existing = comments.find(c => c.body?.startsWith(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
 
       - name: Block direct managed chart changes
         if: github.event.pull_request.user.login != 'poiana' && steps.managed-chart-changes.outputs.changes != '[]'
