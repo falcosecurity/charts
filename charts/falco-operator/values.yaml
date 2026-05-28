@@ -2,7 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# -- Number of replicas for the operator
+# -- Number of replicas for the operator. Leader election is OFF by default;
+# to run more than 1 replica, also set `extraArgs: ["--leader-elect=true"]`.
 replicaCount: 1
 
 # -- The number of old ReplicaSets to retain to allow rollback
