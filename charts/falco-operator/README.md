@@ -41,7 +41,7 @@ helm uninstall falco-operator --namespace falco-operator
 
 ## Configuration
 
-The following table lists the configurable parameters of the falco-operator chart v0.1.0 and their default values. See [values.yaml](values.yaml) for the full list.
+The following table lists the configurable parameters of the falco-operator chart v0.2.0 and their default values. See [values.yaml](values.yaml) for the full list.
 
 ## Values
 
@@ -67,7 +67,7 @@ The following table lists the configurable parameters of the falco-operator char
 | rbac | object | `{"create":true}` | RBAC configuration |
 | rbac.create | bool | `true` | Specifies whether RBAC resources should be created |
 | readinessProbe | object | `{"httpGet":{"path":"/readyz","port":"health"},"initialDelaySeconds":5,"periodSeconds":10}` | Readiness probe configuration |
-| replicaCount | int | `1` | Number of replicas for the operator |
+| replicaCount | int | `1` | Number of replicas for the operator. Leader election is OFF by default; to run more than 1 replica, also set `extraArgs: ["--leader-elect=true"]`. |
 | resizePolicy | list | `[]` | In-place pod resize policy for the manager container |
 | resources | object | `{"limits":{"cpu":"500m","memory":"128Mi"},"requests":{"cpu":"10m","memory":"64Mi"}}` | Resource limits and requests |
 | revisionHistoryLimit | int | `10` | The number of old ReplicaSets to retain to allow rollback |
