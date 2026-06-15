@@ -8113,6 +8113,28 @@ entries:
   falco-talon:
   - apiVersion: v1
     appVersion: 0.3.0
+    created: "2026-06-15T10:15:41.098470267Z"
+    description: React to the events from Falco
+    digest: ea61be2d1445b255c9391d26a36f4ef6a520d3a8f5f904d94e4fe1c7617b06d2
+    home: https://github.com/falcosecurity/falco-talon
+    keywords:
+    - falco
+    - monitoring
+    - security
+    - response-engine
+    maintainers:
+    - email: issif+github@gadz.org
+      name: Issif
+    - email: igoreulalio.ie@gmail.com
+      name: IgorEulalio
+    name: falco-talon
+    sources:
+    - https://github.com/falcosecurity/falco-talon
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falco-talon-0.4.1/falco-talon-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v1
+    appVersion: 0.3.0
     created: "2026-01-16T10:59:31.840343859Z"
     description: React to the events from Falco
     digest: d7796d611fcdd070bd2ab81d12144231b8524e3f72cbf314455211d5aa9b0c29
@@ -11017,4 +11039,4 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.0/k8s-metacollector-0.1.0.tgz
     version: 0.1.0
-generated: "2026-06-11T10:06:23.782675198Z"
+generated: "2026-06-15T10:15:41.100189875Z"
