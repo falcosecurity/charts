@@ -620,6 +620,17 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | grafana.dashboards.configMaps.falcosidekick.name | string | `"falcosidekick-grafana-dashboard"` | name specifies the name for the configmap. |
 | grafana.dashboards.configMaps.falcosidekick.namespace | string | `""` | namespace specifies the namespace for the configmap. |
 | grafana.dashboards.enabled | bool | `false` | enabled specifies whether the dashboards should be deployed. |
+| httproute.additionalRules | list | `[]` | additionalRules (templated) prepends custom rules to the route |
+| httproute.annotations | object | `{}` | HTTPRoute annotations |
+| httproute.apiVersion | string | `""` | HTTPRoute apiVersion (defaults to "gateway.networking.k8s.io/v1" when empty) |
+| httproute.enabled | bool | `false` | Whether to create the HTTPRoute (Gateway API). Requires the Gateway API CRDs to be installed in the cluster |
+| httproute.filters | list | `[]` | filters applied to requests that match this rule |
+| httproute.hostnames | list | `[]` | hostnames (templated) that should match against the HTTP Host header to select this HTTPRoute |
+| httproute.httpsRedirect | bool | `false` | httpsRedirect adds a filter to redirect HTTP to HTTPS (301). When enabled, matches and filters are ignored. Ref. https://gateway-api.sigs.k8s.io/guides/http-redirect-rewrite/ |
+| httproute.kind | string | `""` | HTTPRoute kind (defaults to "HTTPRoute" when empty) |
+| httproute.labels | object | `{}` | HTTPRoute additional labels |
+| httproute.matches | list | `[{"path":{"type":"PathPrefix","value":"/"}}]` | matches define conditions used for matching the rule against incoming HTTP requests |
+| httproute.parentRefs | list | `[]` | parentRefs references the Gateways this HTTPRoute should be attached to |
 | image | object | `{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falcosidekick","tag":"2.32.0"}` | number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
 | image.registry | string | `"docker.io"` | The image registry to pull from |
@@ -683,6 +694,17 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.externalRedis.password | string | `""` | Set the password of the external Redis |
 | webui.externalRedis.port | int | `6379` | The port of the external Redis database with RediSearch > v2 |
 | webui.externalRedis.url | string | `""` | The URL of the external Redis database with RediSearch > v2 |
+| webui.httproute.additionalRules | list | `[]` | additionalRules (templated) prepends custom rules to the route |
+| webui.httproute.annotations | object | `{}` | Web UI HTTPRoute annotations |
+| webui.httproute.apiVersion | string | `""` | HTTPRoute apiVersion (defaults to "gateway.networking.k8s.io/v1" when empty) |
+| webui.httproute.enabled | bool | `false` | Whether to create the Web UI HTTPRoute (Gateway API). Requires the Gateway API CRDs to be installed in the cluster |
+| webui.httproute.filters | list | `[]` | filters applied to requests that match this rule |
+| webui.httproute.hostnames | list | `[]` | hostnames (templated) that should match against the HTTP Host header to select this HTTPRoute |
+| webui.httproute.httpsRedirect | bool | `false` | httpsRedirect adds a filter to redirect HTTP to HTTPS (301). When enabled, matches and filters are ignored |
+| webui.httproute.kind | string | `""` | HTTPRoute kind (defaults to "HTTPRoute" when empty) |
+| webui.httproute.labels | object | `{}` | Web UI HTTPRoute additional labels |
+| webui.httproute.matches | list | `[{"path":{"type":"PathPrefix","value":"/"}}]` | matches define conditions used for matching the rule against incoming HTTP requests |
+| webui.httproute.parentRefs | list | `[]` | parentRefs references the Gateways this HTTPRoute should be attached to |
 | webui.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
 | webui.image.registry | string | `"docker.io"` | The web UI image registry to pull from |
 | webui.image.repository | string | `"falcosecurity/falcosidekick-ui"` | The web UI image repository to pull from |

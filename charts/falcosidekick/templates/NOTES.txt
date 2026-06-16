@@ -5,6 +5,10 @@
   http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
   {{- end }}
 {{- end }}
+{{- else if .Values.httproute.enabled }}
+{{- range .Values.httproute.hostnames }}
+  http{{ if $.Values.httproute.httpsRedirect }}s{{ end }}://{{ tpl . $ }}/
+{{- end }}
 {{- else if contains "NodePort" .Values.service.type }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "falcosidekick.fullname" . }})
   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
@@ -23,6 +27,10 @@
 {{- if .Values.webui.ingress.enabled }}
 {{- range $host := .Values.webui.ingress.hosts }}
   http{{ if $.Values.webui.ingress.tls }}s{{ end }}://{{ $host.host }}{{ index $host.paths 0 }}
+{{- end }}
+{{- else if .Values.webui.httproute.enabled }}
+{{- range .Values.webui.httproute.hostnames }}
+  http{{ if $.Values.webui.httproute.httpsRedirect }}s{{ end }}://{{ tpl . $ }}/
 {{- end }}
 {{- else if contains "NodePort" .Values.webui.service.type }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "falcosidekick.fullname" . }})-ui
