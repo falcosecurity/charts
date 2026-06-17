@@ -101,6 +101,13 @@ volumes: []
 # -- Additional volume mounts
 volumeMounts: []
 
+# -- Label keys that must NOT be propagated onto operator-generated resources.
+# Supports the '*' wildcard (e.g. `kustomize.toolkit.fluxcd.io/*`).
+excludedLabels: []
+  # - argocd.argoproj.io/instance
+  # - kustomize.toolkit.fluxcd.io/name
+  # - kustomize.toolkit.fluxcd.io/namespace
+
 # -- Additional CLI arguments passed to the operator binary
 extraArgs: []
   # - --metrics-bind-address=:8443
@@ -131,6 +138,19 @@ topologySpreadConstraints: []
 
 # -- Priority class name
 priorityClassName: ""
+
+# -- Pod DNS policy. One of ClusterFirst, ClusterFirstWithHostNet, Default or None.
+dnsPolicy: ""
+
+# -- Pod DNS config. Requires dnsPolicy to be set to None to take full effect.
+dnsConfig: {}
+  # nameservers:
+  #   - 1.1.1.1
+  # searches:
+  #   - ns.svc.cluster.local
+  # options:
+  #   - name: ndots
+  #     value: "2"
 
 # -- Array of extra Kubernetes manifests to deploy alongside the operator. Each
 # entry is rendered with `tpl`, so Helm templating (e.g. `{{ .Release.Name }}`)

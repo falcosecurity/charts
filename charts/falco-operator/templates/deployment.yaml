@@ -42,6 +42,9 @@ spec:
             - /usr/bin/manager
           args:
             - --health-probe-bind-address=:8081
+            {{- range .Values.excludedLabels }}
+            - --excluded-labels={{ . }}
+            {{- end }}
             {{- with .Values.extraArgs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -101,5 +104,12 @@ spec:
       {{- end }}
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
+      {{- end }}
+      {{- with .Values.dnsPolicy }}
+      dnsPolicy: {{ . }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       terminationGracePeriodSeconds: 10
