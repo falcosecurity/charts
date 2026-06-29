@@ -1,0 +1,101 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-ingress-fromfalcocore
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: ui
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/name: falcosidekick
+  policyTypes:
+    - Ingress
+  ingress:
+    # Accept Traffic on port 2802 from falco
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: core
+              app.kubernetes.io/instance: falco
+              app.kubernetes.io/name: falcosidekick
+      ports:
+        - port: 2802
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-ingress-fromingress
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: ui
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/name: falcosidekick
+  policyTypes:
+    - Ingress
+  ingress:
+    # Accept Traffic on port 2802 from ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/component: controller
+              app.kubernetes.io/instance: ingress-nginx
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - port: 2802
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-egress-toredis
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: ui
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/name: falcosidekick
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/component: ui-redis
+            app.kubernetes.io/instance: falco
+            app.kubernetes.io/name: falcosidekick
+      ports:
+        - port: 6379
+          protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-egress-tocoredns
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: ui
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/name: falcosidekick
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
