@@ -24,6 +24,7 @@ spec:
         - port: 2802
           protocol: TCP
 {{- if .Values.webui.ingress.enabled -}}
+{{ printf "\n" }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -44,16 +45,17 @@ spec:
         - namespaceSelector:
             matchLabels:
               {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector }}
-              {{- toYaml . | nindent 18 }}
+              {{- toYaml . | nindent 14 }}
               {{- end }}
           podSelector:
             matchLabels:
               {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector }}
-              {{- toYaml . | nindent 18 }}
+              {{- toYaml . | nindent 14 }}
               {{- end }}
       ports:
         - port: 2802
           protocol: TCP
+{{ printf "\n" }}
 {{- end -}}
 ---
 apiVersion: networking.k8s.io/v1
