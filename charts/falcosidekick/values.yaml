@@ -1174,6 +1174,7 @@ ingress:
 
 networkPolicies:
   enabled: true
+  # The following lines will work only if webui ingress is enabled (webui.ingress.enabled = true)
   webuiIngressNetworkPoliciesNamespaceSelector: ""
   webuiIngressNetworkPoliciesPodSelector: {}
   # Full Example with nginx (deprecrated) below.
