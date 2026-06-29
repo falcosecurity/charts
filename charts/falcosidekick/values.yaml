@@ -1173,7 +1173,7 @@ ingress:
   #      - chart-example.local
 
 networkPolicies:
-  enabled: true
+  enabled: false
   # The following lines will work only if webui ingress is enabled (webui.ingress.enabled = true)
   webuiIngressNetworkPoliciesNamespaceSelector: ""
   webuiIngressNetworkPoliciesPodSelector: {}
