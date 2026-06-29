@@ -1174,6 +1174,15 @@ ingress:
 
 networkPolicies:
   enabled: true
+  webuiIngressNetworkPoliciesNamespaceSelector: ""
+  webuiIngressNetworkPoliciesPodSelector: {}
+  # Full Example with nginx (deprecrated) below.
+  # webuiIngressNetworkPoliciesNamespaceSelector: 
+  #   kubernetes.io/metadata.name: ingress-nginx
+  # webuiIngressNetworkPoliciesPodSelector:
+  #   app.kubernetes.io/component: controller
+  #   app.kubernetes.io/instance: ingress-nginx
+  #   app.kubernetes.io/name: ingress-nginx
     
 # -- The resources for falcosdekick pods
 resources: {}

@@ -43,12 +43,14 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: ingress-nginx
+              {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector }}
+              {{- toYaml . | nindent 18 }}
+              {{- end }}
           podSelector:
             matchLabels:
-              app.kubernetes.io/component: controller
-              app.kubernetes.io/instance: ingress-nginx
-              app.kubernetes.io/name: ingress-nginx
+              {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector }}
+              {{- toYaml . | nindent 18 }}
+              {{- end }}
       ports:
         - port: 2802
           protocol: TCP
