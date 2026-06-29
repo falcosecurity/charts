@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "falcosidekick.fullname" . }}-ui-redis-network-policy-ingress-fromsidekickui
+  name: {{ include "falcosidekick.fullname" . }}-ui-redis-network-policy-ingress-from-sidekick-ui
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
@@ -29,7 +29,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "falcosidekick.fullname" . }}-ui-redis-network-policy-egress-tocoredns
+  name: {{ include "falcosidekick.fullname" . }}-ui-redis-network-policy-egress-to-coredns
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:

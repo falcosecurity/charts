@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-ingress-fromfalcocore
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-ingress-from-falco-core
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
@@ -26,7 +26,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-ingress-fromingress
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-ingress-from-ingress
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
@@ -54,7 +54,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-egress-toredis
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-egress-to-redis
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
@@ -78,7 +78,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-egress-tocoredns
+  name: {{ include "falcosidekick.fullname" . }}-ui-network-policy-egress-to-coredns
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
