@@ -24,6 +24,7 @@ spec:
         - port: 2802
           protocol: TCP
 {{- if .Values.webui.ingress.enabled -}}
+{{- if or .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector }}
 {{ printf "\n" }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -42,6 +43,7 @@ spec:
   ingress:
     # Accept Traffic on port 2802 from ingress controller
     - from:
+        {{- if and .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector }}
         - namespaceSelector:
             matchLabels:
               {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector }}
@@ -52,10 +54,26 @@ spec:
               {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector }}
               {{- toYaml . | nindent 14 }}
               {{- end }}
+        {{- end }}
+        {{- if and .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector (not .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector) }}
+        - namespaceSelector:
+            matchLabels:
+              {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector }}
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+        {{- end }}
+        {{- if and .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector (not .Values.networkPolicies.webuiIngressNetworkPoliciesNamespaceSelector) }}
+        - podSelector:
+            matchLabels:
+              {{- with .Values.networkPolicies.webuiIngressNetworkPoliciesPodSelector }}
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+        {{- end }}          
       ports:
         - port: 2802
           protocol: TCP
 {{ printf "\n" }}
+{{- end -}}
 {{- end -}}
 ---
 apiVersion: networking.k8s.io/v1
