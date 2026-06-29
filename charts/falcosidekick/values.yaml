@@ -1172,6 +1172,9 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+networkPolicies:
+  enabled: true
+    
 # -- The resources for falcosdekick pods
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
