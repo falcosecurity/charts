@@ -41,7 +41,7 @@ helm uninstall falco-operator --namespace falco-operator
 
 ## Configuration
 
-The following table lists the configurable parameters of the falco-operator chart v0.3.0 and their default values. See [values.yaml](values.yaml) for the full list.
+The following table lists the configurable parameters of the falco-operator chart v0.3.1 and their default values. See [values.yaml](values.yaml) for the full list.
 
 ## Values
 
