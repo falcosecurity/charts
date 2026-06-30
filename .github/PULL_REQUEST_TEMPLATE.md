@@ -4,7 +4,7 @@
 2. Please label this pull request according to what type of issue you are addressing.
 3. If the PR is unfinished while opening it specify a wip in the title before the actual title, for example, "wip: my awesome feature"
 
-Chart changes for directories listed in [.github/managed-charts.yaml](../.github/managed-charts.yaml) must be authored in the source repository. Non-automation PRs changing those directories are blocked.
+⚠ Some charts in this repository are **managed**: owned by their source repositories and synced here by Poiana. Direct edits to managed charts will be blocked by the "Guard Managed Charts" check; please open changes against the appropriate source repo. See [.github/managed-charts.yaml](../.github/managed-charts.yaml) for the list of managed charts and their source mapping.
 -->
 
 **What type of PR is this?**

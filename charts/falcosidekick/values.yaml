@@ -1185,6 +1185,36 @@ networkPolicies:
   #   app.kubernetes.io/instance: ingress-nginx
   #   app.kubernetes.io/name: ingress-nginx
     
+httproute:
+  # -- Whether to create the HTTPRoute (Gateway API). Requires the Gateway API CRDs to be installed in the cluster
+  enabled: false
+  # -- HTTPRoute apiVersion (defaults to "gateway.networking.k8s.io/v1" when empty)
+  apiVersion: ""
+  # -- HTTPRoute kind (defaults to "HTTPRoute" when empty)
+  kind: ""
+  # -- HTTPRoute annotations
+  annotations: {}
+  # -- HTTPRoute additional labels
+  labels: {}
+  # -- parentRefs references the Gateways this HTTPRoute should be attached to
+  parentRefs: []
+    # - name: my-gateway
+    #   sectionName: http
+  # -- hostnames (templated) that should match against the HTTP Host header to select this HTTPRoute
+  hostnames: []
+    # - falcosidekick.local
+  # -- matches define conditions used for matching the rule against incoming HTTP requests
+  matches:
+    - path:
+        type: PathPrefix
+        value: /
+  # -- filters applied to requests that match this rule
+  filters: []
+  # -- additionalRules (templated) prepends custom rules to the route
+  additionalRules: []
+  # -- httpsRedirect adds a filter to redirect HTTP to HTTPS (301). When enabled, matches and filters are ignored. Ref. https://gateway-api.sigs.k8s.io/guides/http-redirect-rewrite/
+  httpsRedirect: false
+
 # -- The resources for falcosdekick pods
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -1323,6 +1353,36 @@ webui:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+
+  httproute:
+    # -- Whether to create the Web UI HTTPRoute (Gateway API). Requires the Gateway API CRDs to be installed in the cluster
+    enabled: false
+    # -- HTTPRoute apiVersion (defaults to "gateway.networking.k8s.io/v1" when empty)
+    apiVersion: ""
+    # -- HTTPRoute kind (defaults to "HTTPRoute" when empty)
+    kind: ""
+    # --  Web UI HTTPRoute annotations
+    annotations: {}
+    # --  Web UI HTTPRoute additional labels
+    labels: {}
+    # --  parentRefs references the Gateways this HTTPRoute should be attached to
+    parentRefs: []
+      # - name: my-gateway
+      #   sectionName: http
+    # --  hostnames (templated) that should match against the HTTP Host header to select this HTTPRoute
+    hostnames: []
+      # - falcosidekick-ui.local
+    # --  matches define conditions used for matching the rule against incoming HTTP requests
+    matches:
+      - path:
+          type: PathPrefix
+          value: /
+    # --  filters applied to requests that match this rule
+    filters: []
+    # --  additionalRules (templated) prepends custom rules to the route
+    additionalRules: []
+    # --  httpsRedirect adds a filter to redirect HTTP to HTTPS (301). When enabled, matches and filters are ignored
+    httpsRedirect: false
   # --  The resources for the web UI pods
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
