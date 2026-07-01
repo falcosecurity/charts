@@ -1,0 +1,59 @@
+{{- if .Values.defaultNetworkPolicy.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "falcosidekick.fullname" . }}-core-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: core
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/name: falcosidekick
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Accept Traffic on ports 2801 and 2810 from falco
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: falco
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: falco
+              app.kubernetes.io/name: falco
+          podSelector:
+      ports:
+        # http-notls
+        - port: 2801
+          protocol: TCP
+        # http-notls
+        - port: 2810
+          protocol: TCP
+  egress:
+    # Allow kube-dns resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+    {{- if .Values.webui.enabled }}
+    # Allow sending POST to sidekick-ui to ingest data
+    - to:
+        - podSelector:
+            matchLabels:
+             app.kubernetes.io/component: ui
+             app.kubernetes.io/instance: falco
+             app.kubernetes.io/name: falcosidekick
+      ports:
+        # sidekick-ui
+        - port: 2802
+          protocol: TCP
+    {{- end -}}
+{{- end -}}
