@@ -13,3 +13,13 @@ updates:
       - "charts/falco/**"
       - "charts/falco-operator/**"
       - "charts/k8s-metacollector/**"
+  - package-ecosystem: "gomod"
+    directories:
+      - "/charts/event-generator/**"
+      - "/charts/falco/**"
+      - "/charts/falco-operator/**"
+      - "/charts/k8s-metacollector/**"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "*"
