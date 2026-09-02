@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.4.2 - 2026-09-02
+
+- restart Falco Talon when rules or `config.rulesOverride` change by adding a `rules-checksum` annotation on the pod template
+
 ## 0.4.1 - 2026-06-15
 
 - fix missing namespace in the Secret metadata
