@@ -45,6 +45,64 @@ rbac:
   # -- Specifies whether RBAC resources should be created
   create: true
 
+# -- mTLS for the central artifact server and per-Falco-instance client certificates. Requires
+# cert-manager installed in the cluster (and trust-manager too, if mtls.createIssuer is true).
+# See internal/pkg/artifactserver and controllers/instance/falco for the Go side.
+mtls:
+  # -- Enable mTLS. When true: cert-manager issues this Deployment's own server certificate,
+  # the Falco controller creates a unique per-instance client certificate (with a SPIFFE URI
+  # SAN identifying the instance) for every Falco instance's artifact-operator sidecar, and the
+  # operator's ClusterRole gains permission to create cert-manager Certificate objects. When
+  # false (the default), the artifact server runs over plain HTTP, unchanged from today: no
+  # cert-manager dependency at all, and clusters using a service mesh for transport-level mTLS
+  # instead can safely leave this off.
+  enabled: false
+
+  # -- If true, this chart bootstraps its own private CA (a self-signed Issuer, a CA
+  # Certificate, and a ClusterIssuer) and a trust-manager Bundle that distributes that CA to any
+  # namespace labeled trustLabel below. If false, set issuerName to an existing ClusterIssuer
+  # you manage yourself, and handle trust distribution to Falco instances' namespaces on your own
+  # (this chart never creates a Bundle when createIssuer is false).
+  createIssuer: true
+
+  # -- Name of the ClusterIssuer used to sign the server and per-instance client certificates.
+  # Defaults to "<fullname>-artifact-ca-issuer", the one this chart creates when createIssuer is
+  # true. Set this explicitly when createIssuer is false, to reference your own ClusterIssuer.
+  issuerName: ""
+
+  # -- Name of the ConfigMap (synced by trust-manager into every trust-labeled namespace) that
+  # both the operator's Deployment and every Falco instance's sidecar read to verify their peer's
+  # certificate through a CA rotation. Deliberately not each side's own per-instance Secret,
+  # since a Secret's bundled ca.crt only ever reflects one CA at a time, but this ConfigMap can
+  # hold two at once during a rotation (see the CA rotation runbook). Defaults to
+  # "<fullname>-artifact-ca-bundle", the Bundle this chart creates when createIssuer is true.
+  # Set this explicitly when createIssuer is false, to reference your own trust-distribution
+  # mechanism's ConfigMap.
+  caBundleConfigMapName: ""
+
+  # -- Label applied to namespaces that should receive the CA trust bundle via trust-manager
+  # (only relevant when createIssuer is true). A cluster admin must label a Falco instance's
+  # namespace with this key=true before that instance can complete mTLS setup; this chart never
+  # labels namespaces on its own (a deliberate, explicit, admin-approves-trust step). Without it,
+  # a Falco instance's sidecar has no CA bundle ConfigMap to mount and its pod will sit stuck in
+  # ContainerCreating.
+  trustLabel: artifact.falcosecurity.dev/trust
+
+  # -- Duration for the bootstrap CA certificate (only used when createIssuer is true). Not
+  # auto-renewed; rotating it is a coordinated, manual runbook (dual-trust window via the
+  # trust-manager Bundle, then re-pointing issuerName at a new CA).
+  caCertDuration: 8760h
+
+  server:
+    # -- Duration/renewBefore for the artifact server's own leaf certificate.
+    certDuration: 720h
+    certRenewBefore: 168h
+
+  client:
+    # -- Duration/renewBefore for each Falco instance's per-instance client certificate.
+    certDuration: 720h
+    certRenewBefore: 168h
+
 # -- Pod annotations
 podAnnotations: {}
 # -- Pod labels
@@ -67,10 +125,10 @@ securityContext:
 resources:
   limits:
     cpu: 500m
-    memory: 128Mi
+    memory: 512Mi
   requests:
     cpu: 10m
-    memory: 64Mi
+    memory: 128Mi
 
 # -- In-place pod resize policy for the manager container
 resizePolicy: []
@@ -95,10 +153,11 @@ readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 10
 
-# -- Additional volumes
+# -- Additional volumes. mTLS's own volumes (server cert Secret + CA trust bundle ConfigMap) are
+# added natively when mtls.enabled is true; no need to list them here.
 volumes: []
 
-# -- Additional volume mounts
+# -- Additional volume mounts. See the volumes note above.
 volumeMounts: []
 
 # -- Label keys that must NOT be propagated onto operator-generated resources.
@@ -108,7 +167,8 @@ excludedLabels: []
   # - kustomize.toolkit.fluxcd.io/name
   # - kustomize.toolkit.fluxcd.io/namespace
 
-# -- Additional CLI arguments passed to the operator binary
+# -- Additional CLI arguments passed to the operator binary. mTLS's own flags are added
+# natively when mtls.enabled is true; no need to list them here.
 extraArgs: []
   # - --metrics-bind-address=:8443
   # - --metrics-secure=false
@@ -154,7 +214,8 @@ dnsConfig: {}
 
 # -- Array of extra Kubernetes manifests to deploy alongside the operator. Each
 # entry is rendered with `tpl`, so Helm templating (e.g. `{{ .Release.Name }}`)
-# is supported within values.
+# is supported within values. mTLS's own cert-manager/trust-manager resources are templated
+# natively (see mtls.* above and templates/mtls.yaml); this is for anything else.
 extraObjects: []
   # - apiVersion: v1
   #   kind: ConfigMap

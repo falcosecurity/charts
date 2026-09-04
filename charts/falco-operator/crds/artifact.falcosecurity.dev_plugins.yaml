@@ -20,6 +20,9 @@ spec:
     - jsonPath: .status.conditions[?(@.type == 'Programmed')].status
       name: Programmed
       type: string
+    - jsonPath: .status.conditions[?(@.type == 'DependenciesSatisfied')].status
+      name: DependenciesSatisfied
+      type: string
     - jsonPath: .metadata.creationTimestamp
       name: Age
       type: date
@@ -188,6 +191,81 @@ spec:
                 type: Programmed
             description: PluginStatus defines the observed state of Plugin.
             properties:
+              artifactMeta:
+                description: |-
+                  ArtifactMeta holds the parsed metadata (requirements, dependencies, digest) collected by
+                  the instance operator. Per-node artifact operators read this field instead of hitting the
+                  registry themselves.
+                nullable: true
+                properties:
+                  dependencies:
+                    description: Dependencies lists the plugin dependencies declared
+                      by the artifact.
+                    items:
+                      description: ArtifactMetaDependency is a plugin dependency declared
+                        by an artifact.
+                      properties:
+                        alternatives:
+                          description: Alternatives lists optional substitute plugins
+                            that can satisfy this dependency.
+                          items:
+                            description: |-
+                              ArtifactMetaDependencyVariant is an alternative plugin that can satisfy a dependency.
+                              It is a flat (non-recursive) form of ArtifactMetaDependency so that CRD schemas
+                              can express a concrete array-item type.
+                            properties:
+                              name:
+                                description: Name is the plugin name.
+                                type: string
+                              version:
+                                description: Version is the minimum required plugin
+                                  version.
+                                type: string
+                            required:
+                            - name
+                            - version
+                            type: object
+                          type: array
+                        name:
+                          description: Name is the plugin name.
+                          type: string
+                        version:
+                          description: Version is the minimum required plugin version.
+                          type: string
+                      required:
+                      - name
+                      - version
+                      type: object
+                    type: array
+                  digest:
+                    description: Digest is the resolved OCI manifest digest of the
+                      currently observed artifact.
+                    type: string
+                  requirements:
+                    description: Requirements lists the engine/capability requirements
+                      declared by the artifact.
+                    items:
+                      description: ArtifactMetaRequirement is a single engine or capability
+                        requirement declared by an artifact.
+                      properties:
+                        name:
+                          description: Name is the capability name (e.g. "engine_version_semver",
+                            "falco").
+                          type: string
+                        version:
+                          description: Version is the minimum required version string.
+                          type: string
+                      required:
+                      - name
+                      - version
+                      type: object
+                    type: array
+                  specHash:
+                    description: |-
+                      SpecHash is a SHA-256 hash of the OCIArtifact spec. When it changes the cached
+                      Digest, Requirements, and Dependencies are invalidated and re-fetched.
+                    type: string
+                type: object
               conditions:
                 description: Conditions represent the latest available observations
                   of the Plugin's state.
@@ -249,6 +327,13 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
+              observedGeneration:
+                description: |-
+                  ObservedGeneration is the .metadata.generation that the instance operator has fully
+                  processed (ArtifactMeta computed, status patched). Per-node artifact operators defer
+                  reconciliation until this equals metadata.generation.
+                format: int64
+                type: integer
             type: object
         type: object
     served: true

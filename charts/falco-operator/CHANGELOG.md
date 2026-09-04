@@ -5,6 +5,13 @@ release numbering uses [semantic versioning](http://semver.org).
 
 ## Unreleased
 
+## v0.4.0-rc1
+
+* Update the default Falco Operator image tag to `0.5.0-rc1`.
+* Add optional mTLS support (`mtls.*` values) for the central artifact server and per-Falco-instance client certificates, including a bundled cert-manager Issuer/CA and trust-manager Bundle. Requires cert-manager (and trust-manager, if `mtls.createIssuer` is true) in the cluster; disabled by default.
+* Add the `ArtifactNode` CRD, used to track per-node artifact state.
+* Raise default `resources` to `512Mi`/`128Mi` (limits/requests memory).
+
 ## v0.3.1
 
 * Update the default Falco Operator image tag to `0.4.1`.

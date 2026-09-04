@@ -4,24 +4,26 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.17.0
-  name: configs.artifact.falcosecurity.dev
+  name: artifactnodes.artifact.falcosecurity.dev
 spec:
   group: artifact.falcosecurity.dev
   names:
     categories:
     - artifacts
-    kind: Config
-    listKind: ConfigList
-    plural: configs
-    singular: config
+    kind: ArtifactNode
+    listKind: ArtifactNodeList
+    plural: artifactnodes
+    singular: artifactnode
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - description: The priority of the config
-      jsonPath: .spec.priority
-      name: Priority
-      type: integer
-    - jsonPath: .status.conditions[?(@.type == 'Programmed')].status
+    - jsonPath: .metadata.labels['artifact\.falcosecurity\.dev/kind']
+      name: Kind
+      type: string
+    - jsonPath: .spec.nodeName
+      name: Node
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Programmed')].status
       name: Programmed
       type: string
     - jsonPath: .metadata.creationTimestamp
@@ -30,7 +32,11 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Config is the Schema for the configs API.
+        description: |-
+          ArtifactNode tracks the per-node state of an artifact (Plugin, Rulesfile, or Config).
+          One ArtifactNode is created per cluster node that matches the parent artifact selector.
+          It is written exclusively by the artifact operator running on that node.
+          The artifact kind is stored in the label artifact.falcosecurity.dev/kind.
         properties:
           apiVersion:
             description: |-
@@ -50,78 +56,18 @@ spec:
           metadata:
             type: object
           spec:
-            description: ConfigSpec defines the desired state of Config.
+            description: Spec is required, so the apiserver also enforces NodeName's
+              own required constraint within it.
             properties:
-              config:
-                description: Config is the configuration for Falco deployment, specified
-                  as a structured object.
-                x-kubernetes-preserve-unknown-fields: true
-              configMapRef:
-                description: ConfigMapRef specifies a reference to a ConfigMap containing
-                  the Falco configuration.
-                properties:
-                  name:
-                    description: Name is the name of the ConfigMap.
-                    type: string
-                required:
-                - name
-                type: object
-              priority:
-                default: 50
-                description: |-
-                  Priority specifies the priority of the config.
-                  The higher the value, the higher the priority.
-                format: int32
-                maximum: 99
-                minimum: 0
-                type: integer
-              selector:
-                description: Selector is used to select the nodes where the config
-                  should be applied.
-                properties:
-                  matchExpressions:
-                    description: matchExpressions is a list of label selector requirements.
-                      The requirements are ANDed.
-                    items:
-                      description: |-
-                        A label selector requirement is a selector that contains values, a key, and an operator that
-                        relates the key and values.
-                      properties:
-                        key:
-                          description: key is the label key that the selector applies
-                            to.
-                          type: string
-                        operator:
-                          description: |-
-                            operator represents a key's relationship to a set of values.
-                            Valid operators are In, NotIn, Exists and DoesNotExist.
-                          type: string
-                        values:
-                          description: |-
-                            values is an array of string values. If the operator is In or NotIn,
-                            the values array must be non-empty. If the operator is Exists or DoesNotExist,
-                            the values array must be empty. This array is replaced during a strategic
-                            merge patch.
-                          items:
-                            type: string
-                          type: array
-                          x-kubernetes-list-type: atomic
-                      required:
-                      - key
-                      - operator
-                      type: object
-                    type: array
-                    x-kubernetes-list-type: atomic
-                  matchLabels:
-                    additionalProperties:
-                      type: string
-                    description: |-
-                      matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-                      map is equivalent to an element of matchExpressions, whose key field is "key", the
-                      operator is "In", and the values array contains only "value". The requirements are ANDed.
-                    type: object
-                type: object
-                x-kubernetes-map-type: atomic
+              nodeName:
+                description: NodeName is the name of the node to which this artifact
+                  is assigned.
+                type: string
+                x-kubernetes-validations:
+                - message: nodeName is immutable
+                  rule: self == oldSelf
+            required:
+            - nodeName
             type: object
           status:
             default:
@@ -131,11 +77,12 @@ spec:
                 reason: Pending
                 status: Unknown
                 type: Programmed
-            description: ConfigStatus defines the observed state of Config.
+            description: ArtifactNodeStatus defines the per-node observed state of
+              an artifact.
             properties:
               conditions:
                 description: Conditions represent the latest available observations
-                  of the Config's state.
+                  of this node's artifact state.
                 items:
                   description: Condition contains details for one aspect of the current
                     state of this API Resource.
@@ -194,14 +141,70 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
-              observedGeneration:
+              installedArtifacts:
                 description: |-
-                  ObservedGeneration is the .metadata.generation that the instance operator has fully
-                  processed (node objects synced, status patched). Per-node artifact operators defer
-                  reconciliation until this equals metadata.generation.
-                format: int64
-                type: integer
+                  InstalledArtifacts tracks the artifact files currently written to disk by this node's operator.
+                  Each entry corresponds to one source medium (oci, inline, configmap).
+                items:
+                  description: |-
+                    InstalledArtifact describes a single artifact file currently on disk.
+                    The medium field is the list map key: at most one entry per medium exists.
+                  properties:
+                    config:
+                      description: |-
+                        Config tracks the generated configuration file derived from this artifact.
+                        Populated only for Plugin artifacts (the plugins-config-inline.yaml shared config file).
+                        Binary and config share the same lifecycle: no binary means no config, and vice versa.
+                      properties:
+                        path:
+                          description: Path is the absolute on-disk path of the generated
+                            config file.
+                          type: string
+                      required:
+                      - path
+                      type: object
+                    contentHash:
+                      description: |-
+                        ContentHash is the SHA-256 hex digest of the bytes written to disk.
+                        A mismatch between this value and the current source signals that the file must be re-written.
+                      type: string
+                    medium:
+                      description: 'Medium identifies the source: "oci", "inline",
+                        or "configmap".'
+                      enum:
+                      - oci
+                      - inline
+                      - configmap
+                      type: string
+                    path:
+                      description: Path is the absolute on-disk path of the installed
+                        file.
+                      type: string
+                    priority:
+                      description: Priority is the load-order value encoded in the
+                        filename.
+                      format: int32
+                      type: integer
+                    specHash:
+                      description: |-
+                        SpecHash is the SHA-256 hash of the parent artifact's OCIArtifact spec at the time this
+                        artifact was installed. Populated only for MediumOCI. A mismatch with the parent
+                        artifact's current ArtifactMeta.SpecHash means the remote blob may have changed and the
+                        artifact must be re-fetched regardless of disk integrity.
+                      type: string
+                  required:
+                  - contentHash
+                  - medium
+                  - path
+                  - priority
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - medium
+                x-kubernetes-list-type: map
             type: object
+        required:
+        - spec
         type: object
     served: true
     storage: true

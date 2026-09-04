@@ -8,6 +8,21 @@ metadata:
     {{- include "falco-operator.labels" . | nindent 4 }}
     app.kubernetes.io/part-of: falco
 {{ .Files.Get "files/ClusterRole.yaml" }}
+{{- if .Values.mtls.enabled }}
+# Not part of files/ClusterRole.yaml (which is regenerated wholesale by `make manifests` from
+# kubebuilder markers): this permission is only needed when mtls.enabled is true, a Helm-time
+# toggle controller-gen has no concept of, so it's hand-maintained here instead.
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

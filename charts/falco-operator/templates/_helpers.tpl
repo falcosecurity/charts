@@ -60,3 +60,22 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Name of the ClusterIssuer used to sign mTLS certificates: mtls.issuerName if set, else the one
+this chart creates itself (mtls.createIssuer) named after the release.
+*/}}
+{{- define "falco-operator.mtlsIssuerName" -}}
+{{- .Values.mtls.issuerName | default (printf "%s-artifact-ca-issuer" (include "falco-operator.fullname" .)) }}
+{{- end }}
+
+{{/*
+Name of the ConfigMap (synced by trust-manager into every trust-labeled namespace) that both
+the operator's own Deployment and every Falco instance's sidecar read to verify their peer's
+certificate through a CA rotation. mtls.caBundleConfigMapName if set (needed when
+mtls.createIssuer is false, since this chart isn't the one creating the Bundle, so it can't assume
+its own naming convention), else the name of the Bundle this chart creates itself.
+*/}}
+{{- define "falco-operator.mtlsCABundleConfigMapName" -}}
+{{- .Values.mtls.caBundleConfigMapName | default (printf "%s-artifact-ca-bundle" (include "falco-operator.fullname" .)) }}
+{{- end }}

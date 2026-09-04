@@ -1,0 +1,94 @@
+{{- if .Values.mtls.enabled }}
+{{- if .Values.mtls.createIssuer }}
+---
+# Self-signed root Issuer: only ever signs the CA Certificate below, once, in this namespace.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "falco-operator.fullname" . }}-selfsigned-issuer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: falco
+spec:
+  selfSigned: {}
+---
+# Private CA certificate. Its Secret must live in cert-manager's own configured
+# --cluster-resource-namespace for the ClusterIssuer below to read it; set that flag to this
+# release's namespace when installing cert-manager.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "falco-operator.fullname" . }}-artifact-ca
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: falco
+spec:
+  isCA: true
+  commonName: {{ include "falco-operator.fullname" . }}-artifact-ca
+  secretName: {{ include "falco-operator.fullname" . }}-artifact-ca
+  duration: {{ .Values.mtls.caCertDuration }}
+  issuerRef:
+    name: {{ include "falco-operator.fullname" . }}-selfsigned-issuer
+    kind: Issuer
+---
+# Cluster-scoped so per-instance Certificates in any Falco instance's namespace can reference it.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "falco-operator.mtlsIssuerName" . }}
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: falco
+spec:
+  ca:
+    secretName: {{ include "falco-operator.fullname" . }}-artifact-ca
+---
+# Distributes the CA's ca.crt as a ConfigMap into every namespace labeled mtls.trustLabel below:
+# both the artifact server's own namespace (to verify incoming client certs) and every Falco
+# instance's namespace (to verify the server's cert) read from this same synced ConfigMap. Can
+# hold two CA sources at once during a CA rotation (see the CA rotation runbook), which is why
+# trust distribution goes through trust-manager instead of just each leaf Secret's own ca.crt.
+# Requires trust-manager installed with --trust-namespace pointed at this release's namespace.
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: {{ include "falco-operator.mtlsCABundleConfigMapName" . }}
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: falco
+spec:
+  sources:
+    - secret:
+        name: {{ include "falco-operator.fullname" . }}-artifact-ca
+        key: "ca.crt"
+  target:
+    configMap:
+      key: "ca-bundle.crt"
+    namespaceSelector:
+      matchLabels:
+        {{ .Values.mtls.trustLabel }}: "true"
+{{- end }}
+---
+# The artifact server's own leaf certificate (this Deployment's Service DNS name). Per-instance
+# client certificates are NOT listed here; the Falco controller creates one Certificate per
+# Falco instance automatically, directly in that instance's own namespace.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "falco-operator.fullname" . }}-artifact-server-tls
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/part-of: falco
+spec:
+  secretName: {{ include "falco-operator.fullname" . }}-artifact-server-tls
+  dnsNames:
+    - {{ include "falco-operator.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  duration: {{ .Values.mtls.server.certDuration }}
+  renewBefore: {{ .Values.mtls.server.certRenewBefore }}
+  issuerRef:
+    name: {{ include "falco-operator.mtlsIssuerName" . }}
+    kind: ClusterIssuer
+{{- end }}

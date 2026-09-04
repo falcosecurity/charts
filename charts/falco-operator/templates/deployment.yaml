@@ -45,6 +45,14 @@ spec:
             {{- range .Values.excludedLabels }}
             - --excluded-labels={{ . }}
             {{- end }}
+            {{- if .Values.mtls.enabled }}
+            - --artifact-server-cert-path=/etc/artifact-server-certs
+            - --artifact-server-client-ca-file=/etc/artifact-server-trust/ca-bundle.crt
+            - --artifact-client-cert-issuer-name={{ include "falco-operator.mtlsIssuerName" . }}
+            - --artifact-client-cert-duration={{ .Values.mtls.client.certDuration }}
+            - --artifact-client-cert-renew-before={{ .Values.mtls.client.certRenewBefore }}
+            - --artifact-ca-bundle-configmap-name={{ include "falco-operator.mtlsCABundleConfigMapName" . }}
+            {{- end }}
             {{- with .Values.extraArgs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -60,6 +68,9 @@ spec:
             - name: health
               containerPort: 8081
               protocol: TCP
+            - name: artifact-server
+              containerPort: 8082
+              protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -74,18 +85,42 @@ spec:
           resizePolicy:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.extraEnv }}
           env:
+            - name: OPERATOR_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.volumeMounts }}
+            {{- end }}
           volumeMounts:
+            - name: artifact-cache
+              mountPath: /var/cache/falco-operator/artifacts
+            {{- if .Values.mtls.enabled }}
+            - name: artifact-server-certs
+              mountPath: /etc/artifact-server-certs
+              readOnly: true
+            - name: artifact-server-trust
+              mountPath: /etc/artifact-server-trust
+              readOnly: true
+            {{- end }}
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
       volumes:
+        - name: artifact-cache
+          emptyDir: {}
+        {{- if .Values.mtls.enabled }}
+        - name: artifact-server-certs
+          secret:
+            secretName: {{ include "falco-operator.fullname" . }}-artifact-server-tls
+        - name: artifact-server-trust
+          configMap:
+            name: {{ include "falco-operator.mtlsCABundleConfigMapName" . }}
+        {{- end }}
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
