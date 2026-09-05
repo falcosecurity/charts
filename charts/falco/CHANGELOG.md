@@ -5,6 +5,11 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## Unreleased
 
+* Mount the directory that holds each container engine socket instead of the
+socket file. A file bind mount pins the inode, so a runtime restart left Falco
+talking to a dead socket and container and k8s fields came out as `<NA>` until
+the pod was restarted.
+
 ## v9.1.0
 
 * Upgrade Falco to v0.44.1
