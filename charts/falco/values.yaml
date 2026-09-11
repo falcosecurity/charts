@@ -33,6 +33,8 @@ serviceAccount:
   create: true
   # -- Annotations to add to the service account.
   annotations: {}
+  # -- Labels to add to the service account.
+  labels: {}
   # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
@@ -157,6 +159,8 @@ controller:
   # -- Extra labels to add to the daemonset or deployment
   labels: {}
   daemonset:
+    # -- (int) Number of old revisions to retain for rollback. Set to 0 to retain no old revisions. If unset, Kubernetes defaults to 10.
+    revisionHistoryLimit: null
     updateStrategy:
       # You can also customize maxUnavailable or minReadySeconds if you
       # need it
@@ -167,8 +171,8 @@ controller:
     # -- Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing.
     # For more info check the section on Plugins in the README.md file.
     replicas: 1
-    # -- Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
-    # revisionHistoryLimit: 1
+    # -- (int) Number of old revisions to retain for rollback. Set to 0 to retain no old revisions. If unset, Kubernetes defaults to 10.
+    revisionHistoryLimit: null
 
 # -- Network services configuration (scenario requirement)
 # Add here your services to be deployed together with Falco.
@@ -384,8 +388,8 @@ collectors:
     # -- Enable Container Engine support.
     enabled: true
     # -- pluginRef is the OCI reference for the container plugin. It could be a full reference such as
-    # "ghcr.io/falcosecurity/plugins/plugin/container:0.7.1". Or just name + tag: container:0.7.1.
-    pluginRef: "ghcr.io/falcosecurity/plugins/plugin/container:0.7.1"
+    # "ghcr.io/falcosecurity/plugins/plugin/container:0.7.4". Or just name + tag: container:0.7.4.
+    pluginRef: "ghcr.io/falcosecurity/plugins/plugin/container:0.7.4"
     # -- labelMaxLen is the maximum length of the labels that can be used in the container plugin.
     # container labels larger than this value won't be collected.
     labelMaxLen: 100
@@ -436,8 +440,8 @@ collectors:
     # In such a case, only the ID, name, namespace, labels of the pod will be available.
     enabled: false
     # --pluginRef is the OCI reference for the k8smeta plugin. It could be a full reference such as:
-    # "ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.1". Or just name + tag: k8smeta:0.4.1.
-    pluginRef: "ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.1"
+    # "ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.2". Or just name + tag: k8smeta:0.4.2.
+    pluginRef: "ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.2"
     # -- collectorHostname is the address of the k8s-metacollector. When not specified it will be set to match
     # k8s-metacollector service. e.x: falco-k8smetacollecto.falco.svc. If for any reason you need to override
     # it, make sure to set here the address of the k8s-metacollector.
@@ -475,7 +479,7 @@ podHostname:
 # If `extra.env` contains `FALCO_HOSTNAME`, the user-provided value wins.
 falcoHostnameEnv: true
 
-# -- certificates used by webserver.
+# -- TLS material for server certificates and outbound HTTP output client authentication.
 # paste certificate content or use helm with --set-file
 # or use existing secret containing key, crt, ca as well as pem bundle
 certs:
@@ -487,13 +491,14 @@ certs:
     # -- Certificate used by webserver.
     crt: ""
   ca:
-    # -- CA certificate used by webserver and AuditSink validation.
+    # -- CA certificate bundled in the server and HTTP client certificate Secrets.
     crt: ""
+  # -- Existing Secret containing client.crt, client.key, and ca.crt for outbound HTTP output mTLS. Does not configure k8saudit client authentication.
   existingClientSecret: ""
   client:
-    # -- Key used by http mTLS client.
+    # -- Client private key for outbound HTTP output mTLS.
     key: ""
-    # -- Certificate used by http mTLS client.
+    # -- Client certificate for outbound HTTP output mTLS.
     crt: ""
 
 # -- Third party rules enabled for Falco. More info on the dedicated section in README.md file.
@@ -541,7 +546,7 @@ falcoctl:
     # -- The image repository to pull from.
     repository: falcosecurity/falcoctl
     # -- The image tag to pull.
-    tag: "0.13.0"
+    tag: "0.14.1"
   artifact:
     # -- Runs "falcoctl artifact install" command as an init container. It is used to install artifacts before
     # Falco starts. It provides them to Falco by using an emptyDir volume.
@@ -1210,7 +1215,7 @@ falco:
     # stored as individual PEM files in this directory
     # NOTICE: Falco default value for this setting differs from the one used in this Helm chart.
     ca_path: "/etc/falco/certs/"
-    # -- Tell Falco to use mTLS.
+    # -- Use mTLS for outgoing alerts to the HTTP output endpoint. Does not configure the k8saudit webhook listener.
     mtls: false
     # -- Path to the client cert.
     # NOTICE: Falco default value for this setting differs from the one used in this Helm chart.

@@ -273,9 +273,17 @@ And this means that our Falco installation has loaded the rules and is ready to 
 
 ## Kubernetes Audit Log
 
-The Kubernetes Audit Log is now supported via the built-in [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin. It is entirely up to you to set up the [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
+The [k8saudit](https://github.com/falcosecurity/plugins/tree/main/plugins/k8saudit) plugin receives Kubernetes Audit Log events through its own HTTP(S) listener. Configure the Kubernetes API server's [webhook backend](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/#webhook-backend) to forward audit events to that listener.
 
-The following snippet shows how to deploy Falco with the [k8saudit](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit) plugin:
+TLS settings apply to separate connections:
+
+- `falco.http_output.mtls`, `certs.client`, and `certs.existingClientSecret` configure client authentication for **outgoing alerts** sent to a remote HTTP(S) output endpoint. See [Enable http_output](#enable-http_output).
+- `falco.webserver.ssl_enabled` configures HTTPS for Falco's health and metrics webserver, which is separate from the audit webhook listener.
+- The `k8saudit` plugin uses its own `open_params` and `init_config.sslCertificate` settings for HTTPS. Its webhook listener does **not support client-certificate authentication (mTLS)**. Setting the HTTP output options above does not change this.
+
+To enable HTTPS on the audit listener, set the plugin's `open_params` to an HTTPS URL, such as `https://:9765/k8s-audit`, and point `init_config.sslCertificate` to a mounted PEM file containing the server certificate and private key. When using `certs.server.key`, `certs.server.crt`, and `certs.ca.crt`, the chart mounts this bundle at `/etc/falco/certs/falco.pem`.
+
+The following snippet shows how to deploy Falco with the `k8saudit` plugin over HTTP:
 ```yaml
 # -- Disable the drivers since we want to deploy only the k8saudit plugin.
 driver:
@@ -449,7 +457,7 @@ helm install falco falcosecurity/falco \
     --set json_include_output_property=true
 ```
 
-Additionally, you can enable mTLS communication and load HTTP client cryptographic material via:
+To authenticate Falco to the remote HTTP(S) output endpoint, enable mTLS and supply a client certificate and key:
 
 ```shell
 helm install falco falcosecurity/falco \
@@ -466,7 +474,7 @@ helm install falco falcosecurity/falco \
     --set-file certs.client.key="/path/to/client.key",certs.client.crt="/path/to/client.crt",certs.ca.crt="/path/to/cacert.crt"
 ```
 
-Or instead of directly setting the files via `--set-file`, mounting an existing volume with the `certs.existingClientSecret` value.
+Alternatively, supply these files through an existing Secret with `certs.existingClientSecret`.
 
 ## Deploy Falcosidekick with Falco
 
@@ -478,37 +486,40 @@ If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidek
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco chart v9.1.0 and their default values. See [values.yaml](./values.yaml) for full list.
+The following table lists the main configurable parameters of the falco chart v9.2.0-rc1 and their default values. See [values.yaml](./values.yaml) for full list.
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity constraint for pods' scheduling. |
-| certs | object | `{"ca":{"crt":""},"client":{"crt":"","key":""},"existingClientSecret":"","existingSecret":"","server":{"crt":"","key":""}}` | certificates used by webserver. paste certificate content or use helm with --set-file or use existing secret containing key, crt, ca as well as pem bundle |
-| certs.ca.crt | string | `""` | CA certificate used by webserver and AuditSink validation. |
-| certs.client.crt | string | `""` | Certificate used by http mTLS client. |
-| certs.client.key | string | `""` | Key used by http mTLS client. |
+| certs | object | `{"ca":{"crt":""},"client":{"crt":"","key":""},"existingClientSecret":"","existingSecret":"","server":{"crt":"","key":""}}` | TLS material for server certificates and outbound HTTP output client authentication. paste certificate content or use helm with --set-file or use existing secret containing key, crt, ca as well as pem bundle |
+| certs.ca.crt | string | `""` | CA certificate bundled in the server and HTTP client certificate Secrets. |
+| certs.client.crt | string | `""` | Client certificate for outbound HTTP output mTLS. |
+| certs.client.key | string | `""` | Client private key for outbound HTTP output mTLS. |
+| certs.existingClientSecret | string | `""` | Existing Secret containing client.crt, client.key, and ca.crt for outbound HTTP output mTLS. Does not configure k8saudit client authentication. |
 | certs.existingSecret | string | `""` | Existing secret containing the following key, crt and ca as well as the bundle pem. |
 | certs.server.crt | string | `""` | Certificate used by webserver. |
 | certs.server.key | string | `""` | Key used by webserver. |
-| collectors.containerEngine | object | `{"enabled":true,"engines":{"bpm":{"enabled":true},"containerd":{"enabled":true,"sockets":["/run/host-containerd/containerd.sock"]},"cri":{"enabled":true,"sockets":["/run/containerd/containerd.sock","/run/crio/crio.sock","/run/k3s/containerd/containerd.sock","/run/host-containerd/containerd.sock"]},"docker":{"enabled":true,"sockets":["/var/run/docker.sock"]},"libvirt_lxc":{"enabled":true},"lxc":{"enabled":true},"podman":{"enabled":true,"sockets":["/run/podman/podman.sock"]}},"hooks":["create"],"labelMaxLen":100,"pluginRef":"ghcr.io/falcosecurity/plugins/plugin/container:0.7.1","withSize":false}` | This collector is designed to collect metadata from various container engines and provide a unified interface through the container plugin. When enabled, it will deploy the container plugin and use it to collect metadata from the container engines. Keep in mind that the old collectors (docker, containerd, crio, podman) will use the container plugin to collect metadata under the hood. |
+| collectors.containerEngine | object | `{"enabled":true,"engines":{"bpm":{"enabled":true},"containerd":{"enabled":true,"sockets":["/run/host-containerd/containerd.sock"]},"cri":{"enabled":true,"sockets":["/run/containerd/containerd.sock","/run/crio/crio.sock","/run/k3s/containerd/containerd.sock","/run/host-containerd/containerd.sock"]},"docker":{"enabled":true,"sockets":["/var/run/docker.sock"]},"libvirt_lxc":{"enabled":true},"lxc":{"enabled":true},"podman":{"enabled":true,"sockets":["/run/podman/podman.sock"]}},"hooks":["create"],"labelMaxLen":100,"pluginRef":"ghcr.io/falcosecurity/plugins/plugin/container:0.7.4","withSize":false}` | This collector is designed to collect metadata from various container engines and provide a unified interface through the container plugin. When enabled, it will deploy the container plugin and use it to collect metadata from the container engines. Keep in mind that the old collectors (docker, containerd, crio, podman) will use the container plugin to collect metadata under the hood. |
 | collectors.containerEngine.enabled | bool | `true` | Enable Container Engine support. |
 | collectors.containerEngine.engines | object | `{"bpm":{"enabled":true},"containerd":{"enabled":true,"sockets":["/run/host-containerd/containerd.sock"]},"cri":{"enabled":true,"sockets":["/run/containerd/containerd.sock","/run/crio/crio.sock","/run/k3s/containerd/containerd.sock","/run/host-containerd/containerd.sock"]},"docker":{"enabled":true,"sockets":["/var/run/docker.sock"]},"libvirt_lxc":{"enabled":true},"lxc":{"enabled":true},"podman":{"enabled":true,"sockets":["/run/podman/podman.sock"]}}` | engines specify the container engines that will be used to collect metadata. See https://github.com/falcosecurity/plugins/blob/main/plugins/container/README.md#configuration |
 | collectors.containerEngine.hooks | list | `["create"]` | hooks specify the hooks that will be used to collect metadata from the container engine. The available hooks are: create, start. Some fields might not be available in create hook, but we are guaranteed that it gets triggered before first process gets started. |
 | collectors.containerEngine.labelMaxLen | int | `100` | labelMaxLen is the maximum length of the labels that can be used in the container plugin. container labels larger than this value won't be collected. |
-| collectors.containerEngine.pluginRef | string | `"ghcr.io/falcosecurity/plugins/plugin/container:0.7.1"` | pluginRef is the OCI reference for the container plugin. It could be a full reference such as "ghcr.io/falcosecurity/plugins/plugin/container:0.7.1". Or just name + tag: container:0.7.1. |
+| collectors.containerEngine.pluginRef | string | `"ghcr.io/falcosecurity/plugins/plugin/container:0.7.4"` | pluginRef is the OCI reference for the container plugin. It could be a full reference such as "ghcr.io/falcosecurity/plugins/plugin/container:0.7.4". Or just name + tag: container:0.7.4. |
 | collectors.containerEngine.withSize | bool | `false` | withSize specifies whether to enable container size inspection, which is inherently slow. |
 | collectors.enabled | bool | `true` | Enable/disable all the metadata collectors. |
-| collectors.kubernetes | object | `{"collectorHostname":"","collectorPort":"","enabled":false,"hostProc":"/host","pluginRef":"ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.1","verbosity":"info"}` | kubernetes holds the configuration for the kubernetes collector. Starting from version 0.37.0 of Falco, the legacy kubernetes client has been removed. A new standalone component named k8s-metacollector and a Falco plugin have been developed to solve the issues that were present in the old implementation. More info here: https://github.com/falcosecurity/falco/issues/2973 |
+| collectors.kubernetes | object | `{"collectorHostname":"","collectorPort":"","enabled":false,"hostProc":"/host","pluginRef":"ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.2","verbosity":"info"}` | kubernetes holds the configuration for the kubernetes collector. Starting from version 0.37.0 of Falco, the legacy kubernetes client has been removed. A new standalone component named k8s-metacollector and a Falco plugin have been developed to solve the issues that were present in the old implementation. More info here: https://github.com/falcosecurity/falco/issues/2973 |
 | collectors.kubernetes.collectorHostname | string | `""` | collectorHostname is the address of the k8s-metacollector. When not specified it will be set to match k8s-metacollector service. e.x: falco-k8smetacollecto.falco.svc. If for any reason you need to override it, make sure to set here the address of the k8s-metacollector. It is used by the k8smeta plugin to connect to the k8s-metacollector. |
 | collectors.kubernetes.collectorPort | string | `""` | collectorPort designates the port on which the k8s-metacollector gRPC service listens. If not specified the value of the port named `broker-grpc` in k8s-metacollector.service.ports is used. The default values is 45000. It is used by the k8smeta plugin to connect to the k8s-metacollector. |
 | collectors.kubernetes.enabled | bool | `false` | enabled specifies whether the Kubernetes metadata should be collected using the k8smeta plugin and the k8s-metacollector component. It will deploy the k8s-metacollector external component that fetches Kubernetes metadata and pushes them to Falco instances. For more info see: https://github.com/falcosecurity/k8s-metacollector https://github.com/falcosecurity/charts/tree/master/charts/k8s-metacollector When this option is disabled, Falco falls back to the container annotations to grab the metadata. In such a case, only the ID, name, namespace, labels of the pod will be available. |
-| collectors.kubernetes.pluginRef | string | `"ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.1"` | pluginRef is the OCI reference for the k8smeta plugin. It could be a full reference such as: "ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.1". Or just name + tag: k8smeta:0.4.1. |
+| collectors.kubernetes.pluginRef | string | `"ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.2"` | pluginRef is the OCI reference for the k8smeta plugin. It could be a full reference such as: "ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.2". Or just name + tag: k8smeta:0.4.2. |
 | containerSecurityContext | object | `{}` | Set securityContext for the Falco container.For more info see the "falco.securityContext" helper in "pod-template.tpl" |
 | controller.annotations | object | `{}` |  |
+| controller.daemonset.revisionHistoryLimit | int | `nil` | Number of old revisions to retain for rollback. Set to 0 to retain no old revisions. If unset, Kubernetes defaults to 10. |
 | controller.daemonset.updateStrategy.type | string | `"RollingUpdate"` | Perform rolling updates by default in the DaemonSet agent ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/ |
 | controller.deployment.replicas | int | `1` | Number of replicas when installing Falco using a deployment. Change it if you really know what you are doing. For more info check the section on Plugins in the README.md file. |
+| controller.deployment.revisionHistoryLimit | int | `nil` | Number of old revisions to retain for rollback. Set to 0 to retain no old revisions. If unset, Kubernetes defaults to 10. |
 | controller.kind | string | `"daemonset"` |  |
 | controller.labels | object | `{}` | Extra labels to add to the daemonset or deployment |
 | customRules | object | `{}` | Third party rules enabled for Falco. More info on the dedicated section in README.md file. |
@@ -573,7 +584,7 @@ The following table lists the main configurable parameters of the falco chart v9
 | falco.http_output.insecure | bool | `false` | Tell Falco to not verify the remote server. |
 | falco.http_output.keep_alive | bool | `false` | If true, the HTTP connection will be kept alive and reused. |
 | falco.http_output.max_consecutive_timeouts | int | `5` | Maximum consecutive timeouts of libcurl to ignore. |
-| falco.http_output.mtls | bool | `false` | Tell Falco to use mTLS. |
+| falco.http_output.mtls | bool | `false` | Use mTLS for outgoing alerts to the HTTP output endpoint. Does not configure the k8saudit webhook listener. |
 | falco.http_output.url | string | `""` | URL of the remote server to send the alerts to. |
 | falco.http_output.user_agent | string | `"falcosecurity/falco"` | User agent string to be used in the HTTP request. |
 | falco.json_include_message_property | bool | `false` | When using JSON output in Falco, you have the option to include the formatted rule output without timestamp or priority. For instance, if a rule specifies an "output" property like "Opened process %proc.name" the "message" field will only contain "Opened process bash" whereas the "output" field will contain more information. |
@@ -656,7 +667,7 @@ The following table lists the main configurable parameters of the falco chart v9
 | falcoctl.image.pullPolicy | string | `"IfNotPresent"` | The image pull policy. |
 | falcoctl.image.registry | string | `"docker.io"` | The image registry to pull from. |
 | falcoctl.image.repository | string | `"falcosecurity/falcoctl"` | The image repository to pull from. |
-| falcoctl.image.tag | string | `"0.13.0"` | The image tag to pull. |
+| falcoctl.image.tag | string | `"0.14.1"` | The image tag to pull. |
 | falcosidekick | object | `{"enabled":false,"fullfqdn":false,"listenPort":""}` | For configuration values, see https://github.com/falcosecurity/charts/blob/master/charts/falcosidekick/values.yaml |
 | falcosidekick.enabled | bool | `false` | Enable falcosidekick deployment. |
 | falcosidekick.fullfqdn | bool | `false` | Enable usage of full FQDN of falcosidekick service (useful when a Proxy is used). |
@@ -734,6 +745,7 @@ The following table lists the main configurable parameters of the falco chart v9
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account. |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created. |
 | serviceAccount.imagePullSecrets | list | `[]` | Secrets containing credentials when pulling from private/secure registries. |
+| serviceAccount.labels | object | `{}` | Labels to add to the service account. |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | serviceMonitor | object | `{"create":false,"endpointPort":"metrics","interval":"15s","labels":{},"path":"/metrics","relabelings":[],"scheme":"http","scrapeTimeout":"10s","selector":{},"targetLabels":[],"tlsConfig":{}}` | serviceMonitor holds the configuration for the ServiceMonitor CRD. A ServiceMonitor is a custom resource definition (CRD) used to configure how Prometheus should discover and scrape metrics from the Falco service. |
 | serviceMonitor.create | bool | `false` | create specifies whether a ServiceMonitor CRD should be created for a prometheus operator. https://github.com/coreos/prometheus-operator Enable it only if the ServiceMonitor CRD is installed in your cluster. |

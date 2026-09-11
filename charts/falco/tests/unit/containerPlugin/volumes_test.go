@@ -29,17 +29,17 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 6)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/var/run/docker.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/var/run", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/run/podman/podman.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/run/podman", volumes[1].HostPath.Path)
 				require.Equal(t, "container-engine-socket-2", volumes[2].Name)
-				require.Equal(t, "/run/host-containerd/containerd.sock", volumes[2].HostPath.Path)
+				require.Equal(t, "/run/host-containerd", volumes[2].HostPath.Path)
 				require.Equal(t, "container-engine-socket-3", volumes[3].Name)
-				require.Equal(t, "/run/containerd/containerd.sock", volumes[3].HostPath.Path)
+				require.Equal(t, "/run/containerd", volumes[3].HostPath.Path)
 				require.Equal(t, "container-engine-socket-4", volumes[4].Name)
-				require.Equal(t, "/run/crio/crio.sock", volumes[4].HostPath.Path)
+				require.Equal(t, "/run/crio", volumes[4].HostPath.Path)
 				require.Equal(t, "container-engine-socket-5", volumes[5].Name)
-				require.Equal(t, "/run/k3s/containerd/containerd.sock", volumes[5].HostPath.Path)
+				require.Equal(t, "/run/k3s/containerd", volumes[5].HostPath.Path)
 			},
 		},
 		{
@@ -53,7 +53,7 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 1)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/var/run/docker.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/var/run", volumes[0].HostPath.Path)
 			},
 		},
 		{
@@ -68,7 +68,7 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 1)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/custom/docker.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/custom", volumes[0].HostPath.Path)
 			},
 		},
 		{
@@ -82,13 +82,13 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 4)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/run/containerd/containerd.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/run/containerd", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/run/crio/crio.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/run/crio", volumes[1].HostPath.Path)
 				require.Equal(t, "container-engine-socket-2", volumes[2].Name)
-				require.Equal(t, "/run/k3s/containerd/containerd.sock", volumes[2].HostPath.Path)
+				require.Equal(t, "/run/k3s/containerd", volumes[2].HostPath.Path)
 				require.Equal(t, "container-engine-socket-3", volumes[3].Name)
-				require.Equal(t, "/run/host-containerd/containerd.sock", volumes[3].HostPath.Path)
+				require.Equal(t, "/run/host-containerd", volumes[3].HostPath.Path)
 			},
 		},
 		{
@@ -103,7 +103,7 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 1)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/custom/crio.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/custom", volumes[0].HostPath.Path)
 			},
 		},
 		{
@@ -117,7 +117,7 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 1)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/run/host-containerd/containerd.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/run/host-containerd", volumes[0].HostPath.Path)
 			},
 		},
 		{
@@ -132,7 +132,7 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 1)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/custom/containerd.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/custom", volumes[0].HostPath.Path)
 			},
 		},
 
@@ -147,17 +147,17 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 6)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/var/run/docker.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/var/run", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/run/podman/podman.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/run/podman", volumes[1].HostPath.Path)
 				require.Equal(t, "container-engine-socket-2", volumes[2].Name)
-				require.Equal(t, "/run/host-containerd/containerd.sock", volumes[2].HostPath.Path)
+				require.Equal(t, "/run/host-containerd", volumes[2].HostPath.Path)
 				require.Equal(t, "container-engine-socket-3", volumes[3].Name)
-				require.Equal(t, "/run/containerd/containerd.sock", volumes[3].HostPath.Path)
+				require.Equal(t, "/run/containerd", volumes[3].HostPath.Path)
 				require.Equal(t, "container-engine-socket-4", volumes[4].Name)
-				require.Equal(t, "/run/crio/crio.sock", volumes[4].HostPath.Path)
+				require.Equal(t, "/run/crio", volumes[4].HostPath.Path)
 				require.Equal(t, "container-engine-socket-5", volumes[5].Name)
-				require.Equal(t, "/run/k3s/containerd/containerd.sock", volumes[5].HostPath.Path)
+				require.Equal(t, "/run/k3s/containerd", volumes[5].HostPath.Path)
 			},
 		},
 		{
@@ -177,9 +177,9 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 2)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/var/run/docker.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/var/run", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/custom/docker.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/custom", volumes[1].HostPath.Path)
 			},
 		},
 		{
@@ -199,9 +199,9 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 2)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/run/crio/crio.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/run/crio", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/custom/crio.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/custom", volumes[1].HostPath.Path)
 			},
 		},
 		{
@@ -221,9 +221,9 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 2)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/run/podman/podman.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/run/podman", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/custom/podman.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/custom", volumes[1].HostPath.Path)
 			},
 		},
 		{
@@ -243,9 +243,9 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 2)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/run/containerd/containerd.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/run/containerd", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/custom/containerd.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/custom", volumes[1].HostPath.Path)
 			},
 		},
 		{
@@ -266,13 +266,29 @@ func TestContainerPluginVolumes(t *testing.T) {
 			expected: func(t *testing.T, volumes []corev1.Volume) {
 				require.Len(t, volumes, 4)
 				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
-				require.Equal(t, "/custom/docker/socket.sock", volumes[0].HostPath.Path)
+				require.Equal(t, "/custom/docker", volumes[0].HostPath.Path)
 				require.Equal(t, "container-engine-socket-1", volumes[1].Name)
-				require.Equal(t, "/run/podman/podman.sock", volumes[1].HostPath.Path)
+				require.Equal(t, "/run/podman", volumes[1].HostPath.Path)
 				require.Equal(t, "container-engine-socket-2", volumes[2].Name)
-				require.Equal(t, "/run/host-containerd/containerd.sock", volumes[2].HostPath.Path)
+				require.Equal(t, "/run/host-containerd", volumes[2].HostPath.Path)
 				require.Equal(t, "container-engine-socket-3", volumes[3].Name)
-				require.Equal(t, "/var/custom/crio.sock", volumes[3].HostPath.Path)
+				require.Equal(t, "/var/custom", volumes[3].HostPath.Path)
+			},
+		},
+		{
+			name: "ContainerEnginesSocketsInSameDirectoryShareOneVolume",
+			values: map[string]string{
+				"collectors.containerEngine.engines.docker.enabled":     "false",
+				"collectors.containerEngine.engines.containerd.enabled": "false",
+				"collectors.containerEngine.engines.cri.enabled":        "true",
+				"collectors.containerEngine.engines.cri.sockets[0]":     "/run/containerd/containerd.sock",
+				"collectors.containerEngine.engines.cri.sockets[1]":     "/run/containerd/other.sock",
+				"collectors.containerEngine.engines.podman.enabled":     "false",
+			},
+			expected: func(t *testing.T, volumes []corev1.Volume) {
+				require.Len(t, volumes, 1)
+				require.Equal(t, "container-engine-socket-0", volumes[0].Name)
+				require.Equal(t, "/run/containerd", volumes[0].HostPath.Path)
 			},
 		},
 		{
