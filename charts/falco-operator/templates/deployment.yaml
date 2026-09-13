@@ -45,6 +45,9 @@ spec:
             {{- range .Values.excludedLabels }}
             - --excluded-labels={{ . }}
             {{- end }}
+            {{- if not .Values.enforceRequirements }}
+            - --enforce-requirements=false
+            {{- end }}
             {{- if .Values.mtls.enabled }}
             - --artifact-server-cert-path=/etc/artifact-server-certs
             - --artifact-server-client-ca-file=/etc/artifact-server-trust/ca-bundle.crt

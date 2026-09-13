@@ -41,7 +41,7 @@ helm uninstall falco-operator --namespace falco-operator
 
 ## Configuration
 
-The following table lists the configurable parameters of the falco-operator chart v0.4.0-rc1 and their default values. See [values.yaml](values.yaml) for the full list.
+The following table lists the configurable parameters of the falco-operator chart v0.4.0-rc2 and their default values. See [values.yaml](values.yaml) for the full list.
 
 ## Values
 
@@ -50,6 +50,7 @@ The following table lists the configurable parameters of the falco-operator char
 | affinity | object | `{}` | Affinity rules |
 | dnsConfig | object | `{}` | Pod DNS config. Requires dnsPolicy to be set to None to take full effect. |
 | dnsPolicy | string | `""` | Pod DNS policy. One of ClusterFirst, ClusterFirstWithHostNet, Default or None. |
+| enforceRequirements | bool | `true` | When false, the artifact-operator sidecar installs artifacts regardless of Falco version or plugin dependency constraints. Useful when compatibility metadata is unavailable or incorrect. |
 | excludedLabels | list | `[]` | Label keys that must NOT be propagated onto operator-generated resources. Supports the '*' wildcard (e.g. `kustomize.toolkit.fluxcd.io/*`). |
 | extraArgs | list | `[]` | Additional CLI arguments passed to the operator binary. mTLS's own flags are added natively when mtls.enabled is true; no need to list them here. |
 | extraEnv | list | `[]` | Extra environment variables |
