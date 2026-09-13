@@ -5,6 +5,10 @@ release numbering uses [semantic versioning](http://semver.org).
 
 ## Unreleased
 
+## v0.4.0-rc2
+
+* Update the default Falco Operator image tag to `0.5.0-rc2`.
+
 ## v0.4.0-rc1
 
 * Update the default Falco Operator image tag to `0.5.0-rc1`.

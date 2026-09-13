@@ -167,6 +167,10 @@ excludedLabels: []
   # - kustomize.toolkit.fluxcd.io/name
   # - kustomize.toolkit.fluxcd.io/namespace
 
+# -- When false, the artifact-operator sidecar installs artifacts regardless of Falco version
+# or plugin dependency constraints. Useful when compatibility metadata is unavailable or incorrect.
+enforceRequirements: true
+
 # -- Additional CLI arguments passed to the operator binary. mTLS's own flags are added
 # natively when mtls.enabled is true; no need to list them here.
 extraArgs: []
