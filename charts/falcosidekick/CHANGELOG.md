@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.15.0
+
+- Add default networkPolicy `defaultNetworkPolicy` support for Falcosidekick and Falcosidekick UI components
+
 ## 0.14.0
 
 - Add Gateway API `HTTPRoute` support for Falcosidekick and Falcosidekick UI as an alternative to Ingress
