@@ -12,6 +12,7 @@ spec:
     {{- include "falco-operator.selectorLabels" . | nindent 4 }}
     control-plane: falco-operator
     app.kubernetes.io/part-of: falco
+    artifact.falcosecurity.dev/serving: "true"
   ports:
     - name: artifact-server
       port: 8082

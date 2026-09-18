@@ -1,7 +1,7 @@
 {{- if .Values.mtls.enabled }}
 {{- if .Values.mtls.createIssuer }}
 ---
-# Self-signed root Issuer: only ever signs the CA Certificate below, once, in this namespace.
+# Self-signed root Issuer: signs and renews only the CA Certificate below in this namespace.
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -48,7 +48,7 @@ spec:
 # Distributes the CA's ca.crt as a ConfigMap into every namespace labeled mtls.trustLabel below:
 # both the artifact server's own namespace (to verify incoming client certs) and every Falco
 # instance's namespace (to verify the server's cert) read from this same synced ConfigMap. Can
-# hold two CA sources at once during a CA rotation (see the CA rotation runbook), which is why
+# hold two CA sources at once during a coordinated CA rotation, which is why
 # trust distribution goes through trust-manager instead of just each leaf Secret's own ca.crt.
 # Requires trust-manager installed with --trust-namespace pointed at this release's namespace.
 apiVersion: trust.cert-manager.io/v1alpha1

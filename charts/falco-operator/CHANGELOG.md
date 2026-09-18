@@ -5,6 +5,8 @@ release numbering uses [semantic versioning](http://semver.org).
 
 ## Unreleased
 
+* Fix the artifact Service selector to target only the active leader when leader election is enabled.
+
 ## v0.4.0-rc2
 
 * Update the default Falco Operator image tag to `0.5.0-rc2`.
