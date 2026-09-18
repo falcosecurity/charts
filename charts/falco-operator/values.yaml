@@ -74,7 +74,7 @@ mtls:
   # both the operator's Deployment and every Falco instance's sidecar read to verify their peer's
   # certificate through a CA rotation. Deliberately not each side's own per-instance Secret,
   # since a Secret's bundled ca.crt only ever reflects one CA at a time, but this ConfigMap can
-  # hold two at once during a rotation (see the CA rotation runbook). Defaults to
+  # hold two at once during a coordinated rotation. Defaults to
   # "<fullname>-artifact-ca-bundle", the Bundle this chart creates when createIssuer is true.
   # Set this explicitly when createIssuer is false, to reference your own trust-distribution
   # mechanism's ConfigMap.
@@ -88,9 +88,10 @@ mtls:
   # ContainerCreating.
   trustLabel: artifact.falcosecurity.dev/trust
 
-  # -- Duration for the bootstrap CA certificate (only used when createIssuer is true). Not
-  # auto-renewed; rotating it is a coordinated, manual runbook (dual-trust window via the
-  # trust-manager Bundle, then re-pointing issuerName at a new CA).
+  # -- Duration for the bootstrap CA certificate (only used when createIssuer is true).
+  # cert-manager renews it automatically; private-key replacement depends on its rotation
+  # policy and cert-manager version. CA key rotation requires coordinated trust-bundle and
+  # leaf-certificate updates, which this chart does not automate.
   caCertDuration: 8760h
 
   server:
