@@ -28,6 +28,18 @@ podSecurityContext:
   # -- group
   fsGroup: 1234
 
+# -- container security context applied to the falco-talon container. Empty by default;
+# set fields such as readOnlyRootFilesystem, allowPrivilegeEscalation, runAsNonRoot,
+# capabilities and seccompProfile to run the container under a restricted profile.
+securityContext: {}
+
+# -- extra volumes to add to the pod (e.g. an emptyDir for a writable path when the
+# container runs with readOnlyRootFilesystem: true)
+extraVolumes: []
+
+# -- extra volume mounts to add to the falco-talon container
+extraVolumeMounts: []
+
 # -- one or more secrets to be used when pulling images
 imagePullSecrets: []
 # - registrySecretName

@@ -113,6 +113,8 @@ helm delete falco-talon -n falco
 | config.printAllEvents | bool | `false` | print in stdout all received events, not only those which match a rule |
 | config.watchRules | bool | `true` | auto reload the rules when the files change |
 | extraEnv | list | `[{"name":"LOG_LEVEL","value":"warning"}]` | extra env |
+| extraVolumeMounts | list | `[]` | extra volume mounts to add to the falco-talon container |
+| extraVolumes | list | `[]` | extra volumes to add to the pod (e.g. an emptyDir for a writable path when the container runs with readOnlyRootFilesystem: true) |
 | grafana | object | `{"dashboards":{"configMaps":{"talon":{"folder":"","folderAnnotation":"grafana_dashboard_folder","name":"falco-talon-grafana-dashboard","namespace":""}},"enabled":false}}` | grafana contains the configuration related to grafana. |
 | grafana.dashboards | object | `{"configMaps":{"talon":{"folder":"","folderAnnotation":"grafana_dashboard_folder","name":"falco-talon-grafana-dashboard","namespace":""}},"enabled":false}` | dashboards contains configuration for grafana dashboards. |
 | grafana.dashboards.configMaps | object | `{"talon":{"folder":"","folderAnnotation":"grafana_dashboard_folder","name":"falco-talon-grafana-dashboard","namespace":""}}` | configmaps to be deployed that contain a grafana dashboard. |
@@ -147,6 +149,7 @@ helm delete falco-talon -n falco
 | rbac.serviceAccount.name | string | `""` | name of the service account |
 | replicaCount | int | `2` | number of running pods |
 | resources | object | `{}` | resources |
+| securityContext | object | `{}` | container security context applied to the falco-talon container. Empty by default; set fields such as readOnlyRootFilesystem, allowPrivilegeEscalation, runAsNonRoot, capabilities and seccompProfile to run the container under a restricted profile. |
 | service | object | `{"annotations":{},"port":2803,"type":"ClusterIP"}` | service parameters |
 | service.annotations | object | `{}` | annotations of the service |
 | service.port | int | `2803` | port of the service |

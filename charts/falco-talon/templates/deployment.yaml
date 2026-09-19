@@ -34,9 +34,10 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: "{{ .Values.priorityClassName }}"
       {{- end }}
+      {{- with .Values.podSecurityContext }}
       securityContext:
-        runAsUser: {{ .Values.podSecurityContext.runAsUser }}
-        fsGroup: {{ .Values.podSecurityContext.fsGroup }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       restartPolicy: Always
       containers:
         - name: {{ .Chart.Name }}
@@ -46,6 +47,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           args: ["server", "-c", "/etc/falco-talon/config.yaml", "-r", "/etc/falco-talon/rules.yaml"]
           ports:
             - name: http
@@ -81,6 +86,9 @@ spec:
               mountPath: "/etc/falco-talon/rules.yaml"
               subPath: rules.yaml
               readOnly: true
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -100,3 +108,6 @@ spec:
         - name: "config"
           secret:
             secretName: "{{ include "falco-talon.name" . }}-config"
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
