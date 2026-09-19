@@ -3,6 +3,12 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.5.0 - 2026-09-19
+
+- add `securityContext` value for the `falco-talon` container so a restricted profile (e.g. `readOnlyRootFilesystem`, `allowPrivilegeEscalation: false`, `runAsNonRoot`, dropped capabilities, `seccompProfile`) can be applied
+- render `podSecurityContext` in full via `toYaml` instead of only `runAsUser`/`fsGroup`, so any pod-level security context field can be set (default value unchanged)
+- add `extraVolumes` and `extraVolumeMounts` values to mount additional volumes (e.g. an `emptyDir` for a writable path when running with a read-only root filesystem)
+
 ## 0.4.2 - 2026-09-02
 
 - restart Falco Talon when rules or `config.rulesOverride` change by adding a `rules-checksum` annotation on the pod template
