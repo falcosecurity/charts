@@ -486,7 +486,7 @@ If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidek
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco chart v9.2.0-rc1 and their default values. See [values.yaml](./values.yaml) for full list.
+The following table lists the main configurable parameters of the falco chart v9.2.0 and their default values. See [values.yaml](./values.yaml) for full list.
 
 ## Values
 
@@ -667,7 +667,7 @@ The following table lists the main configurable parameters of the falco chart v9
 | falcoctl.image.pullPolicy | string | `"IfNotPresent"` | The image pull policy. |
 | falcoctl.image.registry | string | `"docker.io"` | The image registry to pull from. |
 | falcoctl.image.repository | string | `"falcosecurity/falcoctl"` | The image repository to pull from. |
-| falcoctl.image.tag | string | `"0.14.1"` | The image tag to pull. |
+| falcoctl.image.tag | string | `"0.14.2"` | The image tag to pull. |
 | falcosidekick | object | `{"enabled":false,"fullfqdn":false,"listenPort":""}` | For configuration values, see https://github.com/falcosecurity/charts/blob/master/charts/falcosidekick/values.yaml |
 | falcosidekick.enabled | bool | `false` | Enable falcosidekick deployment. |
 | falcosidekick.fullfqdn | bool | `false` | Enable usage of full FQDN of falcosidekick service (useful when a Proxy is used). |
