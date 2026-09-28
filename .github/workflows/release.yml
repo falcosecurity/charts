@@ -1,8 +1,6 @@
 name: Release Charts
 
 on:
-  # One-time recovery of the already published falco-talon 0.5.0 archive.
-  workflow_dispatch:
   push:
     branches:
       - master
@@ -43,7 +41,6 @@ jobs:
           helm repo add falcosecurity https://falcosecurity.github.io/charts
 
       - name: Run chart-releaser
-        if: github.event_name != 'workflow_dispatch'
         uses: helm/chart-releaser-action@cae68fefc6b5f367a0275617c9f83181ba54714f # v1.7.0
         with:
           charts_dir: charts
@@ -54,22 +51,6 @@ jobs:
           mark_as_latest: false
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Recover existing falco-talon 0.5.0 package
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          test "${GITHUB_REPOSITORY}" = "falcosecurity/charts"
-          target=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/falco-talon-0.5.0" --jq '.object.sha')
-          test "${target}" = "2bc917942128f157aa8d86909f00d892d5e10478"
-          mkdir .cr-release-packages
-          gh release download falco-talon-0.5.0 \
-            --repo "${GITHUB_REPOSITORY}" \
-            --pattern 'falco-talon-0.5.0.tgz' \
-            --dir .cr-release-packages
-          echo '140a3fbd4f707992967a81451860757bbb7a0be04b357bf329703b242e071c27  .cr-release-packages/falco-talon-0.5.0.tgz' | sha256sum --check
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
