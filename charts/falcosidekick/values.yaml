@@ -1172,6 +1172,20 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+# -- Default networkPolicy that comes out of the box with falcosidekick if you don't have any specific needs.
+defaultNetworkPolicy:
+  enabled: false
+  # The following lines will work only if webui ingress is enabled (webui.ingress.enabled = true)
+  webuiIngressNetworkPolicyNamespaceSelector: {}
+  webuiIngressNetworkPolicyPodSelector: {}
+  # Full Example with nginx (deprecrated) below.
+  # webuiIngressNetworkPolicyNamespaceSelector:
+  #  kubernetes.io/metadata.name: ingress-nginx
+  # webuiIngressNetworkPolicyPodSelector:
+  #  app.kubernetes.io/component: controller
+  #  app.kubernetes.io/instance: ingress-nginx
+  #  app.kubernetes.io/name: ingress-nginx
+
 httproute:
   # -- Whether to create the HTTPRoute (Gateway API). Requires the Gateway API CRDs to be installed in the cluster
   enabled: false

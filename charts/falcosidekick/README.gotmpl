@@ -185,3 +185,56 @@ You may want to access the `WebUI (Falcosidekick UI)`](https://github.com/falcos
 nginx.ingress.kubernetes.io/rewrite-target: /$2
 nginx.ingress.kubernetes.io/use-regex: "true"
 ```
+
+## Activate default networkPolicy for falcosidekick components
+
+You may want to harden the way falcosidekick is deployed by enabling a default networkPolicy.
+
+Set the `defaultNetworkPolicy.enabled` to `true` to activate the default networkPolicy.
+```yaml
+defaultNetworkPolicy:
+  enabled: true
+```
+
+You can also set additional `webuiIngressNetworkPolicyNamespaceSelector` and `webuiIngressNetworkPolicyPodSelector` values to allow sidekick-ui flows from ingress-controller pods (applicable only if `webui.enabled` and `webui.ingress.enabled` are both set to true ).
+```yaml
+  webuiIngressNetworkPolicyNamespaceSelector:
+    kubernetes.io/metadata.name: dummy-namespace
+  webuiIngressNetworkPolicyPodSelector:
+    app.kubernetes.io/dummykey1: any-dummy-value
+    app.kubernetes.io/dummykey2: another-dummy-value-just-in-case
+```
+
+Full Example with (deprecrated) ingress-nginx below:
+```yaml
+defaultNetworkPolicy:
+  enabled: true
+  webuiIngressNetworkPolicyNamespaceSelector: 
+    kubernetes.io/metadata.name: ingress-nginx
+  webuiIngressNetworkPolicyPodSelector:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/name: ingress-nginx
+[...]
+webui:
+  # -- enable Falcosidekick-UI
+  enabled: true
+  [...]
+  ingress:
+    # -- Whether to create the Web UI ingress
+    enabled: true
+    [...]
+```
+
+Policy behavior depending on values set:
+| defaultNetworkPolicy.enabled | webui.enabled  | webui.ingress.enabled | networkPolicy rendered | sidekick-core                                                           | sidekick-ui                                                   | sidekick-ui-redis ingress                           |
+| ---------------------------- | -------------- | --------------------- | ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
+| false                        | (true / false) | (true / false)        | NO                     | none                                                                    | none                                                          | none                                                |
+| true                         | false          | (true / false)        | YES                    | <pre>ingress TCP 2801, TCP 2810</pre><pre>egress UDP 53</pre>           | none                                                          | none                                                |
+| true                         | true           | false                 | YES                    | <pre>ingress TCP 2801, TCP 2810</pre><pre>egress UDP 53, TCP 2802</pre> | <pre>ingress TCP 2802*</pre><pre>egress UDP 53, TCP 6379</pre> | <pre>ingress TCP 6379</pre><pre>egress UDP 53</pre> |
+| true                         | true           | true                  | YES                    | <pre>ingress TCP 2801, TCP 2810</pre><pre>egress UDP 53, TCP 2802</pre> | <pre>ingress TCP 2802**</pre><pre>egress UDP 53, TCP 6379</pre> | <pre>ingress TCP 6379</pre><pre>egress UDP 53</pre> |
+
+*tcp Port 2802 open only for  sidekick-core
+**tcp Port 2802 open for both sidekick-core and ingress
+
+For more details regarding selectors used, look at helm chart template files [network-policy-core.yaml](templates/network-policy-core.yaml), [network-policy-ui.yaml](templates/network-policy-ui.yaml) and [network-policy-redis.yaml](templates/network-policy-redis.yaml).
