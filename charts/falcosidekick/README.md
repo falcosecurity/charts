@@ -714,9 +714,9 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
 | webui.ingress.ingressClassName | string | `""` | ingress class name |
 | webui.ingress.tls | list | `[]` | Web UI ingress TLS configuration |
-| webui.initContainer | object | `{"image":{"registry":"docker.io","repository":"redis/redis-stack","tag":"7.2.0-v11"},"resources":{},"securityContext":{}}` | Web UI wait-redis initContainer |
+| webui.initContainer | object | `{"image":{"registry":"docker.io","repository":"redis/redis-stack-server","tag":"7.2.0-v11"},"resources":{},"securityContext":{}}` | Web UI wait-redis initContainer |
 | webui.initContainer.image.registry | string | `"docker.io"` | wait-redis initContainer image registry to pull from |
-| webui.initContainer.image.repository | string | `"redis/redis-stack"` | wait-redis initContainer image repository to pull from |
+| webui.initContainer.image.repository | string | `"redis/redis-stack-server"` | wait-redis initContainer image repository to pull from |
 | webui.initContainer.image.tag | string | `"7.2.0-v11"` | wait-redis initContainer image tag to pull |
 | webui.initContainer.resources | object | `{}` | wait-redis initContainer resources |
 | webui.initContainer.securityContext | object | `{}` | wait-redis initContainer securityContext |
@@ -734,7 +734,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.redis.existingSecret | string | `""` | Existing secret with configuration |
 | webui.redis.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
 | webui.redis.image.registry | string | `"docker.io"` | The web UI Redis image registry to pull from |
-| webui.redis.image.repository | string | `"redis/redis-stack"` | The web UI Redis image repository to pull from |
+| webui.redis.image.repository | string | `"redis/redis-stack-server"` | The web UI Redis image repository to pull from |
 | webui.redis.image.tag | string | `"7.2.0-v11"` | The web UI Redis image tag to pull from |
 | webui.redis.nodeSelector | object | `{}` | Web UI Redis nodeSelector field |
 | webui.redis.password | string | `""` | Set a password for Redis |

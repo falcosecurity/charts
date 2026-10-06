@@ -1284,7 +1284,7 @@ webui:
       # -- wait-redis initContainer image registry to pull from
       registry: docker.io
       # -- wait-redis initContainer image repository to pull from
-      repository: redis/redis-stack
+      repository: redis/redis-stack-server
       # -- wait-redis initContainer image tag to pull
       tag: "7.2.0-v11"
     # -- wait-redis initContainer securityContext
@@ -1404,7 +1404,7 @@ webui:
       # -- The web UI Redis image registry to pull from
       registry: docker.io
       # -- The web UI Redis image repository to pull from
-      repository: redis/redis-stack
+      repository: redis/redis-stack-server
       # -- The web UI Redis image tag to pull from
       tag: "7.2.0-v11"
       # -- The web UI image pull policy
