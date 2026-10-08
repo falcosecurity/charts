@@ -143,5 +143,5 @@ The following table lists the main configurable parameters of the event-generato
 | podAnnotations | object | `{}` | Annotations to be added to the pod. |
 | podSecurityContext | object | `{}` | Security context for the pod. |
 | replicasCount | int | `1` | Number of replicas of the event-generator (meaningful when installed as a deployment). |
-| securityContext | object | `{}` | Security context for the containers. When command is `suite-run` or `suite-test`, the chart defaults `privileged: true` because those commands could perform complex actions that require a wide range of capabilities in order to properly work. Setting `privileged` explicitly here overrides that default. |
+| securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsNonRoot":true,"runAsUser":1000,"seccompProfile":{"type":"RuntimeDefault"}}` | Security context for the containers. When command is `suite-run` or `suite-test`, the chart defaults `privileged: true` because those commands could perform complex actions that require a wide range of capabilities in order to properly work. Setting `privileged` explicitly here overrides that default. |
 | tolerations | list | `[]` | Tolerations to allow the pods to be scheduled on nodes whose taints the pod tolerates. |

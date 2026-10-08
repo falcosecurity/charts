@@ -24,7 +24,16 @@ podSecurityContext:
   fsGroup: 1234
 
 # -- Sidekick container securityContext
-securityContext: {}
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1234
+  seccompProfile:
+    type: RuntimeDefault
 
 # One or more secrets to be used when pulling images
 # -- Secrets for the registry
@@ -1288,7 +1297,15 @@ webui:
       # -- wait-redis initContainer image tag to pull
       tag: "7.2.0-v11"
     # -- wait-redis initContainer securityContext
-    securityContext: {}
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
     # -- wait-redis initContainer resources
     resources: {}
 
@@ -1298,7 +1315,16 @@ webui:
     fsGroup: 1234
 
   # -- Web UI container securityContext
-  securityContext: {}
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1234
+    seccompProfile:
+      type: RuntimeDefault
 
   # -- Name of the priority class to be used by the Web UI pods, priority class needs to be created beforehand
   priorityClassName: ""

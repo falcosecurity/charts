@@ -34,13 +34,16 @@ podSecurityContext: {}
 # -- Security context for the containers. When command is `suite-run` or `suite-test`, the chart defaults
 # `privileged: true` because those commands could perform complex actions that require a wide range of capabilities in
 # order to properly work. Setting `privileged` explicitly here overrides that default.
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  seccompProfile:
+    type: RuntimeDefault
 
 # -- Selectors to choose a given node where to run the pods.
 nodeSelector: {}

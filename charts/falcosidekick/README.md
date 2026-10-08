@@ -672,7 +672,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | prometheusRules.enabled | bool | `false` | enable the creation of PrometheusRules for alerting |
 | replicaCount | int | `2` | number of running pods |
 | resources | object | `{}` | The resources for falcosdekick pods |
-| securityContext | object | `{}` | Sidekick container securityContext |
+| securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsNonRoot":true,"runAsUser":1234,"seccompProfile":{"type":"RuntimeDefault"}}` | Sidekick container securityContext |
 | service.annotations | object | `{"prometheus.io/scrape":"true"}` | Service annotations |
 | service.port | int | `2801` | Service port |
 | service.type | string | `"ClusterIP"` | Service type |
@@ -714,12 +714,12 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
 | webui.ingress.ingressClassName | string | `""` | ingress class name |
 | webui.ingress.tls | list | `[]` | Web UI ingress TLS configuration |
-| webui.initContainer | object | `{"image":{"registry":"docker.io","repository":"redis/redis-stack","tag":"7.2.0-v11"},"resources":{},"securityContext":{}}` | Web UI wait-redis initContainer |
+| webui.initContainer | object | `{"image":{"registry":"docker.io","repository":"redis/redis-stack","tag":"7.2.0-v11"},"resources":{},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}}` | Web UI wait-redis initContainer |
 | webui.initContainer.image.registry | string | `"docker.io"` | wait-redis initContainer image registry to pull from |
 | webui.initContainer.image.repository | string | `"redis/redis-stack"` | wait-redis initContainer image repository to pull from |
 | webui.initContainer.image.tag | string | `"7.2.0-v11"` | wait-redis initContainer image tag to pull |
 | webui.initContainer.resources | object | `{}` | wait-redis initContainer resources |
-| webui.initContainer.securityContext | object | `{}` | wait-redis initContainer securityContext |
+| webui.initContainer.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | wait-redis initContainer securityContext |
 | webui.loglevel | string | `"info"` | Log level ("debug", "info", "warning", "error") |
 | webui.nodeSelector | object | `{}` | Web UI nodeSelector field |
 | webui.podAnnotations | object | `{}` | additions annotations on the pods web UI |
@@ -754,7 +754,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.redis.tolerations | list | `[]` | Tolerations for pod assignment |
 | webui.replicaCount | int | `2` | number of running pods |
 | webui.resources | object | `{}` | The resources for the web UI pods |
-| webui.securityContext | object | `{}` | Web UI container securityContext |
+| webui.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsNonRoot":true,"runAsUser":1234,"seccompProfile":{"type":"RuntimeDefault"}}` | Web UI container securityContext |
 | webui.service.annotations | object | `{}` | The web UI service annotations (use this to set a internal LB, for example.) |
 | webui.service.nodePort | int | `30282` | The web UI service nodePort |
 | webui.service.port | int | `2802` | The web UI service port dor the falcosidekick-ui |
