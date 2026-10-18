@@ -6,6 +6,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 ## Unreleased
 
+## v0.3.3
+
+* Bump k8s-metacollector to version 0.1.5
+
 ## v0.3.2
 
 * Bump k8s-metacollector to version 0.1.4
