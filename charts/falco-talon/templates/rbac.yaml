@@ -181,16 +181,16 @@ rules:
     verbs:
 {{ toYaml .Values.rbac.leases | indent 6 }}
   {{- end }}
-{{- if .Values.podSecurityPolicy.create }}
-- apiGroups:
-    - policy
-  resources:
-    - podsecuritypolicies
-  resourceNames:
-    - {{ template "falco-talon.name" . }}
-  verbs:
-    - use
-{{- end }}
+  {{- if .Values.podSecurityPolicy.create }}
+  - apiGroups:
+      - policy
+    resources:
+      - podsecuritypolicies
+    resourceNames:
+      - {{ template "falco-talon.name" . }}
+    verbs:
+      - use
+  {{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
