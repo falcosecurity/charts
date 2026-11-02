@@ -631,11 +631,11 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | httproute.labels | object | `{}` | HTTPRoute additional labels |
 | httproute.matches | list | `[{"path":{"type":"PathPrefix","value":"/"}}]` | matches define conditions used for matching the rule against incoming HTTP requests |
 | httproute.parentRefs | list | `[]` | parentRefs references the Gateways this HTTPRoute should be attached to |
-| image | object | `{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falcosidekick","tag":"2.32.0"}` | number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
+| image | object | `{"pullPolicy":"IfNotPresent","registry":"docker.io","repository":"falcosecurity/falcosidekick","tag":"2.35.1"}` | number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10) revisionHistoryLimit: 1 |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pull policy |
 | image.registry | string | `"docker.io"` | The image registry to pull from |
 | image.repository | string | `"falcosecurity/falcosidekick"` | The image repository to pull from |
-| image.tag | string | `"2.32.0"` | The image tag to pull |
+| image.tag | string | `"2.35.1"` | The image tag to pull |
 | imagePullSecrets | list | `[]` | Secrets for the registry |
 | ingress.annotations | object | `{}` | Ingress annotations |
 | ingress.enabled | bool | `false` | Whether to create the ingress |
