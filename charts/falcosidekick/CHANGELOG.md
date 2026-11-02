@@ -5,6 +5,11 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.14.2
+
+- Upgrade the default Falcosidekick image to 2.35.1, including certificate trust and Go security updates
+- Align the chart appVersion with the default image
+
 ## 0.14.1
 
 - Use the `redis/redis-stack-server` image for the Web UI Redis pod and the `wait-redis` initContainer. The `redis/redis-stack` image also starts RedisInsight on port 8001, which the chart does not use and does not declare

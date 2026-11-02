@@ -14,7 +14,7 @@ image:
   # -- The image repository to pull from
   repository: falcosecurity/falcosidekick
   # -- The image tag to pull
-  tag: 2.32.0
+  tag: 2.35.1
   # -- The image pull policy
   pullPolicy: IfNotPresent
 
