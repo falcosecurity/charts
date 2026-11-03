@@ -173,6 +173,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity for the Sidekick pods |
+| automountServiceAccountToken | bool | `true` | Whether the Falcosidekick pods mount the ServiceAccount's API token. Only the kubeless, openfaas, fission and policyreport outputs call the Kubernetes API; without them it can be false |
 | config.alertmanager.checkcert | bool | `true` | check if ssl certificate of the output is valid |
 | config.alertmanager.customseveritymap | string | `""` | comma separated list of tuple composed of a ':' separated Falco priority and Alertmanager severity that is used to override the severity label associated to the priority level of falco event. Example: debug:value_1,critical:value2. Default mapping: emergency:critical,alert:critical,critical:critical,error:warning,warning:warning,notice:information,informational:information,debug:information. |
 | config.alertmanager.dropeventdefaultpriority | string | `"critical"` | default priority of dropped events, values are emergency|alert|critical|error|warning|notice|informational|debug |
