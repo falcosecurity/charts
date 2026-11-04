@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.5.1 - 2026-11-04
+
+- fix `podAnnotations` rendering: the values were written under the pod labels with a broken indentation, so setting any pod annotation made the chart fail to render; they are now added to the pod template annotations
+
 ## 0.5.0 - 2026-09-19
 
 - add `securityContext` value for the `falco-talon` container so a restricted profile (e.g. `readOnlyRootFilesystem`, `allowPrivilegeEscalation: false`, `runAsNonRoot`, dropped capabilities, `seccompProfile`) can be applied
