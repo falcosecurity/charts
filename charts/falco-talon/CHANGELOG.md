@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.5.1 - 2026-10-31
+
+- fix `podSecurityPolicy.create: true`: the `podsecuritypolicies` rule in the ClusterRole was not indented under `rules`, so the chart failed to render, and `clusterrole.yaml` created a second ClusterRole with the same name. The rule now sits in the main ClusterRole and the duplicate template is removed
+
 ## 0.5.0 - 2026-09-19
 
 - add `securityContext` value for the `falco-talon` container so a restricted profile (e.g. `readOnlyRootFilesystem`, `allowPrivilegeEscalation: false`, `runAsNonRoot`, dropped capabilities, `seccompProfile`) can be applied
