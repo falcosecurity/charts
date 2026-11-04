@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.15.0
+
+- Add `automountServiceAccountToken` to choose whether the Falcosidekick pods mount the ServiceAccount's API token. It defaults to `true`, so nothing changes unless it is set to `false`
+
 ## 0.14.2
 
 - Upgrade the default Falcosidekick image to 2.35.1, including certificate trust and Go security updates
