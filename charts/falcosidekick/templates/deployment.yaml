@@ -67,7 +67,7 @@ spec:
               protocol: TCP
           {{- if .Values.config.tlsserver.deploy }}
             - name: http-notls
-              containerPort: 2810
+              containerPort: {{ .Values.config.tlsserver.notlsport }}
               protocol: TCP
           {{- end }}
           livenessProbe:
