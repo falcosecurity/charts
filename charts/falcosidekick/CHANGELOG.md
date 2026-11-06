@@ -5,6 +5,11 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.14.3
+
+- Use `config.tlsserver.notlsport` for the `http-notls` container port, so the probes reach the no-TLS server when the port is changed
+- Only add the `http-notls` Service port when `config.tlsserver.deploy` is true, since the container port only exists then
+
 ## 0.14.2
 
 - Upgrade the default Falcosidekick image to 2.35.1, including certificate trust and Go security updates
