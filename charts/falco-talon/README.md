@@ -58,9 +58,9 @@ helm delete falco-talon -n falco
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | affinity |
-| config | object | `{"aws":{"accesKey":"","externalId":"","region":"","roleArn":"","secretKey":""},"deduplication":{"leaderElection":true,"timeWindowSeconds":5},"defaultNotifiers":["k8sevents"],"listenAddress":"0.0.0.0","listenPort":2803,"minio":{"accessKey":"","endpoint":"","secretKey":"","useSsl":false},"notifiers":{"elasticsearch":{"createIndexTemplate":true,"numberOfReplicas":1,"numberOfShards":1,"url":""},"loki":{"apiKey":"","customHeaders":[],"hostPort":"","tenant":"","user":""},"slack":{"footer":"https://github.com/falcosecurity/falco-talon","format":"long","icon":"https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg","username":"Falco Talon","webhookUrl":""},"smtp":{"format":"html","from":"","hostPort":"","password":"","tls":false,"to":"","user":""},"webhook":{"url":""}},"otel":{"collectorEndpoint":"","collectorPort":4317,"collectorUseInsecureGrpc":false,"metricsEnabled":false,"tracesEnabled":false},"printAllEvents":false,"rulesOverride":"- action: Terminate Pod\n  actionner: kubernetes:terminate\n  parameters:\n    ignore_daemonsets: true\n    ignore_statefulsets: true\n    grace_period_seconds: 20\n","watchRules":true}` | config of Falco Talon (See https://docs.falco-talon.org/docs/configuration/) |
-| config.aws | object | `{"accesKey":"","externalId":"","region":"","roleArn":"","secretKey":""}` | aws |
-| config.aws.accesKey | string | `""` | access key (if not specified, default access_key from provider credential chain will be used) |
+| config | object | `{"aws":{"accessKey":"","externalId":"","region":"","roleArn":"","secretKey":""},"deduplication":{"leaderElection":true,"timeWindowSeconds":5},"defaultNotifiers":["k8sevents"],"listenAddress":"0.0.0.0","listenPort":2803,"minio":{"accessKey":"","endpoint":"","secretKey":"","useSsl":false},"notifiers":{"elasticsearch":{"createIndexTemplate":true,"numberOfReplicas":1,"numberOfShards":1,"url":""},"loki":{"apiKey":"","customHeaders":[],"tenant":"","url":"","user":""},"slack":{"footer":"https://github.com/falcosecurity/falco-talon","format":"long","icon":"https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg","username":"Falco Talon","webhookUrl":""},"smtp":{"format":"html","from":"","hostPort":"","password":"","tls":false,"to":"","user":""},"webhook":{"url":""}},"otel":{"collectorEndpoint":"","collectorPort":4317,"collectorUseInsecureGrpc":false,"metricsEnabled":false,"tracesEnabled":false},"printAllEvents":false,"rulesOverride":"- action: Terminate Pod\n  actionner: kubernetes:terminate\n  parameters:\n    ignore_daemonsets: true\n    ignore_statefulsets: true\n    grace_period_seconds: 20\n","watchRules":true}` | config of Falco Talon (See https://docs.falco-talon.org/docs/configuration/) |
+| config.aws | object | `{"accessKey":"","externalId":"","region":"","roleArn":"","secretKey":""}` | aws |
+| config.aws.accessKey | string | `""` | access key (if not specified, default access_key from provider credential chain will be used) |
 | config.aws.externalId | string | `""` | external id |
 | config.aws.region | string | `""` | region (if not specified, default region from provider credential chain will be used) |
 | config.aws.roleArn | string | `""` | role arn |
@@ -76,17 +76,17 @@ helm delete falco-talon -n falco
 | config.minio.endpoint | string | `""` | endpoint |
 | config.minio.secretKey | string | `""` | secret key |
 | config.minio.useSsl | bool | `false` | use ssl |
-| config.notifiers | object | `{"elasticsearch":{"createIndexTemplate":true,"numberOfReplicas":1,"numberOfShards":1,"url":""},"loki":{"apiKey":"","customHeaders":[],"hostPort":"","tenant":"","user":""},"slack":{"footer":"https://github.com/falcosecurity/falco-talon","format":"long","icon":"https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg","username":"Falco Talon","webhookUrl":""},"smtp":{"format":"html","from":"","hostPort":"","password":"","tls":false,"to":"","user":""},"webhook":{"url":""}}` | notifiers (See https://docs.falco-talon.org/docs/notifiers/list/ for the settings) |
+| config.notifiers | object | `{"elasticsearch":{"createIndexTemplate":true,"numberOfReplicas":1,"numberOfShards":1,"url":""},"loki":{"apiKey":"","customHeaders":[],"tenant":"","url":"","user":""},"slack":{"footer":"https://github.com/falcosecurity/falco-talon","format":"long","icon":"https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg","username":"Falco Talon","webhookUrl":""},"smtp":{"format":"html","from":"","hostPort":"","password":"","tls":false,"to":"","user":""},"webhook":{"url":""}}` | notifiers (See https://docs.falco-talon.org/docs/notifiers/list/ for the settings) |
 | config.notifiers.elasticsearch | object | `{"createIndexTemplate":true,"numberOfReplicas":1,"numberOfShards":1,"url":""}` | elasticsearch |
 | config.notifiers.elasticsearch.createIndexTemplate | bool | `true` | create the index template |
 | config.notifiers.elasticsearch.numberOfReplicas | int | `1` | number of replicas |
 | config.notifiers.elasticsearch.numberOfShards | int | `1` | number of shards |
 | config.notifiers.elasticsearch.url | string | `""` | url |
-| config.notifiers.loki | object | `{"apiKey":"","customHeaders":[],"hostPort":"","tenant":"","user":""}` | loki |
+| config.notifiers.loki | object | `{"apiKey":"","customHeaders":[],"tenant":"","url":"","user":""}` | loki |
 | config.notifiers.loki.apiKey | string | `""` | api key |
 | config.notifiers.loki.customHeaders | list | `[]` | custom headers |
-| config.notifiers.loki.hostPort | string | `""` | host:port |
 | config.notifiers.loki.tenant | string | `""` | tenant |
+| config.notifiers.loki.url | string | `""` | url |
 | config.notifiers.loki.user | string | `""` | user |
 | config.notifiers.slack | object | `{"footer":"https://github.com/falcosecurity/falco-talon","format":"long","icon":"https://upload.wikimedia.org/wikipedia/commons/2/26/Circaetus_gallicus_claw.jpg","username":"Falco Talon","webhookUrl":""}` | slack |
 | config.notifiers.slack.footer | string | `"https://github.com/falcosecurity/falco-talon"` | footer |
