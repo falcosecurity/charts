@@ -24,7 +24,7 @@ Charts currently available are listed below.
 
 - [falco](./charts/falco)
 - [falco-operator](./charts/falco-operator)
-- [falcosidekick](./charts/falcosidekick)
+- [falcosidekick](./charts/falcosidekick-v2) (v2, versions `0.14.x`)
 - [event-generator](./charts/event-generator)
 - [k8s-metacollector](./charts/k8s-metacollector)
 - [falco-talon](./charts/falco-talon)

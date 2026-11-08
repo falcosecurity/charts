@@ -1,6 +1,6 @@
 # Falcosidekick
 
-![falcosidekick](https://github.com/falcosecurity/falcosidekick/raw/master/imgs/falcosidekick_color.png)
+![falcosidekick](https://github.com/falcosecurity/falcosidekick/raw/2.x/imgs/falcosidekick_color.png)
 
 ![release](https://flat.badgen.net/github/release/falcosecurity/falcosidekick/latest?color=green) ![last commit](https://flat.badgen.net/github/last-commit/falcosecurity/falcosidekick) ![licence](https://flat.badgen.net/badge/license/MIT/blue) ![docker pulls](https://flat.badgen.net/docker/pulls/falcosecurity/falcosidekick?icon=docker)
 
@@ -11,7 +11,7 @@ forward them to different outputs in a fan-out way.
 
 It works as a single endpoint for as many as you want `Falco` instances :
 
-![falco_with_falcosidekick](https://github.com/falcosecurity/falcosidekick/raw/master/imgs/falco_with_falcosidekick.png)
+![falco_with_falcosidekick](https://github.com/falcosecurity/falcosidekick/raw/2.x/imgs/falco_with_falcosidekick.png)
 
 ## Outputs
 
@@ -22,101 +22,101 @@ Follow the links to get the configuration of each output.
 
 ### Chat
 
-- [**Slack**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/slack.md)
-- [**Rocketchat**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/rocketchat.md)
-- [**Mattermost**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/mattermost.md)
-- [**Teams**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/teams.md)
-- [**Discord**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/discord.md)
-- [**Google Chat**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/googlechat.md)
-- [**Zoho Cliq**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/cliq.md)
-- [**Telegram**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/telegram.md)
+- [**Slack**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/slack.md)
+- [**Rocketchat**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/rocketchat.md)
+- [**Mattermost**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/mattermost.md)
+- [**Teams**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/teams.md)
+- [**Discord**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/discord.md)
+- [**Google Chat**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/googlechat.md)
+- [**Zoho Cliq**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/cliq.md)
+- [**Telegram**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/telegram.md)
 
 ### Metrics / Observability
 
-- [**Datadog**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/datadog.md)
-- [**Influxdb**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/influxdb.md)
-- [**StatsD**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/statsd.md) (for monitoring of `falcosidekick`)
-- [**DogStatsD**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/dogstatsd.md) (for monitoring of `falcosidekick`)
-- [**Prometheus**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/prometheus.md) (for both events and monitoring of `falcosidekick`)
-- [**Wavefront**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/wavefront.md)
-- [**Spyderbat**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/spyderbat.md)
-- [**TimescaleDB**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/timescaledb.md)
-- [**Dynatrace**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/dynatrace.md)
+- [**Datadog**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/datadog.md)
+- [**Influxdb**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/influxdb.md)
+- [**StatsD**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/statsd.md) (for monitoring of `falcosidekick`)
+- [**DogStatsD**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/dogstatsd.md) (for monitoring of `falcosidekick`)
+- [**Prometheus**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/prometheus.md) (for both events and monitoring of `falcosidekick`)
+- [**Wavefront**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/wavefront.md)
+- [**Spyderbat**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/spyderbat.md)
+- [**TimescaleDB**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/timescaledb.md)
+- [**Dynatrace**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/dynatrace.md)
 
 ### Alerting
 
-- [**AlertManager**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/alertmanager.md)
-- [**Opsgenie**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/opsgenie.md)
-- [**PagerDuty**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/pagerduty.md)
-- [**Grafana OnCall**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/grafana_oncall.md)
+- [**AlertManager**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/alertmanager.md)
+- [**Opsgenie**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/opsgenie.md)
+- [**PagerDuty**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/pagerduty.md)
+- [**Grafana OnCall**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/grafana_oncall.md)
 
 ### Logs
 
-- [**Elasticsearch**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/elasticsearch.md)
-- [**Loki**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/loki.md)
-- [**AWS CloudWatchLogs**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_cloudwatch_logs.md)
-- [**Grafana**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/grafana.md)
-- [**Syslog**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/syslog.md)
-- [**Zincsearch**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs//zincsearch.md)
-- [**OpenObserve**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/openobserve.md)
+- [**Elasticsearch**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/elasticsearch.md)
+- [**Loki**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/loki.md)
+- [**AWS CloudWatchLogs**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/aws_cloudwatch_logs.md)
+- [**Grafana**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/grafana.md)
+- [**Syslog**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/syslog.md)
+- [**Zincsearch**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs//zincsearch.md)
+- [**OpenObserve**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/openobserve.md)
 
 ### Object Storage
 
-- [**AWS S3**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_s3.md)
-- [**GCP Storage**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_storage.md)
-- [**Yandex S3 Storage**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/yandex_s3.md)
+- [**AWS S3**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/aws_s3.md)
+- [**GCP Storage**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/gcp_storage.md)
+- [**Yandex S3 Storage**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/yandex_s3.md)
 
 ### FaaS / Serverless
 
-- [**AWS Lambda**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_lambda.md)
-- [**GCP Cloud Run**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_cloud_run.md)
-- [**GCP Cloud Functions**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_cloud_functions.md)
-- [**Fission**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/fission.md)
-- [**KNative (CloudEvents)**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/cloudevents.md)
-- [**Kubeless**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/kubeless.md)
-- [**OpenFaaS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/openfaas.md)
-- [**Tekton**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/tekton.md)
+- [**AWS Lambda**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/aws_lambda.md)
+- [**GCP Cloud Run**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/gcp_cloud_run.md)
+- [**GCP Cloud Functions**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/gcp_cloud_functions.md)
+- [**Fission**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/fission.md)
+- [**KNative (CloudEvents)**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/cloudevents.md)
+- [**Kubeless**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/kubeless.md)
+- [**OpenFaaS**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/openfaas.md)
+- [**Tekton**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/tekton.md)
 
 ### Message queue / Streaming
 
-- [**NATS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/nats.md)
-- [**STAN (NATS Streaming)**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/stan.md)
-- [**AWS SQS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_sqs.md)
-- [**AWS SNS**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_sns.md)
-- [**AWS Kinesis**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_kinesis.md)
-- [**GCP PubSub**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gcp_pub_sub.md)
-- [**Apache Kafka**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/kafka.md)
-- [**Kafka Rest Proxy**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/kafkarest.md)
-- [**RabbitMQ**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/rabbitmq.md)
-- [**Azure Event Hubs**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/azure_event_hub.md)
-- [**Yandex Data Streams**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/yandex_datastreams.md)
-- [**MQTT**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/mqtt.md)
-- [**Gotify**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/gotify.md)
+- [**NATS**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/nats.md)
+- [**STAN (NATS Streaming)**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/stan.md)
+- [**AWS SQS**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/aws_sqs.md)
+- [**AWS SNS**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/aws_sns.md)
+- [**AWS Kinesis**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/aws_kinesis.md)
+- [**GCP PubSub**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/gcp_pub_sub.md)
+- [**Apache Kafka**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/kafka.md)
+- [**Kafka Rest Proxy**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/kafkarest.md)
+- [**RabbitMQ**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/rabbitmq.md)
+- [**Azure Event Hubs**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/azure_event_hub.md)
+- [**Yandex Data Streams**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/yandex_datastreams.md)
+- [**MQTT**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/mqtt.md)
+- [**Gotify**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/gotify.md)
 
 ### Email
 
-- [**SMTP**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/smtp.md)
+- [**SMTP**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/smtp.md)
 
 ### Database
 
-- [**Redis**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/redis.md)
+- [**Redis**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/redis.md)
 
 ### Web
 
-- [**Webhook**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/webhook.md)
-- [**Node-RED**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/nodered.md)
-- [**WebUI (Falcosidekick UI)**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/falcosidekick-ui.md)
+- [**Webhook**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/webhook.md)
+- [**Node-RED**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/nodered.md)
+- [**WebUI (Falcosidekick UI)**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/falcosidekick-ui.md)
 
 ### SIEM
 
-- [**AWS Security Lake**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/aws_security_lake.md)
+- [**AWS Security Lake**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/aws_security_lake.md)
 
 ### Workflow
 
-- [**n8n**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/n8n.md)
+- [**n8n**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/n8n.md)
 
 ### Other
-- [**Policy Report**](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/policy_report.md)
+- [**Policy Report**](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/policy_report.md)
 
 ## Adding `falcosecurity` repository
 
@@ -773,7 +773,7 @@ A `prometheus` endpoint can be scrapped at `/metrics`.
 
 ## Access Falcosidekick UI through an Ingress  and a subpath
 
-You may want to access the `WebUI (Falcosidekick UI)`](https://github.com/falcosecurity/falcosidekick/blob/master/docs/outputs/falcosidekick-ui.md) dashboard not from `/` but from `/subpath` and use an Ingress, here's an example of annotations to add to the Ingress for `nginx-ingress controller`:
+You may want to access the `WebUI (Falcosidekick UI)`](https://github.com/falcosecurity/falcosidekick/blob/2.x/docs/outputs/falcosidekick-ui.md) dashboard not from `/` but from `/subpath` and use an Ingress, here's an example of annotations to add to the Ingress for `nginx-ingress controller`:
 
 ```yaml
 nginx.ingress.kubernetes.io/rewrite-target: /$2
