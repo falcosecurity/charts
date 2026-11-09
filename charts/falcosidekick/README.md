@@ -708,7 +708,7 @@ The following table lists the main configurable parameters of the Falcosidekick 
 | webui.image.pullPolicy | string | `"IfNotPresent"` | The web UI image pull policy |
 | webui.image.registry | string | `"docker.io"` | The web UI image registry to pull from |
 | webui.image.repository | string | `"falcosecurity/falcosidekick-ui"` | The web UI image repository to pull from |
-| webui.image.tag | string | `"2.2.0"` | The web UI image tag to pull |
+| webui.image.tag | string | `"2.3.1"` | The web UI image tag to pull |
 | webui.ingress.annotations | object | `{}` | Web UI ingress annotations |
 | webui.ingress.enabled | bool | `false` | Whether to create the Web UI ingress |
 | webui.ingress.hosts | list | `[{"host":"falcosidekick-ui.local","paths":[{"path":"/"}]}]` | Web UI ingress hosts configuration |
