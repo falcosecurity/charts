@@ -29,6 +29,9 @@ spec:
   commonName: {{ include "falco-operator.fullname" . }}-artifact-ca
   secretName: {{ include "falco-operator.fullname" . }}-artifact-ca
   duration: {{ .Values.mtls.caCertDuration }}
+  # Renew the CA without invalidating certificates still signed by its current key.
+  privateKey:
+    rotationPolicy: Never
   issuerRef:
     name: {{ include "falco-operator.fullname" . }}-selfsigned-issuer
     kind: Issuer
@@ -85,7 +88,7 @@ metadata:
 spec:
   secretName: {{ include "falco-operator.fullname" . }}-artifact-server-tls
   dnsNames:
-    - {{ include "falco-operator.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+    - {{ include "falco-operator.fullname" . }}.{{ .Release.Namespace }}.svc.{{ include "falco-operator.clusterDomain" . }}
   duration: {{ .Values.mtls.server.certDuration }}
   renewBefore: {{ .Values.mtls.server.certRenewBefore }}
   issuerRef:

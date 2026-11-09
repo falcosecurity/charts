@@ -9075,6 +9075,8 @@ spec:
                   deployed.
                 type: string
             type: object
+        required:
+        - spec
         type: object
     served: true
     storage: true

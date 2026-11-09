@@ -197,7 +197,7 @@ spec:
               observedGeneration:
                 description: |-
                   ObservedGeneration is the .metadata.generation that the instance operator has fully
-                  processed (node objects synced, status patched). Per-node artifact operators defer
+                  processed. Per-node artifact operators defer
                   reconciliation until this equals metadata.generation.
                 format: int64
                 type: integer
