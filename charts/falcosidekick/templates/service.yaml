@@ -24,7 +24,7 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-    {{- if not (eq .Values.config.tlsserver.notlspaths "") }}
+    {{- if and .Values.config.tlsserver.deploy (ne .Values.config.tlsserver.notlspaths "") }}
     - port: {{ .Values.config.tlsserver.notlsport }}
       targetPort: http-notls
       protocol: TCP
