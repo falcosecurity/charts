@@ -6,6 +6,33 @@ Expand the name of the chart.
 {{- end }}
 
 {{/*
+Compose the operator image, preserving custom repositories and digest precedence.
+*/}}
+{{- define "falco-operator.image" -}}
+{{- $repository := .Values.image.repository -}}
+{{- if and .Values.imageRegistry (eq $repository "falcosecurity/falco-operator") -}}
+{{- $repository = printf "%s/%s" .Values.imageRegistry $repository -}}
+{{- end -}}
+{{- if .Values.image.digest -}}
+{{ $repository }}@{{ .Values.image.digest }}
+{{- else -}}
+{{ $repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+{{- end -}}
+{{- end }}
+
+{{/*
+Keep the DNS default when upgrades reuse values from a chart without clusterDomain.
+An explicitly empty value is still invalid.
+*/}}
+{{- define "falco-operator.clusterDomain" -}}
+{{- if hasKey .Values "clusterDomain" -}}
+{{- required "clusterDomain must not be empty" .Values.clusterDomain -}}
+{{- else -}}
+cluster.local
+{{- end -}}
+{{- end }}
+
+{{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.

@@ -48,6 +48,9 @@ spec:
             {{- if not .Values.enforceRequirements }}
             - --enforce-requirements=false
             {{- end }}
+            {{- if .Values.artifactOperatorAppArmorUnconfined }}
+            - --artifact-operator-apparmor-unconfined=true
+            {{- end }}
             {{- if .Values.mtls.enabled }}
             - --artifact-server-cert-path=/etc/artifact-server-certs
             - --artifact-server-client-ca-file=/etc/artifact-server-trust/ca-bundle.crt
@@ -61,11 +64,7 @@ spec:
             {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.image.digest }}
-          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
-          {{- else }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          {{- end }}
+          image: {{ include "falco-operator.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: health
@@ -103,6 +102,12 @@ spec:
                   fieldPath: metadata.uid
             - name: OPERATOR_SERVICE_NAME
               value: {{ include "falco-operator.fullname" . | quote }}
+            - name: CLUSTER_DOMAIN
+              value: {{ include "falco-operator.clusterDomain" . | quote }}
+            {{- with .Values.imageRegistry }}
+            - name: IMAGE_REGISTRY
+              value: {{ . | quote }}
+            {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

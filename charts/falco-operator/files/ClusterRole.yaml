@@ -7,7 +7,6 @@ rules:
   - ""
   resources:
   - configmaps
-  - pods
   - serviceaccounts
   - services
   verbs:
@@ -39,6 +38,7 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - pods
   - secrets
   verbs:
   - get

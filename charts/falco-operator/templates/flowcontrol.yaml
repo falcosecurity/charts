@@ -1,0 +1,85 @@
+{{- if .Values.apiPriorityAndFairness.enabled }}
+{{- $name := include "falco-operator.fullname" . }}
+{{- with .Values.apiPriorityAndFairness }}
+# The artifact-operator sidecars, one per node, share a bounded priority level, so that a cluster-wide burst of
+# their requests (a rollout, a bulk change of artifacts) queues instead of competing with the rest of the cluster.
+# Each Falco instance has its own ServiceAccount in its own namespace, which a FlowSchema cannot match by wildcard,
+# so the sidecars are matched by what they request: the artifact API, from any ServiceAccount, or from the
+# ServiceAccounts of artifactOperators.namespaces when that is set. Without it, any other ServiceAccount that uses
+# the artifact API, a GitOps controller for instance, shares the sidecars' level.
+---
+apiVersion: flowcontrol.apiserver.k8s.io/v1
+kind: PriorityLevelConfiguration
+metadata:
+  name: {{ $name }}-artifact-operators
+  labels:
+    {{- include "falco-operator.labels" $ | nindent 4 }}
+spec:
+  type: Limited
+  limited:
+    nominalConcurrencyShares: {{ .artifactOperators.nominalConcurrencyShares }}
+    lendablePercent: {{ .artifactOperators.lendablePercent }}
+    limitResponse:
+      type: Queue
+      queuing:
+        queues: {{ .artifactOperators.queues }}
+        handSize: {{ .artifactOperators.handSize }}
+        queueLengthLimit: {{ .artifactOperators.queueLengthLimit }}
+---
+apiVersion: flowcontrol.apiserver.k8s.io/v1
+kind: FlowSchema
+metadata:
+  name: {{ $name }}-artifact-operators
+  labels:
+    {{- include "falco-operator.labels" $ | nindent 4 }}
+spec:
+  priorityLevelConfiguration:
+    name: {{ $name }}-artifact-operators
+  matchingPrecedence: {{ .artifactOperators.matchingPrecedence }}
+  # Requests are queued fairly per ServiceAccount, that is per Falco instance.
+  distinguisherMethod:
+    type: ByUser
+  rules:
+    - subjects:
+        {{- range .artifactOperators.namespaces }}
+        - kind: Group
+          group:
+            name: system:serviceaccounts:{{ . }}
+        {{- else }}
+        - kind: Group
+          group:
+            name: system:serviceaccounts
+        {{- end }}
+      resourceRules:
+        - verbs: ["*"]
+          apiGroups: ["artifact.falcosecurity.dev"]
+          resources: ["artifactnodes", "artifactnodes/status", "rulesfiles", "plugins", "configs"]
+          namespaces: ["*"]
+# The operator's own requests to the same API, fan-outs to every node's ArtifactNode included, keep their usual
+# priority: this schema, matched first, routes them away from the sidecars' level.
+---
+apiVersion: flowcontrol.apiserver.k8s.io/v1
+kind: FlowSchema
+metadata:
+  name: {{ $name }}-operator
+  labels:
+    {{- include "falco-operator.labels" $ | nindent 4 }}
+spec:
+  priorityLevelConfiguration:
+    name: {{ .operator.priorityLevel }}
+  matchingPrecedence: {{ .operator.matchingPrecedence }}
+  distinguisherMethod:
+    type: ByUser
+  rules:
+    - subjects:
+        - kind: ServiceAccount
+          serviceAccount:
+            namespace: {{ $.Release.Namespace }}
+            name: {{ include "falco-operator.serviceAccountName" $ }}
+      resourceRules:
+        - verbs: ["*"]
+          apiGroups: ["artifact.falcosecurity.dev"]
+          resources: ["*"]
+          namespaces: ["*"]
+{{- end }}
+{{- end }}

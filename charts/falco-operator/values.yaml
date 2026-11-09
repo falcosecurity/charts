@@ -19,6 +19,9 @@ image:
   # -- Optional image digest (e.g. sha256:abc...). When set, takes precedence over tag and renders repository@digest.
   digest: ""
 
+# -- Registry host[:port][/path] for the default Docker Hub images of the operator and generated workloads. Preserves tags/digests; custom repositories and explicit images take precedence.
+imageRegistry: ""
+
 # -- Image pull secrets
 imagePullSecrets: []
 
@@ -26,6 +29,9 @@ imagePullSecrets: []
 nameOverride: ""
 # -- Full name override for the chart
 fullnameOverride: ""
+
+# -- Cluster DNS domain, used for the artifact server URL and its TLS certificate.
+clusterDomain: cluster.local
 
 # -- Service account configuration
 serviceAccount:
@@ -53,16 +59,19 @@ mtls:
   # the Falco controller creates a unique per-instance client certificate (with a SPIFFE URI
   # SAN identifying the instance) for every Falco instance's artifact-operator sidecar, and the
   # operator's ClusterRole gains permission to create cert-manager Certificate objects. When
-  # false (the default), the artifact server runs over plain HTTP, unchanged from today: no
-  # cert-manager dependency at all, and clusters using a service mesh for transport-level mTLS
-  # instead can safely leave this off.
+  # false (the default), the artifact server runs over plain HTTP without application-level
+  # authentication or namespace authorization, and has no cert-manager dependency. Mesh mTLS
+  # alone does not enable these checks; restrict access with network/mesh authorization policies.
   enabled: false
 
   # -- If true, this chart bootstraps its own private CA (a self-signed Issuer, a CA
   # Certificate, and a ClusterIssuer) and a trust-manager Bundle that distributes that CA to any
-  # namespace labeled trustLabel below. If false, set issuerName to an existing ClusterIssuer
-  # you manage yourself, and handle trust distribution to Falco instances' namespaces on your own
-  # (this chart never creates a Bundle when createIssuer is false).
+  # namespace labeled trustLabel below. The CA Secret lives in the release namespace, which must
+  # match cert-manager's --cluster-resource-namespace and trust-manager's app.trust.namespace.
+  # These are shared controller settings: do not change them blindly on an existing PKI.
+  # If false, set issuerName to an existing ClusterIssuer you manage yourself, and distribute
+  # trust to BOTH the operator and Falco namespaces (this chart creates no Bundle in that mode).
+  # See docs/installation.md for onboarding and issuance-policy requirements.
   createIssuer: true
 
   # -- Name of the ClusterIssuer used to sign the server and per-instance client certificates.
@@ -81,17 +90,17 @@ mtls:
   caBundleConfigMapName: ""
 
   # -- Label applied to namespaces that should receive the CA trust bundle via trust-manager
-  # (only relevant when createIssuer is true). A cluster admin must label a Falco instance's
-  # namespace with this key=true before that instance can complete mTLS setup; this chart never
+  # (only relevant when createIssuer is true). A cluster admin must label BOTH the operator's
+  # namespace and every Falco namespace with this key=true before mTLS setup; this chart never
   # labels namespaces on its own (a deliberate, explicit, admin-approves-trust step). Without it,
-  # a Falco instance's sidecar has no CA bundle ConfigMap to mount and its pod will sit stuck in
+  # the operator or a Falco sidecar has no CA bundle ConfigMap to mount and its pod will sit stuck in
   # ContainerCreating.
   trustLabel: artifact.falcosecurity.dev/trust
 
   # -- Duration for the bootstrap CA certificate (only used when createIssuer is true).
-  # cert-manager renews it automatically; private-key replacement depends on its rotation
-  # policy and cert-manager version. CA key rotation requires coordinated trust-bundle and
-  # leaf-certificate updates, which this chart does not automate.
+  # cert-manager renews it automatically, reusing its private key (rotationPolicy: Never)
+  # so existing leaf certificates remain trusted. CA key rotation requires coordinated
+  # trust-bundle and leaf-certificate updates, which this chart does not automate.
   caCertDuration: 8760h
 
   server:
@@ -172,6 +181,11 @@ excludedLabels: []
 # or plugin dependency constraints. Useful when compatibility metadata is unavailable or incorrect.
 enforceRequirements: true
 
+# -- When true, the artifact-operator sidecar runs with the Unconfined AppArmor profile. Enable on nodes
+# where the container runtime's default AppArmor profile blocks SIGHUP to Falco with permission denied.
+# Requires Kubernetes 1.30 or later. Enabling it rolls the Falco pods.
+artifactOperatorAppArmorUnconfined: false
+
 # -- Additional CLI arguments passed to the operator binary. mTLS's own flags are added
 # natively when mtls.enabled is true; no need to list them here.
 extraArgs: []
@@ -180,8 +194,8 @@ extraArgs: []
 
 # -- Extra environment variables
 extraEnv: []
-  # - name: ARTIFACT_OPERATOR_IMAGE
-  #   value: "docker.io/falcosecurity/artifact-operator:latest"
+  # - name: ARTIFACT_DOWNLOAD_TIMEOUT
+  #   value: "2m"
 
 # -- Node selector
 nodeSelector: {}
@@ -216,6 +230,46 @@ dnsConfig: {}
   # options:
   #   - name: ndots
   #     value: "2"
+
+# API Priority and Fairness for the artifact API (flowcontrol.apiserver.k8s.io/v1, Kubernetes 1.29+). Off by
+# default: installing it needs permission to create cluster-scoped flow-control objects. In a large cluster it puts
+# the artifact-operator sidecars, one per node, in a bounded priority level, so that a burst of their requests
+# queues instead of competing with the rest of the cluster, while the operator's own requests keep their priority.
+apiPriorityAndFairness:
+  # -- Create the PriorityLevelConfiguration and FlowSchemas.
+  enabled: false
+  artifactOperators:
+    # -- FlowSchema precedence: lower matches first. Above the cluster's catch-all, below system schemas.
+    matchingPrecedence: 1000
+    # -- Share of the API server's concurrency the sidecars are entitled to.
+    nominalConcurrencyShares: 20
+    # -- Part of that share other levels may borrow while the sidecars do not use it.
+    lendablePercent: 50
+    # -- Queues requests wait in once the level is busy; more queues isolate Falco instances better.
+    queues: 64
+    # -- Queues each Falco instance's requests are spread over (shuffle sharding).
+    handSize: 6
+    # -- Requests a queue holds before further ones are rejected with 429.
+    queueLengthLimit: 50
+    # -- Namespaces of the Falco instances, whose ServiceAccounts are the sidecars'. Empty matches the
+    # ServiceAccounts of every namespace, so any other workload using the artifact API shares the sidecars' level.
+    namespaces: []
+  operator:
+    # -- Precedence of the operator's own schema; it must match before the sidecars' one.
+    matchingPrecedence: 900
+    # -- Priority level for the operator's own artifact API requests.
+    priorityLevel: workload-high
+
+# Admission policy for ArtifactNodes (admissionregistration.k8s.io/v1 ValidatingAdmissionPolicy, Kubernetes 1.30+).
+# Off by default: installing it needs permission to create cluster-scoped admission objects. The artifact-operator
+# sidecars of one Falco instance share a ServiceAccount, whose Role lets each of them patch every ArtifactNode of
+# the namespace. With the policy, a sidecar can only change the ArtifactNode of the node it runs on, and never
+# its spec, so a compromised node cannot take the rules away from the others. It relies on the node name the API
+# server puts in a pod's ServiceAccount token (ServiceAccountTokenPodNodeInfo, on by default since Kubernetes
+# 1.30): a request without it is not restricted.
+artifactNodeAdmissionPolicy:
+  # -- Create the ValidatingAdmissionPolicy and its binding.
+  enabled: false
 
 # -- Array of extra Kubernetes manifests to deploy alongside the operator. Each
 # entry is rendered with `tpl`, so Helm templating (e.g. `{{ .Release.Name }}`)

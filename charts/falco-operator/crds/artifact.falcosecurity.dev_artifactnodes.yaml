@@ -17,14 +17,8 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .metadata.labels['artifact\.falcosecurity\.dev/kind']
-      name: Kind
-      type: string
     - jsonPath: .spec.nodeName
       name: Node
-      type: string
-    - jsonPath: .status.conditions[?(@.type=='Programmed')].status
-      name: Programmed
       type: string
     - jsonPath: .metadata.creationTimestamp
       name: Age
@@ -33,10 +27,10 @@ spec:
     schema:
       openAPIV3Schema:
         description: |-
-          ArtifactNode tracks the per-node state of an artifact (Plugin, Rulesfile, or Config).
-          One ArtifactNode is created per cluster node that matches the parent artifact selector.
-          It is written exclusively by the artifact operator running on that node.
-          The artifact kind is stored in the label artifact.falcosecurity.dev/kind.
+          ArtifactNode records the artifacts (Rulesfile, Plugin and Config) assigned to one node of a
+          namespace and their per-node state. One ArtifactNode exists per namespace and node that runs a
+          Falco pod. Its spec is written by the instance operator and its status by the artifact operator
+          running on that node.
         properties:
           apiVersion:
             description: |-
@@ -59,9 +53,48 @@ spec:
             description: Spec is required, so the apiserver also enforces NodeName's
               own required constraint within it.
             properties:
+              artifacts:
+                description: Artifacts is the set of artifacts assigned to the node.
+                  Entries are unique by kind and name.
+                items:
+                  description: |-
+                    NodeArtifactRef identifies one artifact assigned to a node. The artifact lives in the namespace of
+                    the ArtifactNode that lists it.
+                  properties:
+                    kind:
+                      description: Kind is the kind of the assigned artifact.
+                      enum:
+                      - Rulesfile
+                      - Plugin
+                      - Config
+                      type: string
+                    name:
+                      description: Name is the name of the assigned artifact.
+                      maxLength: 253
+                      minLength: 1
+                      type: string
+                    uid:
+                      description: |-
+                        UID is the UID of the artifact object the assignment was made for. It tells a deleted and
+                        recreated artifact of the same name apart from its predecessor.
+                      minLength: 1
+                      type: string
+                  required:
+                  - kind
+                  - name
+                  - uid
+                  type: object
+                maxItems: 100
+                type: array
+                x-kubernetes-list-map-keys:
+                - kind
+                - name
+                x-kubernetes-list-type: map
               nodeName:
-                description: NodeName is the name of the node to which this artifact
-                  is assigned.
+                description: NodeName is the name of the node the artifacts are assigned
+                  to.
+                maxLength: 253
+                minLength: 1
                 type: string
                 x-kubernetes-validations:
                 - message: nodeName is immutable
@@ -70,137 +103,159 @@ spec:
             - nodeName
             type: object
           status:
-            default:
-              conditions:
-              - lastTransitionTime: "1970-01-01T00:00:00Z"
-                message: Waiting for controller
-                reason: Pending
-                status: Unknown
-                type: Programmed
-            description: ArtifactNodeStatus defines the per-node observed state of
-              an artifact.
+            description: ArtifactNodeStatus defines the observed state of the artifacts
+              assigned to a node.
             properties:
-              conditions:
-                description: Conditions represent the latest available observations
-                  of this node's artifact state.
-                items:
-                  description: Condition contains details for one aspect of the current
-                    state of this API Resource.
-                  properties:
-                    lastTransitionTime:
-                      description: |-
-                        lastTransitionTime is the last time the condition transitioned from one status to another.
-                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
-                      format: date-time
-                      type: string
-                    message:
-                      description: |-
-                        message is a human readable message indicating details about the transition.
-                        This may be an empty string.
-                      maxLength: 32768
-                      type: string
-                    observedGeneration:
-                      description: |-
-                        observedGeneration represents the .metadata.generation that the condition was set based upon.
-                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
-                        with respect to the current state of the instance.
-                      format: int64
-                      minimum: 0
-                      type: integer
-                    reason:
-                      description: |-
-                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
-                        Producers of specific condition types may define expected values and meanings for this field,
-                        and whether the values are considered a guaranteed API.
-                        The value should be a CamelCase string.
-                        This field may not be empty.
-                      maxLength: 1024
-                      minLength: 1
-                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
-                      type: string
-                    status:
-                      description: status of the condition, one of True, False, Unknown.
-                      enum:
-                      - "True"
-                      - "False"
-                      - Unknown
-                      type: string
-                    type:
-                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
-                      maxLength: 316
-                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
-                      type: string
-                  required:
-                  - lastTransitionTime
-                  - message
-                  - reason
-                  - status
-                  - type
-                  type: object
-                type: array
-                x-kubernetes-list-map-keys:
-                - type
-                x-kubernetes-list-type: map
-              installedArtifacts:
-                description: |-
-                  InstalledArtifacts tracks the artifact files currently written to disk by this node's operator.
-                  Each entry corresponds to one source medium (oci, inline, configmap).
+              artifacts:
+                description: Artifacts is the per-artifact state, written exclusively
+                  by the artifact operator on the node.
                 items:
                   description: |-
-                    InstalledArtifact describes a single artifact file currently on disk.
-                    The medium field is the list map key: at most one entry per medium exists.
+                    NodeArtifactStatus is the state of one assigned artifact on the node, as reported by the artifact
+                    operator running there.
                   properties:
-                    config:
+                    conditions:
+                      description: Conditions represent the latest available observations
+                        of the artifact's state on this node.
+                      items:
+                        description: Condition contains details for one aspect of
+                          the current state of this API Resource.
+                        properties:
+                          lastTransitionTime:
+                            description: |-
+                              lastTransitionTime is the last time the condition transitioned from one status to another.
+                              This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                            format: date-time
+                            type: string
+                          message:
+                            description: |-
+                              message is a human readable message indicating details about the transition.
+                              This may be an empty string.
+                            maxLength: 32768
+                            type: string
+                          observedGeneration:
+                            description: |-
+                              observedGeneration represents the .metadata.generation that the condition was set based upon.
+                              For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                              with respect to the current state of the instance.
+                            format: int64
+                            minimum: 0
+                            type: integer
+                          reason:
+                            description: |-
+                              reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                              Producers of specific condition types may define expected values and meanings for this field,
+                              and whether the values are considered a guaranteed API.
+                              The value should be a CamelCase string.
+                              This field may not be empty.
+                            maxLength: 1024
+                            minLength: 1
+                            pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                            type: string
+                          status:
+                            description: status of the condition, one of True, False,
+                              Unknown.
+                            enum:
+                            - "True"
+                            - "False"
+                            - Unknown
+                            type: string
+                          type:
+                            description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                            maxLength: 316
+                            pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                            type: string
+                        required:
+                        - lastTransitionTime
+                        - message
+                        - reason
+                        - status
+                        - type
+                        type: object
+                      maxItems: 16
+                      type: array
+                      x-kubernetes-list-map-keys:
+                      - type
+                      x-kubernetes-list-type: map
+                    installedArtifacts:
                       description: |-
-                        Config tracks the generated configuration file derived from this artifact.
-                        Populated only for Plugin artifacts (the plugins-config-inline.yaml shared config file).
-                        Binary and config share the same lifecycle: no binary means no config, and vice versa.
-                      properties:
-                        path:
-                          description: Path is the absolute on-disk path of the generated
-                            config file.
-                          type: string
-                      required:
-                      - path
-                      type: object
-                    contentHash:
-                      description: |-
-                        ContentHash is the SHA-256 hex digest of the bytes written to disk.
-                        A mismatch between this value and the current source signals that the file must be re-written.
-                      type: string
-                    medium:
-                      description: 'Medium identifies the source: "oci", "inline",
-                        or "configmap".'
+                        InstalledArtifacts tracks the artifact files currently written to disk for this artifact.
+                        Each entry corresponds to one source medium (oci, inline, configmap).
+                      items:
+                        description: |-
+                          InstalledArtifact describes a single artifact file currently on disk.
+                          The medium field is the list map key: at most one entry per medium exists.
+                        properties:
+                          contentHash:
+                            description: |-
+                              ContentHash is the SHA-256 hex digest of the bytes written to disk.
+                              A mismatch between this value and the current source signals that the file must be re-written.
+                            type: string
+                          medium:
+                            description: 'Medium identifies the source: "oci", "inline",
+                              or "configmap".'
+                            enum:
+                            - oci
+                            - inline
+                            - configmap
+                            type: string
+                          path:
+                            description: Path is the absolute on-disk path of the
+                              installed file.
+                            type: string
+                          priority:
+                            description: Priority is the load-order value encoded
+                              in the filename.
+                            format: int32
+                            type: integer
+                          specHash:
+                            description: |-
+                              SpecHash is the SHA-256 hash of the parent artifact's OCIArtifact spec at the time this
+                              artifact was installed. Populated only for MediumOCI. A mismatch with the parent
+                              artifact's current ArtifactMeta.SpecHash means the remote blob may have changed and the
+                              artifact must be re-fetched regardless of disk integrity.
+                            type: string
+                        required:
+                        - contentHash
+                        - medium
+                        - path
+                        - priority
+                        type: object
+                      maxItems: 3
+                      type: array
+                      x-kubernetes-list-map-keys:
+                      - medium
+                      x-kubernetes-list-type: map
+                    kind:
+                      description: Kind is the kind of the artifact this entry reports
+                        on.
                       enum:
-                      - oci
-                      - inline
-                      - configmap
+                      - Rulesfile
+                      - Plugin
+                      - Config
                       type: string
-                    path:
-                      description: Path is the absolute on-disk path of the installed
-                        file.
+                    name:
+                      description: Name is the name of the artifact this entry reports
+                        on.
+                      maxLength: 253
+                      minLength: 1
                       type: string
-                    priority:
-                      description: Priority is the load-order value encoded in the
-                        filename.
-                      format: int32
-                      type: integer
-                    specHash:
+                    uid:
                       description: |-
-                        SpecHash is the SHA-256 hash of the parent artifact's OCIArtifact spec at the time this
-                        artifact was installed. Populated only for MediumOCI. A mismatch with the parent
-                        artifact's current ArtifactMeta.SpecHash means the remote blob may have changed and the
-                        artifact must be re-fetched regardless of disk integrity.
+                        UID is the UID of the artifact object this entry reports on. An entry whose UID differs from
+                        the assignment's describes a previous incarnation of the artifact and must be ignored.
+                      minLength: 1
                       type: string
                   required:
-                  - contentHash
-                  - medium
-                  - path
-                  - priority
+                  - kind
+                  - name
+                  - uid
                   type: object
+                maxItems: 100
                 type: array
                 x-kubernetes-list-map-keys:
-                - medium
+                - kind
+                - name
                 x-kubernetes-list-type: map
             type: object
         required:

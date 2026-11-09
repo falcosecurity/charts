@@ -1,0 +1,44 @@
+{{- if .Values.artifactNodeAdmissionPolicy.enabled }}
+{{- $name := include "falco-operator.fullname" . }}
+# An artifact-operator sidecar writes two things: its own finalizer on, and the status of, the ArtifactNode of the
+# node it runs on. Its Role cannot say "of its own node", since all the sidecars of a Falco instance share one
+# ServiceAccount. This policy does: a request made with a pod's ServiceAccount token carries the name of the pod's
+# node, and such a request may only update the ArtifactNode of that name, and not its spec. The operator, which
+# writes every node's spec, is exempt; requests that carry no node name (users, tokens not bound to a pod) are
+# left to RBAC alone.
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: {{ $name }}-artifactnodes
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["artifact.falcosecurity.dev"]
+        apiVersions: ["*"]
+        operations: ["UPDATE"]
+        resources: ["artifactnodes", "artifactnodes/status"]
+  matchConditions:
+    - name: from-a-pod
+      expression: "'authentication.kubernetes.io/node-name' in request.userInfo.extra"
+    - name: not-the-operator
+      expression: "request.userInfo.username != 'system:serviceaccount:{{ .Release.Namespace }}:{{ include "falco-operator.serviceAccountName" . }}'"
+  validations:
+    - expression: "request.userInfo.extra['authentication.kubernetes.io/node-name'][0] == object.metadata.name"
+      message: "An artifact operator may only update the ArtifactNode of the node it runs on."
+    - expression: "object.spec == oldObject.spec"
+      message: "An artifact operator may not change the spec of an ArtifactNode: the falco-operator assigns artifacts."
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: {{ $name }}-artifactnodes
+  labels:
+    {{- include "falco-operator.labels" . | nindent 4 }}
+spec:
+  policyName: {{ $name }}-artifactnodes
+  validationActions: ["Deny"]
+{{- end }}
