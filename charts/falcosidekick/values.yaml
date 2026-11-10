@@ -1274,7 +1274,7 @@ webui:
     # -- The web UI image repository to pull from
     repository: falcosecurity/falcosidekick-ui
     # -- The web UI image tag to pull
-    tag: "2.2.0"
+    tag: "2.3.1"
     # -- The web UI image pull policy
     pullPolicy: IfNotPresent
 

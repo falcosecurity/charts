@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.14.3
+
+- Upgrade the default Falcosidekick UI image to 2.3.1, which fixes an `interface conversion` panic in the `count_by` API (`CountKeyBy`) that broke the dashboard charts
+
 ## 0.14.2
 
 - Upgrade the default Falcosidekick image to 2.35.1, including certificate trust and Go security updates
