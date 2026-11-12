@@ -8624,6 +8624,28 @@ entries:
     - https://github.com/falcosecurity/charts/releases/download/falco-talon-0.1.1/falco-talon-0.1.1.tgz
     version: 0.1.1
   falcosidekick:
+  - apiVersion: v2
+    appVersion: 3.0.0-beta.1
+    created: "2026-11-12T18:48:10.708572857Z"
+    description: Connect Falco to your ecosystem
+    digest: 32504b5ecd5d64d6c76efc9248e6dcccd925b0211654ef0aef0cb05f47135a2b
+    home: https://github.com/falcosecurity/falcosidekick
+    icon: https://raw.githubusercontent.com/falcosecurity/falcosidekick/master/imgs/falcosidekick_color.png
+    keywords:
+    - falco
+    - security
+    - monitoring
+    - alerting
+    maintainers:
+    - email: cncf-falco-dev@lists.cncf.io
+      name: The Falco Authors
+    name: falcosidekick
+    sources:
+    - https://github.com/falcosecurity/falcosidekick
+    type: application
+    urls:
+    - https://github.com/falcosecurity/charts/releases/download/falcosidekick-1.0.0-beta.1/falcosidekick-1.0.0-beta.1.tgz
+    version: 1.0.0-beta.1
   - apiVersion: v1
     appVersion: 2.35.1
     created: "2026-11-12T17:11:48.513474047Z"
@@ -11490,4 +11512,4 @@ entries:
     urls:
     - https://github.com/falcosecurity/charts/releases/download/k8s-metacollector-0.1.0/k8s-metacollector-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-12T17:11:48.514221353Z"
+generated: "2026-11-12T18:48:10.709086825Z"
