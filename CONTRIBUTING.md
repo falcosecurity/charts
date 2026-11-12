@@ -25,5 +25,6 @@ Open managed chart bugs, feature requests, and chart-change PRs in the source re
 | [`falco-operator`](charts/falco-operator) | [`falcosecurity/falco-operator`](https://github.com/falcosecurity/falco-operator/tree/main/chart/falco-operator) |
 | [`event-generator`](charts/event-generator) | [`falcosecurity/event-generator`](https://github.com/falcosecurity/event-generator/tree/main/chart/event-generator) |
 | [`k8s-metacollector`](charts/k8s-metacollector) | [`falcosecurity/k8s-metacollector`](https://github.com/falcosecurity/k8s-metacollector/tree/main/chart/k8s-metacollector) |
+| [`falcosidekick`](charts/falcosidekick) | [`falcosecurity/falcosidekick`](https://github.com/falcosecurity/falcosidekick/tree/master/chart/falcosidekick) |
 
 Use this repository for issues about the published chart repository, chart index, packaged releases, sync PRs, or charts maintained directly here.
