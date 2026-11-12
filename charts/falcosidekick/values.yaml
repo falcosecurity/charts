@@ -1,0 +1,245 @@
+# Default values for falcosidekick v3.
+
+# -- Number of pods. More than 1 is refused with `database.backend: sqlite`.
+# With the UI on, each pod's UI shows only the events that pod received.
+replicaCount: 1
+
+image:
+  # -- Image registry. Empty uses the repository as written.
+  registry: docker.io
+  # -- Image repository.
+  repository: falcosecurity/falcosidekick
+  # -- Image tag. Defaults to the chart appVersion.
+  tag: ""
+  # -- Image digest (`sha256:...`). When set, it replaces the tag and the variant.
+  digest: ""
+  # -- Image variant: `""` (with the web UI) or `slim` (without it). `slim` requires `ui.enabled: false`.
+  variant: ""
+  # -- Image pull policy.
+  pullPolicy: IfNotPresent
+
+# -- Image pull secrets.
+imagePullSecrets: []
+
+# -- Overrides the chart name.
+nameOverride: ""
+# -- Overrides the full name of the resources.
+fullnameOverride: ""
+
+# -- Core configuration, written as `sidekick.yaml` with v3 keys (see docs/configuration.md).
+# The chart sets `ui.enabled`, `ui.event_source`, `database.backend`, `database.sqlite.path`,
+# `database.postgres.password_file`, the TLS file paths, `management.listen_address` and appends
+# to `api.secret_dirs` as the values below require; a value here that contradicts them fails the render.
+# Credentials are refused: use `secrets` and the `_file` keys. A change restarts the pods.
+config: {}
+
+# -- Outputs, written under `outputs:` in `outputs.yaml` with v3 keys (see docs/outputs).
+# A change reloads the outputs without a restart, once the kubelet has updated the ConfigMap.
+# Credentials are refused: refer to them with `_file` fields pointing into `secrets`.
+outputs: {}
+
+# -- Existing ConfigMaps holding more output files, each `{name, key}` (`key` defaults to `outputs.yaml`).
+# Each is mounted at `/etc/falcosidekick/outputs/<name>` and passed as another `-o` after `outputs`;
+# a change reloads the outputs. The same output name in two files merges, the later file winning.
+extraOutputConfigMaps: []
+
+# -- Names of existing Secrets. Each is mounted read-only at `/etc/falcosidekick/secrets/<name>`
+# and its directory is added to `api.secret_dirs`.
+secrets: []
+
+ui:
+  # -- Serve the web UI on the management port. Sets `ui.enabled`, `ui.event_source: inmemory`
+  # and `api.allow_writes: false` unless `config.api.allow_writes` is set, and adds an `inmemory`
+  # output unless `outputs.inmemory` is set.
+  enabled: true
+
+management:
+  service:
+    # -- Create a ClusterIP Service for the management port (API and UI) and set
+    # `management.listen_address: "::"`. The API has no authentication: restrict who can reach it.
+    # Without it, use `kubectl port-forward`.
+    enabled: false
+    # -- Management Service port.
+    port: 2802
+    # -- Management Service annotations.
+    annotations: {}
+    # -- Management Service `ipFamilyPolicy`. Empty uses the cluster default.
+    ipFamilyPolicy: ""
+    # -- Management Service `ipFamilies`. Empty uses the cluster default.
+    ipFamilies: []
+
+tls:
+  # -- Existing Secret mounted at `/etc/falcosidekick/tls`, required by `config.tls.enabled: true`
+  # unless `config.tls.cert_file` and `key_file` name files mounted otherwise. Unless set in
+  # `config.tls`, `cert_file` is `tls.crt`, `key_file` is `tls.key`, and with
+  # `config.tls.mutual_tls: true` `ca_file` is `ca.crt`. Read at startup: restart the pods after a rotation.
+  secretName: ""
+
+database:
+  # -- Where outputs created through the API and the UI layout are stored: `inmemory`, `sqlite` or `postgres`.
+  # Set the postgres connection in `config.database.postgres`.
+  backend: inmemory
+  sqlite:
+    persistence:
+      # -- Existing PersistentVolumeClaim for the sqlite file. Empty creates one.
+      existingClaim: ""
+      # -- Keep the created claim on uninstall and on a change of backend (`helm.sh/resource-policy: keep`).
+      keep: true
+      # -- Storage class of the created claim. Empty uses the cluster default.
+      storageClassName: ""
+      # -- Access modes of the created claim.
+      accessModes:
+        - ReadWriteOnce
+      # -- Size of the created claim.
+      size: 1Gi
+      # -- Annotations of the created claim.
+      annotations: {}
+  postgres:
+    passwordSecret:
+      # -- Existing Secret holding the postgres password, mounted at `/etc/falcosidekick/postgres`
+      # and set as `database.postgres.password_file`. Read at startup: restart the pods after a rotation.
+      name: ""
+      # -- Key of the password in that Secret.
+      key: password
+
+service:
+  # -- Service type of the ingestion port, which receives Falco events and serves `/metrics`.
+  type: ClusterIP
+  # -- Service port.
+  port: 2801
+  # -- Service annotations.
+  annotations: {}
+  # -- Service `ipFamilyPolicy`. Empty uses the cluster default.
+  ipFamilyPolicy: ""
+  # -- Service `ipFamilies`. Empty uses the cluster default.
+  ipFamilies: []
+
+serviceMonitor:
+  # -- Create a Prometheus Operator ServiceMonitor scraping `/metrics`.
+  enabled: false
+  # -- Scrape interval. Empty uses the Prometheus default.
+  interval: ""
+  # -- Scrape timeout. Empty uses the Prometheus default.
+  scrapeTimeout: ""
+  # -- Extra labels, for the Prometheus `serviceMonitorSelector`.
+  labels: {}
+  # -- TLS settings of the scrape, used when `config.tls.enabled` is true.
+  tlsConfig: {}
+
+rbac:
+  # -- Create a ClusterRole allowing `create` on openreports.io `reports` and `clusterreports`, and
+  # `get` and `update` on those named `falcosidekick`, bound to the ServiceAccount, for the `policyreport` output.
+  policyReport: false
+
+serviceAccount:
+  # -- Create a ServiceAccount.
+  create: true
+  # -- ServiceAccount name. Defaults to the full name when created, else `default`.
+  # Required with `rbac.policyReport` and `create: false`.
+  name: ""
+  # -- ServiceAccount annotations.
+  annotations: {}
+
+probes:
+  startup:
+    # -- startupProbe period, on `/livez`.
+    periodSeconds: 5
+    # -- startupProbe timeout.
+    timeoutSeconds: 3
+    # -- startupProbe failures before a restart. Empty covers `config.database.connect_timeout`
+    # (30s by default) plus 30s: 12 periods of 5s by default.
+    failureThreshold: ""
+  liveness:
+    # -- livenessProbe period, on `/livez`.
+    periodSeconds: 10
+    # -- livenessProbe timeout.
+    timeoutSeconds: 3
+    # -- livenessProbe failures before a restart.
+    failureThreshold: 3
+  readiness:
+    # -- readinessProbe period, on `/readyz`.
+    periodSeconds: 5
+    # -- readinessProbe timeout.
+    timeoutSeconds: 3
+    # -- readinessProbe failures before the pod stops receiving traffic.
+    failureThreshold: 3
+
+podDisruptionBudget:
+  # -- Create a PodDisruptionBudget.
+  enabled: false
+  # -- Minimum available pods. When set, replaces `maxUnavailable`.
+  minAvailable: ""
+  # -- Maximum unavailable pods; `0` blocks every voluntary eviction.
+  maxUnavailable: 1
+
+# -- Pod annotations.
+podAnnotations: {}
+
+# -- Pod labels.
+podLabels: {}
+
+# -- Pod priorityClassName.
+priorityClassName: ""
+
+# -- Pod security context.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Container security context.
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+# -- Container resources. A pod with the UI and two outputs used under 3m CPU and 13 to 30Mi of
+# memory at rest. The memory limit bounds a fault to the pod; raise it for larger queues, see
+# [Resources](#resources). No CPU limit.
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 512Mi
+
+# -- Node selector.
+nodeSelector: {}
+
+# -- Tolerations.
+tolerations: []
+
+# -- Affinity.
+affinity: {}
+
+# -- Extra container environment variables. The FALCOSIDEKICK_* variables of the settings the chart
+# reads (ports, management address, shutdown_delay, tls, database backend and paths, ui, api.secret_dirs)
+# are refused: set them in `config`.
+extraEnv: []
+
+# -- Extra pod volumes.
+extraVolumes: []
+
+# -- Extra container volume mounts.
+extraVolumeMounts: []
+
+test:
+  # -- Create the `helm test` pod, which calls `/readyz` through the Service.
+  enabled: true
+  image:
+    # -- Test image registry.
+    registry: docker.io
+    # -- Test image repository; it must provide `curl`.
+    repository: curlimages/curl
+    # -- Test image tag.
+    tag: "8.11.1"
+    # -- Test image pull policy.
+    pullPolicy: IfNotPresent
