@@ -12,12 +12,14 @@ updates:
       - "charts/event-generator/**"
       - "charts/falco/**"
       - "charts/falco-operator/**"
+      - "charts/falcosidekick/**"
       - "charts/k8s-metacollector/**"
   - package-ecosystem: "gomod"
     directories:
       - "/charts/event-generator/**"
       - "/charts/falco/**"
       - "/charts/falco-operator/**"
+      - "/charts/falcosidekick/**"
       - "/charts/k8s-metacollector/**"
     schedule:
       interval: "weekly"
