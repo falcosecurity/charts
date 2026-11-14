@@ -226,8 +226,8 @@ config:
       tls: false
     # -- loki
     loki:
-      # -- host:port
-      hostPort: ""
+      # -- url
+      url: ""
       # -- user
       user: ""
       # -- api key
@@ -256,7 +256,7 @@ config:
     # -- region (if not specified, default region from provider credential chain will be used)
     region: ""
     # -- access key (if not specified, default access_key from provider credential chain will be used)
-    accesKey: ""
+    accessKey: ""
     # -- secret key (if not specified, default secret_key from provider credential chain will be used)
     secretKey: ""
 
