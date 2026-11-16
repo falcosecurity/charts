@@ -50,6 +50,7 @@ spec:
       {{- end }}
       {{- end }}
       serviceAccountName: {{ include "falcosidekick.fullname" . }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       {{- if .Values.priorityClassName }}
       priorityClassName: "{{ .Values.priorityClassName }}"
       {{- end }}

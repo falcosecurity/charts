@@ -44,6 +44,9 @@ podSecurityPolicy:
 # -- Name of the priority class to be used by the Sidekickpods, priority class needs to be created beforehand
 priorityClassName: ""
 
+# -- Whether the Falcosidekick pods mount the ServiceAccount's API token. Only the kubeless, openfaas, fission and policyreport outputs call the Kubernetes API; without them it can be false
+automountServiceAccountToken: true
+
 # -- custom labels to add to all resources
 customLabels: {}
 
