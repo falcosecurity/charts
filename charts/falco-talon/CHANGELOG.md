@@ -3,11 +3,15 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
-## 0.5.1 - 2026-11-27
+## 0.5.2 - 2026-11-27
 
 - rename `config.aws.accesKey` to `config.aws.accessKey`, the key the Secret template reads, so the AWS access key is passed to Falco Talon
 - rename `config.notifiers.loki.hostPort` to `config.notifiers.loki.url`, the setting the template and Falco Talon's Loki notifier use
 - read the Elasticsearch `createIndexTemplate`, `numberOfShards` and `numberOfReplicas` settings from `config.notifiers.elasticsearch` instead of `config.notifiers.loki`
+
+## 0.5.1 - 2026-11-27
+
+- render `config.notifiers.loki.customHeaders` as a map, the type Falco Talon's Loki notifier reads for `custom_headers`. The list it rendered before was ignored, so no custom header was sent
 
 ## 0.5.0 - 2026-09-19
 
