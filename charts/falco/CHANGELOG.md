@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## v9.2.3
+
+* Use `falco.json_include_output_property` in the HTTP output examples of the README; the top-level `json_include_output_property` value is not read by the chart
+
 ## v9.2.2
 
 * Upgrade Falco to v0.45.2, including the refreshed image CA trust stores and bundled OpenSSL 3.5.9
