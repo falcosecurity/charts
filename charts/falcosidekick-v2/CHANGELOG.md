@@ -5,6 +5,10 @@ numbering uses [semantic versioning](http://semver.org).
 
 Before release 0.1.20, the helm chart can be found in `falcosidekick` [repository](https://github.com/falcosecurity/falcosidekick/tree/master/deploy/helm/falcosidekick).
 
+## 0.14.4
+
+- Add `automountServiceAccountToken` to choose whether the Falcosidekick pods mount the ServiceAccount's API token. It defaults to `true`, so nothing changes unless it is set to `false`
+
 ## 0.14.3
 
 - Move the Falcosidekick v2 chart to `charts/falcosidekick-v2`; the chart name stays `falcosidekick` and its versions stay `0.14.x`
