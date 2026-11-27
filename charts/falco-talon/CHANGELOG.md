@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.5.2 - 2026-11-27
+
+- honor `config.watchRules: false` and `config.deduplication.leaderElection: false`. They were rendered with `default true`, which treats `false` as empty, so both settings were always `true`
+
 ## 0.5.1 - 2026-11-27
 
 - render `config.notifiers.loki.customHeaders` as a map, the type Falco Talon's Loki notifier reads for `custom_headers`. The list it rendered before was ignored, so no custom header was sent
