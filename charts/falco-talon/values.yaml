@@ -235,7 +235,7 @@ config:
       # -- tenant
       tenant: ""
       # -- custom headers
-      customHeaders: []
+      customHeaders: {}
     # -- elasticsearch
     elasticsearch:
       # -- url
