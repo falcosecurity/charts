@@ -3,6 +3,10 @@
 This file documents all notable changes to Falco Talon Helm Chart. The release
 numbering uses [semantic versioning](http://semver.org).
 
+## 0.5.1 - 2026-11-27
+
+- honor `config.watchRules: false` and `config.deduplication.leaderElection: false`. They were rendered with `default true`, which treats `false` as empty, so both settings were always `true`
+
 ## 0.5.0 - 2026-09-19
 
 - add `securityContext` value for the `falco-talon` container so a restricted profile (e.g. `readOnlyRootFilesystem`, `allowPrivilegeEscalation: false`, `runAsNonRoot`, dropped capabilities, `seccompProfile`) can be applied
