@@ -454,7 +454,7 @@ helm install falco falcosecurity/falco \
     --set falco.http_output.enabled=true \
     --set falco.http_output.url="http://some.url/some/path/" \
     --set falco.json_output=true \
-    --set json_include_output_property=true
+    --set falco.json_include_output_property=true
 ```
 
 To authenticate Falco to the remote HTTP(S) output endpoint, enable mTLS and supply a client certificate and key:
@@ -466,7 +466,7 @@ helm install falco falcosecurity/falco \
     --set falco.http_output.enabled=true \
     --set falco.http_output.url="https://some.url/some/path/" \
     --set falco.json_output=true \
-    --set json_include_output_property=true \
+    --set falco.json_include_output_property=true \
     --set falco.http_output.mtls=true \
     --set falco.http_output.client_cert="/etc/falco/certs/client/client.crt" \
     --set falco.http_output.client_key="/etc/falco/certs/client/client.key" \
@@ -486,7 +486,7 @@ If you use a Proxy in your cluster, the requests between `Falco` and `Falcosidek
 
 ## Configuration
 
-The following table lists the main configurable parameters of the falco chart v9.2.2 and their default values. See [values.yaml](./values.yaml) for full list.
+The following table lists the main configurable parameters of the falco chart v9.2.3 and their default values. See [values.yaml](./values.yaml) for full list.
 
 ## Values
 

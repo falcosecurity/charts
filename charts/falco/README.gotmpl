@@ -458,7 +458,7 @@ helm install falco falcosecurity/falco \
     --set falco.http_output.enabled=true \
     --set falco.http_output.url="http://some.url/some/path/" \
     --set falco.json_output=true \
-    --set json_include_output_property=true
+    --set falco.json_include_output_property=true
 ```
 
 To authenticate Falco to the remote HTTP(S) output endpoint, enable mTLS and supply a client certificate and key:
@@ -470,7 +470,7 @@ helm install falco falcosecurity/falco \
     --set falco.http_output.enabled=true \
     --set falco.http_output.url="https://some.url/some/path/" \
     --set falco.json_output=true \
-    --set json_include_output_property=true \
+    --set falco.json_include_output_property=true \
     --set falco.http_output.mtls=true \
     --set falco.http_output.client_cert="/etc/falco/certs/client/client.crt" \
     --set falco.http_output.client_key="/etc/falco/certs/client/client.key" \
